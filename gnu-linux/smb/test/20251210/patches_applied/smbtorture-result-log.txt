@@ -1,0 +1,3526 @@
+starting run smbtorture smb2.connect at 2025-12-10 10:37:58
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334278
+time: 2025-12-10 02:37:58.349556
+test: connect
+time: 2025-12-10 02:37:58.350225
+all_info for '\test9.dat'
+	create_time:    Wed Dec 10 10:37:58 2025 CST
+	access_time:    Wed Dec 10 10:37:58 2025 CST
+	write_time:     Wed Dec 10 10:37:58 2025 CST
+	change_time:    Wed Dec 10 10:37:58 2025 CST
+	attrib:         0x20
+	unknown1:       0x0
+	alloc_size:     69632
+	size:           65536
+	nlink:          1
+	delete_pending: 0
+	directory:      0
+	file_id:        13
+	ea_size:        0
+	access_mask:    0x001f01ff
+	position:       0x10000
+	mode:           0x2
+	short name:     'TEST9~KO.DAT'
+	stream 0:
+		size       65536
+		alloc size 69632
+		name       ::$DATA
+all_info for '\test9.dat'
+	create_time:    Wed Dec 10 10:37:58 2025 CST
+	access_time:    Wed Dec 10 10:37:58 2025 CST
+	write_time:     Wed Dec 10 10:37:58 2025 CST
+	change_time:    Wed Dec 10 10:37:58 2025 CST
+	attrib:         0x20
+	unknown1:       0x0
+	alloc_size:     69632
+	size:           65536
+	nlink:          1
+	delete_pending: 0
+	directory:      0
+	file_id:        13
+	ea_size:        0
+	access_mask:    0x001f01ff
+	position:       0x10000
+	mode:           0x2
+	short name:     'TEST9~KO.DAT'
+	stream 0:
+		size       65536
+		alloc size 69632
+		name       ::$DATA
+time: 2025-12-10 02:37:58.447514
+success: connect
+finished run smbtorture smb2.connect at 2025-12-10 10:37:58
+starting run smbtorture smb2.read.eof at 2025-12-10 10:37:58
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334278
+time: 2025-12-10 02:37:58.554874
+test: eof
+time: 2025-12-10 02:37:58.555238
+time: 2025-12-10 02:37:58.559714
+success: eof
+finished run smbtorture smb2.read.eof at 2025-12-10 10:37:58
+starting run smbtorture smb2.read.position at 2025-12-10 10:37:58
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334278
+time: 2025-12-10 02:37:58.614877
+test: position
+time: 2025-12-10 02:37:58.615129
+time: 2025-12-10 02:37:58.626822
+success: position
+finished run smbtorture smb2.read.position at 2025-12-10 10:37:58
+starting run smbtorture smb2.read.dir at 2025-12-10 10:37:58
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334278
+time: 2025-12-10 02:37:58.708612
+test: dir
+time: 2025-12-10 02:37:58.709151
+time: 2025-12-10 02:37:58.712929
+success: dir
+finished run smbtorture smb2.read.dir at 2025-12-10 10:37:58
+starting run smbtorture smb2.read.access at 2025-12-10 10:37:58
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334278
+time: 2025-12-10 02:37:58.790138
+test: access
+time: 2025-12-10 02:37:58.790544
+time: 2025-12-10 02:37:58.796401
+success: access
+finished run smbtorture smb2.read.access at 2025-12-10 10:37:58
+starting run smbtorture smb2.scan.scan at 2025-12-10 10:37:58
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334278
+time: 2025-12-10 02:37:58.874552
+test: scan
+time: 2025-12-10 02:37:58.875021
+time: 2025-12-10 02:37:59.997200
+success: scan
+finished run smbtorture smb2.scan.scan at 2025-12-10 10:38:00
+starting run smbtorture smb2.scan.getinfo at 2025-12-10 10:38:00
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334280
+time: 2025-12-10 02:38:00.071268
+test: getinfo
+time: 2025-12-10 02:38:00.071656
+(../../source4/torture/smb2/util.c:168) change_time not setup correctly: Fri Jan  9 10:38:00 2026 CST(134123998800000000) => Wed Dec 10 10:38:00 2025 CST(134098078800744421)
+Failed to setup complex file 'scan-getinfo.dat': NT_STATUS_INVALID_PARAMETER
+time: 2025-12-10 02:38:00.085491
+error: getinfo [
+Unknown error/failure. Missing torture_fail() or torture_assert_*() call?
+]
+finished run smbtorture smb2.scan.getinfo at 2025-12-10 10:38:00
+starting run smbtorture smb2.scan.setinfo at 2025-12-10 10:38:00
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334280
+time: 2025-12-10 02:38:00.141629
+test: setinfo
+time: 2025-12-10 02:38:00.141836
+(../../source4/torture/smb2/util.c:168) change_time not setup correctly: Fri Jan  9 10:38:00 2026 CST(134123998800000000) => Wed Dec 10 10:38:00 2025 CST(134098078801440442)
+Failed to setup complex file 'scan-setinfo.dat': NT_STATUS_INVALID_PARAMETER
+time: 2025-12-10 02:38:00.151922
+error: setinfo [
+Unknown error/failure. Missing torture_fail() or torture_assert_*() call?
+]
+finished run smbtorture smb2.scan.setinfo at 2025-12-10 10:38:00
+starting run smbtorture smb2.scan.find at 2025-12-10 10:38:00
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334280
+time: 2025-12-10 02:38:00.198404
+test: find
+time: 2025-12-10 02:38:00.198624
+find level 0x0001 is 140 bytes - NT_STATUS_OK
+find level 0x0002 is 0 bytes - STATUS_NO_MORE_FILES
+find level 0x0003 is 194 bytes - NT_STATUS_OK
+find level 0x000c is 0 bytes - STATUS_NO_MORE_FILES
+find level 0x0025 is 220 bytes - NT_STATUS_OK
+find level 0x0026 is 0 bytes - STATUS_NO_MORE_FILES
+find level 0x0064 is 256 bytes - NT_STATUS_OK
+time: 2025-12-10 02:38:00.235028
+success: find
+finished run smbtorture smb2.scan.find at 2025-12-10 10:38:00
+starting run smbtorture smb2.dir.find at 2025-12-10 10:38:00
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334280
+time: 2025-12-10 02:38:00.301271
+test: find
+time: 2025-12-10 02:38:00.301760
+time: 2025-12-10 02:38:00.330021
+success: find
+finished run smbtorture smb2.dir.find at 2025-12-10 10:38:00
+starting run smbtorture smb2.dir.fixed at 2025-12-10 10:38:00
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334280
+time: 2025-12-10 02:38:00.410594
+test: fixed
+time: 2025-12-10 02:38:00.411080
+time: 2025-12-10 02:38:00.453488
+success: fixed
+finished run smbtorture smb2.dir.fixed at 2025-12-10 10:38:00
+starting run smbtorture smb2.dir.many at 2025-12-10 10:38:00
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334280
+time: 2025-12-10 02:38:00.527637
+test: many
+time: 2025-12-10 02:38:00.527960
+Testing with 700 files
+Continue SMB2_FIND_BOTH_DIRECTORY_INFO via SINGLE
+Continue SMB2_FIND_BOTH_DIRECTORY_INFO via INDEX
+Continue SMB2_FIND_BOTH_DIRECTORY_INFO via RESTART
+Continue SMB2_FIND_BOTH_DIRECTORY_INFO via REOPEN
+Continue SMB2_FIND_DIRECTORY_INFO via SINGLE
+Continue SMB2_FIND_DIRECTORY_INFO via INDEX
+Continue SMB2_FIND_DIRECTORY_INFO via RESTART
+Continue SMB2_FIND_DIRECTORY_INFO via REOPEN
+Continue SMB2_FIND_FULL_DIRECTORY_INFO via SINGLE
+Continue SMB2_FIND_FULL_DIRECTORY_INFO via INDEX
+Continue SMB2_FIND_FULL_DIRECTORY_INFO via RESTART
+Continue SMB2_FIND_FULL_DIRECTORY_INFO via REOPEN
+Continue SMB2_FIND_ID_FULL_DIRECTORY_INFO via SINGLE
+Continue SMB2_FIND_ID_FULL_DIRECTORY_INFO via INDEX
+Continue SMB2_FIND_ID_FULL_DIRECTORY_INFO via RESTART
+Continue SMB2_FIND_ID_FULL_DIRECTORY_INFO via REOPEN
+Continue SMB2_FIND_ID_BOTH_DIRECTORY_INFO via SINGLE
+Continue SMB2_FIND_ID_BOTH_DIRECTORY_INFO via INDEX
+Continue SMB2_FIND_ID_BOTH_DIRECTORY_INFO via RESTART
+Continue SMB2_FIND_ID_BOTH_DIRECTORY_INFO via REOPEN
+time: 2025-12-10 02:38:00.802263
+success: many
+finished run smbtorture smb2.dir.many at 2025-12-10 10:38:00
+starting run smbtorture smb2.dir.modify at 2025-12-10 10:38:00
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334280
+time: 2025-12-10 02:38:00.892099
+test: modify
+time: 2025-12-10 02:38:00.892657
+Creating 700 files
+pulling the first two files
+Changing attributes and deleting
+(../../source4/torture/smb2/util.c:168) change_time not setup correctly: Fri Jan  9 10:38:00 2026 CST(134123998800000000) => Wed Dec 10 10:38:01 2025 CST(134098078811108441)
+time: 2025-12-10 02:38:01.117560
+failure: modify [
+../../source4/torture/smb2/dir.c:1073: status was NT_STATUS_INVALID_PARAMETER, expected NT_STATUS_OK: 
+]
+finished run smbtorture smb2.dir.modify at 2025-12-10 10:38:01
+starting run smbtorture smb2.dir.sorted at 2025-12-10 10:38:01
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334281
+time: 2025-12-10 02:38:01.212457
+test: sorted
+time: 2025-12-10 02:38:01.213175
+Testing if directories always come back sorted
+non-alphabetical order at entry 0 'nhaaaaaa' 'jmaaaaaa'
+Server does not produce sorted directory listings(not an error)
+time: 2025-12-10 02:38:01.402746
+success: sorted
+finished run smbtorture smb2.dir.sorted at 2025-12-10 10:38:01
+starting run smbtorture smb2.dir.file-index at 2025-12-10 10:38:01
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334281
+time: 2025-12-10 02:38:01.474802
+test: file-index
+time: 2025-12-10 02:38:01.475146
+Testing the behavior of file_index flag
+time: 2025-12-10 02:38:01.494477
+skip: file-index [
+../../source4/torture/smb2/dir.c:1264: Talking to a server that doesn't provide a file index.
+Windows servers using NTFS do not provide a file_index. Skipping test
+]
+finished run smbtorture smb2.dir.file-index at 2025-12-10 10:38:01
+starting run smbtorture smb2.dir.large-files at 2025-12-10 10:38:01
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334281
+time: 2025-12-10 02:38:01.580408
+test: large-files
+time: 2025-12-10 02:38:01.581123
+Testing directory enumeration in a directory with >1000 files
+Directory enumeration completed in 0.064 s.
+time: 2025-12-10 02:38:02.660696
+success: large-files
+finished run smbtorture smb2.dir.large-files at 2025-12-10 10:38:02
+starting run smbtorture smb2.rename.simple at 2025-12-10 10:38:02
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334282
+time: 2025-12-10 02:38:02.756099
+test: simple
+time: 2025-12-10 02:38:02.756778
+Creating base directory
+Creating test file
+Renaming test file
+Checking for new filename
+Closing test file
+Cleaning up
+time: 2025-12-10 02:38:02.760374
+success: simple
+finished run smbtorture smb2.rename.simple at 2025-12-10 10:38:02
+starting run smbtorture smb2.rename.simple_nodelete at 2025-12-10 10:38:02
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334282
+time: 2025-12-10 02:38:02.836878
+test: simple_nodelete
+time: 2025-12-10 02:38:02.837604
+Creating base directory
+Creating test file
+Renaming test file
+Closing test file
+Cleaning up
+time: 2025-12-10 02:38:02.842418
+success: simple_nodelete
+finished run smbtorture smb2.rename.simple_nodelete at 2025-12-10 10:38:02
+starting run smbtorture smb2.rename.no_sharing at 2025-12-10 10:38:02
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334282
+time: 2025-12-10 02:38:02.919568
+test: no_sharing
+time: 2025-12-10 02:38:02.920622
+Creating base directory
+Creating test file
+Renaming test file
+Checking for new filename
+Closing test file
+Cleaning up
+time: 2025-12-10 02:38:02.924565
+success: no_sharing
+finished run smbtorture smb2.rename.no_sharing at 2025-12-10 10:38:02
+starting run smbtorture smb2.rename.share_delete_and_delete_access at 2025-12-10 10:38:02
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334283
+time: 2025-12-10 02:38:03.010803
+test: share_delete_and_delete_access
+time: 2025-12-10 02:38:03.011680
+Creating base directory
+Opening parent directory
+Creating test file
+Renaming test file
+Closing test file
+Closing directory
+Cleaning up
+time: 2025-12-10 02:38:03.017017
+success: share_delete_and_delete_access
+finished run smbtorture smb2.rename.share_delete_and_delete_access at 2025-12-10 10:38:03
+starting run smbtorture smb2.rename.no_share_delete_but_delete_access at 2025-12-10 10:38:03
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334283
+time: 2025-12-10 02:38:03.117634
+test: no_share_delete_but_delete_access
+time: 2025-12-10 02:38:03.118152
+Creating base directory
+Opening parent directory
+Creating test file
+Renaming test file
+Closing test file
+Closing directory
+Cleaning up
+time: 2025-12-10 02:38:03.123330
+success: no_share_delete_but_delete_access
+finished run smbtorture smb2.rename.no_share_delete_but_delete_access at 2025-12-10 10:38:03
+starting run smbtorture smb2.rename.share_delete_no_delete_access at 2025-12-10 10:38:03
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334283
+time: 2025-12-10 02:38:03.203210
+test: share_delete_no_delete_access
+time: 2025-12-10 02:38:03.203679
+Creating base directory
+Opening parent directory
+Creating test file
+Renaming test file
+Checking for new filename
+Closing test file
+Closing directory
+Cleaning up
+time: 2025-12-10 02:38:03.206709
+success: share_delete_no_delete_access
+finished run smbtorture smb2.rename.share_delete_no_delete_access at 2025-12-10 10:38:03
+starting run smbtorture smb2.rename.msword at 2025-12-10 10:38:03
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334283
+time: 2025-12-10 02:38:03.300633
+test: msword
+time: 2025-12-10 02:38:03.301327
+Creating base directory
+Creating test file
+Opening parent directory
+Renaming test file
+Checking for new filename
+Closing test file
+Closing directory
+Cleaning up
+time: 2025-12-10 02:38:03.304513
+success: msword
+finished run smbtorture smb2.rename.msword at 2025-12-10 10:38:03
+starting run smbtorture smb2.rename.rename_dir_bench at 2025-12-10 10:38:03
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334283
+time: 2025-12-10 02:38:03.373714
+test: rename_dir_bench
+time: 2025-12-10 02:38:03.374489
+rename_dirs_bench returned NT_STATUS_OK
+time: 2025-12-10 02:38:03.378565
+success: rename_dir_bench
+finished run smbtorture smb2.rename.rename_dir_bench at 2025-12-10 10:38:03
+starting run smbtorture smb2.maxfid at 2025-12-10 10:38:03
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334283
+time: 2025-12-10 02:38:03.457120
+test: maxfid
+time: 2025-12-10 02:38:03.458421
+Creating subdirectories
+Testing maximum number of open files
+create of smb2_maxfid\10\10000 failed: NT_STATUS_INSUFFICIENT_RESOURCES
+Cleanup open files
+time: 2025-12-10 02:38:06.844444
+success: maxfid
+finished run smbtorture smb2.maxfid at 2025-12-10 10:38:06
+starting run smbtorture smb2.sharemode.sharemode-access at 2025-12-10 10:38:06
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334287
+time: 2025-12-10 02:38:07.028152
+test: sharemode-access
+time: 2025-12-10 02:38:07.029058
+index   0, sharemode   R, access mask 0x000001
+index   1, sharemode   R, access mask 0x000002
+index   2, sharemode   R, access mask 0x000004
+index   3, sharemode   R, access mask 0x000008
+index   4, sharemode   R, access mask 0x000010
+index   5, sharemode   R, access mask 0x000020
+index   6, sharemode   R, access mask 0x000080
+index   7, sharemode   R, access mask 0x000100
+index   8, sharemode   R, access mask 0x010000
+index   9, sharemode   R, access mask 0x020000
+index  10, sharemode   R, access mask 0x040000
+index  11, sharemode   R, access mask 0x080000
+index  12, sharemode   R, access mask 0x100000
+index  13, sharemode   W, access mask 0x000001
+index  14, sharemode   W, access mask 0x000002
+index  15, sharemode   W, access mask 0x000004
+index  16, sharemode   W, access mask 0x000008
+index  17, sharemode   W, access mask 0x000010
+index  18, sharemode   W, access mask 0x000020
+index  19, sharemode   W, access mask 0x000080
+index  20, sharemode   W, access mask 0x000100
+index  21, sharemode   W, access mask 0x010000
+index  22, sharemode   W, access mask 0x020000
+index  23, sharemode   W, access mask 0x040000
+index  24, sharemode   W, access mask 0x080000
+index  25, sharemode   W, access mask 0x100000
+index  26, sharemode   D, access mask 0x000001
+index  27, sharemode   D, access mask 0x000002
+index  28, sharemode   D, access mask 0x000004
+index  29, sharemode   D, access mask 0x000008
+index  30, sharemode   D, access mask 0x000010
+index  31, sharemode   D, access mask 0x000020
+index  32, sharemode   D, access mask 0x000080
+index  33, sharemode   D, access mask 0x000100
+index  34, sharemode   D, access mask 0x010000
+index  35, sharemode   D, access mask 0x020000
+index  36, sharemode   D, access mask 0x040000
+index  37, sharemode   D, access mask 0x080000
+index  38, sharemode   D, access mask 0x100000
+index  39, sharemode  RW, access mask 0x000001
+index  40, sharemode  RW, access mask 0x000002
+index  41, sharemode  RW, access mask 0x000004
+index  42, sharemode  RW, access mask 0x000008
+index  43, sharemode  RW, access mask 0x000010
+index  44, sharemode  RW, access mask 0x000020
+index  45, sharemode  RW, access mask 0x000080
+index  46, sharemode  RW, access mask 0x000100
+index  47, sharemode  RW, access mask 0x010000
+index  48, sharemode  RW, access mask 0x020000
+index  49, sharemode  RW, access mask 0x040000
+index  50, sharemode  RW, access mask 0x080000
+index  51, sharemode  RW, access mask 0x100000
+index  52, sharemode  RD, access mask 0x000001
+index  53, sharemode  RD, access mask 0x000002
+index  54, sharemode  RD, access mask 0x000004
+index  55, sharemode  RD, access mask 0x000008
+index  56, sharemode  RD, access mask 0x000010
+index  57, sharemode  RD, access mask 0x000020
+index  58, sharemode  RD, access mask 0x000080
+index  59, sharemode  RD, access mask 0x000100
+index  60, sharemode  RD, access mask 0x010000
+index  61, sharemode  RD, access mask 0x020000
+index  62, sharemode  RD, access mask 0x040000
+index  63, sharemode  RD, access mask 0x080000
+index  64, sharemode  RD, access mask 0x100000
+index  65, sharemode  WD, access mask 0x000001
+index  66, sharemode  WD, access mask 0x000002
+index  67, sharemode  WD, access mask 0x000004
+index  68, sharemode  WD, access mask 0x000008
+index  69, sharemode  WD, access mask 0x000010
+index  70, sharemode  WD, access mask 0x000020
+index  71, sharemode  WD, access mask 0x000080
+index  72, sharemode  WD, access mask 0x000100
+index  73, sharemode  WD, access mask 0x010000
+index  74, sharemode  WD, access mask 0x020000
+index  75, sharemode  WD, access mask 0x040000
+index  76, sharemode  WD, access mask 0x080000
+index  77, sharemode  WD, access mask 0x100000
+index  78, sharemode RWD, access mask 0x000001
+index  79, sharemode RWD, access mask 0x000002
+index  80, sharemode RWD, access mask 0x000004
+index  81, sharemode RWD, access mask 0x000008
+index  82, sharemode RWD, access mask 0x000010
+index  83, sharemode RWD, access mask 0x000020
+index  84, sharemode RWD, access mask 0x000080
+index  85, sharemode RWD, access mask 0x000100
+index  86, sharemode RWD, access mask 0x010000
+index  87, sharemode RWD, access mask 0x020000
+index  88, sharemode RWD, access mask 0x040000
+index  89, sharemode RWD, access mask 0x080000
+index  90, sharemode RWD, access mask 0x100000
+index  91, sharemode   R, access mask 0x000001
+index  92, sharemode   R, access mask 0x000003
+index  93, sharemode   R, access mask 0x000005
+index  94, sharemode   R, access mask 0x000009
+index  95, sharemode   R, access mask 0x000011
+index  96, sharemode   R, access mask 0x000021
+index  97, sharemode   R, access mask 0x000081
+index  98, sharemode   R, access mask 0x000101
+index  99, sharemode   R, access mask 0x010001
+index 100, sharemode   R, access mask 0x020001
+index 101, sharemode   R, access mask 0x040001
+index 102, sharemode   R, access mask 0x080001
+index 103, sharemode   R, access mask 0x100001
+index 104, sharemode   W, access mask 0x000003
+index 105, sharemode   W, access mask 0x000002
+index 106, sharemode   W, access mask 0x000006
+index 107, sharemode   W, access mask 0x00000a
+index 108, sharemode   W, access mask 0x000012
+index 109, sharemode   W, access mask 0x000022
+index 110, sharemode   W, access mask 0x000082
+index 111, sharemode   W, access mask 0x000102
+index 112, sharemode   W, access mask 0x010002
+index 113, sharemode   W, access mask 0x020002
+index 114, sharemode   W, access mask 0x040002
+index 115, sharemode   W, access mask 0x080002
+index 116, sharemode   W, access mask 0x100002
+index 117, sharemode  RW, access mask 0x000001
+index 118, sharemode  RW, access mask 0x000003
+index 119, sharemode  RW, access mask 0x000005
+index 120, sharemode  RW, access mask 0x000009
+index 121, sharemode  RW, access mask 0x000011
+index 122, sharemode  RW, access mask 0x000021
+index 123, sharemode  RW, access mask 0x000081
+index 124, sharemode  RW, access mask 0x000101
+index 125, sharemode  RW, access mask 0x010001
+index 126, sharemode  RW, access mask 0x020001
+index 127, sharemode  RW, access mask 0x040001
+index 128, sharemode  RW, access mask 0x080001
+index 129, sharemode  RW, access mask 0x100001
+index 130, sharemode  RD, access mask 0x000001
+index 131, sharemode  RD, access mask 0x000003
+index 132, sharemode  RD, access mask 0x000005
+index 133, sharemode  RD, access mask 0x000009
+index 134, sharemode  RD, access mask 0x000011
+index 135, sharemode  RD, access mask 0x000021
+index 136, sharemode  RD, access mask 0x000081
+index 137, sharemode  RD, access mask 0x000101
+index 138, sharemode  RD, access mask 0x010001
+index 139, sharemode  RD, access mask 0x020001
+index 140, sharemode  RD, access mask 0x040001
+index 141, sharemode  RD, access mask 0x080001
+index 142, sharemode  RD, access mask 0x100001
+index 143, sharemode  WD, access mask 0x000003
+index 144, sharemode  WD, access mask 0x000002
+index 145, sharemode  WD, access mask 0x000006
+index 146, sharemode  WD, access mask 0x00000a
+index 147, sharemode  WD, access mask 0x000012
+index 148, sharemode  WD, access mask 0x000022
+index 149, sharemode  WD, access mask 0x000082
+index 150, sharemode  WD, access mask 0x000102
+index 151, sharemode  WD, access mask 0x010002
+index 152, sharemode  WD, access mask 0x020002
+index 153, sharemode  WD, access mask 0x040002
+index 154, sharemode  WD, access mask 0x080002
+index 155, sharemode  WD, access mask 0x100002
+index 156, sharemode RWD, access mask 0x000001
+index 157, sharemode RWD, access mask 0x000003
+index 158, sharemode RWD, access mask 0x000005
+index 159, sharemode RWD, access mask 0x000009
+index 160, sharemode RWD, access mask 0x000011
+index 161, sharemode RWD, access mask 0x000021
+index 162, sharemode RWD, access mask 0x000081
+index 163, sharemode RWD, access mask 0x000101
+index 164, sharemode RWD, access mask 0x010001
+index 165, sharemode RWD, access mask 0x020001
+index 166, sharemode RWD, access mask 0x040001
+index 167, sharemode RWD, access mask 0x080001
+index 168, sharemode RWD, access mask 0x100001
+time: 2025-12-10 02:38:07.071760
+success: sharemode-access
+finished run smbtorture smb2.sharemode.sharemode-access at 2025-12-10 10:38:07
+starting run smbtorture smb2.sharemode.access-sharemode at 2025-12-10 10:38:07
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334287
+time: 2025-12-10 02:38:07.144054
+test: access-sharemode
+time: 2025-12-10 02:38:07.144827
+index   0, access mask 0x000001, sharemode   R
+index   1, access mask 0x000002, sharemode   R
+index   2, access mask 0x000004, sharemode   R
+index   3, access mask 0x000008, sharemode   R
+index   4, access mask 0x000010, sharemode   R
+index   5, access mask 0x000020, sharemode   R
+index   6, access mask 0x000080, sharemode   R
+index   7, access mask 0x000100, sharemode   R
+index   8, access mask 0x010000, sharemode   R
+index   9, access mask 0x020000, sharemode   R
+index  10, access mask 0x040000, sharemode   R
+index  11, access mask 0x080000, sharemode   R
+index  12, access mask 0x100000, sharemode   R
+index  13, access mask 0x000001, sharemode   W
+index  14, access mask 0x000002, sharemode   W
+index  15, access mask 0x000004, sharemode   W
+index  16, access mask 0x000008, sharemode   W
+index  17, access mask 0x000010, sharemode   W
+index  18, access mask 0x000020, sharemode   W
+index  19, access mask 0x000080, sharemode   W
+index  20, access mask 0x000100, sharemode   W
+index  21, access mask 0x010000, sharemode   W
+index  22, access mask 0x020000, sharemode   W
+index  23, access mask 0x040000, sharemode   W
+index  24, access mask 0x080000, sharemode   W
+index  25, access mask 0x100000, sharemode   W
+index  26, access mask 0x000001, sharemode   D
+index  27, access mask 0x000002, sharemode   D
+index  28, access mask 0x000004, sharemode   D
+index  29, access mask 0x000008, sharemode   D
+index  30, access mask 0x000010, sharemode   D
+index  31, access mask 0x000020, sharemode   D
+index  32, access mask 0x000080, sharemode   D
+index  33, access mask 0x000100, sharemode   D
+index  34, access mask 0x010000, sharemode   D
+index  35, access mask 0x020000, sharemode   D
+index  36, access mask 0x040000, sharemode   D
+index  37, access mask 0x080000, sharemode   D
+index  38, access mask 0x100000, sharemode   D
+index  39, access mask 0x000001, sharemode  RW
+index  40, access mask 0x000002, sharemode  RW
+index  41, access mask 0x000004, sharemode  RW
+index  42, access mask 0x000008, sharemode  RW
+index  43, access mask 0x000010, sharemode  RW
+index  44, access mask 0x000020, sharemode  RW
+index  45, access mask 0x000080, sharemode  RW
+index  46, access mask 0x000100, sharemode  RW
+index  47, access mask 0x010000, sharemode  RW
+index  48, access mask 0x020000, sharemode  RW
+index  49, access mask 0x040000, sharemode  RW
+index  50, access mask 0x080000, sharemode  RW
+index  51, access mask 0x100000, sharemode  RW
+index  52, access mask 0x000001, sharemode  RD
+index  53, access mask 0x000002, sharemode  RD
+index  54, access mask 0x000004, sharemode  RD
+index  55, access mask 0x000008, sharemode  RD
+index  56, access mask 0x000010, sharemode  RD
+index  57, access mask 0x000020, sharemode  RD
+index  58, access mask 0x000080, sharemode  RD
+index  59, access mask 0x000100, sharemode  RD
+index  60, access mask 0x010000, sharemode  RD
+index  61, access mask 0x020000, sharemode  RD
+index  62, access mask 0x040000, sharemode  RD
+index  63, access mask 0x080000, sharemode  RD
+index  64, access mask 0x100000, sharemode  RD
+index  65, access mask 0x000001, sharemode  WD
+index  66, access mask 0x000002, sharemode  WD
+index  67, access mask 0x000004, sharemode  WD
+index  68, access mask 0x000008, sharemode  WD
+index  69, access mask 0x000010, sharemode  WD
+index  70, access mask 0x000020, sharemode  WD
+index  71, access mask 0x000080, sharemode  WD
+index  72, access mask 0x000100, sharemode  WD
+index  73, access mask 0x010000, sharemode  WD
+index  74, access mask 0x020000, sharemode  WD
+index  75, access mask 0x040000, sharemode  WD
+index  76, access mask 0x080000, sharemode  WD
+index  77, access mask 0x100000, sharemode  WD
+index  78, access mask 0x000001, sharemode RWD
+index  79, access mask 0x000002, sharemode RWD
+index  80, access mask 0x000004, sharemode RWD
+index  81, access mask 0x000008, sharemode RWD
+index  82, access mask 0x000010, sharemode RWD
+index  83, access mask 0x000020, sharemode RWD
+index  84, access mask 0x000080, sharemode RWD
+index  85, access mask 0x000100, sharemode RWD
+index  86, access mask 0x010000, sharemode RWD
+index  87, access mask 0x020000, sharemode RWD
+index  88, access mask 0x040000, sharemode RWD
+index  89, access mask 0x080000, sharemode RWD
+index  90, access mask 0x100000, sharemode RWD
+index  91, access mask 0x000001, sharemode   R
+index  92, access mask 0x000003, sharemode   R
+index  93, access mask 0x000005, sharemode   R
+index  94, access mask 0x000009, sharemode   R
+index  95, access mask 0x000011, sharemode   R
+index  96, access mask 0x000021, sharemode   R
+index  97, access mask 0x000081, sharemode   R
+index  98, access mask 0x000101, sharemode   R
+index  99, access mask 0x010001, sharemode   R
+index 100, access mask 0x020001, sharemode   R
+index 101, access mask 0x040001, sharemode   R
+index 102, access mask 0x080001, sharemode   R
+index 103, access mask 0x100001, sharemode   R
+index 104, access mask 0x000003, sharemode   W
+index 105, access mask 0x000002, sharemode   W
+index 106, access mask 0x000006, sharemode   W
+index 107, access mask 0x00000a, sharemode   W
+index 108, access mask 0x000012, sharemode   W
+index 109, access mask 0x000022, sharemode   W
+index 110, access mask 0x000082, sharemode   W
+index 111, access mask 0x000102, sharemode   W
+index 112, access mask 0x010002, sharemode   W
+index 113, access mask 0x020002, sharemode   W
+index 114, access mask 0x040002, sharemode   W
+index 115, access mask 0x080002, sharemode   W
+index 116, access mask 0x100002, sharemode   W
+index 117, access mask 0x000001, sharemode  RW
+index 118, access mask 0x000003, sharemode  RW
+index 119, access mask 0x000005, sharemode  RW
+index 120, access mask 0x000009, sharemode  RW
+index 121, access mask 0x000011, sharemode  RW
+index 122, access mask 0x000021, sharemode  RW
+index 123, access mask 0x000081, sharemode  RW
+index 124, access mask 0x000101, sharemode  RW
+index 125, access mask 0x010001, sharemode  RW
+index 126, access mask 0x020001, sharemode  RW
+index 127, access mask 0x040001, sharemode  RW
+index 128, access mask 0x080001, sharemode  RW
+index 129, access mask 0x100001, sharemode  RW
+index 130, access mask 0x000001, sharemode  RD
+index 131, access mask 0x000003, sharemode  RD
+index 132, access mask 0x000005, sharemode  RD
+index 133, access mask 0x000009, sharemode  RD
+index 134, access mask 0x000011, sharemode  RD
+index 135, access mask 0x000021, sharemode  RD
+index 136, access mask 0x000081, sharemode  RD
+index 137, access mask 0x000101, sharemode  RD
+index 138, access mask 0x010001, sharemode  RD
+index 139, access mask 0x020001, sharemode  RD
+index 140, access mask 0x040001, sharemode  RD
+index 141, access mask 0x080001, sharemode  RD
+index 142, access mask 0x100001, sharemode  RD
+index 143, access mask 0x000003, sharemode  WD
+index 144, access mask 0x000002, sharemode  WD
+index 145, access mask 0x000006, sharemode  WD
+index 146, access mask 0x00000a, sharemode  WD
+index 147, access mask 0x000012, sharemode  WD
+index 148, access mask 0x000022, sharemode  WD
+index 149, access mask 0x000082, sharemode  WD
+index 150, access mask 0x000102, sharemode  WD
+index 151, access mask 0x010002, sharemode  WD
+index 152, access mask 0x020002, sharemode  WD
+index 153, access mask 0x040002, sharemode  WD
+index 154, access mask 0x080002, sharemode  WD
+index 155, access mask 0x100002, sharemode  WD
+index 156, access mask 0x000001, sharemode RWD
+index 157, access mask 0x000003, sharemode RWD
+index 158, access mask 0x000005, sharemode RWD
+index 159, access mask 0x000009, sharemode RWD
+index 160, access mask 0x000011, sharemode RWD
+index 161, access mask 0x000021, sharemode RWD
+index 162, access mask 0x000081, sharemode RWD
+index 163, access mask 0x000101, sharemode RWD
+index 164, access mask 0x010001, sharemode RWD
+index 165, access mask 0x020001, sharemode RWD
+index 166, access mask 0x040001, sharemode RWD
+index 167, access mask 0x080001, sharemode RWD
+index 168, access mask 0x100001, sharemode RWD
+time: 2025-12-10 02:38:07.184376
+success: access-sharemode
+finished run smbtorture smb2.sharemode.access-sharemode at 2025-12-10 10:38:07
+starting run smbtorture smb2.compound.related1 at 2025-12-10 10:38:07
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334287
+time: 2025-12-10 02:38:07.260015
+test: related1
+time: 2025-12-10 02:38:07.260616
+time: 2025-12-10 02:38:07.264132
+success: related1
+finished run smbtorture smb2.compound.related1 at 2025-12-10 10:38:07
+starting run smbtorture smb2.compound.related2 at 2025-12-10 10:38:07
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334287
+time: 2025-12-10 02:38:07.337653
+test: related2
+time: 2025-12-10 02:38:07.338682
+time: 2025-12-10 02:38:07.341930
+success: related2
+finished run smbtorture smb2.compound.related2 at 2025-12-10 10:38:07
+starting run smbtorture smb2.compound.related3 at 2025-12-10 10:38:07
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334287
+time: 2025-12-10 02:38:07.419417
+test: related3
+time: 2025-12-10 02:38:07.419960
+time: 2025-12-10 02:38:07.423154
+success: related3
+finished run smbtorture smb2.compound.related3 at 2025-12-10 10:38:07
+starting run smbtorture smb2.compound.unrelated1 at 2025-12-10 10:38:07
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334287
+time: 2025-12-10 02:38:07.500593
+test: unrelated1
+time: 2025-12-10 02:38:07.501206
+time: 2025-12-10 02:38:07.505201
+success: unrelated1
+finished run smbtorture smb2.compound.unrelated1 at 2025-12-10 10:38:07
+starting run smbtorture smb2.compound.invalid1 at 2025-12-10 10:38:07
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334287
+time: 2025-12-10 02:38:07.592858
+test: invalid1
+time: 2025-12-10 02:38:07.593347
+time: 2025-12-10 02:38:07.597104
+success: invalid1
+finished run smbtorture smb2.compound.invalid1 at 2025-12-10 10:38:07
+starting run smbtorture smb2.compound.invalid2 at 2025-12-10 10:38:07
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334287
+time: 2025-12-10 02:38:07.722033
+test: invalid2
+time: 2025-12-10 02:38:07.723146
+time: 2025-12-10 02:38:07.729260
+success: invalid2
+finished run smbtorture smb2.compound.invalid2 at 2025-12-10 10:38:07
+starting run smbtorture smb2.compound.invalid3 at 2025-12-10 10:38:07
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334287
+time: 2025-12-10 02:38:07.818878
+test: invalid3
+time: 2025-12-10 02:38:07.819498
+time: 2025-12-10 02:38:07.823032
+success: invalid3
+finished run smbtorture smb2.compound.invalid3 at 2025-12-10 10:38:07
+starting run smbtorture smb2.compound.interim2 at 2025-12-10 10:38:07
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334287
+time: 2025-12-10 02:38:07.900822
+test: interim2
+time: 2025-12-10 02:38:07.901391
+time: 2025-12-10 02:38:07.904706
+success: interim2
+finished run smbtorture smb2.compound.interim2 at 2025-12-10 10:38:07
+starting run smbtorture smb2.compound.compound-break at 2025-12-10 10:38:07
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334287
+time: 2025-12-10 02:38:07.987203
+test: compound-break
+time: 2025-12-10 02:38:07.988127
+TEST2: open a file with an batch oplock (share mode: all)
+TEST2: Opening second time with compound
+Acking to level II [0x01] in oplock handler
+time: 2025-12-10 02:38:07.991676
+success: compound-break
+finished run smbtorture smb2.compound.compound-break at 2025-12-10 10:38:07
+starting run smbtorture smb2.compound.compound-padding at 2025-12-10 10:38:08
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334288
+time: 2025-12-10 02:38:08.068810
+test: compound-padding
+time: 2025-12-10 02:38:08.069550
+time: 2025-12-10 02:38:08.075244
+success: compound-padding
+finished run smbtorture smb2.compound.compound-padding at 2025-12-10 10:38:08
+starting run smbtorture smb2.streams.dir at 2025-12-10 10:38:08
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334288
+time: 2025-12-10 02:38:08.160140
+test: dir
+time: 2025-12-10 02:38:08.160995
+teststreams\stream.txt:Stream One
+(../../source4/torture/smb2/streams.c:214) opening non-existent directory stream
+(../../source4/torture/smb2/streams.c:229) opening basedir  stream
+(../../source4/torture/smb2/streams.c:245) opening basedir ::$DATA stream
+(../../source4/torture/smb2/streams.c:261) list the streams on the basedir
+time: 2025-12-10 02:38:08.164354
+success: dir
+finished run smbtorture smb2.streams.dir at 2025-12-10 10:38:08
+starting run smbtorture smb2.streams.io at 2025-12-10 10:38:08
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334288
+time: 2025-12-10 02:38:08.218168
+test: io
+time: 2025-12-10 02:38:08.218853
+(../../source4/torture/smb2/streams.c:301) creating a stream on a non-existent file
+(../../source4/torture/smb2/streams.c:321) check that open of base file is allowed
+(../../source4/torture/smb2/streams.c:328) writing to stream
+(../../source4/torture/smb2/streams.c:343) modifying stream
+(../../source4/torture/smb2/streams.c:353) creating a stream2 on a existing file
+(../../source4/torture/smb2/streams.c:360) modifying stream
+(../../source4/torture/smb2/streams.c:409) deleting stream
+(../../source4/torture/smb2/streams.c:422) delete a stream via delete-on-close
+(../../source4/torture/smb2/streams.c:454) deleting file
+time: 2025-12-10 02:38:08.225142
+success: io
+finished run smbtorture smb2.streams.io at 2025-12-10 10:38:08
+starting run smbtorture smb2.streams.sharemodes at 2025-12-10 10:38:08
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334288
+time: 2025-12-10 02:38:08.268438
+test: sharemodes
+time: 2025-12-10 02:38:08.269092
+(../../source4/torture/smb2/streams.c:570) Testing stream share mode conflicts
+time: 2025-12-10 02:38:08.272636
+success: sharemodes
+finished run smbtorture smb2.streams.sharemodes at 2025-12-10 10:38:08
+starting run smbtorture smb2.streams.names at 2025-12-10 10:38:08
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334288
+time: 2025-12-10 02:38:08.318054
+test: names
+time: 2025-12-10 02:38:08.318648
+(../../source4/torture/smb2/streams.c:847) testing stream names
+time: 2025-12-10 02:38:08.322589
+success: names
+finished run smbtorture smb2.streams.names at 2025-12-10 10:38:08
+starting run smbtorture smb2.streams.names2 at 2025-12-10 10:38:08
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334288
+time: 2025-12-10 02:38:08.376420
+test: names2
+time: 2025-12-10 02:38:08.377089
+(../../source4/torture/smb2/streams.c:1141) testing stream names
+time: 2025-12-10 02:38:08.391215
+success: names2
+finished run smbtorture smb2.streams.names2 at 2025-12-10 10:38:08
+starting run smbtorture smb2.streams.names3 at 2025-12-10 10:38:08
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334288
+time: 2025-12-10 02:38:08.453288
+test: names3
+time: 2025-12-10 02:38:08.454511
+(../../source4/torture/smb2/streams.c:1269) testing case insensitive stream names
+time: 2025-12-10 02:38:08.458968
+success: names3
+finished run smbtorture smb2.streams.names3 at 2025-12-10 10:38:08
+starting run smbtorture smb2.streams.rename at 2025-12-10 10:38:08
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334288
+time: 2025-12-10 02:38:08.510715
+test: rename
+time: 2025-12-10 02:38:08.511366
+(../../source4/torture/smb2/streams.c:1350) testing stream renames
+time: 2025-12-10 02:38:08.516735
+success: rename
+finished run smbtorture smb2.streams.rename at 2025-12-10 10:38:08
+starting run smbtorture smb2.streams.rename2 at 2025-12-10 10:38:08
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334288
+time: 2025-12-10 02:38:08.574774
+test: rename2
+time: 2025-12-10 02:38:08.575746
+(../../source4/torture/smb2/streams.c:1475) Checking SMB2 rename of a stream using :<stream>
+(../../source4/torture/smb2/streams.c:1489) Checking SMB2 rename of an overwriting stream using :<stream>
+(../../source4/torture/smb2/streams.c:1519) Checking SMB2 rename of a stream using <base>:<stream>
+(../../source4/torture/smb2/streams.c:1529) Checking SMB2 rename to default stream using :<stream>
+time: 2025-12-10 02:38:08.582081
+success: rename2
+finished run smbtorture smb2.streams.rename2 at 2025-12-10 10:38:08
+starting run smbtorture smb2.streams.create-disposition at 2025-12-10 10:38:08
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334288
+time: 2025-12-10 02:38:08.649211
+test: create-disposition
+time: 2025-12-10 02:38:08.650340
+(../../source4/torture/smb2/streams.c:1635) Checking create disp: open
+(../../source4/torture/smb2/streams.c:1649) Checking create disp: overwrite
+(../../source4/torture/smb2/streams.c:1663) Checking create disp: overwrite_if
+(../../source4/torture/smb2/streams.c:1681) Checking create disp: supersede
+(../../source4/torture/smb2/streams.c:1701) Checking create disp: overwrite_if on stream
+time: 2025-12-10 02:38:08.656575
+success: create-disposition
+finished run smbtorture smb2.streams.create-disposition at 2025-12-10 10:38:08
+starting run smbtorture smb2.streams.zero-byte at 2025-12-10 10:38:08
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334288
+time: 2025-12-10 02:38:08.712825
+test: zero-byte
+time: 2025-12-10 02:38:08.713485
+(../../source4/torture/smb2/streams.c:490) Check 0 byte named stream
+time: 2025-12-10 02:38:08.717074
+success: zero-byte
+finished run smbtorture smb2.streams.zero-byte at 2025-12-10 10:38:08
+starting run smbtorture smb2.streams.basefile-rename-with-open-stream at 2025-12-10 10:38:08
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334288
+time: 2025-12-10 02:38:08.770154
+test: basefile-rename-with-open-stream
+time: 2025-12-10 02:38:08.770975
+Creating file with stream
+Writing to stream
+Renaming base file
+time: 2025-12-10 02:38:08.777754
+success: basefile-rename-with-open-stream
+finished run smbtorture smb2.streams.basefile-rename-with-open-stream at 2025-12-10 10:38:08
+starting run smbtorture smb2.create.open at 2025-12-10 10:38:08
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334288
+time: 2025-12-10 02:38:08.854203
+test: open
+time: 2025-12-10 02:38:08.854548
+Checking SMB2 Open
+(../../source4/torture/smb2/util.c:168) change_time not setup correctly: Fri Jan  9 10:38:08 2026 CST(134123998880000000) => Wed Dec 10 10:38:09 2025 CST(134098078888668658)
+time: 2025-12-10 02:38:08.867281
+failure: open [
+(../../source4/torture/smb2/create.c:805) Incorrect status NT_STATUS_INVALID_PARAMETER - should be NT_STATUS_OK
+]
+finished run smbtorture smb2.create.open at 2025-12-10 10:38:08
+starting run smbtorture smb2.create.brlocked at 2025-12-10 10:38:08
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334288
+time: 2025-12-10 02:38:08.922735
+test: brlocked
+time: 2025-12-10 02:38:08.923130
+Testing SMB2 open with a byte range locked file
+time: 2025-12-10 02:38:08.926736
+success: brlocked
+finished run smbtorture smb2.create.brlocked at 2025-12-10 10:38:08
+starting run smbtorture smb2.create.multi at 2025-12-10 10:38:08
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334288
+time: 2025-12-10 02:38:08.984433
+test: multi
+time: 2025-12-10 02:38:08.984789
+Testing SMB2 Open with multiple connections
+waiting for replies
+File 0 returned status NT_STATUS_OK
+File 1 returned status NT_STATUS_OBJECT_NAME_COLLISION
+File 2 returned status NT_STATUS_OBJECT_NAME_COLLISION
+time: 2025-12-10 02:38:08.991588
+success: multi
+finished run smbtorture smb2.create.multi at 2025-12-10 10:38:08
+starting run smbtorture smb2.create.delete at 2025-12-10 10:38:08
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334289
+time: 2025-12-10 02:38:09.046146
+test: delete
+time: 2025-12-10 02:38:09.046508
+Checking SMB2_OPEN for delete on a readonly file.
+time: 2025-12-10 02:38:09.050709
+success: delete
+finished run smbtorture smb2.create.delete at 2025-12-10 10:38:09
+starting run smbtorture smb2.create.leading-slash at 2025-12-10 10:38:09
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334289
+time: 2025-12-10 02:38:09.104496
+test: leading-slash
+time: 2025-12-10 02:38:09.104887
+Trying to create a directory with leading slash on path
+time: 2025-12-10 02:38:09.109472
+success: leading-slash
+finished run smbtorture smb2.create.leading-slash at 2025-12-10 10:38:09
+starting run smbtorture smb2.create.impersonation at 2025-12-10 10:38:09
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334289
+time: 2025-12-10 02:38:09.163229
+test: impersonation
+time: 2025-12-10 02:38:09.163675
+Testing SMB2 open with an invalid impersonation level.
+time: 2025-12-10 02:38:09.168918
+success: impersonation
+finished run smbtorture smb2.create.impersonation at 2025-12-10 10:38:09
+starting run smbtorture smb2.create.dir-alloc-size at 2025-12-10 10:38:09
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334289
+time: 2025-12-10 02:38:09.222443
+test: dir-alloc-size
+time: 2025-12-10 02:38:09.222905
+Checking initial allocation size on directories
+Got directory alloc size: 0
+time: 2025-12-10 02:38:09.226261
+success: dir-alloc-size
+finished run smbtorture smb2.create.dir-alloc-size at 2025-12-10 10:38:09
+starting run smbtorture smb2.create.aclfile at 2025-12-10 10:38:09
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334289
+time: 2025-12-10 02:38:09.283640
+test: aclfile
+time: 2025-12-10 02:38:09.284049
+Testing nttrans create with sec_desc on files
+basic create
+adding a new ACE
+creating a file with an initial ACL
+creating with attributes
+creating with attributes and ACL
+creating with attributes, ACL and owner
+time: 2025-12-10 02:38:09.290090
+success: aclfile
+finished run smbtorture smb2.create.aclfile at 2025-12-10 10:38:09
+starting run smbtorture smb2.create.acldir at 2025-12-10 10:38:09
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334289
+time: 2025-12-10 02:38:09.362971
+test: acldir
+time: 2025-12-10 02:38:09.363229
+Testing nttrans create with sec_desc on directories
+basic create
+adding a new ACE
+creating a file with an initial ACL
+creating with attributes
+creating with attributes and ACL
+creating with attributes, ACL and owner
+time: 2025-12-10 02:38:09.367903
+success: acldir
+finished run smbtorture smb2.create.acldir at 2025-12-10 10:38:09
+starting run smbtorture smb2.create.nulldacl at 2025-12-10 10:38:09
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334289
+time: 2025-12-10 02:38:09.441187
+test: nulldacl
+time: 2025-12-10 02:38:09.441569
+TESTING SEC_DESC WITH A NULL DACL
+creating a file with a empty sd
+get the original sd
+set NULL DACL
+get the sd
+try open for read control
+try open for write
+try open for read
+try open for generic write
+try open for generic read
+set DACL with 0 aces
+get the sd
+try open for read control
+try open for write => access_denied
+try open for read => access_denied
+try open for generic write => access_denied
+try open for generic read => access_denied
+set empty sd
+get the sd
+time: 2025-12-10 02:38:09.448026
+success: nulldacl
+finished run smbtorture smb2.create.nulldacl at 2025-12-10 10:38:09
+starting run smbtorture smb2.delete-on-close-perms.OVERWRITE_IF at 2025-12-10 10:38:09
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334289
+time: 2025-12-10 02:38:09.528391
+test: OVERWRITE_IF
+time: 2025-12-10 02:38:09.529651
+Opening Directory for setting new SD: test_dir
+get the original sd
+Setting permissions on dir to 0x1f01ff
+Creating Directory for testing: test_dir
+get the original sd
+Setting permissions on dir to 0x1e01bf
+Create file with DeleteOnClose on non-existent file (OVERWRITE_IF)
+We expect NT_STATUS_OK
+Testing if the file was deleted when closed
+We expect NT_STATUS_OBJECT_NAME_NOT_FOUND
+time: 2025-12-10 02:38:09.534280
+success: OVERWRITE_IF
+finished run smbtorture smb2.delete-on-close-perms.OVERWRITE_IF at 2025-12-10 10:38:09
+starting run smbtorture smb2.delete-on-close-perms.OVERWRITE_IF Existing at 2025-12-10 10:38:09
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334289
+time: 2025-12-10 02:38:09.611469
+test: OVERWRITE_IF
+time: 2025-12-10 02:38:09.612364
+Opening Directory for setting new SD: test_dir
+get the original sd
+Setting permissions on dir to 0x1f01ff
+Creating Directory for testing: test_dir
+get the original sd
+Setting permissions on dir to 0x1e01bf
+Create file with DeleteOnClose on non-existent file (OVERWRITE_IF)
+We expect NT_STATUS_OK
+Testing if the file was deleted when closed
+We expect NT_STATUS_OBJECT_NAME_NOT_FOUND
+time: 2025-12-10 02:38:09.616439
+success: OVERWRITE_IF
+time: 2025-12-10 02:38:09.617425
+Unknown torture operation 'Existing'
+finished run smbtorture smb2.delete-on-close-perms.OVERWRITE_IF Existing at 2025-12-10 10:38:09
+starting run smbtorture smb2.delete-on-close-perms.CREATE at 2025-12-10 10:38:09
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334289
+time: 2025-12-10 02:38:09.694513
+test: CREATE
+time: 2025-12-10 02:38:09.695383
+Opening Directory for setting new SD: test_dir
+get the original sd
+Setting permissions on dir to 0x1f01ff
+Creating Directory for testing: test_dir
+get the original sd
+Setting permissions on dir to 0x1e01bf
+Create file with DeleteOnClose on non-existent file (CREATE) 
+We expect NT_STATUS_OK
+Testing if the file was deleted when closed
+We expect NT_STATUS_OBJECT_NAME_NOT_FOUND
+time: 2025-12-10 02:38:09.699842
+success: CREATE
+finished run smbtorture smb2.delete-on-close-perms.CREATE at 2025-12-10 10:38:09
+starting run smbtorture smb2.delete-on-close-perms.CREATE Existing at 2025-12-10 10:38:09
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334289
+time: 2025-12-10 02:38:09.776109
+test: CREATE
+time: 2025-12-10 02:38:09.776949
+Opening Directory for setting new SD: test_dir
+get the original sd
+Setting permissions on dir to 0x1f01ff
+Creating Directory for testing: test_dir
+get the original sd
+Setting permissions on dir to 0x1e01bf
+Create file with DeleteOnClose on non-existent file (CREATE) 
+We expect NT_STATUS_OK
+Testing if the file was deleted when closed
+We expect NT_STATUS_OBJECT_NAME_NOT_FOUND
+time: 2025-12-10 02:38:09.781031
+success: CREATE
+time: 2025-12-10 02:38:09.782162
+Unknown torture operation 'Existing'
+finished run smbtorture smb2.delete-on-close-perms.CREATE Existing at 2025-12-10 10:38:09
+starting run smbtorture smb2.delete-on-close-perms.CREATE_IF at 2025-12-10 10:38:09
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334289
+time: 2025-12-10 02:38:09.855166
+test: CREATE_IF
+time: 2025-12-10 02:38:09.856052
+Opening Directory for setting new SD: test_dir
+get the original sd
+Setting permissions on dir to 0x1f01ff
+Creating Directory for testing: test_dir
+get the original sd
+Setting permissions on dir to 0x1e01bf
+Create file with DeleteOnClose on non-existent file (OPEN_IF)
+We expect NT_STATUS_OK
+Testing if the file was deleted when closed
+We expect NT_STATUS_OBJECT_NAME_NOT_FOUND
+time: 2025-12-10 02:38:09.860322
+success: CREATE_IF
+finished run smbtorture smb2.delete-on-close-perms.CREATE_IF at 2025-12-10 10:38:09
+starting run smbtorture smb2.delete-on-close-perms.CREATE_IF Existing at 2025-12-10 10:38:09
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334289
+time: 2025-12-10 02:38:09.931828
+test: CREATE_IF
+time: 2025-12-10 02:38:09.932418
+Opening Directory for setting new SD: test_dir
+get the original sd
+Setting permissions on dir to 0x1f01ff
+Creating Directory for testing: test_dir
+get the original sd
+Setting permissions on dir to 0x1e01bf
+Create file with DeleteOnClose on non-existent file (OPEN_IF)
+We expect NT_STATUS_OK
+Testing if the file was deleted when closed
+We expect NT_STATUS_OBJECT_NAME_NOT_FOUND
+time: 2025-12-10 02:38:09.936061
+success: CREATE_IF
+time: 2025-12-10 02:38:09.936679
+Unknown torture operation 'Existing'
+finished run smbtorture smb2.delete-on-close-perms.CREATE_IF Existing at 2025-12-10 10:38:09
+starting run smbtorture smb2.delete-on-close-perms.FIND_and_set_DOC at 2025-12-10 10:38:09
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334290
+time: 2025-12-10 02:38:10.013172
+test: FIND_and_set_DOC
+time: 2025-12-10 02:38:10.014085
+Opening Directory for setting new SD: test_dir
+get the original sd
+Setting permissions on dir to 0x1f01ff
+FIND and delete directory
+We expect NT_STATUS_OK
+time: 2025-12-10 02:38:10.018192
+success: FIND_and_set_DOC
+finished run smbtorture smb2.delete-on-close-perms.FIND_and_set_DOC at 2025-12-10 10:38:10
+starting run smbtorture smb2.oplock.exclusive1 at 2025-12-10 10:38:10
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334290
+time: 2025-12-10 02:38:10.093155
+test: exclusive1
+time: 2025-12-10 02:38:10.093712
+EXCLUSIVE1: open a file with an exclusive oplock (share mode: none)
+a 2nd open should not cause a break
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+unlink it - should also be no break
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:38:12.100786
+success: exclusive1
+finished run smbtorture smb2.oplock.exclusive1 at 2025-12-10 10:38:12
+starting run smbtorture smb2.oplock.exclusive2 at 2025-12-10 10:38:12
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334292
+time: 2025-12-10 02:38:12.155909
+test: exclusive2
+time: 2025-12-10 02:38:12.156769
+EXCLUSIVE2: open a file with an exclusive oplock (share mode: all)
+a 2nd open should cause a break to level 2
+Acking to level II [0x01] in oplock handler
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+try to unlink it - should cause a break
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+close both handles
+time: 2025-12-10 02:38:14.174259
+success: exclusive2
+finished run smbtorture smb2.oplock.exclusive2 at 2025-12-10 10:38:14
+starting run smbtorture smb2.oplock.exclusive3 at 2025-12-10 10:38:14
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334294
+time: 2025-12-10 02:38:14.228447
+test: exclusive3
+time: 2025-12-10 02:38:14.229121
+EXCLUSIVE3: open a file with an exclusive oplock (share mode: none)
+setpathinfo EOF should trigger a break to none
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:38:15.235374
+success: exclusive3
+finished run smbtorture smb2.oplock.exclusive3 at 2025-12-10 10:38:15
+starting run smbtorture smb2.oplock.exclusive4 at 2025-12-10 10:38:15
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334295
+time: 2025-12-10 02:38:15.289603
+test: exclusive4
+time: 2025-12-10 02:38:15.290354
+EXCLUSIVE4: open with exclusive oplock
+second open with attributes only shouldn't cause oplock break
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:38:16.296797
+success: exclusive4
+finished run smbtorture smb2.oplock.exclusive4 at 2025-12-10 10:38:16
+starting run smbtorture smb2.oplock.exclusive5 at 2025-12-10 10:38:16
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334296
+time: 2025-12-10 02:38:16.349293
+test: exclusive5
+time: 2025-12-10 02:38:16.350155
+EXCLUSIVE5: open with exclusive oplock
+second open with attributes only and NTCREATEX_DISP_OVERWRITE_IF disposition causes oplock break
+Acking to level II [0x01] in oplock handler
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:38:17.356488
+success: exclusive5
+finished run smbtorture smb2.oplock.exclusive5 at 2025-12-10 10:38:17
+starting run smbtorture smb2.oplock.exclusive6 at 2025-12-10 10:38:17
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334297
+time: 2025-12-10 02:38:17.407805
+test: exclusive6
+time: 2025-12-10 02:38:17.408562
+EXCLUSIVE6: open a file with an exclusive oplock (share mode: none)
+rename with the parent directory handle open for DELETE should not generate a break but get a sharing violation
+trying rename while parent handle open for delete.
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+rename with the parent directory handle open without DELETE should succeed without a break
+trying rename while parent handle open without delete
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:38:19.419237
+success: exclusive6
+finished run smbtorture smb2.oplock.exclusive6 at 2025-12-10 10:38:19
+starting run smbtorture smb2.oplock.exclusive9 at 2025-12-10 10:38:19
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334299
+time: 2025-12-10 02:38:19.472506
+test: exclusive9
+time: 2025-12-10 02:38:19.473247
+Acking to none [0x00] in oplock handler
+Acking to level II [0x01] in oplock handler
+Acking to none [0x00] in oplock handler
+Acking to level II [0x01] in oplock handler
+time: 2025-12-10 02:38:19.479108
+success: exclusive9
+finished run smbtorture smb2.oplock.exclusive9 at 2025-12-10 10:38:19
+starting run smbtorture smb2.oplock.batch1 at 2025-12-10 10:38:19
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334299
+time: 2025-12-10 02:38:19.533935
+test: batch1
+time: 2025-12-10 02:38:19.534545
+BATCH1: open with batch oplock
+unlink should generate a break
+Acking to level II [0x01] in oplock handler
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+2nd unlink should not generate a break
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+writing should generate a self break to none
+Break from level II to none in oplock handler
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:38:22.544210
+success: batch1
+finished run smbtorture smb2.oplock.batch1 at 2025-12-10 10:38:22
+starting run smbtorture smb2.oplock.batch2 at 2025-12-10 10:38:22
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334302
+time: 2025-12-10 02:38:22.595992
+test: batch2
+time: 2025-12-10 02:38:22.596559
+BATCH2: open with batch oplock
+unlink should generate a break, which we ack as break to none
+Acking to none in oplock handler
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+2nd unlink should not generate a break
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+writing should not generate a break
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:38:25.606222
+success: batch2
+finished run smbtorture smb2.oplock.batch2 at 2025-12-10 10:38:25
+starting run smbtorture smb2.oplock.batch3 at 2025-12-10 10:38:25
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334305
+time: 2025-12-10 02:38:25.663508
+test: batch3
+time: 2025-12-10 02:38:25.664104
+BATCH3: if we close on break then the unlink can succeed
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:38:26.671035
+success: batch3
+finished run smbtorture smb2.oplock.batch3 at 2025-12-10 10:38:26
+starting run smbtorture smb2.oplock.batch4 at 2025-12-10 10:38:26
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334306
+time: 2025-12-10 02:38:26.727795
+test: batch4
+time: 2025-12-10 02:38:26.728421
+BATCH4: a self read should not cause a break
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:38:27.734692
+success: batch4
+finished run smbtorture smb2.oplock.batch4 at 2025-12-10 10:38:27
+starting run smbtorture smb2.oplock.batch5 at 2025-12-10 10:38:27
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334307
+time: 2025-12-10 02:38:27.792758
+test: batch5
+time: 2025-12-10 02:38:27.793405
+BATCH5: a 2nd open should give a break
+Acking to level II [0x01] in oplock handler
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:38:28.800428
+success: batch5
+finished run smbtorture smb2.oplock.batch5 at 2025-12-10 10:38:28
+starting run smbtorture smb2.oplock.batch6 at 2025-12-10 10:38:28
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334308
+time: 2025-12-10 02:38:28.854540
+test: batch6
+time: 2025-12-10 02:38:28.855152
+BATCH6: a 2nd open should give a break to level II if the first open allowed shared read
+Acking to level II [0x01] in oplock handler
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+write should trigger a break to none on both
+Break from level II to none in oplock handler
+Break from level II to none in oplock handler
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:38:31.864437
+success: batch6
+finished run smbtorture smb2.oplock.batch6 at 2025-12-10 10:38:31
+starting run smbtorture smb2.oplock.batch7 at 2025-12-10 10:38:31
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334311
+time: 2025-12-10 02:38:31.923862
+test: batch7
+time: 2025-12-10 02:38:31.924536
+BATCH7: a 2nd open should get an oplock when we close instead of ack
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:38:32.931523
+success: batch7
+finished run smbtorture smb2.oplock.batch7 at 2025-12-10 10:38:32
+starting run smbtorture smb2.oplock.batch8 at 2025-12-10 10:38:32
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334312
+time: 2025-12-10 02:38:32.985580
+test: batch8
+time: 2025-12-10 02:38:32.986303
+BATCH8: open with batch oplock
+second open with attributes only shouldn't cause oplock break
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:38:33.993170
+success: batch8
+finished run smbtorture smb2.oplock.batch8 at 2025-12-10 10:38:34
+starting run smbtorture smb2.oplock.batch9 at 2025-12-10 10:38:34
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334314
+time: 2025-12-10 02:38:34.047290
+test: batch9
+time: 2025-12-10 02:38:34.048045
+BATCH9: open with attributes only can create file
+Subsequent normal open should break oplock on attribute only open to level II
+Acking to level II [0x01] in oplock handler
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+third oplocked open should grant level2 without break
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+write should trigger a break to none on both
+Break from level II to none in oplock handler
+Waiting for a potential oplock break...
+Break from level II to none in oplock handler
+... waiting for an oplock break timed out
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:38:38.058887
+success: batch9
+finished run smbtorture smb2.oplock.batch9 at 2025-12-10 10:38:38
+starting run smbtorture smb2.oplock.batch9a at 2025-12-10 10:38:38
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334318
+time: 2025-12-10 02:38:38.115267
+test: batch9a
+time: 2025-12-10 02:38:38.115863
+BATCH9: open with attributes only can create file
+Subsequent attributes open should not break
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+Subsequent normal open should break oplock on attribute only open to level II
+Acking to level II [0x01] in oplock handler
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+third oplocked open should grant level2 without break
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+write should trigger a break to none on both
+Break from level II to none in oplock handler
+Waiting for a potential oplock break...
+Break from level II to none in oplock handler
+... waiting for an oplock break timed out
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:38:43.128859
+success: batch9a
+finished run smbtorture smb2.oplock.batch9a at 2025-12-10 10:38:43
+starting run smbtorture smb2.oplock.batch10 at 2025-12-10 10:38:43
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334323
+time: 2025-12-10 02:38:43.184180
+test: batch10
+time: 2025-12-10 02:38:43.184927
+BATCH10: Open with oplock after a non-oplock open should grant level2
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+write should trigger a break to none
+Break from level II to none in oplock handler
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:38:46.194893
+success: batch10
+finished run smbtorture smb2.oplock.batch10 at 2025-12-10 10:38:46
+starting run smbtorture smb2.oplock.batch11 at 2025-12-10 10:38:46
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334326
+time: 2025-12-10 02:38:46.247943
+test: batch11
+time: 2025-12-10 02:38:46.248708
+BATCH11: Test if setpathinfo set EOF breaks oplocks.
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+Breaking to level II [0x01] in oplock handler
+Breaking to none [0x00] in oplock handler
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:38:49.258331
+success: batch11
+finished run smbtorture smb2.oplock.batch11 at 2025-12-10 10:38:49
+starting run smbtorture smb2.oplock.batch12 at 2025-12-10 10:38:49
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334329
+time: 2025-12-10 02:38:49.310059
+test: batch12
+time: 2025-12-10 02:38:49.310813
+BATCH12: Test if setpathinfo allocation size breaks oplocks.
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+Breaking to level II [0x01] in oplock handler
+Breaking to none [0x00] in oplock handler
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:38:52.320241
+success: batch12
+finished run smbtorture smb2.oplock.batch12 at 2025-12-10 10:38:52
+starting run smbtorture smb2.oplock.batch13 at 2025-12-10 10:38:52
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334332
+time: 2025-12-10 02:38:52.374137
+test: batch13
+time: 2025-12-10 02:38:52.374883
+BATCH13: open with batch oplock
+second open with attributes only and NTCREATEX_DISP_OVERWRITE disposition causes oplock break
+Acking to level II [0x01] in oplock handler
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:38:53.381504
+success: batch13
+finished run smbtorture smb2.oplock.batch13 at 2025-12-10 10:38:53
+starting run smbtorture smb2.oplock.batch14 at 2025-12-10 10:38:53
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334333
+time: 2025-12-10 02:38:53.437555
+test: batch14
+time: 2025-12-10 02:38:53.438163
+BATCH14: open with batch oplock
+second open with attributes only and NTCREATEX_DISP_SUPERSEDE disposition causes oplock break
+Acking to level II [0x01] in oplock handler
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:38:54.444515
+success: batch14
+finished run smbtorture smb2.oplock.batch14 at 2025-12-10 10:38:54
+starting run smbtorture smb2.oplock.batch15 at 2025-12-10 10:38:54
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334334
+time: 2025-12-10 02:38:54.499563
+test: batch15
+time: 2025-12-10 02:38:54.500390
+BATCH15: Test if qpathinfo all info breaks a batch oplock (should not).
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:38:56.509813
+success: batch15
+finished run smbtorture smb2.oplock.batch15 at 2025-12-10 10:38:56
+starting run smbtorture smb2.oplock.batch16 at 2025-12-10 10:38:56
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334336
+time: 2025-12-10 02:38:56.567517
+test: batch16
+time: 2025-12-10 02:38:56.568147
+BATCH16: open with batch oplock
+second open with attributes only and NTCREATEX_DISP_OVERWRITE_IF disposition causes oplock break
+Acking to level II [0x01] in oplock handler
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:38:57.574823
+success: batch16
+finished run smbtorture smb2.oplock.batch16 at 2025-12-10 10:38:57
+starting run smbtorture smb2.oplock.batch19 at 2025-12-10 10:38:57
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334337
+time: 2025-12-10 02:38:57.628421
+test: batch19
+time: 2025-12-10 02:38:57.629195
+BATCH19: open a file with an batch oplock (share mode: none)
+setfileinfo rename info should not trigger a break but should cause a sharing violation
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:38:58.636967
+success: batch19
+finished run smbtorture smb2.oplock.batch19 at 2025-12-10 10:38:58
+starting run smbtorture smb2.oplock.batch20 at 2025-12-10 10:38:58
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334338
+time: 2025-12-10 02:38:58.694856
+test: batch20
+time: 2025-12-10 02:38:58.695957
+BATCH20: open a file with an batch oplock (share mode: all)
+setfileinfo rename info should not trigger a break but should cause a sharing violation
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+open the file a second time requesting batch (share mode: all)
+Acking to level II [0x01] in oplock handler
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+setfileinfo rename info should not trigger a break but should cause a sharing violation
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:39:01.715455
+success: batch20
+finished run smbtorture smb2.oplock.batch20 at 2025-12-10 10:39:01
+starting run smbtorture smb2.oplock.batch21 at 2025-12-10 10:39:01
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334341
+time: 2025-12-10 02:39:01.769511
+test: batch21
+time: 2025-12-10 02:39:01.770130
+BATCH21: open with batch oplock
+writing should not generate a break
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:39:02.774731
+success: batch21
+finished run smbtorture smb2.oplock.batch21 at 2025-12-10 10:39:02
+starting run smbtorture smb2.oplock.batch22a at 2025-12-10 10:39:02
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334342
+time: 2025-12-10 02:39:02.828686
+test: batch22a
+time: 2025-12-10 02:39:02.829467
+BATCH22: open with batch oplock
+a 2nd open should succeed after the oplock break timeout
+Let oplock break timeout
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+waited 36 seconds for oplock timeout
+time: 2025-12-10 02:39:39.107439
+success: batch22a
+finished run smbtorture smb2.oplock.batch22a at 2025-12-10 10:39:39
+starting run smbtorture smb2.oplock.batch23 at 2025-12-10 10:39:39
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334379
+time: 2025-12-10 02:39:39.164093
+test: batch23
+time: 2025-12-10 02:39:39.164719
+BATCH23: an open and ask for a batch oplock
+a 2nd open without level2 oplock support should generate a break to level2
+Acking to level II [0x01] in oplock handler
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+a 3rd open with level2 oplock support should not generate a break
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:39:41.175136
+success: batch23
+finished run smbtorture smb2.oplock.batch23 at 2025-12-10 10:39:41
+starting run smbtorture smb2.oplock.batch24 at 2025-12-10 10:39:41
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334381
+time: 2025-12-10 02:39:41.230445
+test: batch24
+time: 2025-12-10 02:39:41.231269
+BATCH24: a open without level support and ask for a batch oplock
+a 2nd open with level2 oplock support should generate a break
+Acking to level II [0x01] in oplock handler
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:39:42.239425
+success: batch24
+finished run smbtorture smb2.oplock.batch24 at 2025-12-10 10:39:42
+starting run smbtorture smb2.oplock.batch25 at 2025-12-10 10:39:42
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334382
+time: 2025-12-10 02:39:42.296840
+test: batch25
+time: 2025-12-10 02:39:42.297490
+BATCH25: open a file with an batch oplock (share mode: none)
+time: 2025-12-10 02:39:42.301140
+success: batch25
+finished run smbtorture smb2.oplock.batch25 at 2025-12-10 10:39:42
+starting run smbtorture smb2.oplock.batch26 at 2025-12-10 10:39:42
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334382
+time: 2025-12-10 02:39:42.346321
+test: batch26
+time: 2025-12-10 02:39:42.346936
+Open the base file with batch oplock
+Got batch oplock on base file
+Opening stream file with batch oplock..
+Got batch oplock on stream file
+Open base file again with batch oplock
+Acking to level II [0x01] in oplock handler
+time: 2025-12-10 02:39:42.350416
+success: batch26
+finished run smbtorture smb2.oplock.batch26 at 2025-12-10 10:39:42
+starting run smbtorture smb2.oplock.doc at 2025-12-10 10:39:42
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334382
+time: 2025-12-10 02:39:42.404357
+test: doc
+time: 2025-12-10 02:39:42.405033
+open a file with a batch oplock
+Set delete on close
+2nd open should not break and get DELETE_PENDING
+time: 2025-12-10 02:39:42.410090
+success: doc
+finished run smbtorture smb2.oplock.doc at 2025-12-10 10:39:42
+starting run smbtorture smb2.oplock.brl1 at 2025-12-10 10:39:42
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334382
+time: 2025-12-10 02:39:42.462183
+test: brl1
+time: 2025-12-10 02:39:42.462804
+open with batch oplock
+a 2nd open should give a break
+Breaking to level II [0x01] in oplock handler
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+a self BRL acquisition should break to none
+Breaking to none [0x00] in oplock handler
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:39:45.474480
+success: brl1
+finished run smbtorture smb2.oplock.brl1 at 2025-12-10 10:39:45
+starting run smbtorture smb2.oplock.brl2 at 2025-12-10 10:39:45
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334385
+time: 2025-12-10 02:39:45.549399
+test: brl2
+time: 2025-12-10 02:39:45.550045
+open with batch oplock
+a self BRL acquisition should not break to none
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:39:46.557572
+success: brl2
+finished run smbtorture smb2.oplock.brl2 at 2025-12-10 10:39:46
+starting run smbtorture smb2.oplock.brl3 at 2025-12-10 10:39:46
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334386
+time: 2025-12-10 02:39:46.626250
+test: brl3
+time: 2025-12-10 02:39:46.626718
+open with batch oplock
+a 2nd open should give a break
+Breaking to level II [0x01] in oplock handler
+a self BRL acquisition should break to none
+Breaking to none [0x00] in oplock handler
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:39:48.634931
+success: brl3
+finished run smbtorture smb2.oplock.brl3 at 2025-12-10 10:39:48
+starting run smbtorture smb2.oplock.levelii500 at 2025-12-10 10:39:48
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334388
+time: 2025-12-10 02:39:48.714453
+test: levelii500
+time: 2025-12-10 02:39:48.715081
+LEVELII500: acknowledging a break from II to none should return an error
+write should trigger a break to none and when we reply, an oplock break failure
+Acking to none [0x00] in oplock handler
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+Waiting for a potential oplock break...
+... waiting for an oplock break timed out
+time: 2025-12-10 02:39:52.724671
+success: levelii500
+finished run smbtorture smb2.oplock.levelii500 at 2025-12-10 10:39:52
+starting run smbtorture smb2.oplock.levelii501 at 2025-12-10 10:39:52
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334392
+time: 2025-12-10 02:39:52.801325
+test: levelii501
+time: 2025-12-10 02:39:52.802043
+LEVELII501: Test double break sequence
+Got break to level II [0x01] in oplock handler, postponing break response for 500msec
+break done: NT_STATUS_OK
+open1 done: NT_STATUS_OK
+Got break to none [0x00] in oplock handler, postponing break response for 500msec
+open2 done: NT_STATUS_OK
+break done: NT_STATUS_INVALID_OPLOCK_PROTOCOL
+time: 2025-12-10 02:39:54.811800
+success: levelii501
+finished run smbtorture smb2.oplock.levelii501 at 2025-12-10 10:39:54
+starting run smbtorture smb2.oplock.levelii502 at 2025-12-10 10:39:54
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334394
+time: 2025-12-10 02:39:54.890636
+test: levelii502
+time: 2025-12-10 02:39:54.891273
+LEVELII502: Open a stale LEVEL2 oplock with OVERWRITEtime: 2025-12-10 02:39:55.896905
+success: levelii502
+finished run smbtorture smb2.oplock.levelii502 at 2025-12-10 10:39:55
+starting run smbtorture smb2.session.reconnect1 at 2025-12-10 10:39:55
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334395
+time: 2025-12-10 02:39:55.949748
+test: reconnect1
+time: 2025-12-10 02:39:55.950680
+time: 2025-12-10 02:39:55.956014
+success: reconnect1
+finished run smbtorture smb2.session.reconnect1 at 2025-12-10 10:39:55
+starting run smbtorture smb2.session.reconnect2 at 2025-12-10 10:39:55
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334396
+time: 2025-12-10 02:39:56.007753
+test: reconnect2
+time: 2025-12-10 02:39:56.008614
+time: 2025-12-10 02:39:56.012079
+success: reconnect2
+finished run smbtorture smb2.session.reconnect2 at 2025-12-10 10:39:56
+starting run smbtorture smb2.session.reauth1 at 2025-12-10 10:39:56
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334396
+time: 2025-12-10 02:39:56.065858
+test: reauth1
+time: 2025-12-10 02:39:56.066646
+time: 2025-12-10 02:39:56.070658
+success: reauth1
+finished run smbtorture smb2.session.reauth1 at 2025-12-10 10:39:56
+starting run smbtorture smb2.session.reauth2 at 2025-12-10 10:39:56
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334396
+time: 2025-12-10 02:39:56.123949
+test: reauth2
+time: 2025-12-10 02:39:56.124758
+time: 2025-12-10 02:39:56.128841
+success: reauth2
+finished run smbtorture smb2.session.reauth2 at 2025-12-10 10:39:56
+starting run smbtorture smb2.session.reauth3 at 2025-12-10 10:39:56
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334396
+time: 2025-12-10 02:39:56.181169
+test: reauth3
+time: 2025-12-10 02:39:56.181939
+time: 2025-12-10 02:39:56.187330
+success: reauth3
+finished run smbtorture smb2.session.reauth3 at 2025-12-10 10:39:56
+starting run smbtorture smb2.session.reauth4 at 2025-12-10 10:39:56
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334396
+time: 2025-12-10 02:39:56.248871
+test: reauth4
+time: 2025-12-10 02:39:56.249811
+time: 2025-12-10 02:39:56.255236
+success: reauth4
+finished run smbtorture smb2.session.reauth4 at 2025-12-10 10:39:56
+starting run smbtorture smb2.lock.valid-request at 2025-12-10 10:39:56
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334396
+time: 2025-12-10 02:39:56.308402
+test: valid-request
+time: 2025-12-10 02:39:56.308736
+Test request with 0 locks.
+Test >63-bit lock requests.
+Test basic lock stacking.
+Test flags field permutations.
+Test return error when 2 locks are requested
+time: 2025-12-10 02:39:56.329801
+success: valid-request
+finished run smbtorture smb2.lock.valid-request at 2025-12-10 10:39:56
+starting run smbtorture smb2.lock.rw-shared at 2025-12-10 10:39:56
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334396
+time: 2025-12-10 02:39:56.384798
+test: rw-shared
+time: 2025-12-10 02:39:56.385160
+time: 2025-12-10 02:39:56.394328
+success: rw-shared
+finished run smbtorture smb2.lock.rw-shared at 2025-12-10 10:39:56
+starting run smbtorture smb2.lock.rw-exclusive at 2025-12-10 10:39:56
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334396
+time: 2025-12-10 02:39:56.451636
+test: rw-exclusive
+time: 2025-12-10 02:39:56.451953
+time: 2025-12-10 02:39:56.461970
+success: rw-exclusive
+finished run smbtorture smb2.lock.rw-exclusive at 2025-12-10 10:39:56
+starting run smbtorture smb2.lock.auto-unlock at 2025-12-10 10:39:56
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334396
+time: 2025-12-10 02:39:56.518795
+test: auto-unlock
+time: 2025-12-10 02:39:56.519143
+time: 2025-12-10 02:39:56.527922
+success: auto-unlock
+finished run smbtorture smb2.lock.auto-unlock at 2025-12-10 10:39:56
+starting run smbtorture smb2.lock.async at 2025-12-10 10:39:56
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334396
+time: 2025-12-10 02:39:56.579788
+test: async
+time: 2025-12-10 02:39:56.580142
+  Acquire first lock
+  Second lock should pend on first
+  Unlock first lock
+  Second lock should now succeed
+time: 2025-12-10 02:39:56.583549
+success: async
+finished run smbtorture smb2.lock.async at 2025-12-10 10:39:56
+starting run smbtorture smb2.lock.cancel at 2025-12-10 10:39:56
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334396
+time: 2025-12-10 02:39:56.639551
+test: cancel
+time: 2025-12-10 02:39:56.639947
+Testing basic cancel
+  Acquire first lock
+  Second lock should pend on first
+  Cancel the second lock
+  Unlock first lock
+Testing cancel by unlock
+  Acquire first lock
+  Second lock should pend on first
+  Attempt to unlock pending second lock
+  Now cancel the second lock
+  Unlock first lock
+Testing cancel by close
+  Acquire first lock
+  Second lock should pend on first
+  Close the second lock handle
+  Check pending lock reply
+  Unlock first lock
+time: 2025-12-10 02:39:56.645629
+success: cancel
+finished run smbtorture smb2.lock.cancel at 2025-12-10 10:39:56
+starting run smbtorture smb2.lock.cancel-tdis at 2025-12-10 10:39:56
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334396
+time: 2025-12-10 02:39:56.704482
+test: cancel-tdis
+time: 2025-12-10 02:39:56.704898
+Testing cancel by tree disconnect
+  Acquire first lock
+  Second lock should pend on first
+  Disconnect the tree
+  Check pending lock reply
+  Attempt to unlock first lock
+time: 2025-12-10 02:39:56.709393
+success: cancel-tdis
+finished run smbtorture smb2.lock.cancel-tdis at 2025-12-10 10:39:56
+starting run smbtorture smb2.lock.cancel-logoff at 2025-12-10 10:39:56
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334396
+time: 2025-12-10 02:39:56.768580
+test: cancel-logoff
+time: 2025-12-10 02:39:56.768936
+Testing cancel by ulogoff
+  Acquire first lock
+  Second lock should pend on first
+  Logoff user
+  Check pending lock reply
+  Attempt to unlock first lock
+time: 2025-12-10 02:39:56.773579
+success: cancel-logoff
+finished run smbtorture smb2.lock.cancel-logoff at 2025-12-10 10:39:56
+starting run smbtorture smb2.lock.zerobytelength at 2025-12-10 10:39:56
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334396
+time: 2025-12-10 02:39:56.828193
+test: zerobytelength
+time: 2025-12-10 02:39:56.828617
+Testing zero length byte range locks:
+  ... {10, 0} + {10, 0} = NT_STATUS_OK
+  ... {10, 0} + {9, 1} = NT_STATUS_OK
+  ... {10, 0} + {10, 1} = NT_STATUS_OK
+  ... {10, 0} + {11, 1} = NT_STATUS_OK
+  ... {10, 0} + {9, 2} = NT_STATUS_LOCK_NOT_GRANTED
+  ... {10, 0} + {10, 2} = NT_STATUS_OK
+  ... {10, 0} + {9, 3} = NT_STATUS_LOCK_NOT_GRANTED
+  ... {10, 0} + {10, 0} = NT_STATUS_OK
+  ... {9, 1} + {10, 0} = NT_STATUS_OK
+  ... {10, 1} + {10, 0} = NT_STATUS_OK
+  ... {11, 1} + {10, 0} = NT_STATUS_OK
+  ... {9, 2} + {10, 0} = NT_STATUS_LOCK_NOT_GRANTED
+  ... {10, 2} + {10, 0} = NT_STATUS_OK
+  ... {9, 3} + {10, 0} = NT_STATUS_LOCK_NOT_GRANTED
+  ... {0, 0} + {0, 0} = NT_STATUS_OK
+  ... {10, 0} + {10, 0} = NT_STATUS_OK
+  ... {10, 0} + {9, 1} = NT_STATUS_OK
+  ... {10, 0} + {10, 1} = NT_STATUS_OK
+  ... {10, 0} + {11, 1} = NT_STATUS_OK
+  ... {10, 0} + {9, 2} = NT_STATUS_LOCK_NOT_GRANTED
+  ... {10, 0} + {10, 2} = NT_STATUS_OK
+  ... {10, 0} + {9, 3} = NT_STATUS_LOCK_NOT_GRANTED
+  ... {10, 0} + {10, 0} = NT_STATUS_OK
+  ... {9, 1} + {10, 0} = NT_STATUS_OK
+  ... {10, 1} + {10, 0} = NT_STATUS_OK
+  ... {11, 1} + {10, 0} = NT_STATUS_OK
+  ... {9, 2} + {10, 0} = NT_STATUS_LOCK_NOT_GRANTED
+  ... {10, 2} + {10, 0} = NT_STATUS_OK
+  ... {9, 3} + {10, 0} = NT_STATUS_LOCK_NOT_GRANTED
+  ... {0, 0} + {0, 0} = NT_STATUS_OK
+time: 2025-12-10 02:39:56.853037
+success: zerobytelength
+finished run smbtorture smb2.lock.zerobytelength at 2025-12-10 10:39:56
+starting run smbtorture smb2.lock.zerobyteread at 2025-12-10 10:39:56
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334396
+time: 2025-12-10 02:39:56.908165
+test: zerobyteread
+time: 2025-12-10 02:39:56.908533
+Testing zero byte read on lock range:
+  taking exclusive lock.
+  reading 0 bytes.
+Testing zero byte read on zero byte lock range:
+  taking exclusive 0-byte lock.
+  reading 0 bytes before the lock.
+  reading 0 bytes on the lock.
+  reading 0 bytes after the lock.
+time: 2025-12-10 02:39:56.912394
+success: zerobyteread
+finished run smbtorture smb2.lock.zerobyteread at 2025-12-10 10:39:56
+starting run smbtorture smb2.lock.unlock at 2025-12-10 10:39:56
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334396
+time: 2025-12-10 02:39:56.962473
+test: unlock
+time: 2025-12-10 02:39:56.962817
+Testing unlock exclusive with shared
+  taking exclusive lock.
+  try to unlock the exclusive with a shared unlock call.
+  try shared lock on h2, to test the unlock.
+  unlock the exclusive lock
+Testing unlock shared with exclusive
+  taking shared lock.
+  try to unlock the shared with an exclusive unlock call.
+  try exclusive lock on h2, to test the unlock.
+  unlock the exclusive lock
+Test unlocking stacked 0-byte locks
+Test unlocking stacked exclusive/shared locks
+time: 2025-12-10 02:39:56.976592
+success: unlock
+finished run smbtorture smb2.lock.unlock at 2025-12-10 10:39:56
+starting run smbtorture smb2.lock.multiple-unlock at 2025-12-10 10:39:56
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334397
+time: 2025-12-10 02:39:57.031516
+test: multiple-unlock
+time: 2025-12-10 02:39:57.031853
+Testing multiple unlocks:
+  unlock 2 locks, first one not locked. Expect no locks unlocked. 
+  unlock 2 locks, second one not locked. Expect first lock unlocked.
+  request 2 locks, second one will contend. Expect both to fail.
+  request unlock and lock, second one will error. Expect the unlock to succeed.
+  request unlock and lock.  Unlock will succeed, but lock will fail.
+  request lock and unlock.  Both will fail.
+time: 2025-12-10 02:39:57.046213
+success: multiple-unlock
+finished run smbtorture smb2.lock.multiple-unlock at 2025-12-10 10:39:57
+starting run smbtorture smb2.lock.stacking at 2025-12-10 10:39:57
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334397
+time: 2025-12-10 02:39:57.099696
+test: stacking
+time: 2025-12-10 02:39:57.100154
+Testing lock stacking:
+  stacking a shared on top of a sharedlock succeeds.
+  stacking a shared on top of an exclusive lock succeeds.
+  stacking a shared on top of an exclusive lock with different handles fails.
+  stacking an exclusive on top of a shared lock fails.
+  two exclusive locks do not stack.
+time: 2025-12-10 02:39:57.114151
+success: stacking
+finished run smbtorture smb2.lock.stacking at 2025-12-10 10:39:57
+starting run smbtorture smb2.lock.contend at 2025-12-10 10:39:57
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334397
+time: 2025-12-10 02:39:57.172816
+test: contend
+time: 2025-12-10 02:39:57.173190
+Testing lock contention:
+  shared should contend on exclusive on different handle.
+time: 2025-12-10 02:39:57.178636
+success: contend
+finished run smbtorture smb2.lock.contend at 2025-12-10 10:39:57
+starting run smbtorture smb2.lock.context at 2025-12-10 10:39:57
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334397
+time: 2025-12-10 02:39:57.235269
+test: context
+time: 2025-12-10 02:39:57.235617
+Testing locker context:
+  pid shouldn't affect locker context
+time: 2025-12-10 02:39:57.240657
+success: context
+finished run smbtorture smb2.lock.context at 2025-12-10 10:39:57
+starting run smbtorture smb2.lock.truncate at 2025-12-10 10:39:57
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334397
+time: 2025-12-10 02:39:57.297652
+test: truncate
+time: 2025-12-10 02:39:57.298046
+Testing truncation of locked file:
+  overwrite disposition is allowed on a locked file.
+  supersede disposition is allowed on a locked file.
+time: 2025-12-10 02:39:57.301828
+success: truncate
+finished run smbtorture smb2.lock.truncate at 2025-12-10 10:39:57
+starting run smbtorture smb2.lease.request at 2025-12-10 10:39:57
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334397
+time: 2025-12-10 02:39:57.353631
+test: request
+time: 2025-12-10 02:39:57.354261
+Requesting lease type (0), expecting (0)
+Requesting lease type R(1), expecting R(1)
+Requesting lease type H(2), expecting (0)
+Requesting lease type W(4), expecting (0)
+Requesting lease type RH(3), expecting RH(3)
+Requesting lease type RW(5), expecting RW(5)
+Requesting lease type HW(6), expecting (0)
+Requesting lease type RHW(7), expecting RHW(7)
+time: 2025-12-10 02:39:57.358732
+success: request
+finished run smbtorture smb2.lease.request at 2025-12-10 10:39:57
+starting run smbtorture smb2.lease.nobreakself at 2025-12-10 10:39:57
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334397
+time: 2025-12-10 02:39:57.413295
+test: nobreakself
+time: 2025-12-10 02:39:57.413789
+transport[0x214d1f0] received to 0x0 () in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+transport[0x214d1f0] received to 0x0 () in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+transport[0x214d1f0] received to 0x0 () in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+time: 2025-12-10 02:40:00.422052
+success: nobreakself
+finished run smbtorture smb2.lease.nobreakself at 2025-12-10 10:40:00
+starting run smbtorture smb2.lease.statopen at 2025-12-10 10:40:00
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334400
+time: 2025-12-10 02:40:00.477173
+test: statopen
+time: 2025-12-10 02:40:00.477681
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+transport[0x295691f0] acking to 0x3 (RH) in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+time: 2025-12-10 02:40:03.485957
+success: statopen
+finished run smbtorture smb2.lease.statopen at 2025-12-10 10:40:03
+starting run smbtorture smb2.lease.statopen2 at 2025-12-10 10:40:03
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334403
+time: 2025-12-10 02:40:03.541116
+test: statopen2
+time: 2025-12-10 02:40:03.541596
+time: 2025-12-10 02:40:03.544822
+success: statopen2
+finished run smbtorture smb2.lease.statopen2 at 2025-12-10 10:40:03
+starting run smbtorture smb2.lease.statopen3 at 2025-12-10 10:40:03
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334403
+time: 2025-12-10 02:40:03.604449
+test: statopen3
+time: 2025-12-10 02:40:03.604940
+time: 2025-12-10 02:40:03.608419
+success: statopen3
+finished run smbtorture smb2.lease.statopen3 at 2025-12-10 10:40:03
+starting run smbtorture smb2.lease.upgrade at 2025-12-10 10:40:03
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334403
+time: 2025-12-10 02:40:03.662001
+test: upgrade
+time: 2025-12-10 02:40:03.662481
+time: 2025-12-10 02:40:03.665719
+success: upgrade
+finished run smbtorture smb2.lease.upgrade at 2025-12-10 10:40:03
+starting run smbtorture smb2.lease.upgrade2 at 2025-12-10 10:40:03
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334403
+time: 2025-12-10 02:40:03.720503
+test: upgrade2
+time: 2025-12-10 02:40:03.721071
+time: 2025-12-10 02:40:03.734343
+success: upgrade2
+finished run smbtorture smb2.lease.upgrade2 at 2025-12-10 10:40:03
+starting run smbtorture smb2.lease.upgrade3 at 2025-12-10 10:40:03
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334403
+time: 2025-12-10 02:40:03.789052
+test: upgrade3
+time: 2025-12-10 02:40:03.789555
+time: 2025-12-10 02:40:03.802825
+success: upgrade3
+finished run smbtorture smb2.lease.upgrade3 at 2025-12-10 10:40:03
+starting run smbtorture smb2.lease.break at 2025-12-10 10:40:03
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334403
+time: 2025-12-10 02:40:03.855210
+test: break
+time: 2025-12-10 02:40:03.855718
+Hold R(1), requesting R(1), expecting break to R(1) and grant of R(1)
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold R(1), requesting RH(3), expecting break to R(1) and grant of RH(3)
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold R(1), requesting RW(5), expecting break to R(1) and grant of R(1)
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold R(1), requesting RHW(7), expecting break to R(1) and grant of RH(3)
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold RH(3), requesting R(1), expecting break to RH(3) and grant of R(1)
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold RH(3), requesting RH(3), expecting break to RH(3) and grant of RH(3)
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold RH(3), requesting RW(5), expecting break to RH(3) and grant of R(1)
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold RH(3), requesting RHW(7), expecting break to RH(3) and grant of RH(3)
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold RW(5), requesting R(1), expecting break to R(1) and grant of R(1)
+transport[0xe1221f0] acking to 0x1 (R) in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold RW(5), requesting RH(3), expecting break to R(1) and grant of RH(3)
+transport[0xe1221f0] acking to 0x1 (R) in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold RW(5), requesting RW(5), expecting break to R(1) and grant of R(1)
+transport[0xe1221f0] acking to 0x1 (R) in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold RW(5), requesting RHW(7), expecting break to R(1) and grant of RH(3)
+transport[0xe1221f0] acking to 0x1 (R) in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold RHW(7), requesting R(1), expecting break to RH(3) and grant of R(1)
+transport[0xe1221f0] acking to 0x3 (RH) in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold RHW(7), requesting RH(3), expecting break to RH(3) and grant of RH(3)
+transport[0xe1221f0] acking to 0x3 (RH) in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold RHW(7), requesting RW(5), expecting break to RH(3) and grant of R(1)
+transport[0xe1221f0] acking to 0x3 (RH) in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold RHW(7), requesting RHW(7), expecting break to RH(3) and grant of RH(3)
+transport[0xe1221f0] acking to 0x3 (RH) in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+time: 2025-12-10 02:40:27.906046
+success: break
+finished run smbtorture smb2.lease.break at 2025-12-10 10:40:27
+starting run smbtorture smb2.lease.oplock at 2025-12-10 10:40:27
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334427
+time: 2025-12-10 02:40:27.954594
+test: oplock
+time: 2025-12-10 02:40:27.955129
+Hold R(1), requesting s(1), expecting break to R(1) and grant of s(1)
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold R(1), requesting x(8), expecting break to R(1) and grant of s(1)
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold R(1), requesting b(9), expecting break to R(1) and grant of s(1)
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold RH(3), requesting s(1), expecting break to RH(3) and grant of (0)
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold RH(3), requesting x(8), expecting break to RH(3) and grant of (0)
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold RH(3), requesting b(9), expecting break to RH(3) and grant of (0)
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold RW(5), requesting s(1), expecting break to R(1) and grant of s(1)
+transport[0xea371f0] acking to 0x1 (R) in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold RW(5), requesting x(8), expecting break to R(1) and grant of s(1)
+transport[0xea371f0] acking to 0x1 (R) in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold RW(5), requesting b(9), expecting break to R(1) and grant of s(1)
+transport[0xea371f0] acking to 0x1 (R) in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold RHW(7), requesting s(1), expecting break to RH(3) and grant of (0)
+transport[0xea371f0] acking to 0x3 (RH) in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold RHW(7), requesting x(8), expecting break to RH(3) and grant of (0)
+transport[0xea371f0] acking to 0x3 (RH) in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold RHW(7), requesting b(9), expecting break to RH(3) and grant of (0)
+transport[0xea371f0] acking to 0x3 (RH) in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold s(1), requesting R(1), expecting break to s(1) and grant of R(1)
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold s(1), requesting RH(3), expecting break to s(1) and grant of R(1)
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold s(1), requesting RW(5), expecting break to s(1) and grant of R(1)
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold s(1), requesting RHW(7), expecting break to s(1) and grant of R(1)
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold x(8), requesting R(1), expecting break to s(1) and grant of R(1)
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold x(8), requesting RH(3), expecting break to s(1) and grant of R(1)
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold x(8), requesting RW(5), expecting break to s(1) and grant of R(1)
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold x(8), requesting RHW(7), expecting break to s(1) and grant of R(1)
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold b(9), requesting R(1), expecting break to s(1) and grant of R(1)
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold b(9), requesting RH(3), expecting break to s(1) and grant of R(1)
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold b(9), requesting RW(5), expecting break to s(1) and grant of R(1)
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Hold b(9), requesting RHW(7), expecting break to s(1) and grant of R(1)
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+time: 2025-12-10 02:40:58.019528
+success: oplock
+finished run smbtorture smb2.lease.oplock at 2025-12-10 10:40:58
+starting run smbtorture smb2.lease.multibreak at 2025-12-10 10:40:58
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334458
+time: 2025-12-10 02:40:58.072529
+test: multibreak
+time: 2025-12-10 02:40:58.073184
+transport[0x1ceb81f0] acking to 0x3 (RH) in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+transport[0x1ceb81f0] received to 0x0 () in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+time: 2025-12-10 02:41:03.334574
+success: multibreak
+finished run smbtorture smb2.lease.multibreak at 2025-12-10 10:41:03
+starting run smbtorture smb2.lease.breaking1 at 2025-12-10 10:41:03
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334463
+time: 2025-12-10 02:41:03.387486
+test: breaking1
+time: 2025-12-10 02:41:03.388132
+Waiting for a potential lease break...
+transport[0xf9911f0] Skip acking to 0x3 (RH) in lease handler
+Got 1 lease breaks
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+time: 2025-12-10 02:41:05.394768
+success: breaking1
+finished run smbtorture smb2.lease.breaking1 at 2025-12-10 10:41:05
+starting run smbtorture smb2.lease.breaking2 at 2025-12-10 10:41:05
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334465
+time: 2025-12-10 02:41:05.451623
+test: breaking2
+time: 2025-12-10 02:41:05.452132
+Waiting for a potential lease break...
+transport[0x1c1a81f0] Skip acking to 0x0 () in lease handler
+Got 1 lease breaks
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+time: 2025-12-10 02:41:06.456864
+failure: breaking2 [
+../../source4/torture/smb2/lease.c:2551: Incorrect status NT_STATUS_INVALID_NETWORK_RESPONSE - should be NT_STATUS_REQUEST_NOT_ACCEPTED
+]
+finished run smbtorture smb2.lease.breaking2 at 2025-12-10 10:41:06
+starting run smbtorture smb2.lease.breaking3 at 2025-12-10 10:41:06
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334466
+time: 2025-12-10 02:41:06.518331
+test: breaking3
+time: 2025-12-10 02:41:06.519103
+Waiting for a potential lease break...
+transport[0x1a3071f0] Skip acking to 0x3 (RH) in lease handler
+Got 1 lease breaks
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+transport[0x1a3071f0] Skip acking to 0x1 (R) in lease handler
+Got 1 lease breaks
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+transport[0x1a3071f0] received to 0x0 () in lease handler
+Got 1 lease breaks
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+time: 2025-12-10 02:41:10.528434
+success: breaking3
+finished run smbtorture smb2.lease.breaking3 at 2025-12-10 10:41:10
+starting run smbtorture smb2.lease.breaking5 at 2025-12-10 10:41:10
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334470
+time: 2025-12-10 02:41:10.581762
+test: breaking5
+time: 2025-12-10 02:41:10.582394
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+transport[0x11daa1f0] Skip received to 0x0 () in lease handler
+Got 1 lease breaks
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+time: 2025-12-10 02:41:15.593252
+success: breaking5
+finished run smbtorture smb2.lease.breaking5 at 2025-12-10 10:41:15
+starting run smbtorture smb2.lease.breaking6 at 2025-12-10 10:41:15
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334475
+time: 2025-12-10 02:41:15.647910
+test: breaking6
+time: 2025-12-10 02:41:15.648560
+Waiting for a potential lease break...
+transport[0x175641f0] Skip acking to 0x3 (RH) in lease handler
+Got 1 lease breaks
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+time: 2025-12-10 02:41:17.655236
+success: breaking6
+finished run smbtorture smb2.lease.breaking6 at 2025-12-10 10:41:17
+starting run smbtorture smb2.lease.lock1 at 2025-12-10 10:41:17
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334477
+time: 2025-12-10 02:41:17.709500
+test: lock1
+time: 2025-12-10 02:41:17.710012
+transport[0x246131f0] acking to 0x3 (RH) in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+transport[0x247d9590] acking to 0x0 () in lease handler
+transport[0x247e1340] acking to 0x0 () in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+transport[0x246131f0] acking to 0x0 () in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+time: 2025-12-10 02:41:26.730358
+success: lock1
+finished run smbtorture smb2.lease.lock1 at 2025-12-10 10:41:26
+starting run smbtorture smb2.lease.complex1 at 2025-12-10 10:41:26
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334486
+time: 2025-12-10 02:41:26.784791
+test: complex1
+time: 2025-12-10 02:41:26.785323
+transport[0x121d91f0] acking to 0x3 (RH) in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+transport[0x1239f9d0] received to 0x0 () in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+transport[0x121d91f0] acking to 0x0 () in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+time: 2025-12-10 02:41:31.797522
+success: complex1
+finished run smbtorture smb2.lease.complex1 at 2025-12-10 10:41:31
+starting run smbtorture smb2.lease.timeout at 2025-12-10 10:41:31
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334491
+time: 2025-12-10 02:41:31.850889
+test: timeout
+time: 2025-12-10 02:41:31.851559
+Waiting for a potential lease break...
+transport[0x1b7121f0] Skip acking to 0x3 (RH) in lease handler
+Got 1 lease breaks
+transport[0x1b7121f0] acking to 0x0 () in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+time: 2025-12-10 02:42:13.686755
+success: timeout
+finished run smbtorture smb2.lease.timeout at 2025-12-10 10:42:13
+starting run smbtorture smb2.lease.v2_request_parent at 2025-12-10 10:42:13
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334533
+time: 2025-12-10 02:42:13.741955
+Unknown torture operation 'smb2.lease.v2_request_parent'
+finished run smbtorture smb2.lease.v2_request_parent at 2025-12-10 10:42:13
+starting run smbtorture smb2.lease.v2_request at 2025-12-10 10:42:13
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334533
+time: 2025-12-10 02:42:13.794821
+Unknown torture operation 'smb2.lease.v2_request'
+finished run smbtorture smb2.lease.v2_request at 2025-12-10 10:42:13
+starting run smbtorture smb2.lease.v2_epoch1 at 2025-12-10 10:42:13
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334533
+time: 2025-12-10 02:42:13.849639
+test: v2_epoch1
+time: 2025-12-10 02:42:13.850155
+time: 2025-12-10 02:42:13.853573
+success: v2_epoch1
+finished run smbtorture smb2.lease.v2_epoch1 at 2025-12-10 10:42:13
+starting run smbtorture smb2.lease.v2_epoch2 at 2025-12-10 10:42:13
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334533
+time: 2025-12-10 02:42:13.907806
+test: v2_epoch2
+time: 2025-12-10 02:42:13.908322
+transport[0x1f4801f0] acking to 0x3 (RH) in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+time: 2025-12-10 02:42:15.914618
+success: v2_epoch2
+finished run smbtorture smb2.lease.v2_epoch2 at 2025-12-10 10:42:15
+starting run smbtorture smb2.lease.v2_epoch3 at 2025-12-10 10:42:15
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334535
+time: 2025-12-10 02:42:15.971435
+test: v2_epoch3
+time: 2025-12-10 02:42:15.971954
+transport[0x34a141f0] acking to 0x3 (RH) in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+time: 2025-12-10 02:42:17.978538
+success: v2_epoch3
+finished run smbtorture smb2.lease.v2_epoch3 at 2025-12-10 10:42:17
+starting run smbtorture smb2.lease.v2_complex2 at 2025-12-10 10:42:17
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334538
+time: 2025-12-10 02:42:18.030041
+test: v2_complex2
+time: 2025-12-10 02:42:18.030427
+Waiting for a potential lease break...
+transport[0x1c9ce1f0] Skip acking to 0x3 (RH) in lease handler
+Got 1 lease breaks
+time: 2025-12-10 02:42:18.034140
+success: v2_complex2
+finished run smbtorture smb2.lease.v2_complex2 at 2025-12-10 10:42:18
+starting run smbtorture smb2.lease.v2_rename at 2025-12-10 10:42:18
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334538
+time: 2025-12-10 02:42:18.085182
+test: v2_rename
+time: 2025-12-10 02:42:18.085696
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+transport[0x2dc481f0] acking to 0x3 (RH) in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+transport[0x2dc481f0] acking to 0x1 (R) in lease handler
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+Waiting for a potential lease break...
+... waiting for a lease break timed out
+time: 2025-12-10 02:42:23.096307
+success: v2_rename
+finished run smbtorture smb2.lease.v2_rename at 2025-12-10 10:42:23
+starting run smbtorture smb2.acls.CREATOR at 2025-12-10 10:42:23
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334543
+time: 2025-12-10 02:42:23.149516
+test: CREATOR
+time: 2025-12-10 02:42:23.149973
+TESTING SID_CREATOR_OWNER
+get the original sd
+set a sec desc allowing no write by CREATOR_OWNER
+try open for write
+try open for read
+try open for generic write
+try open for generic read
+set a sec desc allowing no write by owner
+check that sd has been mapped correctly
+try open for write
+try open for read
+try open for generic write
+try open for generic read
+set a sec desc allowing generic read by owner
+check that generic read has been mapped correctly
+try open for write
+try open for read
+try open for generic write
+try open for generic read
+put back original sd
+time: 2025-12-10 02:42:23.157041
+success: CREATOR
+finished run smbtorture smb2.acls.CREATOR at 2025-12-10 10:42:23
+starting run smbtorture smb2.acls.GENERIC at 2025-12-10 10:42:23
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334543
+time: 2025-12-10 02:42:23.233124
+test: GENERIC
+time: 2025-12-10 02:42:23.233512
+TESTING FILE GENERIC BITS
+get the original sd
+Testing generic bits 0x00000000
+Testing generic bits 0x80000000
+Testing generic bits 0x40000000
+Testing generic bits 0x20000000
+Testing generic bits 0x10000000
+Testing generic bits 0x00000001
+Testing generic bits 0x00000080
+put back original sd
+TESTING DIR GENERIC BITS
+get the original sd
+Testing generic bits 0x00000000
+Testing generic bits 0x80000000
+Testing generic bits 0x40000000
+Testing generic bits 0x20000000
+Testing generic bits 0x10000000
+put back original sd
+time: 2025-12-10 02:42:23.243772
+success: GENERIC
+finished run smbtorture smb2.acls.GENERIC at 2025-12-10 10:42:23
+starting run smbtorture smb2.acls.OWNER at 2025-12-10 10:42:23
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334543
+time: 2025-12-10 02:42:23.319783
+test: OWNER
+time: 2025-12-10 02:42:23.320197
+TESTING FILE OWNER BITS
+get the original sd
+put back original sd
+time: 2025-12-10 02:42:23.335687
+success: OWNER
+finished run smbtorture smb2.acls.OWNER at 2025-12-10 10:42:23
+starting run smbtorture smb2.acls.INHERITANCE at 2025-12-10 10:42:23
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334543
+time: 2025-12-10 02:42:23.413729
+test: INHERITANCE
+time: 2025-12-10 02:42:23.414123
+TESTING ACL INHERITANCE
+get the original sd
+owner_sid is S-1-22-1-0
+WARNING!: Expected default sd:
+
+WARNING!: at 0 - got:
+
+WARNING!: Expected default sd for dir at 0:
+
+WARNING!: got:
+
+WARNING!: Bad sd in child file at 1
+
+WARNING!: Expected default sd:
+
+WARNING!: at 2 - got:
+
+WARNING!: (CI) Bad sd in child dir - expected 0x2 for parent 0x2 (i=2)
+
+WARNING!: FYI, here is the parent sd:
+
+WARNING!: Bad sd in child file at 3
+
+WARNING!: (CI) Bad sd in child dir - expected 0x3 for parent 0x3 (i=3)
+
+WARNING!: FYI, here is the parent sd:
+
+WARNING!: Expected default sd:
+
+WARNING!: at 4 - got:
+
+WARNING!: Expected default sd for dir at 4:
+
+WARNING!: got:
+
+WARNING!: Bad sd in child file at 5
+
+WARNING!: Expected default sd for dir at 5:
+
+WARNING!: got:
+
+WARNING!: Expected default sd:
+
+WARNING!: at 6 - got:
+
+WARNING!: (CI & NP) Bad sd in child dir - expected 0x0 for parent 0x6 (i=6)
+
+WARNING!: FYI, here is the parent sd:
+
+WARNING!: Bad sd in child file at 7
+
+WARNING!: (CI & NP) Bad sd in child dir - expected 0x0 for parent 0x7 (i=7)
+
+WARNING!: FYI, here is the parent sd:
+
+WARNING!: Expected default sd:
+
+WARNING!: at 8 - got:
+
+WARNING!: Expected default sd for dir at 8:
+
+WARNING!: got:
+
+WARNING!: Bad sd in child file at 9
+
+WARNING!: Expected default sd:
+
+WARNING!: at 10 - got:
+
+WARNING!: (CI) Bad sd in child dir - expected 0x2 for parent 0xa (i=10)
+
+WARNING!: FYI, here is the parent sd:
+
+WARNING!: Bad sd in child file at 11
+
+WARNING!: (CI) Bad sd in child dir - expected 0x3 for parent 0xb (i=11)
+
+WARNING!: FYI, here is the parent sd:
+
+WARNING!: Expected default sd:
+
+WARNING!: at 12 - got:
+
+WARNING!: Expected default sd for dir at 12:
+
+WARNING!: got:
+
+WARNING!: Bad sd in child file at 13
+
+WARNING!: Expected default sd for dir at 13:
+
+WARNING!: got:
+
+WARNING!: Expected default sd:
+
+WARNING!: at 14 - got:
+
+WARNING!: (CI & NP) Bad sd in child dir - expected 0x0 for parent 0xe (i=14)
+
+WARNING!: FYI, here is the parent sd:
+
+WARNING!: Bad sd in child file at 15
+
+WARNING!: (CI & NP) Bad sd in child dir - expected 0x0 for parent 0xf (i=15)
+
+WARNING!: FYI, here is the parent sd:
+
+Testing access checks on inherited create with smb2-testsd\inheritance\testfile
+checking new sd
+trying without execute
+and with full permissions again
+put back original sd
+put back original sd
+time: 2025-12-10 02:42:23.439447
+error: INHERITANCE [
+Unknown error/failure. Missing torture_fail() or torture_assert_*() call?
+]
+finished run smbtorture smb2.acls.INHERITANCE at 2025-12-10 10:42:23
+starting run smbtorture smb2.acls.INHERITFLAGS at 2025-12-10 10:42:23
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334543
+time: 2025-12-10 02:42:23.513004
+test: INHERITFLAGS
+time: 2025-12-10 02:42:23.513495
+i=0:
+i=1:AUTO_INHERITED, 
+i=2:AUTO_INHERIT_REQ, 
+i=3:AUTO_INHERITED, AUTO_INHERIT_REQ,   ... parent is AUTO INHERITED
+i=4:PROTECTED, 
+i=5:AUTO_INHERITED, PROTECTED, 
+i=6:AUTO_INHERIT_REQ, PROTECTED, 
+i=7:AUTO_INHERITED, AUTO_INHERIT_REQ, PROTECTED,   ... parent is AUTO INHERITED
+i=8:INHERITED,   ... parent ACE is INHERITED
+i=9:AUTO_INHERITED, INHERITED,   ... parent ACE is INHERITED
+i=10:AUTO_INHERIT_REQ, INHERITED,   ... parent ACE is INHERITED
+i=11:AUTO_INHERITED, AUTO_INHERIT_REQ, INHERITED,   ... parent is AUTO INHERITED  ... parent ACE is INHERITED
+i=12:PROTECTED, INHERITED,   ... parent ACE is INHERITED
+i=13:AUTO_INHERITED, PROTECTED, INHERITED,   ... parent ACE is INHERITED
+i=14:AUTO_INHERIT_REQ, PROTECTED, INHERITED,   ... parent ACE is INHERITED
+TESTING ACL INHERITANCE FLAGS
+creating initial directory smb2-testsd\inheritance
+getting original sd
+owner_sid is S-1-22-1-0
+setting a new sd on directory, pass #0
+  checking new sd
+  creating file smb2-testsd\inheritance\testfile
+  checking sd on file smb2-testsd\inheritance\testfile
+  setting new file sd, pass #0
+  setting new file sd, pass #1
+  setting new file sd, pass #2
+  setting new file sd, pass #3
+  setting new file sd, pass #4
+  setting new file sd, pass #5
+  setting new file sd, pass #6
+  setting new file sd, pass #7
+  setting new file sd, pass #8
+  setting new file sd, pass #9
+  setting new file sd, pass #10
+  setting new file sd, pass #11
+  setting new file sd, pass #12
+  setting new file sd, pass #13
+  setting new file sd, pass #14
+  setting new file sd, pass #15
+setting a new sd on directory, pass #1
+  checking new sd
+  creating file smb2-testsd\inheritance\testfile
+  checking sd on file smb2-testsd\inheritance\testfile
+  setting new file sd, pass #0
+  setting new file sd, pass #1
+  setting new file sd, pass #2
+  setting new file sd, pass #3
+  setting new file sd, pass #4
+  setting new file sd, pass #5
+  setting new file sd, pass #6
+  setting new file sd, pass #7
+  setting new file sd, pass #8
+  setting new file sd, pass #9
+  setting new file sd, pass #10
+  setting new file sd, pass #11
+  setting new file sd, pass #12
+  setting new file sd, pass #13
+  setting new file sd, pass #14
+  setting new file sd, pass #15
+setting a new sd on directory, pass #2
+  checking new sd
+  creating file smb2-testsd\inheritance\testfile
+  checking sd on file smb2-testsd\inheritance\testfile
+  setting new file sd, pass #0
+  setting new file sd, pass #1
+  setting new file sd, pass #2
+  setting new file sd, pass #3
+  setting new file sd, pass #4
+  setting new file sd, pass #5
+  setting new file sd, pass #6
+  setting new file sd, pass #7
+  setting new file sd, pass #8
+  setting new file sd, pass #9
+  setting new file sd, pass #10
+  setting new file sd, pass #11
+  setting new file sd, pass #12
+  setting new file sd, pass #13
+  setting new file sd, pass #14
+  setting new file sd, pass #15
+setting a new sd on directory, pass #3
+  checking new sd
+  creating file smb2-testsd\inheritance\testfile
+  checking sd on file smb2-testsd\inheritance\testfile
+  setting new file sd, pass #0
+  setting new file sd, pass #1
+  setting new file sd, pass #2
+  setting new file sd, pass #3
+  setting new file sd, pass #4
+  setting new file sd, pass #5
+  setting new file sd, pass #6
+  setting new file sd, pass #7
+  setting new file sd, pass #8
+  setting new file sd, pass #9
+  setting new file sd, pass #10
+  setting new file sd, pass #11
+  setting new file sd, pass #12
+  setting new file sd, pass #13
+  setting new file sd, pass #14
+  setting new file sd, pass #15
+setting a new sd on directory, pass #4
+  checking new sd
+  creating file smb2-testsd\inheritance\testfile
+  checking sd on file smb2-testsd\inheritance\testfile
+  setting new file sd, pass #0
+  setting new file sd, pass #1
+  setting new file sd, pass #2
+  setting new file sd, pass #3
+  setting new file sd, pass #4
+  setting new file sd, pass #5
+  setting new file sd, pass #6
+  setting new file sd, pass #7
+  setting new file sd, pass #8
+  setting new file sd, pass #9
+  setting new file sd, pass #10
+  setting new file sd, pass #11
+  setting new file sd, pass #12
+  setting new file sd, pass #13
+  setting new file sd, pass #14
+  setting new file sd, pass #15
+setting a new sd on directory, pass #5
+  checking new sd
+  creating file smb2-testsd\inheritance\testfile
+  checking sd on file smb2-testsd\inheritance\testfile
+  setting new file sd, pass #0
+  setting new file sd, pass #1
+  setting new file sd, pass #2
+  setting new file sd, pass #3
+  setting new file sd, pass #4
+  setting new file sd, pass #5
+  setting new file sd, pass #6
+  setting new file sd, pass #7
+  setting new file sd, pass #8
+  setting new file sd, pass #9
+  setting new file sd, pass #10
+  setting new file sd, pass #11
+  setting new file sd, pass #12
+  setting new file sd, pass #13
+  setting new file sd, pass #14
+  setting new file sd, pass #15
+setting a new sd on directory, pass #6
+  checking new sd
+  creating file smb2-testsd\inheritance\testfile
+  checking sd on file smb2-testsd\inheritance\testfile
+  setting new file sd, pass #0
+  setting new file sd, pass #1
+  setting new file sd, pass #2
+  setting new file sd, pass #3
+  setting new file sd, pass #4
+  setting new file sd, pass #5
+  setting new file sd, pass #6
+  setting new file sd, pass #7
+  setting new file sd, pass #8
+  setting new file sd, pass #9
+  setting new file sd, pass #10
+  setting new file sd, pass #11
+  setting new file sd, pass #12
+  setting new file sd, pass #13
+  setting new file sd, pass #14
+  setting new file sd, pass #15
+setting a new sd on directory, pass #7
+  checking new sd
+  creating file smb2-testsd\inheritance\testfile
+  checking sd on file smb2-testsd\inheritance\testfile
+  setting new file sd, pass #0
+  setting new file sd, pass #1
+  setting new file sd, pass #2
+  setting new file sd, pass #3
+  setting new file sd, pass #4
+  setting new file sd, pass #5
+  setting new file sd, pass #6
+  setting new file sd, pass #7
+  setting new file sd, pass #8
+  setting new file sd, pass #9
+  setting new file sd, pass #10
+  setting new file sd, pass #11
+  setting new file sd, pass #12
+  setting new file sd, pass #13
+  setting new file sd, pass #14
+  setting new file sd, pass #15
+setting a new sd on directory, pass #8
+  checking new sd
+  creating file smb2-testsd\inheritance\testfile
+  checking sd on file smb2-testsd\inheritance\testfile
+  setting new file sd, pass #0
+  setting new file sd, pass #1
+  setting new file sd, pass #2
+  setting new file sd, pass #3
+  setting new file sd, pass #4
+  setting new file sd, pass #5
+  setting new file sd, pass #6
+  setting new file sd, pass #7
+  setting new file sd, pass #8
+  setting new file sd, pass #9
+  setting new file sd, pass #10
+  setting new file sd, pass #11
+  setting new file sd, pass #12
+  setting new file sd, pass #13
+  setting new file sd, pass #14
+  setting new file sd, pass #15
+setting a new sd on directory, pass #9
+  checking new sd
+  creating file smb2-testsd\inheritance\testfile
+  checking sd on file smb2-testsd\inheritance\testfile
+  setting new file sd, pass #0
+  setting new file sd, pass #1
+  setting new file sd, pass #2
+  setting new file sd, pass #3
+  setting new file sd, pass #4
+  setting new file sd, pass #5
+  setting new file sd, pass #6
+  setting new file sd, pass #7
+  setting new file sd, pass #8
+  setting new file sd, pass #9
+  setting new file sd, pass #10
+  setting new file sd, pass #11
+  setting new file sd, pass #12
+  setting new file sd, pass #13
+  setting new file sd, pass #14
+  setting new file sd, pass #15
+setting a new sd on directory, pass #10
+  checking new sd
+  creating file smb2-testsd\inheritance\testfile
+  checking sd on file smb2-testsd\inheritance\testfile
+  setting new file sd, pass #0
+  setting new file sd, pass #1
+  setting new file sd, pass #2
+  setting new file sd, pass #3
+  setting new file sd, pass #4
+  setting new file sd, pass #5
+  setting new file sd, pass #6
+  setting new file sd, pass #7
+  setting new file sd, pass #8
+  setting new file sd, pass #9
+  setting new file sd, pass #10
+  setting new file sd, pass #11
+  setting new file sd, pass #12
+  setting new file sd, pass #13
+  setting new file sd, pass #14
+  setting new file sd, pass #15
+setting a new sd on directory, pass #11
+  checking new sd
+  creating file smb2-testsd\inheritance\testfile
+  checking sd on file smb2-testsd\inheritance\testfile
+  setting new file sd, pass #0
+  setting new file sd, pass #1
+  setting new file sd, pass #2
+  setting new file sd, pass #3
+  setting new file sd, pass #4
+  setting new file sd, pass #5
+  setting new file sd, pass #6
+  setting new file sd, pass #7
+  setting new file sd, pass #8
+  setting new file sd, pass #9
+  setting new file sd, pass #10
+  setting new file sd, pass #11
+  setting new file sd, pass #12
+  setting new file sd, pass #13
+  setting new file sd, pass #14
+  setting new file sd, pass #15
+setting a new sd on directory, pass #12
+  checking new sd
+  creating file smb2-testsd\inheritance\testfile
+  checking sd on file smb2-testsd\inheritance\testfile
+  setting new file sd, pass #0
+  setting new file sd, pass #1
+  setting new file sd, pass #2
+  setting new file sd, pass #3
+  setting new file sd, pass #4
+  setting new file sd, pass #5
+  setting new file sd, pass #6
+  setting new file sd, pass #7
+  setting new file sd, pass #8
+  setting new file sd, pass #9
+  setting new file sd, pass #10
+  setting new file sd, pass #11
+  setting new file sd, pass #12
+  setting new file sd, pass #13
+  setting new file sd, pass #14
+  setting new file sd, pass #15
+setting a new sd on directory, pass #13
+  checking new sd
+  creating file smb2-testsd\inheritance\testfile
+  checking sd on file smb2-testsd\inheritance\testfile
+  setting new file sd, pass #0
+  setting new file sd, pass #1
+  setting new file sd, pass #2
+  setting new file sd, pass #3
+  setting new file sd, pass #4
+  setting new file sd, pass #5
+  setting new file sd, pass #6
+  setting new file sd, pass #7
+  setting new file sd, pass #8
+  setting new file sd, pass #9
+  setting new file sd, pass #10
+  setting new file sd, pass #11
+  setting new file sd, pass #12
+  setting new file sd, pass #13
+  setting new file sd, pass #14
+  setting new file sd, pass #15
+setting a new sd on directory, pass #14
+  checking new sd
+  creating file smb2-testsd\inheritance\testfile
+  checking sd on file smb2-testsd\inheritance\testfile
+  setting new file sd, pass #0
+  setting new file sd, pass #1
+  setting new file sd, pass #2
+  setting new file sd, pass #3
+  setting new file sd, pass #4
+  setting new file sd, pass #5
+  setting new file sd, pass #6
+  setting new file sd, pass #7
+  setting new file sd, pass #8
+  setting new file sd, pass #9
+  setting new file sd, pass #10
+  setting new file sd, pass #11
+  setting new file sd, pass #12
+  setting new file sd, pass #13
+  setting new file sd, pass #14
+  setting new file sd, pass #15
+setting a new sd on directory, pass #15
+  checking new sd
+  creating file smb2-testsd\inheritance\testfile
+  checking sd on file smb2-testsd\inheritance\testfile
+  setting new file sd, pass #0
+  setting new file sd, pass #1
+  setting new file sd, pass #2
+  setting new file sd, pass #3
+  setting new file sd, pass #4
+  setting new file sd, pass #5
+  setting new file sd, pass #6
+  setting new file sd, pass #7
+  setting new file sd, pass #8
+  setting new file sd, pass #9
+  setting new file sd, pass #10
+  setting new file sd, pass #11
+  setting new file sd, pass #12
+  setting new file sd, pass #13
+  setting new file sd, pass #14
+  setting new file sd, pass #15
+put back original sd
+time: 2025-12-10 02:42:23.585060
+success: INHERITFLAGS
+finished run smbtorture smb2.acls.INHERITFLAGS at 2025-12-10 10:42:23
+starting run smbtorture smb2.acls.DYNAMIC at 2025-12-10 10:42:23
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334543
+time: 2025-12-10 02:42:23.663079
+test: DYNAMIC
+time: 2025-12-10 02:42:23.663496
+TESTING DYNAMIC ACL INHERITANCE
+get the original sd
+owner_sid is S-1-22-1-0
+create a file with an inherited acl
+try and access file with base rights - should be OK
+try and access file with extra rights - should be denied
+update parent sd
+try and access file with base rights - should be OK
+try and access now - should be OK if dynamic inheritance works
+Server does not have dynamic inheritance
+put back original sd
+time: 2025-12-10 02:42:23.668382
+success: DYNAMIC
+finished run smbtorture smb2.acls.DYNAMIC at 2025-12-10 10:42:23
+starting run smbtorture smb2.credits.session_setup_credits_granted at 2025-12-10 10:42:23
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334543
+time: 2025-12-10 02:42:23.720754
+test: session_setup_credits_granted
+time: 2025-12-10 02:42:23.721616
+time: 2025-12-10 02:42:23.725435
+success: session_setup_credits_granted
+finished run smbtorture smb2.credits.session_setup_credits_granted at 2025-12-10 10:42:23
+starting run smbtorture smb2.credits.single_req_credits_granted at 2025-12-10 10:42:23
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334543
+time: 2025-12-10 02:42:23.774587
+test: single_req_credits_granted
+time: 2025-12-10 02:42:23.775416
+time: 2025-12-10 02:42:23.779573
+success: single_req_credits_granted
+finished run smbtorture smb2.credits.single_req_credits_granted at 2025-12-10 10:42:23
+starting run smbtorture smb2.credits.skipped_mid at 2025-12-10 10:42:23
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334543
+time: 2025-12-10 02:42:23.819162
+test: skipped_mid
+time: 2025-12-10 02:42:23.819754
+time: 2025-12-10 02:42:24.091429
+success: skipped_mid
+finished run smbtorture smb2.credits.skipped_mid at 2025-12-10 10:42:24
+starting run smbtorture smb2.durable-open.open-oplock at 2025-12-10 10:42:24
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334544
+time: 2025-12-10 02:42:24.148487
+test: open-oplock
+time: 2025-12-10 02:42:24.148938
+time: 2025-12-10 02:42:24.163670
+success: open-oplock
+finished run smbtorture smb2.durable-open.open-oplock at 2025-12-10 10:42:24
+starting run smbtorture smb2.durable-open.open-lease at 2025-12-10 10:42:24
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334544
+time: 2025-12-10 02:42:24.217205
+test: open-lease
+time: 2025-12-10 02:42:24.217735
+time: 2025-12-10 02:42:24.235690
+success: open-lease
+finished run smbtorture smb2.durable-open.open-lease at 2025-12-10 10:42:24
+starting run smbtorture smb2.durable-open.reopen1 at 2025-12-10 10:42:24
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334544
+time: 2025-12-10 02:42:24.269812
+test: reopen1
+time: 2025-12-10 02:42:24.270102
+time: 2025-12-10 02:42:24.272450
+success: reopen1
+finished run smbtorture smb2.durable-open.reopen1 at 2025-12-10 10:42:24
+starting run smbtorture smb2.durable-open.reopen1a at 2025-12-10 10:42:24
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334544
+time: 2025-12-10 02:42:24.320777
+test: reopen1a
+time: 2025-12-10 02:42:24.321069
+time: 2025-12-10 02:42:24.325812
+success: reopen1a
+finished run smbtorture smb2.durable-open.reopen1a at 2025-12-10 10:42:24
+starting run smbtorture smb2.durable-open.reopen1a-lease at 2025-12-10 10:42:24
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334544
+time: 2025-12-10 02:42:24.376199
+test: reopen1a-lease
+time: 2025-12-10 02:42:24.376652
+time: 2025-12-10 02:42:24.382820
+success: reopen1a-lease
+finished run smbtorture smb2.durable-open.reopen1a-lease at 2025-12-10 10:42:24
+starting run smbtorture smb2.durable-open.reopen2 at 2025-12-10 10:42:24
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334544
+time: 2025-12-10 02:42:24.437394
+test: reopen2
+time: 2025-12-10 02:42:24.437827
+time: 2025-12-10 02:42:24.444938
+success: reopen2
+finished run smbtorture smb2.durable-open.reopen2 at 2025-12-10 10:42:24
+starting run smbtorture smb2.durable-open.reopen2a at 2025-12-10 10:42:24
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334544
+time: 2025-12-10 02:42:24.495814
+test: reopen2a
+time: 2025-12-10 02:42:24.496253
+time: 2025-12-10 02:42:24.500790
+success: reopen2a
+finished run smbtorture smb2.durable-open.reopen2a at 2025-12-10 10:42:24
+starting run smbtorture smb2.durable-open.reopen2-lease at 2025-12-10 10:42:24
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334544
+time: 2025-12-10 02:42:24.555676
+test: reopen2-lease
+time: 2025-12-10 02:42:24.556183
+time: 2025-12-10 02:42:24.562393
+success: reopen2-lease
+finished run smbtorture smb2.durable-open.reopen2-lease at 2025-12-10 10:42:24
+starting run smbtorture smb2.durable-open.reopen2-lease-v2 at 2025-12-10 10:42:24
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334544
+time: 2025-12-10 02:42:24.615152
+test: reopen2-lease-v2
+time: 2025-12-10 02:42:24.615606
+time: 2025-12-10 02:42:24.621231
+success: reopen2-lease-v2
+finished run smbtorture smb2.durable-open.reopen2-lease-v2 at 2025-12-10 10:42:24
+starting run smbtorture smb2.durable-open.reopen3 at 2025-12-10 10:42:24
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334544
+time: 2025-12-10 02:42:24.676883
+test: reopen3
+time: 2025-12-10 02:42:24.677402
+time: 2025-12-10 02:42:24.680964
+success: reopen3
+finished run smbtorture smb2.durable-open.reopen3 at 2025-12-10 10:42:24
+starting run smbtorture smb2.durable-open.reopen4 at 2025-12-10 10:42:24
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334544
+time: 2025-12-10 02:42:24.721372
+test: reopen4
+time: 2025-12-10 02:42:24.721670
+time: 2025-12-10 02:42:24.724563
+success: reopen4
+finished run smbtorture smb2.durable-open.reopen4 at 2025-12-10 10:42:24
+starting run smbtorture smb2.durable-open.delete_on_close2 at 2025-12-10 10:42:24
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334544
+time: 2025-12-10 02:42:24.777381
+test: delete_on_close2
+time: 2025-12-10 02:42:24.777911
+time: 2025-12-10 02:42:24.784734
+success: delete_on_close2
+finished run smbtorture smb2.durable-open.delete_on_close2 at 2025-12-10 10:42:24
+starting run smbtorture smb2.durable-open.file-position at 2025-12-10 10:42:24
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334544
+time: 2025-12-10 02:42:24.844034
+test: file-position
+time: 2025-12-10 02:42:24.844487
+position: 0
+position: 4096
+position: 4096
+time: 2025-12-10 02:42:24.849091
+success: file-position
+finished run smbtorture smb2.durable-open.file-position at 2025-12-10 10:42:24
+starting run smbtorture smb2.durable-open.lease at 2025-12-10 10:42:24
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334544
+time: 2025-12-10 02:42:24.904364
+test: lease
+time: 2025-12-10 02:42:24.904810
+time: 2025-12-10 02:42:24.910618
+success: lease
+finished run smbtorture smb2.durable-open.lease at 2025-12-10 10:42:24
+starting run smbtorture smb2.durable-open.alloc-size at 2025-12-10 10:42:24
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334544
+time: 2025-12-10 02:42:24.963934
+test: alloc-size
+time: 2025-12-10 02:42:24.964437
+time: 2025-12-10 02:42:24.971800
+success: alloc-size
+finished run smbtorture smb2.durable-open.alloc-size at 2025-12-10 10:42:24
+starting run smbtorture smb2.durable-open.read-only at 2025-12-10 10:42:24
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334545
+time: 2025-12-10 02:42:25.025791
+test: read-only
+time: 2025-12-10 02:42:25.026260
+time: 2025-12-10 02:42:25.030751
+success: read-only
+finished run smbtorture smb2.durable-open.read-only at 2025-12-10 10:42:25
+starting run smbtorture smb2.durable-v2-open.create-blob at 2025-12-10 10:42:25
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334545
+time: 2025-12-10 02:42:25.084420
+test: create-blob
+time: 2025-12-10 02:42:25.084864
+time: 2025-12-10 02:42:25.089544
+success: create-blob
+finished run smbtorture smb2.durable-v2-open.create-blob at 2025-12-10 10:42:25
+starting run smbtorture smb2.durable-v2-open.open-oplock at 2025-12-10 10:42:25
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334545
+time: 2025-12-10 02:42:25.144294
+test: open-oplock
+time: 2025-12-10 02:42:25.144743
+time: 2025-12-10 02:42:25.159924
+success: open-oplock
+finished run smbtorture smb2.durable-v2-open.open-oplock at 2025-12-10 10:42:25
+starting run smbtorture smb2.durable-v2-open.open-lease at 2025-12-10 10:42:25
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334545
+time: 2025-12-10 02:42:25.215491
+test: open-lease
+time: 2025-12-10 02:42:25.215930
+time: 2025-12-10 02:42:25.234216
+success: open-lease
+finished run smbtorture smb2.durable-v2-open.open-lease at 2025-12-10 10:42:25
+starting run smbtorture smb2.durable-v2-open.reopen1 at 2025-12-10 10:42:25
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334545
+time: 2025-12-10 02:42:25.287115
+test: reopen1
+time: 2025-12-10 02:42:25.287687
+time: 2025-12-10 02:42:25.290864
+success: reopen1
+finished run smbtorture smb2.durable-v2-open.reopen1 at 2025-12-10 10:42:25
+starting run smbtorture smb2.durable-v2-open.reopen1a at 2025-12-10 10:42:25
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334545
+time: 2025-12-10 02:42:25.347112
+test: reopen1a
+time: 2025-12-10 02:42:25.347576
+time: 2025-12-10 02:42:25.353814
+success: reopen1a
+finished run smbtorture smb2.durable-v2-open.reopen1a at 2025-12-10 10:42:25
+starting run smbtorture smb2.durable-v2-open.reopen1a-lease at 2025-12-10 10:42:25
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334545
+time: 2025-12-10 02:42:25.405234
+test: reopen1a-lease
+time: 2025-12-10 02:42:25.405697
+time: 2025-12-10 02:42:25.411533
+success: reopen1a-lease
+finished run smbtorture smb2.durable-v2-open.reopen1a-lease at 2025-12-10 10:42:25
+starting run smbtorture smb2.durable-v2-open.reopen2 at 2025-12-10 10:42:25
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334545
+time: 2025-12-10 02:42:25.465473
+test: reopen2
+time: 2025-12-10 02:42:25.465922
+time: 2025-12-10 02:42:25.472256
+success: reopen2
+finished run smbtorture smb2.durable-v2-open.reopen2 at 2025-12-10 10:42:25
+starting run smbtorture smb2.durable-v2-open.reopen2b at 2025-12-10 10:42:25
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334545
+time: 2025-12-10 02:42:25.528174
+test: reopen2b
+time: 2025-12-10 02:42:25.528670
+time: 2025-12-10 02:42:25.533294
+success: reopen2b
+finished run smbtorture smb2.durable-v2-open.reopen2b at 2025-12-10 10:42:25
+starting run smbtorture smb2.durable-v2-open.reopen2c at 2025-12-10 10:42:25
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334545
+time: 2025-12-10 02:42:25.585715
+test: reopen2c
+time: 2025-12-10 02:42:25.586187
+time: 2025-12-10 02:42:25.590117
+success: reopen2c
+finished run smbtorture smb2.durable-v2-open.reopen2c at 2025-12-10 10:42:25
+starting run smbtorture smb2.durable-v2-open.reopen2-lease at 2025-12-10 10:42:25
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334545
+time: 2025-12-10 02:42:25.644396
+test: reopen2-lease
+time: 2025-12-10 02:42:25.645024
+time: 2025-12-10 02:42:25.651695
+success: reopen2-lease
+finished run smbtorture smb2.durable-v2-open.reopen2-lease at 2025-12-10 10:42:25
+starting run smbtorture smb2.durable-v2-open.reopen2-lease-v2 at 2025-12-10 10:42:25
+smbtorture 4.24.0pre1-DEVELOPERBUILD
+Using seed 1765334545
+time: 2025-12-10 02:42:25.705921
+test: reopen2-lease-v2
+time: 2025-12-10 02:42:25.706449
+time: 2025-12-10 02:42:25.712975
+success: reopen2-lease-v2
+finished run smbtorture smb2.durable-v2-open.reopen2-lease-v2 at 2025-12-10 10:42:25

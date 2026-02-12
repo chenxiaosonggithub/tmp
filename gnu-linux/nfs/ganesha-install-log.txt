@@ -1,0 +1,159 @@
+[  1%] Built target gshdbus                                                                                            
+[  1%] Built target ntirpcmonitoring                                                                                   
+[ 14%] Built target ntirpc                                                                                             
+[ 15%] Built target log                                                                                                
+[ 16%] Built target config_parsing                                                                                     
+[ 18%] Built target cidr                            
+[ 19%] Built target avltree                                                                                            
+[ 19%] Built target hashtable                                                                                          
+[ 23%] Built target sal                                                                                                
+[ 24%] Built target rpcal                                                                                              
+[ 44%] Built target nfsproto                                                                                           
+[ 44%] Built target nfs4callbacks                
+[ 46%] Built target nfs_mnt_xdr                                                                                        
+[ 49%] Built target nlm                                                                                                
+[ 50%] Built target rquota                                                                                             
+[ 50%] Built target nfsacl                                                                                             
+[ 57%] Built target 9p                             
+[ 57%] Built target string_utils                                                                                       
+[ 57%] Built target hash                                                                                               
+[ 57%] Built target uid2grp                                                                                            
+[ 57%] Built target netgroup_cache                                                                                     
+[ 60%] Built target support                                                                                            
+[ 61%] Built target gos                          
+[ 62%] Built target ganesha_monitoring                                                                                 
+[ 65%] Built target fsalmdcache                                                                                        
+[ 67%] Built target fsalpseudo                                                                                         
+[ 68%] Built target idmap                                                                                              
+[ 70%] Built target MainServices                   
+[ 73%] Built target ganesha_nfsd                                                                                       
+[ 73%] Built target ganesha.nfsd                                                                                       
+[ 74%] Built target ganesha-rados-grace                                                                                
+[ 75%] Built target sm_notify.ganesha                   
+[ 76%] Built target rpcping                         
+[ 76%] Built target ganesha_rados_urls          
+[ 77%] Built target ganesha_rados_recov                                                                                
+[ 78%] Built target fsalnull                      
+[ 79%] Built target fsal_os                         
+[ 81%] Built target fsalvfs                                                                                                                                                                                                                   
+[ 84%] Built target fsaldummylustre                                                                                    
+[ 86%] Built target fsalxfs
+[ 87%] Built target fsalproxy_v4
+[ 88%] Built target fsalproxy_v3
+[ 89%] Built target fsalceph
+[ 90%] Built target fsalrgw
+[ 93%] Built target fsalsaunafs
+[ 97%] Built target fsalgpfs
+[ 98%] Built target fsalgluster
+[100%] Built target fsalmem
+Install the project...
+-- Install configuration: "Debug"
+-- Installing: /etc/ganesha/ganesha.conf
+-- Installing: /usr/bin/ganesha.nfsd
+-- Set non-toolchain portion of runtime path of "/usr/bin/ganesha.nfsd" to ""
+-- Installing: /usr/bin/ganesha-rados-grace
+-- Set non-toolchain portion of runtime path of "/usr/bin/ganesha-rados-grace" to ""
+-- Installing: /usr/lib64/pkgconfig/libntirpc.pc
+-- Installing: /usr/include/ntirpc
+-- Installing: /usr/include/ntirpc/fpmath.h
+-- Installing: /usr/include/ntirpc/getpeereid.h
+-- Installing: /usr/include/ntirpc/intrinsic.h
+-- Installing: /usr/include/ntirpc/libc_private.h
+-- Installing: /usr/include/ntirpc/lttng
+-- Installing: /usr/include/ntirpc/lttng/ntirpc_traces.h
+-- Installing: /usr/include/ntirpc/misc
+-- Installing: /usr/include/ntirpc/misc/abstract_atomic.h
+-- Installing: /usr/include/ntirpc/misc/bsd_epoll.h
+-- Installing: /usr/include/ntirpc/misc/city.h
+-- Installing: /usr/include/ntirpc/misc/citycrc.h
+-- Installing: /usr/include/ntirpc/misc/event.h
+-- Installing: /usr/include/ntirpc/misc/macpthreads.h
+-- Installing: /usr/include/ntirpc/misc/opr.h
+-- Installing: /usr/include/ntirpc/misc/opr_queue.h
+-- Installing: /usr/include/ntirpc/misc/os_epoll.h
+-- Installing: /usr/include/ntirpc/misc/portable.h
+-- Installing: /usr/include/ntirpc/misc/queue.h
+-- Installing: /usr/include/ntirpc/misc/rbtree.h
+-- Installing: /usr/include/ntirpc/misc/rbtree_x.h
+-- Installing: /usr/include/ntirpc/misc/socket.h
+-- Installing: /usr/include/ntirpc/misc/stdint.h
+-- Installing: /usr/include/ntirpc/misc/stdio.h
+-- Installing: /usr/include/ntirpc/misc/timespec.h
+-- Installing: /usr/include/ntirpc/misc/wait_queue.h
+-- Installing: /usr/include/ntirpc/misc/winpthreads.h
+-- Installing: /usr/include/ntirpc/namespace.h
+-- Installing: /usr/include/ntirpc/netconfig.h
+-- Installing: /usr/include/ntirpc/reentrant.h
+-- Installing: /usr/include/ntirpc/rpc
+-- Installing: /usr/include/ntirpc/rpc/auth.h
+-- Installing: /usr/include/ntirpc/rpc/auth_gss.h
+-- Installing: /usr/include/ntirpc/rpc/auth_inline.h
+-- Installing: /usr/include/ntirpc/rpc/auth_stat.h
+-- Installing: /usr/include/ntirpc/rpc/auth_unix.h
+-- Installing: /usr/include/ntirpc/rpc/clnt.h
+-- Installing: /usr/include/ntirpc/rpc/clnt_stat.h
+-- Installing: /usr/include/ntirpc/rpc/des.h
+-- Installing: /usr/include/ntirpc/rpc/des_crypt.h
+-- Installing: /usr/include/ntirpc/rpc/gss_internal.h
+-- Installing: /usr/include/ntirpc/rpc/nettype.h
+-- Installing: /usr/include/ntirpc/rpc/pmap_prot.h
+-- Installing: /usr/include/ntirpc/rpc/pmap_rmt.h
+-- Installing: /usr/include/ntirpc/rpc/pool_queue.h
+-- Installing: /usr/include/ntirpc/rpc/rpc.h
+-- Installing: /usr/include/ntirpc/rpc/rpc_cksum.h
+-- Installing: /usr/include/ntirpc/rpc/rpc_com.h
+-- Installing: /usr/include/ntirpc/rpc/rpc_err.h
+-- Installing: /usr/include/ntirpc/rpc/rpc_msg.h
+-- Installing: /usr/include/ntirpc/rpc/rpcb_clnt.h
+-- Installing: /usr/include/ntirpc/rpc/rpcb_prot.h
+-- Installing: /usr/include/ntirpc/rpc/rpcb_prot.x
+-- Installing: /usr/include/ntirpc/rpc/rpcent.h
+-- Installing: /usr/include/ntirpc/rpc/svc.h
+-- Installing: /usr/include/ntirpc/rpc/svc_auth.h
+-- Installing: /usr/include/ntirpc/rpc/svc_rqst.h
+-- Installing: /usr/include/ntirpc/rpc/tirpc_compat.h
+-- Installing: /usr/include/ntirpc/rpc/types.h
+-- Installing: /usr/include/ntirpc/rpc/work_pool.h
+-- Installing: /usr/include/ntirpc/rpc/xdr.h
+-- Installing: /usr/include/ntirpc/rpc/xdr_inline.h
+-- Installing: /usr/include/ntirpc/rpc/xdr_ioq.h
+-- Installing: /usr/include/ntirpc/rpcsvc
+-- Installing: /usr/include/ntirpc/rpcsvc/crypt.h
+-- Installing: /usr/include/ntirpc/un-namespace.h
+-- Installing: /usr/include/ntirpc/version.h
+-- Installing: /usr/lib64/libntirpc.so.6.3
+-- Set non-toolchain portion of runtime path of "/usr/lib64/libntirpc.so.6.3" to ""
+-- Installing: /usr/lib64/libntirpc.so
+-- Installing: /usr/lib64/libntirpcmonitoring.so
+-- Installing: /usr/lib64/libganesha_rados_urls.so
+-- Set non-toolchain portion of runtime path of "/usr/lib64/libganesha_rados_urls.so" to ""
+-- Installing: /usr/lib64/libganesha_rados_recov.so
+-- Set non-toolchain portion of runtime path of "/usr/lib64/libganesha_rados_recov.so" to ""
+-- Installing: /usr/lib64/libganesha_monitoring.so
+-- Installing: /usr/lib64/ganesha/libfsalnull.so
+-- Set non-toolchain portion of runtime path of "/usr/lib64/ganesha/libfsalnull.so" to ""
+-- Installing: /usr/lib64/ganesha/libfsalvfs.so
+-- Set non-toolchain portion of runtime path of "/usr/lib64/ganesha/libfsalvfs.so" to ""
+-- Installing: /usr/lib64/ganesha/libfsaldummylustre.so
+-- Set non-toolchain portion of runtime path of "/usr/lib64/ganesha/libfsaldummylustre.so" to ""
+-- Installing: /usr/lib64/ganesha/libfsalxfs.so
+-- Set non-toolchain portion of runtime path of "/usr/lib64/ganesha/libfsalxfs.so" to ""
+-- Installing: /usr/lib64/ganesha/libfsalproxy_v4.so
+-- Set non-toolchain portion of runtime path of "/usr/lib64/ganesha/libfsalproxy_v4.so" to ""
+-- Installing: /usr/lib64/ganesha/libfsalproxy_v3.so
+-- Set non-toolchain portion of runtime path of "/usr/lib64/ganesha/libfsalproxy_v3.so" to ""
+-- Installing: /usr/lib64/ganesha/libfsalceph.so
+-- Set non-toolchain portion of runtime path of "/usr/lib64/ganesha/libfsalceph.so" to ""
+-- Installing: /usr/lib64/ganesha/libfsalrgw.so
+-- Set non-toolchain portion of runtime path of "/usr/lib64/ganesha/libfsalrgw.so" to ""
+-- Installing: /usr/lib64/ganesha/libfsalsaunafs.so
+-- Installing: /usr/lib64/ganesha/libfsalgpfs.so
+-- Set non-toolchain portion of runtime path of "/usr/lib64/ganesha/libfsalgpfs.so" to ""
+-- Installing: /usr/lib64/ganesha/libfsalgluster.so
+-- Set non-toolchain portion of runtime path of "/usr/lib64/ganesha/libfsalgluster.so" to ""
+-- Installing: /usr/lib64/ganesha/libfsalmem.so
+-- Set non-toolchain portion of runtime path of "/usr/lib64/ganesha/libfsalmem.so" to ""
+-- Installing: /usr/lib64/libganesha_nfsd.so.7
+-- Set non-toolchain portion of runtime path of "/usr/lib64/libganesha_nfsd.so.7" to ""
+-- Installing: /usr/lib64/libganesha_nfsd.so
+

@@ -1,0 +1,1406 @@
+starting run fstests cifs/001 at 2025-11-13 19:24:55
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+cifs/001 0s ...  0s
+Ran: cifs/001
+Passed all 1 tests
+
+finished run fstests cifs/001 at 2025-11-13 19:24:56
+starting run fstests generic/001 at 2025-11-13 19:24:56
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/001 14s ...  14s
+Ran: generic/001
+Passed all 1 tests
+
+finished run fstests generic/001 at 2025-11-13 19:25:10
+starting run fstests generic/002 at 2025-11-13 19:25:10
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/002 0s ...  1s
+Ran: generic/002
+Passed all 1 tests
+
+finished run fstests generic/002 at 2025-11-13 19:25:11
+starting run fstests generic/005 at 2025-11-13 19:25:11
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/005       [not run] Require symlinks support
+Ran: generic/005
+Not run: generic/005
+Passed all 1 tests
+
+finished run fstests generic/005 at 2025-11-13 19:25:12
+starting run fstests generic/006 at 2025-11-13 19:25:12
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/006 8s ...  7s
+Ran: generic/006
+Passed all 1 tests
+
+finished run fstests generic/006 at 2025-11-13 19:25:19
+starting run fstests generic/007 at 2025-11-13 19:25:19
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/007 8s ...  8s
+Ran: generic/007
+Passed all 1 tests
+
+finished run fstests generic/007 at 2025-11-13 19:25:27
+starting run fstests generic/008 at 2025-11-13 19:25:27
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/008 1s ...  1s
+Ran: generic/008
+Passed all 1 tests
+
+finished run fstests generic/008 at 2025-11-13 19:25:29
+starting run fstests generic/010 at 2025-11-13 19:25:29
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/010 1s ...  1s
+Ran: generic/010
+Passed all 1 tests
+
+finished run fstests generic/010 at 2025-11-13 19:25:30
+starting run fstests generic/011 at 2025-11-13 19:25:30
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/011 1s ...  1s
+Ran: generic/011
+Passed all 1 tests
+
+finished run fstests generic/011 at 2025-11-13 19:25:31
+starting run fstests generic/014 at 2025-11-13 19:25:31
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/014 44s ...  43s
+Ran: generic/014
+Passed all 1 tests
+
+finished run fstests generic/014 at 2025-11-13 19:26:15
+starting run fstests generic/023 at 2025-11-13 19:26:15
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/023       [not run] Require symlinks support
+Ran: generic/023
+Not run: generic/023
+Passed all 1 tests
+
+finished run fstests generic/023 at 2025-11-13 19:26:16
+starting run fstests generic/024 at 2025-11-13 19:26:16
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/024       [not run] Require symlinks support
+Ran: generic/024
+Not run: generic/024
+Passed all 1 tests
+
+finished run fstests generic/024 at 2025-11-13 19:26:17
+starting run fstests generic/028 at 2025-11-13 19:26:17
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/028 6s ...  5s
+Ran: generic/028
+Passed all 1 tests
+
+finished run fstests generic/028 at 2025-11-13 19:26:22
+starting run fstests generic/029 at 2025-11-13 19:26:22
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/029 1s ...  0s
+Ran: generic/029
+Passed all 1 tests
+
+finished run fstests generic/029 at 2025-11-13 19:26:23
+starting run fstests generic/030 at 2025-11-13 19:26:23
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/030 1s ...  0s
+Ran: generic/030
+Passed all 1 tests
+
+finished run fstests generic/030 at 2025-11-13 19:26:24
+starting run fstests generic/032 at 2025-11-13 19:26:24
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/032 7s ...  7s
+Ran: generic/032
+Passed all 1 tests
+
+finished run fstests generic/032 at 2025-11-13 19:26:32
+starting run fstests generic/033 at 2025-11-13 19:26:32
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/033 0s ...  0s
+Ran: generic/033
+Passed all 1 tests
+
+finished run fstests generic/033 at 2025-11-13 19:26:33
+starting run fstests generic/036 at 2025-11-13 19:26:33
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/036 11s ...  10s
+Ran: generic/036
+Passed all 1 tests
+
+finished run fstests generic/036 at 2025-11-13 19:26:44
+starting run fstests generic/037 at 2025-11-13 19:26:44
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/037 4s ...  4s
+Ran: generic/037
+Passed all 1 tests
+
+finished run fstests generic/037 at 2025-11-13 19:26:48
+starting run fstests generic/043 at 2025-11-13 19:26:48
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/043 23s ...  23s
+Ran: generic/043
+Passed all 1 tests
+
+finished run fstests generic/043 at 2025-11-13 19:27:12
+starting run fstests generic/044 at 2025-11-13 19:27:12
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/044 35s ...  36s
+Ran: generic/044
+Passed all 1 tests
+
+finished run fstests generic/044 at 2025-11-13 19:27:49
+starting run fstests generic/045 at 2025-11-13 19:27:49
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/045 32s ...  31s
+Ran: generic/045
+Passed all 1 tests
+
+finished run fstests generic/045 at 2025-11-13 19:28:21
+starting run fstests generic/046 at 2025-11-13 19:28:21
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/046 26s ...  26s
+Ran: generic/046
+Passed all 1 tests
+
+finished run fstests generic/046 at 2025-11-13 19:28:48
+starting run fstests generic/051 at 2025-11-13 19:28:48
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/051 71s ...  71s
+Ran: generic/051
+Passed all 1 tests
+
+finished run fstests generic/051 at 2025-11-13 19:30:00
+starting run fstests generic/069 at 2025-11-13 19:30:00
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/069 2s ...  2s
+Ran: generic/069
+Passed all 1 tests
+
+finished run fstests generic/069 at 2025-11-13 19:30:02
+starting run fstests generic/071 at 2025-11-13 19:30:02
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/071 1s ...  0s
+Ran: generic/071
+Passed all 1 tests
+
+finished run fstests generic/071 at 2025-11-13 19:30:03
+starting run fstests generic/072 at 2025-11-13 19:30:03
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/072 272s ...  271s
+Ran: generic/072
+Passed all 1 tests
+
+finished run fstests generic/072 at 2025-11-13 19:34:34
+starting run fstests generic/074 at 2025-11-13 19:34:34
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/074 20s ...  20s
+Ran: generic/074
+Passed all 1 tests
+
+finished run fstests generic/074 at 2025-11-13 19:34:54
+starting run fstests generic/080 at 2025-11-13 19:34:54
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/080 2s ...  2s
+Ran: generic/080
+Passed all 1 tests
+
+finished run fstests generic/080 at 2025-11-13 19:34:57
+starting run fstests generic/084 at 2025-11-13 19:34:57
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/084 6s ...  5s
+Ran: generic/084
+Passed all 1 tests
+
+finished run fstests generic/084 at 2025-11-13 19:35:03
+starting run fstests generic/086 at 2025-11-13 19:35:03
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/086 0s ...  1s
+Ran: generic/086
+Passed all 1 tests
+
+finished run fstests generic/086 at 2025-11-13 19:35:04
+starting run fstests generic/091 at 2025-11-13 19:35:04
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/091 29s ...  29s
+Ran: generic/091
+Passed all 1 tests
+
+finished run fstests generic/091 at 2025-11-13 19:35:33
+starting run fstests generic/095 at 2025-11-13 19:35:33
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/095 7s ...  6s
+Ran: generic/095
+Passed all 1 tests
+
+finished run fstests generic/095 at 2025-11-13 19:35:39
+starting run fstests generic/098 at 2025-11-13 19:35:39
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/098 1s ...  0s
+Ran: generic/098
+Passed all 1 tests
+
+finished run fstests generic/098 at 2025-11-13 19:35:39
+starting run fstests generic/100 at 2025-11-13 19:35:39
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/100 29s ...  29s
+Ran: generic/100
+Passed all 1 tests
+
+finished run fstests generic/100 at 2025-11-13 19:36:09
+starting run fstests generic/103 at 2025-11-13 19:36:09
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/103 1s ...  1s
+Ran: generic/103
+Passed all 1 tests
+
+finished run fstests generic/103 at 2025-11-13 19:36:10
+starting run fstests generic/109 at 2025-11-13 19:36:10
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/109       [not run] Require symlinks support
+Ran: generic/109
+Not run: generic/109
+Passed all 1 tests
+
+finished run fstests generic/109 at 2025-11-13 19:36:11
+starting run fstests generic/113 at 2025-11-13 19:36:11
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/113 5s ...  5s
+Ran: generic/113
+Passed all 1 tests
+
+finished run fstests generic/113 at 2025-11-13 19:36:16
+starting run fstests generic/117 at 2025-11-13 19:36:16
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/117 187s ...  190s
+Ran: generic/117
+Passed all 1 tests
+
+finished run fstests generic/117 at 2025-11-13 19:39:27
+starting run fstests generic/124 at 2025-11-13 19:39:27
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/124 2s ...  2s
+Ran: generic/124
+Passed all 1 tests
+
+finished run fstests generic/124 at 2025-11-13 19:39:30
+starting run fstests generic/125 at 2025-11-13 19:39:30
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/125       [not run] fsgqa user not defined.
+Ran: generic/125
+Not run: generic/125
+Passed all 1 tests
+
+finished run fstests generic/125 at 2025-11-13 19:39:30
+starting run fstests generic/129 at 2025-11-13 19:39:30
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/129 45s ...  44s
+Ran: generic/129
+Passed all 1 tests
+
+finished run fstests generic/129 at 2025-11-13 19:40:15
+starting run fstests generic/130 at 2025-11-13 19:40:15
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/130 2s ...  2s
+Ran: generic/130
+Passed all 1 tests
+
+finished run fstests generic/130 at 2025-11-13 19:40:18
+starting run fstests generic/132 at 2025-11-13 19:40:18
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/132 11s ...  11s
+Ran: generic/132
+Passed all 1 tests
+
+finished run fstests generic/132 at 2025-11-13 19:40:29
+starting run fstests generic/133 at 2025-11-13 19:40:29
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/133 7s ...  7s
+Ran: generic/133
+Passed all 1 tests
+
+finished run fstests generic/133 at 2025-11-13 19:40:37
+starting run fstests generic/135 at 2025-11-13 19:40:37
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/135 0s ...  1s
+Ran: generic/135
+Passed all 1 tests
+
+finished run fstests generic/135 at 2025-11-13 19:40:38
+starting run fstests generic/141 at 2025-11-13 19:40:38
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/141 1s ...  0s
+Ran: generic/141
+Passed all 1 tests
+
+finished run fstests generic/141 at 2025-11-13 19:40:38
+starting run fstests generic/169 at 2025-11-13 19:40:38
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/169 1s ...  0s
+Ran: generic/169
+Passed all 1 tests
+
+finished run fstests generic/169 at 2025-11-13 19:40:39
+starting run fstests generic/198 at 2025-11-13 19:40:39
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/198 1s ...  1s
+Ran: generic/198
+Passed all 1 tests
+
+finished run fstests generic/198 at 2025-11-13 19:40:40
+starting run fstests generic/207 at 2025-11-13 19:40:40
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/207 0s ...  1s
+Ran: generic/207
+Passed all 1 tests
+
+finished run fstests generic/207 at 2025-11-13 19:40:41
+starting run fstests generic/208 at 2025-11-13 19:40:41
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/208 200s ...  201s
+Ran: generic/208
+Passed all 1 tests
+
+finished run fstests generic/208 at 2025-11-13 19:44:02
+starting run fstests generic/210 at 2025-11-13 19:44:02
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/210 0s ...  1s
+Ran: generic/210
+Passed all 1 tests
+
+finished run fstests generic/210 at 2025-11-13 19:44:03
+starting run fstests generic/211 at 2025-11-13 19:44:03
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/211       [not run] Filesystem cifs not supported in _scratch_mkfs_sized
+Ran: generic/211
+Not run: generic/211
+Passed all 1 tests
+
+finished run fstests generic/211 at 2025-11-13 19:44:03
+starting run fstests generic/212 at 2025-11-13 19:44:03
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/212 1s ...  0s
+Ran: generic/212
+Passed all 1 tests
+
+finished run fstests generic/212 at 2025-11-13 19:44:04
+starting run fstests generic/214 at 2025-11-13 19:44:04
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/214 0s ...  1s
+Ran: generic/214
+Passed all 1 tests
+
+finished run fstests generic/214 at 2025-11-13 19:44:05
+starting run fstests generic/215 at 2025-11-13 19:44:05
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/215 2s ...  3s
+Ran: generic/215
+Passed all 1 tests
+
+finished run fstests generic/215 at 2025-11-13 19:44:08
+starting run fstests generic/221 at 2025-11-13 19:44:08
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/221 2s ...  1s
+Ran: generic/221
+Passed all 1 tests
+
+finished run fstests generic/221 at 2025-11-13 19:44:09
+starting run fstests generic/225 at 2025-11-13 19:44:09
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/225 4s ...  4s
+Ran: generic/225
+Passed all 1 tests
+
+finished run fstests generic/225 at 2025-11-13 19:44:14
+starting run fstests generic/228 at 2025-11-13 19:44:14
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/228 0s ...  1s
+Ran: generic/228
+Passed all 1 tests
+
+finished run fstests generic/228 at 2025-11-13 19:44:15
+starting run fstests generic/236 at 2025-11-13 19:44:15
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/236 2s ...  1s
+Ran: generic/236
+Passed all 1 tests
+
+finished run fstests generic/236 at 2025-11-13 19:44:16
+starting run fstests generic/239 at 2025-11-13 19:44:16
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/239 22s ...  25s
+Ran: generic/239
+Passed all 1 tests
+
+finished run fstests generic/239 at 2025-11-13 19:44:42
+starting run fstests generic/241 at 2025-11-13 19:44:42
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/241 73s ...  73s
+Ran: generic/241
+Passed all 1 tests
+
+finished run fstests generic/241 at 2025-11-13 19:45:55
+starting run fstests generic/245 at 2025-11-13 19:45:55
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/245 1s ...  1s
+Ran: generic/245
+Passed all 1 tests
+
+finished run fstests generic/245 at 2025-11-13 19:45:56
+starting run fstests generic/246 at 2025-11-13 19:45:56
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/246 0s ...  0s
+Ran: generic/246
+Passed all 1 tests
+
+finished run fstests generic/246 at 2025-11-13 19:45:56
+starting run fstests generic/247 at 2025-11-13 19:45:56
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/247 4s ...  5s
+Ran: generic/247
+Passed all 1 tests
+
+finished run fstests generic/247 at 2025-11-13 19:46:02
+starting run fstests generic/248 at 2025-11-13 19:46:02
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/248 0s ...  0s
+Ran: generic/248
+Passed all 1 tests
+
+finished run fstests generic/248 at 2025-11-13 19:46:02
+starting run fstests generic/249 at 2025-11-13 19:46:02
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/249 1s ...  0s
+Ran: generic/249
+Passed all 1 tests
+
+finished run fstests generic/249 at 2025-11-13 19:46:03
+starting run fstests generic/257 at 2025-11-13 19:46:03
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/257 1s ...  1s
+Ran: generic/257
+Passed all 1 tests
+
+finished run fstests generic/257 at 2025-11-13 19:46:05
+starting run fstests generic/258 at 2025-11-13 19:46:05
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/258 0s ...  0s
+Ran: generic/258
+Passed all 1 tests
+
+finished run fstests generic/258 at 2025-11-13 19:46:06
+starting run fstests generic/263 at 2025-11-13 19:46:06
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/263 18s ...  18s
+Ran: generic/263
+Passed all 1 tests
+
+finished run fstests generic/263 at 2025-11-13 19:46:24
+starting run fstests generic/308 at 2025-11-13 19:46:24
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/308 0s ...  0s
+Ran: generic/308
+Passed all 1 tests
+
+finished run fstests generic/308 at 2025-11-13 19:46:25
+starting run fstests generic/309 at 2025-11-13 19:46:25
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/309 2s ...  2s
+Ran: generic/309
+Passed all 1 tests
+
+finished run fstests generic/309 at 2025-11-13 19:46:27
+starting run fstests generic/310 at 2025-11-13 19:46:27
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/310 91s ...  93s
+Ran: generic/310
+Passed all 1 tests
+
+finished run fstests generic/310 at 2025-11-13 19:48:00
+starting run fstests generic/313 at 2025-11-13 19:48:00
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/313 4s ...  5s
+Ran: generic/313
+Passed all 1 tests
+
+finished run fstests generic/313 at 2025-11-13 19:48:05
+starting run fstests generic/315 at 2025-11-13 19:48:05
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/315 1s ...  0s
+Ran: generic/315
+Passed all 1 tests
+
+finished run fstests generic/315 at 2025-11-13 19:48:05
+starting run fstests generic/316 at 2025-11-13 19:48:05
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/316 1s ...  1s
+Ran: generic/316
+Passed all 1 tests
+
+finished run fstests generic/316 at 2025-11-13 19:48:07
+starting run fstests generic/323 at 2025-11-13 19:48:07
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/323 121s ...  121s
+Ran: generic/323
+Passed all 1 tests
+
+finished run fstests generic/323 at 2025-11-13 19:50:08
+starting run fstests generic/337 at 2025-11-13 19:50:08
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/337 1s ...  0s
+Ran: generic/337
+Passed all 1 tests
+
+finished run fstests generic/337 at 2025-11-13 19:50:08
+starting run fstests generic/339 at 2025-11-13 19:50:08
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/339 1s ...  1s
+Ran: generic/339
+Passed all 1 tests
+
+finished run fstests generic/339 at 2025-11-13 19:50:10
+starting run fstests generic/340 at 2025-11-13 19:50:10
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/340 1s ...  1s
+Ran: generic/340
+Passed all 1 tests
+
+finished run fstests generic/340 at 2025-11-13 19:50:12
+starting run fstests generic/344 at 2025-11-13 19:50:12
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/344 3s ...  2s
+Ran: generic/344
+Passed all 1 tests
+
+finished run fstests generic/344 at 2025-11-13 19:50:15
+starting run fstests generic/345 at 2025-11-13 19:50:15
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/345 3s ...  2s
+Ran: generic/345
+Passed all 1 tests
+
+finished run fstests generic/345 at 2025-11-13 19:50:17
+starting run fstests generic/346 at 2025-11-13 19:50:17
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/346 1s ...  1s
+Ran: generic/346
+Passed all 1 tests
+
+finished run fstests generic/346 at 2025-11-13 19:50:19
+starting run fstests generic/349 at 2025-11-13 19:50:19
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/349       [not run] scsi_debug module not found
+Ran: generic/349
+Not run: generic/349
+Passed all 1 tests
+
+finished run fstests generic/349 at 2025-11-13 19:50:20
+starting run fstests generic/350 at 2025-11-13 19:50:20
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/350       [not run] scsi_debug module not found
+Ran: generic/350
+Not run: generic/350
+Passed all 1 tests
+
+finished run fstests generic/350 at 2025-11-13 19:50:21
+starting run fstests generic/354 at 2025-11-13 19:50:21
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/354 2s ...  2s
+Ran: generic/354
+Passed all 1 tests
+
+finished run fstests generic/354 at 2025-11-13 19:50:23
+starting run fstests generic/360 at 2025-11-13 19:50:23
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/360       [not run] Require symlinks support
+Ran: generic/360
+Not run: generic/360
+Passed all 1 tests
+
+finished run fstests generic/360 at 2025-11-13 19:50:24
+starting run fstests generic/377 at 2025-11-13 19:50:24
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/377 0s ...  1s
+Ran: generic/377
+Passed all 1 tests
+
+finished run fstests generic/377 at 2025-11-13 19:50:25
+starting run fstests generic/391 at 2025-11-13 19:50:25
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/391 3s ...  3s
+Ran: generic/391
+Passed all 1 tests
+
+finished run fstests generic/391 at 2025-11-13 19:50:28
+starting run fstests generic/393 at 2025-11-13 19:50:28
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/393 0s ...  0s
+Ran: generic/393
+Passed all 1 tests
+
+finished run fstests generic/393 at 2025-11-13 19:50:29
+starting run fstests generic/394 at 2025-11-13 19:50:29
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/394 0s ...  0s
+Ran: generic/394
+Passed all 1 tests
+
+finished run fstests generic/394 at 2025-11-13 19:50:30
+starting run fstests generic/406 at 2025-11-13 19:50:30
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/406 1s ...  1s
+Ran: generic/406
+Passed all 1 tests
+
+finished run fstests generic/406 at 2025-11-13 19:50:31
+starting run fstests generic/412 at 2025-11-13 19:50:31
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/412 1s ...  1s
+Ran: generic/412
+Passed all 1 tests
+
+finished run fstests generic/412 at 2025-11-13 19:50:32
+starting run fstests generic/420 at 2025-11-13 19:50:32
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/420 0s ...  0s
+Ran: generic/420
+Passed all 1 tests
+
+finished run fstests generic/420 at 2025-11-13 19:50:32
+starting run fstests generic/428 at 2025-11-13 19:50:32
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/428 0s ...  0s
+Ran: generic/428
+Passed all 1 tests
+
+finished run fstests generic/428 at 2025-11-13 19:50:33
+starting run fstests generic/430 at 2025-11-13 19:50:33
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/430 1s ...  1s
+Ran: generic/430
+Passed all 1 tests
+
+finished run fstests generic/430 at 2025-11-13 19:50:34
+starting run fstests generic/431 at 2025-11-13 19:50:34
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/431 0s ...  0s
+Ran: generic/431
+Passed all 1 tests
+
+finished run fstests generic/431 at 2025-11-13 19:50:34
+starting run fstests generic/432 at 2025-11-13 19:50:34
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/432 0s ...  0s
+Ran: generic/432
+Passed all 1 tests
+
+finished run fstests generic/432 at 2025-11-13 19:50:35
+starting run fstests generic/433 at 2025-11-13 19:50:35
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/433 1s ...  1s
+Ran: generic/433
+Passed all 1 tests
+
+finished run fstests generic/433 at 2025-11-13 19:50:36
+starting run fstests generic/436 at 2025-11-13 19:50:36
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/436 1s ...  1s
+Ran: generic/436
+Passed all 1 tests
+
+finished run fstests generic/436 at 2025-11-13 19:50:37
+starting run fstests generic/437 at 2025-11-13 19:50:37
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/437 1s ...  1s
+Ran: generic/437
+Passed all 1 tests
+
+finished run fstests generic/437 at 2025-11-13 19:50:38
+starting run fstests generic/438 at 2025-11-13 19:50:38
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/438 44s ...  43s
+Ran: generic/438
+Passed all 1 tests
+
+finished run fstests generic/438 at 2025-11-13 19:51:22
+starting run fstests generic/439 at 2025-11-13 19:51:22
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/439 1s ...  1s
+Ran: generic/439
+Passed all 1 tests
+
+finished run fstests generic/439 at 2025-11-13 19:51:23
+starting run fstests generic/443 at 2025-11-13 19:51:23
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/443 0s ...  0s
+Ran: generic/443
+Passed all 1 tests
+
+finished run fstests generic/443 at 2025-11-13 19:51:23
+starting run fstests generic/445 at 2025-11-13 19:51:23
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/445 0s ...  0s
+Ran: generic/445
+Passed all 1 tests
+
+finished run fstests generic/445 at 2025-11-13 19:51:24
+starting run fstests generic/446 at 2025-11-13 19:51:24
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/446 6s ...  6s
+Ran: generic/446
+Passed all 1 tests
+
+finished run fstests generic/446 at 2025-11-13 19:51:31
+starting run fstests generic/448 at 2025-11-13 19:51:31
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/448 1s ...  1s
+Ran: generic/448
+Passed all 1 tests
+
+finished run fstests generic/448 at 2025-11-13 19:51:32
+starting run fstests generic/451 at 2025-11-13 19:51:32
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/451 30s ...  31s
+Ran: generic/451
+Passed all 1 tests
+
+finished run fstests generic/451 at 2025-11-13 19:52:03
+starting run fstests generic/452 at 2025-11-13 19:52:03
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/452 0s ...  0s
+Ran: generic/452
+Passed all 1 tests
+
+finished run fstests generic/452 at 2025-11-13 19:52:03
+starting run fstests generic/454 at 2025-11-13 19:52:03
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/454       [not run] cifs does not allow unrestricted byte streams for names
+Ran: generic/454
+Not run: generic/454
+Passed all 1 tests
+
+finished run fstests generic/454 at 2025-11-13 19:52:41
+starting run fstests generic/460 at 2025-11-13 19:52:41
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/460 1s ...  1s
+Ran: generic/460
+Passed all 1 tests
+
+finished run fstests generic/460 at 2025-11-13 19:52:42
+starting run fstests generic/461 at 2025-11-13 19:52:43
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/461 20s ...  20s
+Ran: generic/461
+Passed all 1 tests
+
+finished run fstests generic/461 at 2025-11-13 19:53:03
+starting run fstests generic/464 at 2025-11-13 19:53:03
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/464 51s ...  51s
+Ran: generic/464
+Passed all 1 tests
+
+finished run fstests generic/464 at 2025-11-13 19:53:55
+starting run fstests generic/465 at 2025-11-13 19:53:55
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/465 1s ...  1s
+Ran: generic/465
+Passed all 1 tests
+
+finished run fstests generic/465 at 2025-11-13 19:53:57
+starting run fstests generic/469 at 2025-11-13 19:53:57
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/469 1s ...  1s
+Ran: generic/469
+Passed all 1 tests
+
+finished run fstests generic/469 at 2025-11-13 19:53:59
+starting run fstests generic/504 at 2025-11-13 19:53:59
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/504 0s ...  0s
+Ran: generic/504
+Passed all 1 tests
+
+finished run fstests generic/504 at 2025-11-13 19:53:59
+starting run fstests generic/523 at 2025-11-13 19:53:59
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/523 0s ...  0s
+Ran: generic/523
+Passed all 1 tests
+
+finished run fstests generic/523 at 2025-11-13 19:54:00
+starting run fstests generic/524 at 2025-11-13 19:54:00
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/524 2s ...  3s
+Ran: generic/524
+Passed all 1 tests
+
+finished run fstests generic/524 at 2025-11-13 19:54:03
+starting run fstests generic/528 at 2025-11-13 19:54:03
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/528 1s ...  1s
+Ran: generic/528
+Passed all 1 tests
+
+finished run fstests generic/528 at 2025-11-13 19:54:04
+starting run fstests generic/532 at 2025-11-13 19:54:04
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/532 0s ...  0s
+Ran: generic/532
+Passed all 1 tests
+
+finished run fstests generic/532 at 2025-11-13 19:54:04
+starting run fstests generic/533 at 2025-11-13 19:54:04
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/533 0s ...  0s
+Ran: generic/533
+Passed all 1 tests
+
+finished run fstests generic/533 at 2025-11-13 19:54:05
+starting run fstests generic/539 at 2025-11-13 19:54:05
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/539       [failed, exit status 1]- output mismatch (see /root/code/xfstests-dev/results//generic/539.out.bad)
+    --- tests/generic/539.out	2025-11-09 16:32:21.071206222 +0800
+    +++ /root/code/xfstests-dev/results//generic/539.out.bad	2025-11-13 19:54:06.785647764 +0800
+    @@ -1,2 +1,4 @@
+     QA output created by 539
+     Silence is golden
+    +seek sanity check failed!
+    +(see /root/code/xfstests-dev/results//generic/539.full for details)
+    ...
+    (Run 'diff -u /root/code/xfstests-dev/tests/generic/539.out /root/code/xfstests-dev/results//generic/539.out.bad'  to see the entire diff)
+Ran: generic/539
+Failures: generic/539
+Failed 1 of 1 tests
+
+finished run fstests generic/539 at 2025-11-13 19:54:06
+starting run fstests generic/565 at 2025-11-13 19:54:06
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/565 0s ...  0s
+Ran: generic/565
+Passed all 1 tests
+
+finished run fstests generic/565 at 2025-11-13 19:54:07
+starting run fstests generic/567 at 2025-11-13 19:54:07
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/567 1s ...  1s
+Ran: generic/567
+Passed all 1 tests
+
+finished run fstests generic/567 at 2025-11-13 19:54:08
+starting run fstests generic/568 at 2025-11-13 19:54:08
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/568 0s ...  0s
+Ran: generic/568
+Passed all 1 tests
+
+finished run fstests generic/568 at 2025-11-13 19:54:08
+starting run fstests generic/599 at 2025-11-13 19:54:08
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 drbd01 6.18.0-rc1 #10 SMP PREEMPT_DYNAMIC Thu Nov 13 19:20:36 CST 2025
+MKFS_OPTIONS  -- //192.168.53.209/cifsd-test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/cifsd-test2 /mnt/2
+
+generic/599 0s ...  0s
+Ran: generic/599
+Passed all 1 tests
+
+finished run fstests generic/599 at 2025-11-13 19:54:09

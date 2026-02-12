@@ -1,0 +1,19 @@
+From 1cda76e3d5a9b08beda186388bb9781fd977a405 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Sat, 20 Dec 2025 00:01:22 +0800
+Subject: [PATCH v4 0/2] smb/server: fix minimum PDU size
+
+v3: https://lore.kernel.org/linux-cifs/20251219235419.338880-1-chenxiaosong.chenxiaosong@linux.dev/
+v3->v4:
+  - Patch #01: remove `struct smb_pdu`
+
+ChenXiaoSong (2):
+  smb/server: fix minimum SMB1 PDU size
+  smb/server: fix minimum SMB2 PDU size
+
+ fs/smb/server/connection.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+-- 
+2.43.0
+

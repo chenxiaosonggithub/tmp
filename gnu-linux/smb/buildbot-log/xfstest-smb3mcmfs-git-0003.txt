@@ -1,0 +1,116 @@
+http://smb311-linux-testing.southcentralus.cloudapp.azure.com/#/builders/12/builds/46/steps/160/logs/stdio
+
+ssh fedora29.vm.test ./run-xfstests.sh smb3mcmfs git/0003
+ in dir /root/buildbot/cifs_testing_worker/windows-multichannel/build (timeout 1900 secs)
+ watching logfiles {}
+ argv: [b'ssh', b'fedora29.vm.test', b'./run-xfstests.sh', b'smb3mcmfs', b'git/0003']
+ environment:
+  DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/0/bus
+  HOME=/root
+  LANG=en_US.UTF-8
+  LOGNAME=root
+  OLDPWD=/root
+  PATH=/root/buildbot/python3-virtualenv/bin:/usr/bin:/bin
+  PS1=(python3-virtualenv) 
+  PWD=/root/buildbot/cifs_testing_worker/windows-multichannel/build
+  SHELL=/bin/sh
+  SHLVL=1
+  USER=root
+  VIRTUAL_ENV=/root/buildbot/python3-virtualenv
+  XDG_RUNTIME_DIR=/run/user/0
+  XDG_SESSION_CLASS=background
+  XDG_SESSION_ID=1
+  XDG_SESSION_TYPE=unspecified
+  _=/root/buildbot/python3-virtualenv/bin/buildbot-worker
+ using PTY: False
+Running test smb3mcmfs git/0003 at Sun Jan 25 04:28:08 AM UTC 2026
+#!/bin/bash
+# SPDX-License-Identifier: GPL-2.0
+# Copyright (C) 2014 SUSE Linux Products GmbH. All Rights Reserved.
+#
+# FS QA Test No. git/0003 attributes
+#
+# Sanity test  for git 
+#
+umount: /mnt/test: not mounted.
+umount: /mnt/test: not mounted.
+umount: /mnt/scratch: not mounted.
+umount: /mnt/scratch: not mounted.
+SECTION       -- smb3mcmfs
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 fedora29 6.19.0-rc6 #1 SMP PREEMPT_DYNAMIC Wed Jan 21 19:06:59 UTC 2026
+MKFS_OPTIONS  -- //10.0.0.18/Scratch
+
+git/0003            - output mismatch (see /data/xfstests-dev/results//smb3mcmfs/git/0003.out.bad)
+    --- tests/git/0003.out	2024-03-12 01:15:02.759578802 -0500
+    +++ /data/xfstests-dev/results//smb3mcmfs/git/0003.out.bad	2026-01-24 22:28:11.991895363 -0600
+    @@ -1,55 +1,4 @@
+     QA output created by git 0003
+    -ok 1 - open-quoted pathname
+    -ok 2 - setup
+    -ok 3 - setup branches
+    -ok 4 - command line checks
+    -ok 5 - attribute test
+    -ok 6 - attribute matching is case sensitive when core.ignorecase=0
+    ...
+    (Run 'diff -u /data/xfstests-dev/tests/git/0003.out /data/xfstests-dev/results//smb3mcmfs/git/0003.out.bad'  to see the entire diff)
+Ran: git/0003
+Failures: git/0003
+Failed 1 of 1 tests
+
+SECTION       -- smb3mcmfs
+=========================
+Ran: git/0003
+Failures: git/0003
+Failed 1 of 1 tests
+
+Test completed smb3mcmfs git/0003 at Sun Jan 25 04:28:12 AM UTC 2026
+dmesg output during the test: 
+[Sat Jan 24 22:28:07 2026] Key type cifs.idmap unregistered
+[Sat Jan 24 22:28:07 2026] Key type cifs.spnego unregistered
+[Sat Jan 24 22:28:08 2026] cifs: module verification failed: signature and/or required key missing - tainting kernel
+[Sat Jan 24 22:28:08 2026] Key type cifs.spnego registered
+[Sat Jan 24 22:28:08 2026] Key type cifs.idmap registered
+[Sat Jan 24 22:28:09 2026] CIFS: Attempting to mount //10.0.0.18/test
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: generate_smb3signingkey: dumping generated AES session keys
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: Session Id    31 00 00 34 01 34 00 00
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: Cipher type   2
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: Session Key   17 35 48 23 18 8a f2 d7 a2 e5 a0 56 30 e9 4b d5
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: Signing Key   30 b8 f8 89 46 80 29 ea 3c d2 b6 a6 60 67 a8 aa
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: ServerIn Key  fd 58 40 55 f0 46 47 07 df dd 93 7d f1 bf 0a 90
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: ServerOut Key 18 b4 dc 7f c0 00 32 7d a3 4b f4 e6 19 24 2d 9e
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: Error connecting to socket. Aborting operation.
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: failed to open extra channel on iface:fe80:0000:0000:0000:d6c9:79fc:6bea:f696 rc=-22
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: generate_smb3signingkey: dumping generated AES session keys
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: Session Id    31 00 00 34 01 34 00 00
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: Cipher type   2
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: Session Key   38 0f 57 08 a7 85 53 02 6a 92 b3 d7 5c e1 98 46
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: Signing Key   30 b8 f8 89 46 80 29 ea 3c d2 b6 a6 60 67 a8 aa
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: ServerIn Key  fd 58 40 55 f0 46 47 07 df dd 93 7d f1 bf 0a 90
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: ServerOut Key 18 b4 dc 7f c0 00 32 7d a3 4b f4 e6 19 24 2d 9e
+[Sat Jan 24 22:28:09 2026] CIFS: successfully opened new channel on iface:10.0.0.18
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: Error connecting to socket. Aborting operation.
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: failed to open extra channel on iface:fe80:0000:0000:0000:d6c9:79fc:6bea:f696 rc=-22
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: generate_smb3signingkey: dumping generated AES session keys
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: Session Id    31 00 00 34 01 34 00 00
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: Cipher type   2
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: Session Key   d2 28 b7 cb b6 4d 2a df 02 d5 38 48 49 32 d7 8f
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: Signing Key   30 b8 f8 89 46 80 29 ea 3c d2 b6 a6 60 67 a8 aa
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: ServerIn Key  fd 58 40 55 f0 46 47 07 df dd 93 7d f1 bf 0a 90
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: ServerOut Key 18 b4 dc 7f c0 00 32 7d a3 4b f4 e6 19 24 2d 9e
+[Sat Jan 24 22:28:09 2026] CIFS: successfully opened new channel on iface:10.0.0.18
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: Error connecting to socket. Aborting operation.
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: failed to open extra channel on iface:fe80:0000:0000:0000:d6c9:79fc:6bea:f696 rc=-22
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: generate_smb3signingkey: dumping generated AES session keys
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: Session Id    31 00 00 34 01 34 00 00
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: Cipher type   2
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: Session Key   26 5d f1 54 44 cf 83 94 be 7a de 97 20 7a ab 20
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: Signing Key   30 b8 f8 89 46 80 29 ea 3c d2 b6 a6 60 67 a8 aa
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: ServerIn Key  fd 58 40 55 f0 46 47 07 df dd 93 7d f1 bf 0a 90
+[Sat Jan 24 22:28:09 2026] CIFS: VFS: ServerOut Key 18 b4 dc 7f c0 00 32 7d a3 4b f4 e6 19 24 2d 9e
+[Sat Jan 24 22:28:09 2026] CIFS: successfully opened new channel on iface:10.0.0.18
+[Sat Jan 24 22:28:09 2026] CIFS: Attempting to mount //10.0.0.18/Scratch
+[Sat Jan 24 22:28:10 2026] CIFS: Attempting to mount //10.0.0.18/Scratch
+[Sat Jan 24 22:28:10 2026] run fstests git/0003 at 2026-01-24 22:28:10
+program finished with exit code 1
+elapsedTime=4.251875

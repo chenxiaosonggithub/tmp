@@ -1,0 +1,20 @@
+From 180c094957d5d8160ce0363073e9f668e97d6f9e Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Wed, 7 Jan 2026 12:23:46 +0800
+Subject: [PATCH v3 0/1] smbinfo: add notify subcommand
+
+v2: https://lore.kernel.org/linux-cifs/20251221152216.363567-1-chenxiaosong.chenxiaosong@linux.dev/T/#m4ba6e208cdf29930d8962c806bf5a544451ecccc
+v2->v3:
+  - Remove parentheses around `if (pad_len >= 8)` for consistency with Python style
+  - Close the file when the process exits
+
+ChenXiaoSong (1):
+  smbinfo: add notify subcommand
+
+ smbinfo     | 78 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ smbinfo.rst |  2 ++
+ 2 files changed, 80 insertions(+)
+
+-- 
+2.43.0
+

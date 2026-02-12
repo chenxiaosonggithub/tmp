@@ -1,0 +1,40 @@
+From 1c8bc5209606c69a5e803a17d0f117db11365f5b Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Sun, 7 Dec 2025 14:04:41 +0800
+Subject: [PATCH 27/30] smb/client: introduce KUnit test to check sort result
+ of mapping_table_ERRSRV array
+
+The KUnit test are executed when cifs.ko is loaded.
+
+The mapping_table_ERRSRV_check_sort() checks whether the array is properly
+sorted.
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/client/netmisc_test.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/fs/smb/client/netmisc_test.c b/fs/smb/client/netmisc_test.c
+index eae6c0c09519..4a82edd58dcc 100644
+--- a/fs/smb/client/netmisc_test.c
++++ b/fs/smb/client/netmisc_test.c
+@@ -34,6 +34,8 @@ DEFINE_CHECK_SORT_FUNC(ntstatus_to_dos_map, ntstatus_to_dos_num, ntstatus);
+ DEFINE_CHECK_SORT_FUNC(nt_errs, nt_err_num, nt_errcode);
+ /* mapping_table_ERRDOS_check_sort */
+ DEFINE_CHECK_SORT_FUNC(mapping_table_ERRDOS, errdos_num, smb_err);
++/* mapping_table_ERRSRV_check_sort */
++DEFINE_CHECK_SORT_FUNC(mapping_table_ERRSRV, errsrv_num, smb_err);
+ 
+ #define DEFINE_CHECK_SEARCH_FUNC(__struct_name, __field,		\
+ 				 __array, __num)			\
+@@ -91,6 +93,7 @@ static struct kunit_case maperror_test_cases[] = {
+ 	KUNIT_CASE(ntstatus_to_dos_map_check_sort),
+ 	KUNIT_CASE(nt_errs_check_sort),
+ 	KUNIT_CASE(mapping_table_ERRDOS_check_sort),
++	KUNIT_CASE(mapping_table_ERRSRV_check_sort),
+ 	/* check search */
+ 	KUNIT_CASE(ntstatus_to_dos_map_check_search),
+ 	KUNIT_CASE(nt_errs_check_search),
+-- 
+2.43.0
+

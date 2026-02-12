@@ -1,0 +1,23 @@
+From 44ab15d7905dc7af4b8af3f7b446cc301fa47d75 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
+Date: Mon, 2 Feb 2026 09:30:22 +0000
+Subject: [PATCH v3 0/1] smb/client: fix memory leaks
+
+v2->v3: rebased on mainline
+
+v2: https://lore.kernel.org/linux-cifs/20260202082407.1881618-1-chenxiaosong.chenxiaosong@linux.dev/
+
+The following patches from v2 have already been merged into cifs-2.6.git for-next:
+  - smb/client: fix memory leak in smb2_open_file(): https://lore.kernel.org/linux-cifs/20260202082407.1881618-3-chenxiaosong.chenxiaosong@linux.dev/
+
+For detailed information, please see the link: https://chenxiaosong.com/en/smb-buildbot.html (I will ensure this link is always accessible).
+
+ChenXiaoSong (1):
+  smb/client: fix memory leak in SendReceive()
+
+ fs/smb/client/cifstransport.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+-- 
+2.52.0
+

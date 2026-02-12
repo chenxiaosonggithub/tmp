@@ -1,0 +1,5 @@
+[ 1009.315573] ksmbd: [ksmbd_conn_handler_loop:347] RFC1002 header 68 bytes
+[ 1009.317462] ksmbd: [smb2_calc_size:259] SMB2 len 68
+[ 1009.318817] ksmbd: [smb2_echo:5916] Received smb2 echo request
+[ 1009.320414] ksmbd: [smb2_set_rsp_credits:365] credits: requested[1] granted[1] total_granted[520]
+

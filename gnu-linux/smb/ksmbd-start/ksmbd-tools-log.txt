@@ -1,0 +1,17 @@
+May 08 10:13:23 kdc systemd[1]: Starting ksmbd.service - ksmbd userspace daemon...
+May 08 10:13:23 kdc ksmbd[837]: [ksmbd.mountd/837]: DEBUG: Can't open `/run/ksmbd.lock': No such file or directory
+May 08 10:13:23 kdc ksmbd[837]: [ksmbd.mountd/837]: INFO: Wrote `/run/ksmbd.lock'
+May 08 10:13:23 kdc ksmbd.mountd[835]: [ksmbd.mountd/835]: INFO: Started manager
+May 08 10:13:23 kdc ksmbd[837]: [ksmbd.mountd(manager)/837]: INFO: Started worker
+May 08 10:13:23 kdc systemd[1]: Started ksmbd.service - ksmbd userspace daemon.
+May 08 10:13:23 kdc ksmbd[838]: [ksmbd.mountd(worker)/838]: DEBUG: New user `root' [0x3F3598F0]
+May 08 10:13:23 kdc ksmbd[838]: [ksmbd.mountd(worker)/838]: DEBUG: ... with UID 0
+May 08 10:13:23 kdc ksmbd[838]: [ksmbd.mountd(worker)/838]: DEBUG: ... with GID 0 (`root')
+May 08 10:13:23 kdc ksmbd[838]: [ksmbd.mountd(worker)/838]: DEBUG: New user `nobody' [0x3F35E240]
+May 08 10:13:23 kdc ksmbd[838]: [ksmbd.mountd(worker)/838]: DEBUG: ... with UID 65534
+May 08 10:13:23 kdc ksmbd[838]: [ksmbd.mountd(worker)/838]: DEBUG: ... with GID 65534 (`nobody')
+May 08 10:13:23 kdc ksmbd[838]: [ksmbd.mountd(worker)/838]: DEBUG: New share `TEST' [0x3F35EAA0]
+May 08 10:13:23 kdc ksmbd[838]: [ksmbd.mountd(worker)/838]: DEBUG: New share `ipc$' [0x3F35EBD0]
+May 08 10:13:23 kdc ksmbd[838]: [ksmbd.mountd(worker)/838]: DEBUG: Ignored key-values in group `global'
+May 08 10:13:23 kdc ksmbd[838]: [ksmbd.mountd(worker)/838]: DEBUG: ... `public = yes'
+

@@ -1,0 +1,163 @@
+[  825.583532] ksmbd: [ksmbd_kthread_fn:260] connect success: accepted new connection
+[  825.586174] ksmbd: [ksmbd_conn_handler_loop:347] RFC1002 header 240 bytes
+[  825.588418] ksmbd: [smb2_get_data_area_len:187] no length check for command
+[  825.590324] ksmbd: [smb2_calc_size:238] SMB2 data length 0 offset 0
+[  825.592074] ksmbd: [smb2_calc_size:259] SMB2 len 100
+[  825.593480] ksmbd: [ksmbd_lookup_dialect_by_id:242] client requested dialect 0x311
+[  825.595651] ksmbd: [ksmbd_lookup_dialect_by_id:249] selected \x02SMB 3.1.1 dialect
+[  825.597713] ksmbd: [ksmbd_smb_negotiate_common:597] conn->dialect 0x311
+[  825.599595] ksmbd: [smb2_handle_negotiate:1096] Received negotiate request
+[  825.601573] ksmbd: [deassemble_neg_contexts:1009] decoding 4 negotiate contexts
+[  825.603601] ksmbd: [deassemble_neg_contexts:1031] deassemble SMB2_PREAUTH_INTEGRITY_CAPABILITIES context
+[  825.606187] ksmbd: [deassemble_neg_contexts:1042] deassemble SMB2_ENCRYPTION_CAPABILITIES context
+[  825.608623] ksmbd: [decode_encrypt_ctxt:930] Cipher ID = 0x2
+[  825.610176] ksmbd: [deassemble_neg_contexts:1059] deassemble SMB2_NETNAME_NEGOTIATE_CONTEXT_ID context
+[  825.612671] ksmbd: [deassemble_neg_contexts:1062] deassemble SMB2_POSIX_EXTENSIONS_AVAILABLE context
+[  825.615190] ksmbd: [assemble_neg_contexts:834] assemble SMB2_PREAUTH_INTEGRITY_CAPABILITIES context
+[  825.617651] ksmbd: [assemble_neg_contexts:843] assemble SMB2_ENCRYPTION_CAPABILITIES context
+[  825.619922] ksmbd: [assemble_neg_contexts:857] assemble SMB2_POSIX_EXTENSIONS_AVAILABLE context
+[  825.622265] ksmbd: [smb2_handle_negotiate:1229] negotiate context offset 224, count 3
+[  825.624367] ksmbd: [smb2_set_rsp_credits:365] credits: requested[10] granted[1] total_granted[1]
+[  825.666961] ksmbd: [ksmbd_conn_handler_loop:347] RFC1002 header 132 bytes
+[  825.669002] ksmbd: [smb2_calc_size:238] SMB2 data length 44 offset 88
+[  825.670765] ksmbd: [smb2_calc_size:259] SMB2 len 132
+[  825.672134] ksmbd: [smb2_sess_setup:1680] Received smb2 session setup request
+[  825.674103] ksmbd: [ntlm_negotiate:1343] negotiate phase
+[  825.675599] ksmbd: [ksmbd_build_ntlmssp_challenge_blob:506] NTLMSSP SecurityBufferLength 188
+[  825.677918] ksmbd: [smb2_set_rsp_credits:365] credits: requested[130] granted[130] total_granted[130]
+[  825.742475] ksmbd: [ksmbd_conn_handler_loop:347] RFC1002 header 386 bytes
+[  825.744345] ksmbd: [smb2_calc_size:238] SMB2 data length 298 offset 88
+[  825.746125] ksmbd: [smb2_calc_size:259] SMB2 len 386
+[  825.747482] ksmbd: [smb2_sess_setup:1680] Received smb2 session setup request
+[  825.749415] ksmbd: [ntlm_authenticate:1453] authenticate phase
+[  825.751010] ksmbd: [session_user:1436] session setup request for user root
+[  825.753991] ksmbd: [ksmbd_decode_ntlmssp_auth_blob:342] decode_ntlmssp_authenticate_blob dname
+[  825.790809] ksmbd: [generate_smb3encryptionkey:873] dumping generated AES encryption keys
+[  825.793093] ksmbd: [generate_smb3encryptionkey:874] Cipher type   2
+[  825.794843] ksmbd: [generate_smb3encryptionkey:875] Session Id    1
+[  825.796594] ksmbd: [generate_smb3encryptionkey:876] Session Key   84 b0 8f c2 06 4d 2f 6a 82 34 f2 5f 58 9b c8 89
+[  825.799379] ksmbd: [generate_smb3encryptionkey:885] ServerIn Key  ab 6e d8 25 8a e8 46 ae c7 74 38 e7 9e ed 78 4c
+[  825.802183] ksmbd: [generate_smb3encryptionkey:887] ServerOut Key b5 84 4b 0d 7f bd b4 8e 13 e7 0a 49 96 f7 6e 48
+[  825.805034] ksmbd: [generate_smb3signingkey:804] dumping generated AES signing keys
+[  825.807158] ksmbd: [generate_smb3signingkey:805] Session Id    1
+[  825.808939] ksmbd: [generate_smb3signingkey:806] Session Key   84 b0 8f c2 06 4d 2f 6a 82 34 f2 5f 58 9b c8 89
+[  825.811743] ksmbd: [generate_smb3signingkey:808] Signing Key   fa fe 0f 36 e2 bb 67 47 7c 3c 88 7f 1a a4 58 21
+[  825.814518] ksmbd: [smb2_set_rsp_credits:365] credits: requested[130] granted[130] total_granted[259]
+[  825.898666] ksmbd: [ksmbd_conn_handler_loop:347] RFC1002 header 114 bytes
+[  825.900755] ksmbd: [smb2_get_ksmbd_tcon:100] skip to check tree connect request
+[  825.902782] ksmbd: [smb2_calc_size:238] SMB2 data length 42 offset 72
+[  825.904604] ksmbd: [smb2_calc_size:259] SMB2 len 114
+[  825.905975] ksmbd: [smb2_tree_connect:1960] Received smb2 tree connect request
+[  825.907943] ksmbd: [smb2_tree_connect:1979] tree connect request for tree ipc$ treename \\192.168.53.209\IPC$
+[  825.911078] ksmbd: [smb2_tree_connect:1990] IPC share path request
+[  825.912807] ksmbd: [smb2_set_rsp_credits:365] credits: requested[64] granted[64] total_granted[322]
+[  825.949196] ksmbd: [ksmbd_conn_handler_loop:347] RFC1002 header 164 bytes
+[  825.951369] ksmbd: [smb2_calc_size:238] SMB2 data length 44 offset 120
+[  825.953227] ksmbd: [smb2_calc_size:259] SMB2 len 164
+[  825.954599] ksmbd: [smb2_ioctl:8075] Received smb2 ioctl request
+[  825.956266] ksmbd: [smb2_set_rsp_credits:365] credits: requested[10] granted[10] total_granted[331]
+[  825.987079] ksmbd: [ksmbd_conn_handler_loop:347] RFC1002 header 114 bytes
+[  825.989057] ksmbd: [smb2_get_ksmbd_tcon:100] skip to check tree connect request
+[  825.991108] ksmbd: [smb2_calc_size:238] SMB2 data length 42 offset 72
+[  825.992936] ksmbd: [smb2_calc_size:259] SMB2 len 114
+[  825.994329] ksmbd: [smb2_tree_connect:1960] Received smb2 tree connect request
+[  825.996348] ksmbd: [smb2_tree_connect:1979] tree connect request for tree test treename \\192.168.53.209\TEST
+[  825.999378] ksmbd: [smb2_set_rsp_credits:365] credits: requested[64] granted[64] total_granted[394]
+[  826.024129] ksmbd: [ksmbd_conn_handler_loop:347] RFC1002 header 152 bytes
+[  826.026137] ksmbd: [smb2_calc_size:238] SMB2 data length 24 offset 128
+[  826.027991] ksmbd: [smb2_calc_size:259] SMB2 len 152
+[  826.029411] ksmbd: [smb2_open:2884] Received smb2 create request
+[  826.031135] ksmbd: [smb_check_perm_dacl:1266] check permission using windows acl
+[  826.033205] ksmbd: [smb2_create_open_flags:2093] Discard write access to a directory
+[  826.035466] ksmbd: [smb2_open:3534] get query on disk id context
+[  826.037164] ksmbd: [ksmbd_vfs_get_dos_attrib_xattr:1631] failed to load dos attribute in xattr
+[  826.039578] ksmbd: [smb2_set_rsp_credits:365] credits: requested[10] granted[10] total_granted[403]
+[  826.060389] ksmbd: [ksmbd_conn_handler_loop:347] RFC1002 header 121 bytes
+[  826.062489] ksmbd: [smb2_calc_size:238] SMB2 data length 0 offset 120
+[  826.064259] ksmbd: [smb2_calc_size:259] SMB2 len 121
+[  826.065645] ksmbd: [smb2_ioctl:8075] Received smb2 ioctl request
+[  826.067330] ksmbd: [smb2_set_rsp_credits:365] credits: requested[10] granted[10] total_granted[412]
+[  826.111291] ksmbd: [ksmbd_conn_handler_loop:347] RFC1002 header 105 bytes
+[  826.113317] ksmbd: [smb2_calc_size:238] SMB2 data length 0 offset 104
+[  826.115158] ksmbd: [smb2_calc_size:259] SMB2 len 105
+[  826.116535] ksmbd: [smb2_query_info:5691] Received request smb2 query info request
+[  826.118630] ksmbd: [smb2_query_info:5706] GOT SMB2_O_INFO_FILESYSTEM
+[  826.120409] ksmbd: [smb2_set_rsp_credits:365] credits: requested[10] granted[10] total_granted[421]
+[  826.141901] ksmbd: [ksmbd_conn_handler_loop:347] RFC1002 header 105 bytes
+[  826.143890] ksmbd: [smb2_calc_size:238] SMB2 data length 0 offset 104
+[  826.145744] ksmbd: [smb2_calc_size:259] SMB2 len 105
+[  826.147187] ksmbd: [smb2_query_info:5691] Received request smb2 query info request
+[  826.149341] ksmbd: [smb2_query_info:5706] GOT SMB2_O_INFO_FILESYSTEM
+[  826.151119] ksmbd: [smb2_set_rsp_credits:365] credits: requested[10] granted[10] total_granted[430]
+[  826.172792] ksmbd: [ksmbd_conn_handler_loop:347] RFC1002 header 105 bytes
+[  826.174829] ksmbd: [smb2_calc_size:238] SMB2 data length 0 offset 104
+[  826.176629] ksmbd: [smb2_calc_size:259] SMB2 len 105
+[  826.178056] ksmbd: [smb2_query_info:5691] Received request smb2 query info request
+[  826.180178] ksmbd: [smb2_query_info:5706] GOT SMB2_O_INFO_FILESYSTEM
+[  826.182053] ksmbd: [smb2_set_rsp_credits:365] credits: requested[10] granted[10] total_granted[439]
+[  826.203583] ksmbd: [ksmbd_conn_handler_loop:347] RFC1002 header 105 bytes
+[  826.205584] ksmbd: [smb2_calc_size:238] SMB2 data length 0 offset 104
+[  826.207376] ksmbd: [smb2_calc_size:259] SMB2 len 105
+[  826.208808] ksmbd: [smb2_query_info:5691] Received request smb2 query info request
+[  826.210918] ksmbd: [smb2_query_info:5706] GOT SMB2_O_INFO_FILESYSTEM
+[  826.212754] ksmbd: [smb2_set_rsp_credits:365] credits: requested[10] granted[10] total_granted[448]
+[  826.233697] ksmbd: [ksmbd_conn_handler_loop:347] RFC1002 header 88 bytes
+[  826.235672] ksmbd: [smb2_calc_size:259] SMB2 len 88
+[  826.237055] ksmbd: [smb2_close:5798] Received smb2 close request
+[  826.238737] ksmbd: [smb2_close:5845] volatile_id = 0
+[  826.240156] ksmbd: [smb2_set_rsp_credits:365] credits: requested[10] granted[10] total_granted[457]
+[  826.261708] ksmbd: [ksmbd_conn_handler_loop:347] RFC1002 header 152 bytes
+[  826.263693] ksmbd: [smb2_calc_size:238] SMB2 data length 24 offset 128
+[  826.265527] ksmbd: [smb2_calc_size:259] SMB2 len 152
+[  826.266962] ksmbd: [smb2_open:2884] Received smb2 create request
+[  826.268669] ksmbd: [smb_check_perm_dacl:1266] check permission using windows acl
+[  826.270772] ksmbd: [smb2_create_open_flags:2093] Discard write access to a directory
+[  826.272934] ksmbd: [smb2_open:3534] get query on disk id context
+[  826.274624] ksmbd: [ksmbd_vfs_get_dos_attrib_xattr:1631] failed to load dos attribute in xattr
+[  826.277029] ksmbd: [smb2_set_rsp_credits:365] credits: requested[10] granted[10] total_granted[466]
+[  826.297724] ksmbd: [ksmbd_conn_handler_loop:347] RFC1002 header 88 bytes
+[  826.299712] ksmbd: [smb2_calc_size:259] SMB2 len 88
+[  826.301116] ksmbd: [smb2_close:5798] Received smb2 close request
+[  826.302817] ksmbd: [smb2_close:5845] volatile_id = 1
+[  826.304206] ksmbd: [smb2_set_rsp_credits:365] credits: requested[10] granted[10] total_granted[475]
+[  826.323019] ksmbd: [ksmbd_conn_handler_loop:347] RFC1002 header 152 bytes
+[  826.325053] ksmbd: [smb2_calc_size:238] SMB2 data length 24 offset 128
+[  826.326905] ksmbd: [smb2_calc_size:259] SMB2 len 152
+[  826.328336] ksmbd: [smb2_open:2884] Received smb2 create request
+[  826.330027] ksmbd: [smb_check_perm_dacl:1266] check permission using windows acl
+[  826.332086] ksmbd: [smb2_create_open_flags:2093] Discard write access to a directory
+[  826.334269] ksmbd: [smb2_open:3534] get query on disk id context
+[  826.335970] ksmbd: [ksmbd_vfs_get_dos_attrib_xattr:1631] failed to load dos attribute in xattr
+[  826.338335] ksmbd: [smb2_set_rsp_credits:365] credits: requested[10] granted[10] total_granted[484]
+[  826.359151] ksmbd: [ksmbd_conn_handler_loop:347] RFC1002 header 88 bytes
+[  826.361147] ksmbd: [smb2_calc_size:259] SMB2 len 88
+[  826.362577] ksmbd: [smb2_close:5798] Received smb2 close request
+[  826.364273] ksmbd: [smb2_close:5845] volatile_id = 2
+[  826.365764] ksmbd: [smb2_set_rsp_credits:365] credits: requested[10] granted[10] total_granted[493]
+[  826.390627] ksmbd: [ksmbd_conn_handler_loop:347] RFC1002 header 344 bytes
+[  826.392711] ksmbd: [smb2_calc_size:238] SMB2 data length 24 offset 128
+[  826.394562] ksmbd: [smb2_calc_size:259] SMB2 len 152
+[  826.395975] ksmbd: [smb2_open:2884] Received smb2 create request
+[  826.397695] ksmbd: [smb_check_perm_dacl:1266] check permission using windows acl
+[  826.399777] ksmbd: [smb2_create_open_flags:2093] Discard write access to a directory
+[  826.401939] ksmbd: [smb2_open:3534] get query on disk id context
+[  826.403650] ksmbd: [ksmbd_vfs_get_dos_attrib_xattr:1631] failed to load dos attribute in xattr
+[  826.406040] ksmbd: [smb2_set_rsp_credits:365] credits: requested[10] granted[10] total_granted[502]
+[  826.408518] ksmbd: [is_chained_smb2_message:471] got SMB2 chained command
+[  826.410412] ksmbd: [init_chained_smb2_rsp:409] Compound req new_len = 208 rcv off = 152 rsp off = 208
+[  826.412973] ksmbd: [smb2_calc_size:238] SMB2 data length 0 offset 104
+[  826.414804] ksmbd: [smb2_calc_size:259] SMB2 len 105
+[  826.416221] ksmbd: [smb2_query_info:5691] Received request smb2 query info request
+[  826.418410] ksmbd: [smb2_query_info:5702] GOT SMB2_O_INFO_FILE
+[  826.420072] ksmbd: [smb2_get_info_file:5287] Compound request set FID = 3
+[  826.422006] ksmbd: [get_file_all_info:4903] filename = \
+[  826.423315] ksmbd: [smb2_set_rsp_credits:365] credits: requested[10] granted[10] total_granted[511]
+[  826.425305] ksmbd: [is_chained_smb2_message:471] got SMB2 chained command
+[  826.426810] ksmbd: [init_chained_smb2_rsp:409] Compound req new_len = 176 rcv off = 256 rsp off = 384
+[  826.428810] ksmbd: [smb2_calc_size:259] SMB2 len 88
+[  826.429904] ksmbd: [smb2_close:5798] Received smb2 close request
+[  826.431320] ksmbd: [smb2_close:5832] Compound request set FID = 3:3
+[  826.432845] ksmbd: [smb2_close:5845] volatile_id = 3
+[  826.433964] ksmbd: [smb2_set_rsp_credits:365] credits: requested[10] granted[10] total_granted[520]
+[  826.435950] ksmbd: [is_chained_smb2_message:482] padding len 4
+

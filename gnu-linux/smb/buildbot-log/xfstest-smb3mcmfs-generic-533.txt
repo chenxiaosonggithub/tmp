@@ -1,0 +1,118 @@
+http://smb311-linux-testing.southcentralus.cloudapp.azure.com/#/builders/12/builds/46/steps/136/logs/stdio
+
+ssh fedora29.vm.test ./run-xfstests.sh smb3mcmfs generic/533
+ in dir /root/buildbot/cifs_testing_worker/windows-multichannel/build (timeout 1900 secs)
+ watching logfiles {}
+ argv: [b'ssh', b'fedora29.vm.test', b'./run-xfstests.sh', b'smb3mcmfs', b'generic/533']
+ environment:
+  DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/0/bus
+  HOME=/root
+  LANG=en_US.UTF-8
+  LOGNAME=root
+  OLDPWD=/root
+  PATH=/root/buildbot/python3-virtualenv/bin:/usr/bin:/bin
+  PS1=(python3-virtualenv) 
+  PWD=/root/buildbot/cifs_testing_worker/windows-multichannel/build
+  SHELL=/bin/sh
+  SHLVL=1
+  USER=root
+  VIRTUAL_ENV=/root/buildbot/python3-virtualenv
+  XDG_RUNTIME_DIR=/run/user/0
+  XDG_SESSION_CLASS=background
+  XDG_SESSION_ID=1
+  XDG_SESSION_TYPE=unspecified
+  _=/root/buildbot/python3-virtualenv/bin/buildbot-worker
+ using PTY: False
+Running test smb3mcmfs generic/533 at Sun Jan 25 04:13:03 AM UTC 2026
+#! /bin/bash
+# SPDX-License-Identifier: GPL-2.0
+# Copyright (c) 2000-2004 Silicon Graphics, Inc.  All Rights Reserved.
+# Copyright (c) 2017 Google, Inc.  All Rights Reserved.
+# Copyright (c) 2019 Red Hat Inc.  All Rights Reserved.
+#
+# FS QA Test No. 526.
+#
+umount: /mnt/test: not mounted.
+umount: /mnt/test: not mounted.
+umount: /mnt/scratch: not mounted.
+umount: /mnt/scratch: not mounted.
+SECTION       -- smb3mcmfs
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 fedora29 6.19.0-rc6 #1 SMP PREEMPT_DYNAMIC Wed Jan 21 19:06:59 UTC 2026
+MKFS_OPTIONS  -- //10.0.0.18/Scratch
+
+generic/533         - output mismatch (see /data/xfstests-dev/results//smb3mcmfs/generic/533.out.bad)
+    --- tests/generic/533.out	2024-05-15 02:56:12.479945348 -0500
+    +++ /data/xfstests-dev/results//smb3mcmfs/generic/533.out.bad	2026-01-24 22:13:07.409402867 -0600
+    @@ -1,108 +1,90 @@
+     QA output created by 533
+    +./common/attr: line 217: /mnt/test/syscalltest.out: Input/output error
+    +cat: /mnt/test/syscalltest.out: No such file or directory
+    +grep: /mnt/test/syscalltest.out: No such file or directory
+    +grep: /mnt/test/syscalltest.out: No such file or directory
+     
+     create file foo.533
+    ...
+    (Run 'diff -u /data/xfstests-dev/tests/generic/533.out /data/xfstests-dev/results//smb3mcmfs/generic/533.out.bad'  to see the entire diff)
+Ran: generic/533
+Failures: generic/533
+Failed 1 of 1 tests
+
+SECTION       -- smb3mcmfs
+=========================
+Ran: generic/533
+Failures: generic/533
+Failed 1 of 1 tests
+
+Test completed smb3mcmfs generic/533 at Sun Jan 25 04:13:07 AM UTC 2026
+dmesg output during the test: 
+[Sat Jan 24 22:13:02 2026] Key type cifs.idmap unregistered
+[Sat Jan 24 22:13:02 2026] Key type cifs.spnego unregistered
+[Sat Jan 24 22:13:03 2026] cifs: module verification failed: signature and/or required key missing - tainting kernel
+[Sat Jan 24 22:13:03 2026] Key type cifs.spnego registered
+[Sat Jan 24 22:13:03 2026] Key type cifs.idmap registered
+[Sat Jan 24 22:13:04 2026] CIFS: Attempting to mount //10.0.0.18/test
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: generate_smb3signingkey: dumping generated AES session keys
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: Session Id    21 00 00 28 01 34 00 00
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: Cipher type   2
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: Session Key   6f 4d 92 e0 2e c7 bd 03 b4 cf 0d bb 5f 74 ba 38
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: Signing Key   20 ff 58 0a f9 7b 1b d4 ec 92 30 5f fa de 7e 40
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: ServerIn Key  c1 9f 97 15 00 c1 bc 6a de e1 d0 32 b3 6f 59 cb
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: ServerOut Key 2a e2 27 08 9a dc 94 da b1 2c 26 c1 52 42 92 c3
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: Error connecting to socket. Aborting operation.
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: failed to open extra channel on iface:fe80:0000:0000:0000:d6c9:79fc:6bea:f696 rc=-22
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: generate_smb3signingkey: dumping generated AES session keys
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: Session Id    21 00 00 28 01 34 00 00
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: Cipher type   2
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: Session Key   2a a3 bf 29 7c a7 28 40 6e 20 0c b2 95 30 fc 41
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: Signing Key   20 ff 58 0a f9 7b 1b d4 ec 92 30 5f fa de 7e 40
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: ServerIn Key  c1 9f 97 15 00 c1 bc 6a de e1 d0 32 b3 6f 59 cb
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: ServerOut Key 2a e2 27 08 9a dc 94 da b1 2c 26 c1 52 42 92 c3
+[Sat Jan 24 22:13:04 2026] CIFS: successfully opened new channel on iface:10.0.0.18
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: Error connecting to socket. Aborting operation.
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: failed to open extra channel on iface:fe80:0000:0000:0000:d6c9:79fc:6bea:f696 rc=-22
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: generate_smb3signingkey: dumping generated AES session keys
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: Session Id    21 00 00 28 01 34 00 00
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: Cipher type   2
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: Session Key   b7 0d 99 cc 24 cf 91 65 ed 46 f2 bd f0 d2 cc f1
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: Signing Key   20 ff 58 0a f9 7b 1b d4 ec 92 30 5f fa de 7e 40
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: ServerIn Key  c1 9f 97 15 00 c1 bc 6a de e1 d0 32 b3 6f 59 cb
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: ServerOut Key 2a e2 27 08 9a dc 94 da b1 2c 26 c1 52 42 92 c3
+[Sat Jan 24 22:13:04 2026] CIFS: successfully opened new channel on iface:10.0.0.18
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: Error connecting to socket. Aborting operation.
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: failed to open extra channel on iface:fe80:0000:0000:0000:d6c9:79fc:6bea:f696 rc=-22
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: generate_smb3signingkey: dumping generated AES session keys
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: Session Id    21 00 00 28 01 34 00 00
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: Cipher type   2
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: Session Key   1d 85 4d 99 40 b6 79 7c fb d6 da ae fd 99 9a e7
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: Signing Key   20 ff 58 0a f9 7b 1b d4 ec 92 30 5f fa de 7e 40
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: ServerIn Key  c1 9f 97 15 00 c1 bc 6a de e1 d0 32 b3 6f 59 cb
+[Sat Jan 24 22:13:04 2026] CIFS: VFS: ServerOut Key 2a e2 27 08 9a dc 94 da b1 2c 26 c1 52 42 92 c3
+[Sat Jan 24 22:13:04 2026] CIFS: successfully opened new channel on iface:10.0.0.18
+[Sat Jan 24 22:13:04 2026] CIFS: Attempting to mount //10.0.0.18/Scratch
+[Sat Jan 24 22:13:04 2026] CIFS: Attempting to mount //10.0.0.18/Scratch
+[Sat Jan 24 22:13:05 2026] run fstests generic/533 at 2026-01-24 22:13:05
+[Sat Jan 24 22:13:06 2026] CIFS: Attempting to mount //10.0.0.18/test
+[Sat Jan 24 22:13:06 2026] CIFS: Attempting to mount //10.0.0.18/test
+program finished with exit code 1
+elapsedTime=4.779162

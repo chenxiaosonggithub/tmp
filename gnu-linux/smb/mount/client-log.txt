@@ -1,0 +1,246 @@
+[ 2486.374687] CIFS: [dfs_cache_init:312] dfs_cache_init: initialized DFS referral cache
+[ 2486.375927] CIFS: [init_cifs_spnego:202] Registering the cifs.spnego key type
+[ 2486.377975] Key type cifs.spnego registered
+[ 2486.378654] CIFS: [init_cifs_spnego:237] cifs spnego keyring: 428879192
+[ 2486.379608] CIFS: [init_cifs_idmap:464] Registering the cifs.idmap key type
+[ 2486.380575] Key type cifs.idmap registered
+[ 2486.381145] CIFS: [init_cifs_idmap:498] cifs idmap keyring: 986307075
+[ 2486.383865] CIFS: [smb3_fs_context_parse_param:1131] CIFS: parsing cifs mount option 'source'
+[ 2486.386292] CIFS: [smb3_fs_context_parse_param:1131] CIFS: parsing cifs mount option 'ip'
+[ 2486.388555] CIFS: [cifs_inet_pton:135] address conversion returned 1 for 192.168.53.209
+[ 2486.390754] CIFS: [smb3_fs_context_parse_param:1131] CIFS: parsing cifs mount option 'unc'
+[ 2486.393017] CIFS: [smb3_fs_context_parse_param:1131] CIFS: parsing cifs mount option 'user'
+[ 2486.395302] CIFS: [smb3_fs_context_parse_param:1131] CIFS: parsing cifs mount option 'pass'
+[ 2486.397683] CIFS: No dialect specified on mount. Default has changed to a more secure dialect, SMB2.1 or later (e.g. SMB3.1.1), from CIFS (SMB1). To use the less secure SMB1 dialect to access old servers which do not support SMB3.1.1 (or even SMB3 or SMB2.1) specify vers=1.0 on mount.
+[ 2486.404457] CIFS: [cifs_smb3_do_mount:961] Attempting to mount //192.168.53.209/TEST
+[ 2486.406575] CIFS: [cifs_setup_cifs_sb:3584] file mode: 0755  dir mode: 0755
+[ 2486.408477] CIFS: [cifs_mount_get_session:3653] VFS: in cifs_mount_get_session as Xid: 0 with uid: 0
+[ 2486.410998] CIFS: [cifs_get_tcp_session:1736] UNC: \\192.168.53.209\TEST
+[ 2486.412841] CIFS: [generic_ip_connect:3343] generic_ip_connect: connecting to 192.168.53.209:445
+[ 2486.415019] CIFS: [generic_ip_connect:3367] Socket created
+[ 2486.416349] CIFS: [generic_ip_connect:3400] sndbuf 16384 rcvbuf 131072 rcvtimeo 0x1b58
+[ 2486.421608] CIFS: [cifs_get_smb_ses:2337] VFS: in cifs_get_smb_ses as Xid: 1 with uid: 0
+[ 2486.421621] CIFS: [cifs_demultiplex_thread:1252] Demultiplex PID: 923
+[ 2486.423579] CIFS: [cifs_get_smb_ses:2391] Existing smb sess not found
+[ 2486.423590] CIFS: [SMB2_negotiate:1046] Negotiate protocol
+[ 2486.428270] CIFS: [wait_for_free_credits:621] wait_for_free_credits: remove 1 credits total=0
+[ 2486.430338] CIFS: [__smb_send_rqst:339] Sending smb: smb_len=244
+[ 2486.529589] CIFS: [cifs_demultiplex_thread:1286] RFC1002 header 0x138
+[ 2486.531463] CIFS: [smb2_calc_size:430] SMB2 data length 96 offset 128
+[ 2486.533222] CIFS: [smb2_calc_size:448] SMB2 len 224
+[ 2486.534563] CIFS: [get_neg_ctxt_len:128] length of negcontexts 88 pad 0
+[ 2486.536369] CIFS: [smb2_add_credits:181] smb2_add_credits: added 1 credits total=1
+[ 2486.538466] CIFS: [cifs_sync_mid_result:880] cifs_sync_mid_result: cmd=0 mid=0 state=64
+[ 2486.540668] CIFS: [cifs_small_buf_release:241] Null buffer passed to cifs_small_buf_release
+[ 2486.542935] CIFS: [SMB2_negotiate:1169] mode 0x1
+[ 2486.544210] CIFS: [SMB2_negotiate:1180] negotiated smb3.1.1 dialect
+[ 2486.545925] CIFS: [smb311_decode_neg_context:906] decoding 3 negotiate contexts
+[ 2486.547910] CIFS: [decode_encrypt_ctx:819] decode SMB3.11 encryption neg context of len 4
+[ 2486.550117] CIFS: [decode_encrypt_ctx:834] SMB311 cipher type:2
+[ 2486.551782] CIFS: [cifs_setup_session:4233] cifs_setup_session: channel connect bitmap: 0x1
+[ 2486.554049] CIFS: [cifs_setup_session:4307] Security Mode: 0x1 Capabilities: 0x300044 TimeAdjust: 0
+[ 2486.556504] CIFS: [SMB2_sess_setup:1901] Session Setup
+[ 2486.557923] CIFS: [SMB2_select_sec:1872] sess setup type 2
+[ 2486.559470] CIFS: [SMB2_sess_alloc_buffer:1478] Fresh session. Previous: 0
+[ 2486.561344] CIFS: [wait_for_free_credits:621] wait_for_free_credits: remove 1 credits total=0
+[ 2486.563668] CIFS: [__smb_send_rqst:339] Sending smb: smb_len=136
+[ 2486.574744] CIFS: [cifs_demultiplex_thread:1286] RFC1002 header 0x104
+[ 2486.576517] CIFS: [smb2_calc_size:430] SMB2 data length 188 offset 72
+[ 2486.578281] CIFS: [smb2_calc_size:448] SMB2 len 260
+[ 2486.579635] CIFS: [smb2_add_credits:181] smb2_add_credits: added 130 credits total=130
+[ 2486.581829] CIFS: [cifs_sync_mid_result:880] cifs_sync_mid_result: cmd=1 mid=1 state=64
+[ 2486.584019] CIFS: [map_smb2_to_linux_error:2472] Mapping SMB2 status code 0xc0000016 to POSIX err -5
+[ 2486.586498] CIFS: [cifs_small_buf_release:241] Null buffer passed to cifs_small_buf_release
+[ 2486.588763] CIFS: [decode_ntlmssp_challenge:911] decode_ntlmssp_challenge: negotiate=0xe2088235 challenge=0xe0828235
+[ 2486.591587] CIFS: [SMB2_sess_auth_rawntlmssp_negotiate:1759] rawntlmssp session setup challenge phase
+[ 2486.594071] CIFS: [SMB2_sess_alloc_buffer:1478] Fresh session. Previous: 0
+[ 2486.630783] CIFS: [wait_for_free_credits:621] wait_for_free_credits: remove 1 credits total=129
+[ 2486.633168] CIFS: [__smb_send_rqst:339] Sending smb: smb_len=390
+[ 2486.730749] CIFS: [cifs_demultiplex_thread:1286] RFC1002 header 0x48
+[ 2486.732538] CIFS: [smb2_calc_size:430] SMB2 data length 0 offset 72
+[ 2486.734294] CIFS: [smb2_calc_size:448] SMB2 len 73
+[ 2486.735651] CIFS: [smb2_add_credits:181] smb2_add_credits: added 130 credits total=259
+[ 2486.737849] CIFS: [cifs_sync_mid_result:880] cifs_sync_mid_result: cmd=1 mid=2 state=64
+[ 2486.740437] CIFS: [cifs_small_buf_release:241] Null buffer passed to cifs_small_buf_release
+[ 2486.743112] CIFS: [generate_smb3signingkey:498] VFS: generate_smb3signingkey: dumping generated AES session keys
+[ 2486.746335] CIFS: [generate_smb3signingkey:503] VFS: Session Id    01 00 00 00 00 00 00 00
+[ 2486.748974] CIFS: [generate_smb3signingkey:505] VFS: Cipher type   2
+[ 2486.751013] CIFS: [generate_smb3signingkey:506] VFS: Session Key   49 f0 91 82 4d ad e4 96 8c b6 36 00 18 60 b6 94
+[ 2486.754298] CIFS: [generate_smb3signingkey:508] VFS: Signing Key   ff 6a 7f c4 64 16 87 bf fd fd 29 2c ba c6 98 6a
+[ 2486.757573] CIFS: [generate_smb3signingkey:517] VFS: ServerIn Key  f3 7c 26 4e db ae 30 45 df 2d 5e 3e d3 6a 35 9b
+[ 2486.760898] CIFS: [generate_smb3signingkey:519] VFS: ServerOut Key e6 52 97 0e 46 1d 62 61 d1 f5 f8 ae 73 21 e1 c4
+[ 2486.764173] CIFS: [SMB2_sess_establish_session:1594] SMB2/3 session established successfully
+[ 2486.766871] CIFS: [cifs_chan_clear_need_reconnect:117] Cleared reconnect bitmask for chan 0; now 0x0
+[ 2486.769784] CIFS: [cifs_setup_ipc:2037] VFS: in cifs_setup_ipc as Xid: 2 with uid: 0
+[ 2486.772258] CIFS: [SMB2_tcon:2034] TCON
+[ 2486.773521] CIFS: [wait_for_free_credits:621] wait_for_free_credits: remove 1 credits total=258
+[ 2486.776357] CIFS: [__smb_send_rqst:339] Sending smb: smb_len=118
+[ 2486.791048] CIFS: [cifs_demultiplex_thread:1286] RFC1002 header 0x50
+[ 2486.792858] CIFS: [smb2_calc_size:448] SMB2 len 80
+[ 2486.794184] CIFS: [smb2_add_credits:181] smb2_add_credits: added 64 credits total=320
+[ 2486.796351] CIFS: [cifs_sync_mid_result:880] cifs_sync_mid_result: cmd=3 mid=3 state=64
+[ 2486.798538] CIFS: [cifs_small_buf_release:241] Null buffer passed to cifs_small_buf_release
+[ 2486.800810] CIFS: [SMB2_tcon:2114] connection to pipe share
+[ 2486.802329] CIFS: [cifs_setup_ipc:2042] VFS: leaving cifs_setup_ipc (xid = 2) rc = 0
+[ 2486.804432] CIFS: [cifs_setup_ipc:2050] IPC tcon rc=0 ipc tid=0x1
+[ 2486.806104] CIFS: [cifs_get_smb_ses:2511] VFS: leaving cifs_get_smb_ses (xid = 1) rc = 0
+[ 2486.808305] CIFS: [cache_refresh_path:691] cache_refresh_path: search path: \192.168.53.209\TEST
+[ 2486.810681] CIFS: [get_dfs_referral:658] get_dfs_referral: ipc=\\192.168.53.209\IPC$ referral=\192.168.53.209\TEST
+[ 2486.813478] CIFS: [smb2_get_dfs_refer:2947] smb2_get_dfs_refer: path: \192.168.53.209\TEST
+[ 2486.815718] CIFS: [SMB2_ioctl:3414] SMB2 IOCTL
+[ 2486.816951] CIFS: [wait_for_free_credits:621] wait_for_free_credits: remove 1 credits total=319
+[ 2486.819315] CIFS: [__smb_send_rqst:339] Sending smb: smb_len=168
+[ 2486.828388] CIFS: [cifs_demultiplex_thread:1286] RFC1002 header 0x49
+[ 2486.830264] CIFS: [smb2_calc_size:430] SMB2 data length 0 offset 0
+[ 2486.832051] CIFS: [smb2_calc_size:448] SMB2 len 73
+[ 2486.833443] CIFS: [smb2_add_credits:181] smb2_add_credits: added 10 credits total=329
+[ 2486.835739] CIFS: [cifs_sync_mid_result:880] cifs_sync_mid_result: cmd=11 mid=4 state=64
+[ 2486.837951] CIFS: [map_smb2_to_linux_error:2472] Mapping SMB2 status code 0xc000019c to POSIX err -95
+[ 2486.840447] CIFS: [cifs_small_buf_release:241] Null buffer passed to cifs_small_buf_release
+[ 2486.842725] CIFS: [dfs_mount_share:289] dfs_mount_share: no dfs referral for \192.168.53.209\TEST: -95
+[ 2486.845242] CIFS: [dfs_mount_share:291] dfs_mount_share: assuming non-dfs mount...
+[ 2486.847343] CIFS: [cifs_get_tcon:2768] VFS: in cifs_get_tcon as Xid: 3 with uid: 0
+[ 2486.849411] CIFS: [SMB2_tcon:2034] TCON
+[ 2486.850492] CIFS: [wait_for_free_credits:621] wait_for_free_credits: remove 1 credits total=328
+[ 2486.852915] CIFS: [__smb_send_rqst:339] Sending smb: smb_len=118
+[ 2486.866065] CIFS: [cifs_demultiplex_thread:1286] RFC1002 header 0x50
+[ 2486.867932] CIFS: [smb2_calc_size:448] SMB2 len 80
+[ 2486.869355] CIFS: [smb2_add_credits:181] smb2_add_credits: added 64 credits total=392
+[ 2486.871596] CIFS: [cifs_sync_mid_result:880] cifs_sync_mid_result: cmd=3 mid=5 state=64
+[ 2486.873817] CIFS: [cifs_small_buf_release:241] Null buffer passed to cifs_small_buf_release
+[ 2486.876077] CIFS: [SMB2_tcon:2110] connection to disk share
+[ 2486.877608] CIFS: [cifs_get_tcon:2771] VFS: leaving cifs_get_tcon (xid = 3) rc = 0
+[ 2486.879660] CIFS: [cifs_get_tcon:2772] Tcon rc = 0
+[ 2486.880991] CIFS: [SMB2_open:3192] create/open
+[ 2486.882233] CIFS: [wait_for_free_credits:621] wait_for_free_credits: remove 1 credits total=391
+[ 2486.884590] CIFS: [__smb_send_rqst:339] Sending smb: smb_len=156
+[ 2486.899243] CIFS: [cifs_demultiplex_thread:1286] RFC1002 header 0xd0
+[ 2486.901030] CIFS: [smb2_calc_size:430] SMB2 data length 56 offset 152
+[ 2486.902791] CIFS: [smb2_calc_size:448] SMB2 len 208
+[ 2486.904136] CIFS: [smb2_add_credits:181] smb2_add_credits: added 10 credits total=401
+[ 2486.906305] CIFS: [cifs_sync_mid_result:880] cifs_sync_mid_result: cmd=5 mid=6 state=64
+[ 2486.908493] CIFS: [cifs_small_buf_release:241] Null buffer passed to cifs_small_buf_release
+[ 2486.910758] CIFS: [SMB2_ioctl:3414] SMB2 IOCTL
+[ 2486.912003] CIFS: [wait_for_free_credits:621] wait_for_free_credits: remove 1 credits total=400
+[ 2486.914368] CIFS: [__smb_send_rqst:339] Sending smb: smb_len=125
+[ 2486.923300] CIFS: [cifs_demultiplex_thread:1286] RFC1002 header 0x1a0
+[ 2486.925102] CIFS: [smb2_calc_size:430] SMB2 data length 304 offset 112
+[ 2486.926892] CIFS: [smb2_calc_size:448] SMB2 len 416
+[ 2486.928239] CIFS: [smb2_add_credits:181] smb2_add_credits: added 10 credits total=410
+[ 2486.930406] CIFS: [cifs_sync_mid_result:880] cifs_sync_mid_result: cmd=11 mid=7 state=64
+[ 2486.932649] CIFS: [cifs_small_buf_release:241] Null buffer passed to cifs_small_buf_release
+[ 2486.934923] CIFS: [parse_server_interfaces:689] parse_server_interfaces: ipv4 192.168.53.209
+[ 2486.937210] CIFS: [parse_server_interfaces:748] parse_server_interfaces: adding iface 0
+[ 2486.939374] CIFS: [parse_server_interfaces:749] parse_server_interfaces: speed 4294967295000000 bps
+[ 2486.941826] CIFS: [parse_server_interfaces:750] parse_server_interfaces: capabilities 0x00000000
+[ 2486.944194] CIFS: [parse_server_interfaces:703] parse_server_interfaces: ipv6 fe80:0000:0000:0000:48ea:b222:6606:730b
+[ 2486.947049] CIFS: [parse_server_interfaces:748] parse_server_interfaces: adding iface 1
+[ 2486.949215] CIFS: [parse_server_interfaces:749] parse_server_interfaces: speed 4294967295000000 bps
+[ 2486.951660] CIFS: [parse_server_interfaces:750] parse_server_interfaces: capabilities 0x00000000
+[ 2486.954042] CIFS: [cifs_chan_update_iface:432] referencing primary channel iface: 192.168.53.209
+[ 2486.956429] CIFS: [build_qfs_info_req:5824] Query FSInfo level 5
+[ 2486.957899] CIFS: [wait_for_free_credits:621] wait_for_free_credits: remove 1 credits total=409
+[ 2486.959760] CIFS: [__smb_send_rqst:339] Sending smb: smb_len=109
+[ 2486.969730] CIFS: [cifs_demultiplex_thread:1286] RFC1002 header 0x5c
+[ 2486.971557] CIFS: [smb2_calc_size:430] SMB2 data length 20 offset 72
+[ 2486.973377] CIFS: [smb2_calc_size:448] SMB2 len 92
+[ 2486.974771] CIFS: [smb2_add_credits:181] smb2_add_credits: added 10 credits total=419
+[ 2486.976988] CIFS: [cifs_sync_mid_result:880] cifs_sync_mid_result: cmd=16 mid=8 state=64
+[ 2486.979207] CIFS: [cifs_small_buf_release:241] Null buffer passed to cifs_small_buf_release
+[ 2486.981460] CIFS: [build_qfs_info_req:5824] Query FSInfo level 4
+[ 2486.983112] CIFS: [wait_for_free_credits:621] wait_for_free_credits: remove 1 credits total=418
+[ 2486.985479] CIFS: [__smb_send_rqst:339] Sending smb: smb_len=109
+[ 2486.995938] CIFS: [cifs_demultiplex_thread:1286] RFC1002 header 0x50
+[ 2486.997813] CIFS: [smb2_calc_size:430] SMB2 data length 8 offset 72
+[ 2486.999575] CIFS: [smb2_calc_size:448] SMB2 len 80
+[ 2487.000912] CIFS: [smb2_add_credits:181] smb2_add_credits: added 10 credits total=428
+[ 2487.003073] CIFS: [cifs_sync_mid_result:880] cifs_sync_mid_result: cmd=16 mid=9 state=64
+[ 2487.005282] CIFS: [cifs_small_buf_release:241] Null buffer passed to cifs_small_buf_release
+[ 2487.007554] CIFS: [build_qfs_info_req:5824] Query FSInfo level 1
+[ 2487.009206] CIFS: [wait_for_free_credits:621] wait_for_free_credits: remove 1 credits total=427
+[ 2487.011615] CIFS: [__smb_send_rqst:339] Sending smb: smb_len=109
+[ 2487.022074] CIFS: [cifs_demultiplex_thread:1286] RFC1002 header 0x62
+[ 2487.023940] CIFS: [smb2_calc_size:430] SMB2 data length 26 offset 72
+[ 2487.025778] CIFS: [smb2_calc_size:448] SMB2 len 98
+[ 2487.027174] CIFS: [smb2_add_credits:181] smb2_add_credits: added 10 credits total=437
+[ 2487.029432] CIFS: [cifs_sync_mid_result:880] cifs_sync_mid_result: cmd=16 mid=10 state=64
+[ 2487.031681] CIFS: [cifs_small_buf_release:241] Null buffer passed to cifs_small_buf_release
+[ 2487.033945] CIFS: [build_qfs_info_req:5824] Query FSInfo level 11
+[ 2487.035613] CIFS: [wait_for_free_credits:621] wait_for_free_credits: remove 1 credits total=436
+[ 2487.037979] CIFS: [__smb_send_rqst:339] Sending smb: smb_len=109
+[ 2487.048242] CIFS: [cifs_demultiplex_thread:1286] RFC1002 header 0x64
+[ 2487.050093] CIFS: [smb2_calc_size:430] SMB2 data length 28 offset 72
+[ 2487.051903] CIFS: [smb2_calc_size:448] SMB2 len 100
+[ 2487.053309] CIFS: [smb2_add_credits:181] smb2_add_credits: added 10 credits total=446
+[ 2487.055557] CIFS: [cifs_sync_mid_result:880] cifs_sync_mid_result: cmd=16 mid=11 state=64
+[ 2487.057877] CIFS: [cifs_small_buf_release:241] Null buffer passed to cifs_small_buf_release
+[ 2487.060213] CIFS: [__SMB2_close:3600] Close
+[ 2487.061417] CIFS: [wait_for_free_credits:621] wait_for_free_credits: remove 1 credits total=445
+[ 2487.063873] CIFS: [__smb_send_rqst:339] Sending smb: smb_len=92
+[ 2487.072436] CIFS: [cifs_demultiplex_thread:1286] RFC1002 header 0x7c
+[ 2487.074206] CIFS: [smb2_calc_size:448] SMB2 len 124
+[ 2487.075563] CIFS: [smb2_add_credits:181] smb2_add_credits: added 10 credits total=455
+[ 2487.077749] CIFS: [cifs_sync_mid_result:880] cifs_sync_mid_result: cmd=6 mid=12 state=64
+[ 2487.080046] CIFS: [cifs_small_buf_release:241] Null buffer passed to cifs_small_buf_release
+[ 2487.082435] CIFS: [cifs_is_path_remote:3873] cifs_is_path_remote: full_path: 
+[ 2487.084500] CIFS: [SMB2_open:3192] create/open
+[ 2487.085789] CIFS: [wait_for_free_credits:621] wait_for_free_credits: remove 1 credits total=454
+[ 2487.088254] CIFS: [__smb_send_rqst:339] Sending smb: smb_len=156
+[ 2487.102529] CIFS: [cifs_demultiplex_thread:1286] RFC1002 header 0xd0
+[ 2487.104363] CIFS: [smb2_calc_size:430] SMB2 data length 56 offset 152
+[ 2487.106199] CIFS: [smb2_calc_size:448] SMB2 len 208
+[ 2487.107616] CIFS: [smb2_add_credits:181] smb2_add_credits: added 10 credits total=464
+[ 2487.109965] CIFS: [cifs_sync_mid_result:880] cifs_sync_mid_result: cmd=5 mid=13 state=64
+[ 2487.112302] CIFS: [cifs_small_buf_release:241] Null buffer passed to cifs_small_buf_release
+[ 2487.114738] CIFS: [__SMB2_close:3600] Close
+[ 2487.115978] CIFS: [wait_for_free_credits:621] wait_for_free_credits: remove 1 credits total=463
+[ 2487.118502] CIFS: [__smb_send_rqst:339] Sending smb: smb_len=92
+[ 2487.126723] CIFS: [cifs_demultiplex_thread:1286] RFC1002 header 0x7c
+[ 2487.128500] CIFS: [smb2_calc_size:448] SMB2 len 124
+[ 2487.129889] CIFS: [smb2_add_credits:181] smb2_add_credits: added 10 credits total=473
+[ 2487.132074] CIFS: [cifs_sync_mid_result:880] cifs_sync_mid_result: cmd=6 mid=14 state=64
+[ 2487.134421] CIFS: [cifs_small_buf_release:241] Null buffer passed to cifs_small_buf_release
+[ 2487.136843] CIFS: [SMB2_open:3192] create/open
+[ 2487.138132] CIFS: [wait_for_free_credits:621] wait_for_free_credits: remove 1 credits total=472
+[ 2487.140629] CIFS: [__smb_send_rqst:339] Sending smb: smb_len=156
+[ 2487.154810] CIFS: [cifs_demultiplex_thread:1286] RFC1002 header 0xd0
+[ 2487.156577] CIFS: [smb2_calc_size:430] SMB2 data length 56 offset 152
+[ 2487.158344] CIFS: [smb2_calc_size:448] SMB2 len 208
+[ 2487.159694] CIFS: [smb2_add_credits:181] smb2_add_credits: added 10 credits total=482
+[ 2487.161851] CIFS: [cifs_sync_mid_result:880] cifs_sync_mid_result: cmd=5 mid=15 state=64
+[ 2487.164183] CIFS: [cifs_small_buf_release:241] Null buffer passed to cifs_small_buf_release
+[ 2487.166589] CIFS: [__SMB2_close:3600] Close
+[ 2487.167833] CIFS: [wait_for_free_credits:621] wait_for_free_credits: remove 1 credits total=481
+[ 2487.170379] CIFS: [__smb_send_rqst:339] Sending smb: smb_len=92
+[ 2487.178574] CIFS: [cifs_demultiplex_thread:1286] RFC1002 header 0x7c
+[ 2487.180420] CIFS: [smb2_calc_size:448] SMB2 len 124
+[ 2487.181820] CIFS: [smb2_add_credits:181] smb2_add_credits: added 10 credits total=491
+[ 2487.184011] CIFS: [cifs_sync_mid_result:880] cifs_sync_mid_result: cmd=6 mid=16 state=64
+[ 2487.186222] CIFS: [cifs_small_buf_release:241] Null buffer passed to cifs_small_buf_release
+[ 2487.188481] CIFS: [cifs_try_adding_channels:165] ses already at max_channels (1), nothing to open
+[ 2487.190894] CIFS: [cifs_mount:3927] VFS: leaving cifs_mount (xid = 0) rc = 0
+[ 2487.193075] CIFS: [cifs_root_iget:1677] VFS: in cifs_root_iget as Xid: 4 with uid: 0
+[ 2487.195219] CIFS: [wait_for_free_credits:621] wait_for_free_credits: remove 3 credits total=488
+[ 2487.197606] CIFS: [__smb_send_rqst:339] Sending smb: smb_len=348
+[ 2487.233502] CIFS: [cifs_demultiplex_thread:1286] RFC1002 header 0x200
+[ 2487.235340] CIFS: [smb2_calc_size:430] SMB2 data length 56 offset 152
+[ 2487.237217] CIFS: [smb2_calc_size:448] SMB2 len 208
+[ 2487.238612] CIFS: [smb2_add_credits:181] smb2_add_credits: added 0 credits total=488
+[ 2487.240867] CIFS: [smb2_calc_size:430] SMB2 data length 102 offset 72
+[ 2487.242745] CIFS: [smb2_calc_size:448] SMB2 len 174
+[ 2487.244163] CIFS: [smb2_add_credits:181] smb2_add_credits: added 0 credits total=488
+[ 2487.246347] CIFS: [smb2_calc_size:448] SMB2 len 124
+[ 2487.247768] CIFS: [smb2_add_credits:181] smb2_add_credits: added 30 credits total=518
+[ 2487.250081] CIFS: [cifs_sync_mid_result:880] cifs_sync_mid_result: cmd=5 mid=17 state=64
+[ 2487.252297] CIFS: [cifs_sync_mid_result:880] cifs_sync_mid_result: cmd=16 mid=18 state=64
+[ 2487.254519] CIFS: [cifs_sync_mid_result:880] cifs_sync_mid_result: cmd=6 mid=19 state=64
+[ 2487.256735] CIFS: [cifs_small_buf_release:241] Null buffer passed to cifs_small_buf_release
+[ 2487.258999] CIFS: [cifs_small_buf_release:241] Null buffer passed to cifs_small_buf_release
+[ 2487.261256] CIFS: [cifs_small_buf_release:241] Null buffer passed to cifs_small_buf_release
+[ 2487.263515] CIFS: [cifs_iget:1618] looking for uniqueid=2
+[ 2487.265160] CIFS: [cifs_revalidate_cache:101] cifs_revalidate_cache: revalidating inode 2
+[ 2487.267404] CIFS: [cifs_revalidate_cache:105] cifs_revalidate_cache: inode 2 is new
+[ 2487.269498] CIFS: [cifs_root_iget:1727] VFS: leaving cifs_root_iget (xid = 4) rc = 0
+[ 2487.271605] CIFS: [cifs_get_root:906] Get root dentry for 
+[ 2487.273115] CIFS: [cifs_smb3_do_mount:1028] dentry root is: 00000000741c6e94
+

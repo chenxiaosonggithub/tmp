@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>SMB3 POSIX Extensions</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="" />
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#posix-fsa-posix-extensions-to-ms-fsa"
+id="toc-posix-fsa-posix-extensions-to-ms-fsa">[POSIX-FSA] POSIX
+Extensions to MS-FSA</a>
+<ul>
+<li><a href="#published-version" id="toc-published-version">Published
+Version</a></li>
+<li><a href="#previous-versions" id="toc-previous-versions">Previous
+Versions</a></li>
+</ul></li>
+<li><a href="#introduction" id="toc-introduction">1
+Introduction</a></li>
+<li><a href="#algorithm-details" id="toc-algorithm-details">2 Algorithm
+Details</a>
+<ul>
+<li><a href="#object-store-details" id="toc-object-store-details">2.1
+Object Store Details</a>
+<ul>
+<li><a href="#abstract-data-model" id="toc-abstract-data-model">2.1.1
+Abstract Data Model</a>
+<ul>
+<li><a href="#per-volume" id="toc-per-volume">2.1.1.1 Per
+Volume</a></li>
+<li><a href="#per-open" id="toc-per-open">2.1.1.6 Per Open</a></li>
+<li><a href="#per-byterangelock" id="toc-per-byterangelock">2.1.1.7 Per
+ByteRangeLock</a></li>
+</ul></li>
+<li><a href="#initialization" id="toc-initialization">2.1.3
+Initialization</a></li>
+<li><a href="#common-algorithms" id="toc-common-algorithms">2.1.4 Common
+Algorithms</a>
+<ul>
+<li><a
+href="#algorithm-for-detecting-if-open-files-exist-under-a-directory"
+id="toc-algorithm-for-detecting-if-open-files-exist-under-a-directory">2.1.4.2
+Algorithm for Detecting If Open Files Exist Under a Directory</a></li>
+<li><a
+href="#algorithm-for-determining-if-a-range-access-conflicts-with-byte-range-locks"
+id="toc-algorithm-for-determining-if-a-range-access-conflicts-with-byte-range-locks">2.1.4.10
+Algorithm for Determining If a Range Access Conflicts with Byte-Range
+Locks</a></li>
+</ul></li>
+<li><a href="#higher-layer-triggered-events"
+id="toc-higher-layer-triggered-events">2.1.5 Higher-Layer Triggered
+Events</a>
+<ul>
+<li><a href="#server-requests-an-open-of-a-file"
+id="toc-server-requests-an-open-of-a-file">2.1.5.1 Server Requests an
+Open of a File</a></li>
+<li><a href="#server-requests-closing-an-open"
+id="toc-server-requests-closing-an-open">2.1.5.4 Server Requests Closing
+an Open</a></li>
+<li><a href="#server-requests-querying-a-directory"
+id="toc-server-requests-querying-a-directory">2.1.5.5 Server Requests
+Querying a Directory</a></li>
+<li><a href="#server-requests-a-byte-range-lock"
+id="toc-server-requests-a-byte-range-lock">2.1.5.7 Server Requests a
+Byte-Range Lock</a></li>
+<li><a href="#server-requests-an-unlock-of-a-byte-range"
+id="toc-server-requests-an-unlock-of-a-byte-range">2.1.5.8 Server
+Requests an Unlock of a Byte-Range</a></li>
+<li><a href="#server-requests-a-query-of-file-information"
+id="toc-server-requests-a-query-of-file-information">2.1.5.11 Server
+Requests a Query of File Information</a></li>
+<li><a href="#server-requests-a-query-of-file-system-information"
+id="toc-server-requests-a-query-of-file-system-information">2.1.5.12
+Server Requests a Query of File System Information</a></li>
+<li><a href="#server-requests-setting-of-security-information"
+id="toc-server-requests-setting-of-security-information">2.1.5.16 Server
+Requests Setting of Security Information</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+<style>
+body {
+  font-family: Segoe UI,SegoeUI,Helvetica Neue,Helvetica,Arial,sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+.protocol-table p {
+  margin-top: 0px;
+}
+p {
+  margin-top: 1rem;
+  margin-bottom: 0px;
+}
+table {
+  margin-top: 1rem;
+  border: 1px solid #EAEAEA;
+  border-collapse: collapse;
+  width: 100%;
+}
+table, th, td {
+  border-radius: 3px;
+  padding: 5px;
+}
+th, td {
+  font-size: .875rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  border: 1px solid #bbb;
+  color: #2a2a2a;
+}
+th {
+  background-color: #ededed;
+  font-weight: 600;
+}
+td {
+  padding: 0.5rem;
+  background-color: #fff;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-weight: bold;
+  color: #000;
+}
+h1 {
+  font-size: 28px;
+}
+h2 {
+  font-size: 24px;
+}
+h3 {
+  font-size: 20px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 14px;
+}
+</style>
+<h1 id="posix-fsa-posix-extensions-to-ms-fsa">[POSIX-FSA] POSIX
+Extensions to MS-FSA</h1>
+<p>Specifies the MS-FSA extensions for supporting POSIX compliant
+operating systems.</p>
+<h2 id="published-version">Published Version</h2>
+<table class="protocol-table"><thead>
+  <tr>
+   <th>
+   <p>Date</p>
+   </th>
+   <th>
+   <p>Protocol Revision</p>
+   </th>
+   <th>
+   <p>Revision Class</p>
+   </th>
+   <th>
+   <p>Downloads</p>
+   </th>
+  </tr>
+ </thead><tbody><tr>
+  <td>
+  <p></p>
+  </td>
+  <td>
+  <p></p>
+  </td>
+  <td>
+  <p></p>
+  </td>
+  <td>
+  <p>
+  </p>
+  </td>
+</tr></tbody></table>
+<h2 id="previous-versions">Previous Versions</h2>
+<table class="protocol-table"><thead>
+  <tr>
+   <th>
+   <p>Date</p>
+   </th>
+   <th>
+   <p>Protocol Revision</p>
+   </th>
+   <th>
+   <p>Revision Class</p>
+   </th>
+   <th>
+   <p>Downloads</p>
+   </th>
+  </tr>
+ </thead><tbody>
+ <tr>
+  <td>
+  <p></p>
+  </td>
+  <td>
+  <p></p>
+  </td>
+  <td>
+  <p></p>
+  </td>
+  <td>
+  <p>
+  </p>
+  </td>
+ </tr>
+</tbody></table>
+<h1 id="introduction">1 Introduction</h1>
+<p>The SMB3 POSIX Extensions are extensions to enable POSIX compliant
+operating systems to better interoperate with SMB3 servers and storage
+appliances. This document specified the extensions to the <a
+href="https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-fscc">[MS-FSA]</a>
+specification. Popular servers such as Samba, Windows Server and others
+support SMB3 by default. These extensions are already implemented in
+multiple clients and servers.</p>
+<h1 id="algorithm-details">2 Algorithm Details</h1>
+<h2 id="object-store-details">2.1 Object Store Details</h2>
+<h3 id="abstract-data-model">2.1.1 Abstract Data Model</h3>
+<h4 id="per-volume">2.1.1.1 Per Volume</h4>
+<p>SupportsPosix: A boolean that is TRUE if the volume's filesystem
+supports POSIX semantics.</p>
+<h4 id="per-open">2.1.1.6 Per Open</h4>
+<p>IsPosix: A boolean that is TRUE if this open is a POSIX open.</p>
+<h4 id="per-byterangelock">2.1.1.7 Per ByteRangeLock</h4>
+<p>IsPosix: A boolean that is TRUE if this lock is a POSIX lock.</p>
+<h3 id="initialization">2.1.3 Initialization</h3>
+<p>Volume.SupportsPosix MUST be initialized in an implementation defined
+manner.</p>
+<h3 id="common-algorithms">2.1.4 Common Algorithms</h3>
+<h4
+id="algorithm-for-detecting-if-open-files-exist-under-a-directory">2.1.4.2
+Algorithm for Detecting If Open Files Exist Under a Directory</h4>
+<p>When processing the following condition from MS-FSA 2.1.4.2:</p>
+<ul>
+<li>If Link.File.OpenList contains an <strong>Open</strong> with
+Open.Link equal to <strong>Link</strong></li>
+</ul>
+<p>and the condition is TRUE, the object store MUST additionally
+check:</p>
+<ul>
+<li>If <strong>Open.IsPosix</strong> is TRUE, ignore this open.</li>
+</ul>
+<h4
+id="algorithm-for-determining-if-a-range-access-conflicts-with-byte-range-locks">2.1.4.10
+Algorithm for Determining If a Range Access Conflicts with Byte-Range
+Locks</h4>
+<h3 id="higher-layer-triggered-events">2.1.5 Higher-Layer Triggered
+Events</h3>
+<h4 id="server-requests-an-open-of-a-file">2.1.5.1 Server Requests an
+Open of a File</h4>
+<h5 id="creation-of-a-new-file">2.1.5.1.1 Creation of a New File</h5>
+<h5 id="open-of-an-existing-file">2.1.5.1.2 Open of an Existing
+File</h5>
+<h4 id="server-requests-closing-an-open">2.1.5.4 Server Requests Closing
+an Open</h4>
+<h4 id="server-requests-querying-a-directory">2.1.5.5 Server Requests
+Querying a Directory</h4>
+<h5 id="directory-information-queries">2.1.5.5.3 Directory Information
+Queries</h5>
+<h6 id="fileposixinformation">2.1.5.5.3.1 FilePosixInformation</h6>
+<h4 id="server-requests-a-byte-range-lock">2.1.5.7 Server Requests a
+Byte-Range Lock</h4>
+<h4 id="server-requests-an-unlock-of-a-byte-range">2.1.5.8 Server
+Requests an Unlock of a Byte-Range</h4>
+<h4 id="server-requests-a-query-of-file-information">2.1.5.11 Server
+Requests a Query of File Information</h4>
+<h5 id="fileposixinformation-1">2.1.5.11.1 FilePosixInformation</h5>
+<h4 id="server-requests-a-query-of-file-system-information">2.1.5.12
+Server Requests a Query of File System Information</h4>
+<h5 id="filefsposixinformation">2.1.5.12.1 FileFsPosixInformation</h5>
+<h4 id="server-requests-setting-of-security-information">2.1.5.16 Server
+Requests Setting of Security Information</h4>
+</body>
+</html>

@@ -1,0 +1,96 @@
+[  131.265432] kmemleak: Automatic memory scanning thread ended
+...
+[  150.754818] =============================================================================
+[  150.755800] BUG cifs_small_rq (Not tainted): Objects remaining on __kmem_cache_shutdown()
+[  150.755800] -----------------------------------------------------------------------------
+
+[  150.755800] Object 0x00000000d47521be @offset=14336
+[  150.755800] Slab 0x00000000d5dfe033 objects=32 used=1 fp=0x000000009b1c0571 flags=0xfffffc0000240(workingset|head|node=0|zone=1|lastcpupid=0x1fffff)
+[  150.755800] Disabling lock debugging due to kernel taint
+[  150.755800] ------------[ cut here ]------------
+[  150.755800] WARNING: mm/slub.c:1251 at __kmem_cache_shutdown+0x34e/0x440, CPU#0: modprobe/1577
+[  150.755800] Modules linked in: cifs(-) rdma_cm ib_cm iw_cm ib_core libarc4 nls_ucs2_utils cifs_md4
+[  150.755800] CPU: 0 UID: 0 PID: 1577 Comm: modprobe Tainted: G    B               6.19.0-rc7+ #4 PREEMPT(voluntary) 
+[  150.755800] Tainted: [B]=BAD_PAGE
+[  150.755800] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.17.0-0-gb52ca86e094d-prebuilt.qemu.org 04/01/2014
+[  150.755800] RIP: 0010:__kmem_cache_shutdown+0x34e/0x440
+[  150.755800] Code: df 48 c7 c6 0f b8 3b 85 e8 2f ed 3a ff e9 15 fe ff ff 48 8b 7d a8 e8 b1 ed 3a ff bf 05 00 00 00 be 01 00 00 00 e8 b2 9c 5f ff <0f> 0b e9 b3 fd ff ff 0f 0b e9 53 ff ff ff f6 43 20 02 0f 84 88 fe
+[  150.755800] RSP: 0018:ffff888019b47d58 EFLAGS: 00010093
+[  150.755800] RAX: ffffffff814844c9 RBX: ffff8880556e21c0 RCX: ffff88810c6da580
+[  150.755800] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+[  150.755800] RBP: ffff888019b47dd0 R08: ffffffff876fcbe7 R09: 1ffffffff0edf97c
+[  150.755800] R10: dffffc0000000000 R11: fffffbfff0edf97d R12: ffff8880163e0000
+[  150.755800] R13: ffffea000058f810 R14: 0000000000003e00 R15: ffffea0004550e10
+[  150.755800] FS:  00007f320f102740(0000) GS:ffff8881929d5000(0000) knlGS:0000000000000000
+[  150.755800] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  150.755800] CR2: 000055f4160a6f20 CR3: 000000000b8d8000 CR4: 0000000000350ef0
+[  150.755800] Call Trace:
+[  150.755800]  <TASK>
+[  150.755800]  ? cifs_destroy_request_bufs+0x3e/0x50 [cifs]
+[  150.755800]  kmem_cache_destroy+0x94/0x190
+[  150.755800]  cifs_destroy_request_bufs+0x3e/0x50 [cifs]
+[  150.755800]  cleanup_module+0x4e/0x540 [cifs]
+[  150.755800]  __se_sys_delete_module+0x278/0x400
+[  150.755800]  __x64_sys_delete_module+0x5f/0x70
+[  150.755800]  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  150.755800]  x64_sys_call+0x2299/0x2ff0
+[  150.755800]  do_syscall_64+0x89/0x350
+[  150.755800]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  150.755800] RIP: 0033:0x7f320eb2b02b
+[  150.755800] Code: 73 01 c3 48 8b 0d ed ad 0c 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 b0 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d bd ad 0c 00 f7 d8 64 89 01 48
+[  150.755800] RSP: 002b:00007ffcc6bc27a8 EFLAGS: 00000206 ORIG_RAX: 00000000000000b0
+[  150.755800] RAX: ffffffffffffffda RBX: 0000560b19a6ae50 RCX: 00007f320eb2b02b
+[  150.755800] RDX: 0000000000000000 RSI: 0000000000000800 RDI: 0000560b19a6aeb8
+[  150.755800] RBP: 00007ffcc6bc27d0 R08: 1999999999999999 R09: 0000000000000000
+[  150.755800] R10: 00007f320eba5fe0 R11: 0000000000000206 R12: 0000000000000000
+[  150.755800] R13: 00007ffcc6bc2800 R14: 0000000000000000 R15: 0000000000000000
+[  150.755800]  </TASK>
+[  150.755800] irq event stamp: 25466
+[  150.755800] hardirqs last  enabled at (25465): [<ffffffff847e9f1b>] _raw_spin_unlock_irq+0x2b/0x50
+[  150.755800] hardirqs last disabled at (25466): [<ffffffff847e9d70>] _raw_spin_lock_irq+0x20/0x60
+[  150.755800] softirqs last  enabled at (25366): [<ffffffff8149d7ec>] __irq_exit_rcu+0x5c/0x1d0
+[  150.755800] softirqs last disabled at (25359): [<ffffffff8149d7ec>] __irq_exit_rcu+0x5c/0x1d0
+[  150.755800] ---[ end trace 0000000000000000 ]---
+[  150.868636] ------------[ cut here ]------------
+[  150.869931] kmem_cache_destroy cifs_small_rq: Slab cache still has objects when called from cifs_destroy_request_bufs+0x3e/0x50 [cifs]
+[  150.870876] WARNING: mm/slab_common.c:532 at kmem_cache_destroy+0x16b/0x190, CPU#0: modprobe/1577
+[  150.876743] Modules linked in: cifs(-) rdma_cm ib_cm iw_cm ib_core libarc4 nls_ucs2_utils cifs_md4
+[  150.879307] CPU: 0 UID: 0 PID: 1577 Comm: modprobe Tainted: G    B   W           6.19.0-rc7+ #4 PREEMPT(voluntary) 
+[  150.882374] Tainted: [B]=BAD_PAGE, [W]=WARN
+[  150.883579] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.17.0-0-gb52ca86e094d-prebuilt.qemu.org 04/01/2014
+[  150.886820] RIP: 0010:kmem_cache_destroy+0x179/0x190
+[  150.888225] Code: 06 48 89 de e8 68 ca 12 00 5b 41 5e 41 5f 5d e9 4d 38 a9 02 cc 48 8d 3d a5 62 d7 04 48 8b 53 78 48 c7 c6 d5 62 3d 85 4c 89 f1 <67> 48 0f b9 3a e9 27 ff ff ff 66 66 66 66 2e 0f 1f 84 00 00 00 00
+[  150.893433] RSP: 0018:ffff888019b47de0 EFLAGS: 00010246
+[  150.894976] RAX: 0000000000000000 RBX: ffff8880556e21c0 RCX: ffffffffa082913e
+[  150.897038] RDX: ffff88811297adc0 RSI: ffffffff853d62d5 RDI: ffffffff86ad0a60
+[  150.899097] RBP: ffff888019b47df8 R08: ffff88811a049f83 R09: 1ffff110234093f0
+[  150.901124] R10: dffffc0000000000 R11: ffffed10234093f1 R12: dffffc0000000000
+[  150.903176] R13: ffff88810c6da580 R14: ffffffffa082913e R15: 0000000000000001
+[  150.905208] FS:  00007f320f102740(0000) GS:ffff8881929d5000(0000) knlGS:0000000000000000
+[  150.907510] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  150.909191] CR2: 000055f4160a6f20 CR3: 000000000b8d8000 CR4: 0000000000350ef0
+[  150.911210] Call Trace:
+[  150.911972]  <TASK>
+[  150.912598]  cifs_destroy_request_bufs+0x3e/0x50 [cifs]
+[  150.915052]  cleanup_module+0x4e/0x540 [cifs]
+[  150.917291]  __se_sys_delete_module+0x278/0x400
+[  150.918645]  __x64_sys_delete_module+0x5f/0x70
+[  150.919952]  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  150.921435]  x64_sys_call+0x2299/0x2ff0
+[  150.923124]  do_syscall_64+0x89/0x350
+[  150.924213]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  150.925664] RIP: 0033:0x7f320eb2b02b
+[  150.926749] Code: 73 01 c3 48 8b 0d ed ad 0c 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 b0 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d bd ad 0c 00 f7 d8 64 89 01 48
+[  150.931954] RSP: 002b:00007ffcc6bc27a8 EFLAGS: 00000206 ORIG_RAX: 00000000000000b0
+[  150.934093] RAX: ffffffffffffffda RBX: 0000560b19a6ae50 RCX: 00007f320eb2b02b
+[  150.936132] RDX: 0000000000000000 RSI: 0000000000000800 RDI: 0000560b19a6aeb8
+[  150.938200] RBP: 00007ffcc6bc27d0 R08: 1999999999999999 R09: 0000000000000000
+[  150.940284] R10: 00007f320eba5fe0 R11: 0000000000000206 R12: 0000000000000000
+[  150.942334] R13: 00007ffcc6bc2800 R14: 0000000000000000 R15: 0000000000000000
+[  150.944502]  </TASK>
+[  150.945212] irq event stamp: 25466
+[  150.946225] hardirqs last  enabled at (25465): [<ffffffff847e9f1b>] _raw_spin_unlock_irq+0x2b/0x50
+[  150.948794] hardirqs last disabled at (25466): [<ffffffff847e9d70>] _raw_spin_lock_irq+0x20/0x60
+[  150.951267] softirqs last  enabled at (25366): [<ffffffff8149d7ec>] __irq_exit_rcu+0x5c/0x1d0
+[  150.953698] softirqs last disabled at (25359): [<ffffffff8149d7ec>] __irq_exit_rcu+0x5c/0x1d0
+[  150.956132] ---[ end trace 0000000000000000 ]---

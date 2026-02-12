@@ -1,0 +1,43 @@
+From 6b3d8561ad9374dd5d6ae0bb41f13e2ce31ae485 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Wed, 15 Jan 2025 02:11:59 +0000
+Subject: [PATCH 4/5] nfs: fix build errors when CONFIG_ENFS=m &&
+ CONFIG_NFS_FS=y
+
+Fix the following build errors:
+
+  ld: fs/nfs/client.c:258: undefined reference to `nfs_free_multi_path_client'
+  ld: fs/nfs/client.c:379: undefined reference to `nfs_multipath_client_match'
+  ld: fs/nfs/client.c:689: undefined reference to `nfs_create_multi_path_client'
+  ld: fs/nfs/super.c:789: undefined reference to `nfs_multipath_show_client_info'
+  ld: fs/nfs/super.c:1012: undefined reference to `enfs_free_mount_options'
+  ld: fs/nfs/super.c:886: undefined reference to `nfs_multipath_show_client_info'
+  ld: fs/nfs/super.c:1693: undefined reference to `enfs_check_mount_parse_info'
+  ld: fs/nfs/super.c:2411: undefined reference to `enfs_free_mount_options'
+  ld: fs/nfs/super.c:2394: undefined reference to `nfs_remount_iplist'
+  ld: fs/nfs/nfs4client.c:540: undefined reference to `nfs4_multipath_client_match'
+  ld: fs/nfs/nfs4client.c:228: undefined reference to `nfs_create_multi_path_client'
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/nfs/Makefile | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/fs/nfs/Makefile b/fs/nfs/Makefile
+index 19d0ac2ba3b8..8a9892236194 100644
+--- a/fs/nfs/Makefile
++++ b/fs/nfs/Makefile
+@@ -12,7 +12,9 @@ nfs-y 			:= client.o dir.o file.o getroot.o inode.o super.o \
+ nfs-$(CONFIG_ROOT_NFS)	+= nfsroot.o
+ nfs-$(CONFIG_SYSCTL)	+= sysctl.o
+ nfs-$(CONFIG_NFS_FSCACHE) += fscache.o fscache-index.o
+-nfs-$(CONFIG_ENFS) += enfs_adapter.o
++ifneq ($(CONFIG_ENFS),)
++	nfs-y += enfs_adapter.o
++endif
+ 
+ obj-$(CONFIG_NFS_V2) += nfsv2.o
+ nfsv2-y := nfs2super.o proc.o nfs2xdr.o
+-- 
+2.34.1
+

@@ -1,0 +1,76 @@
+Apr 11 10:55:25 SZU-BPL1078302 kernel: [48614967.076641] -pid- flgs status -client- --rqstp- -timeout ---ops--
+Apr 11 10:55:25 SZU-BPL1078302 kernel: [48614967.076670] 57533 4201      0 159b39a4   (null)        0 43ff7b9f nfsv4 WRITE a:rpc_prepare_task [sunrpc] q:ForeChannel Slot table
+... 省略455个
+Apr 11 10:56:00 SZU-BPL1078302 kernel: [48615002.848858] RPC:       registering /proc/net/rpc
+Apr 11 10:56:00 SZU-BPL1078302 kernel: [48615002.870811] NFS: nfs_weak_revalidate: inode 64 is valid
+Apr 11 10:56:00 SZU-BPL1078302 kernel: [48615002.870818] nfs_encode_fh: max fh len 32 inode 00000000a4825e59 parent           (null)
+Apr 11 10:56:00 SZU-BPL1078302 kernel: [48615002.870820] nfs_encode_fh: result fh fileid 64 mode 16895 size 12
+Apr 11 10:56:00 SZU-BPL1078302 kernel: [48615002.870840] NFS: nfs_weak_revalidate: inode 64 is valid
+Apr 11 10:56:00 SZU-BPL1078302 kernel: [48615002.870883] NFS: nfs_weak_revalidate: inode 3752919104 is valid
+Apr 11 10:56:00 SZU-BPL1078302 kernel: [48615002.870885] nfs_encode_fh: max fh len 32 inode 000000000e3b8d8f parent           (null)
+Apr 11 10:56:00 SZU-BPL1078302 kernel: [48615002.870887] nfs_encode_fh: result fh fileid 3752919104 mode 16895 size 15
+Apr 11 10:56:00 SZU-BPL1078302 kernel: [48615002.870905] NFS: nfs_weak_revalidate: inode 3752919104 is valid
+Apr 11 10:56:00 SZU-BPL1078302 kernel: [48615002.870992] NFS: nfs_weak_revalidate: inode 3791847488 is valid
+Apr 11 10:56:00 SZU-BPL1078302 kernel: [48615002.870994] nfs_encode_fh: max fh len 32 inode 000000002ee0c54b parent           (null)
+Apr 11 10:56:00 SZU-BPL1078302 kernel: [48615002.870995] nfs_encode_fh: result fh fileid 3791847488 mode 16895 size 15
+Apr 11 10:56:00 SZU-BPL1078302 kernel: [48615002.871013] NFS: nfs_weak_revalidate: inode 3791847488 is valid
+Apr 11 10:56:25 SZU-BPL1078302 kernel: [48615027.083746] -pid- flgs status -client- --rqstp- -timeout ---ops--
+Apr 11 10:56:25 SZU-BPL1078302 kernel: [48615027.083774] 57533 4201      0 159b39a4   (null)        0 43ff7b9f nfsv4 WRITE a:rpc_prepare_task [sunrpc] q:ForeChannel Slot table
+... 省略455个
+Apr 11 11:02:09 SZU-BPL1078302 kernel: [48615371.859747] -pid- flgs status -client- --rqstp- -timeout ---ops--
+Apr 11 11:02:09 SZU-BPL1078302 kernel: [48615371.859777] 57533 4201      0 159b39a4   (null)        0 43ff7b9f nfsv4 WRITE a:rpc_prepare_task [sunrpc] q:ForeChannel Slot table
+... 省略456个
+Apr 11 11:02:19 SZU-BPL1078302 kernel: [48615381.496732] NFS: nfs mount opts='vers=4.2,addr=172.22.249.180,clientaddr=30.22.70.103'
+Apr 11 11:02:19 SZU-BPL1078302 kernel: [48615381.496737] NFS:   parsing nfs mount option 'vers=4.2'
+Apr 11 11:02:19 SZU-BPL1078302 kernel: [48615381.496742] NFS:   parsing nfs mount option 'addr=172.22.249.180'
+Apr 11 11:02:19 SZU-BPL1078302 kernel: [48615381.496748] NFS:   parsing nfs mount option 'clientaddr=30.22.70.103'
+Apr 11 11:02:19 SZU-BPL1078302 kernel: [48615381.496752] NFS: MNTPATH: '/cnas_puf_rf_id122282_vol2001_prd'
+Apr 11 11:02:19 SZU-BPL1078302 kernel: [48615381.496756] --> nfs4_try_mount()
+Apr 11 11:02:19 SZU-BPL1078302 kernel: [48615381.496853] RPC:       creating nfs client for 172.22.249.180 (xprt 00000000eb5e5346)
+Apr 11 11:02:19 SZU-BPL1078302 kernel: [48615381.496901] RPC:       creating UNIX authenticator for client 000000005477c815
+Apr 11 11:02:19 SZU-BPL1078302 kernel: [48615381.496905] --> _nfs41_proc_secinfo_no_name
+Apr 11 11:02:19 SZU-BPL1078302 kernel: [48615381.496907] RPC:       new task initialized, procpid 3533510
+Apr 11 11:02:19 SZU-BPL1078302 kernel: [48615381.496908] RPC:       allocated task 00000000ffe5f41d
+Apr 11 11:02:19 SZU-BPL1078302 kernel: [48615381.496912] RPC: 58025 __rpc_execute flags=0x4080
+Apr 11 11:02:19 SZU-BPL1078302 kernel: [48615381.496914] --> nfs41_call_sync_prepare data->seq_server 0000000047dd51b0
+Apr 11 11:02:19 SZU-BPL1078302 kernel: [48615381.496916] RPC: 58025 sleep_on(queue "ForeChannel Slot table" time 16448827365)
+Apr 11 11:02:19 SZU-BPL1078302 kernel: [48615381.496962] RPC: 58025 added to queue 0000000013cd5ced "ForeChannel Slot table"
+Apr 11 11:02:19 SZU-BPL1078302 kernel: [48615381.496963] RPC: 58025 sync task going to sleep
+Apr 11 11:02:31 SZU-BPL1078302 kernel: [48615393.144451] RPC:       unregistering /proc/net/rpc
+Apr 11 11:02:37 SZU-BPL1078302 kernel: [48615399.592696] RPC: 58025 got signal
+Apr 11 11:02:37 SZU-BPL1078302 kernel: [48615399.592700] RPC: 58025 __rpc_wake_up_task (now 16448831889)
+Apr 11 11:02:37 SZU-BPL1078302 kernel: [48615399.592705] RPC: 58025 removed from queue 0000000013cd5ced "ForeChannel Slot table"
+Apr 11 11:02:37 SZU-BPL1078302 kernel: [48615399.592706] RPC:       __rpc_wake_up_task done
+Apr 11 11:02:37 SZU-BPL1078302 kernel: [48615399.592707] RPC: 58025 sync task resuming
+Apr 11 11:02:37 SZU-BPL1078302 kernel: [48615399.592709] RPC: 58025 return -512, status -512
+Apr 11 11:02:37 SZU-BPL1078302 kernel: [48615399.592710] RPC: 58025 release task
+Apr 11 11:02:37 SZU-BPL1078302 kernel: [48615399.592713] RPC:       rpc_release_client(000000005477c815)
+Apr 11 11:02:37 SZU-BPL1078302 kernel: [48615399.592715] RPC: 58025 freeing task
+Apr 11 11:02:37 SZU-BPL1078302 kernel: [48615399.592717] <-- _nfs41_proc_secinfo_no_name status=-512
+Apr 11 11:02:37 SZU-BPL1078302 kernel: [48615399.592720] nfs4_get_rootfh: getroot error = 512
+Apr 11 11:02:37 SZU-BPL1078302 kernel: [48615399.624255] RPC:       shutting down nfs client for 172.22.249.180
+Apr 11 11:02:37 SZU-BPL1078302 kernel: [48615399.624257] RPC:       rpc_release_client(000000005477c815)
+Apr 11 11:02:37 SZU-BPL1078302 kernel: [48615399.624259] RPC:       destroying nfs client for 172.22.249.180
+Apr 11 11:02:37 SZU-BPL1078302 kernel: [48615399.624352] <-- nfs4_try_mount() = -512 [error]
+Apr 11 11:02:44 SZU-BPL1078302 kernel: [48615406.133626] -pid- flgs status -client- --rqstp- -timeout ---ops--
+Apr 11 11:02:44 SZU-BPL1078302 kernel: [48615406.133653] 57533 4201      0 159b39a4   (null)        0 43ff7b9f nfsv4 WRITE a:rpc_prepare_task [sunrpc] q:ForeChannel Slot table
+... 省略456个
+Apr 11 11:02:52 SZU-BPL1078302 kernel: [48615414.187560] NFS: nfs mount opts='vers=4.2,addr=172.22.249.180,clientaddr=30.22.70.103'
+Apr 11 11:02:52 SZU-BPL1078302 kernel: [48615414.187565] NFS:   parsing nfs mount option 'vers=4.2'
+Apr 11 11:02:52 SZU-BPL1078302 kernel: [48615414.187570] NFS:   parsing nfs mount option 'addr=172.22.249.180'
+Apr 11 11:02:52 SZU-BPL1078302 kernel: [48615414.187575] NFS:   parsing nfs mount option 'clientaddr=30.22.70.103'
+Apr 11 11:02:52 SZU-BPL1078302 kernel: [48615414.187580] NFS: MNTPATH: '/cnas_puf_rf_id122282_vol2001_prd'
+Apr 11 11:02:52 SZU-BPL1078302 kernel: [48615414.187583] --> nfs4_try_mount()
+Apr 11 11:02:52 SZU-BPL1078302 kernel: [48615414.187663] RPC:       creating nfs client for 172.22.249.180 (xprt 00000000eb5e5346)
+Apr 11 11:02:52 SZU-BPL1078302 kernel: [48615414.187694] RPC:       creating UNIX authenticator for client 0000000070bb5254
+Apr 11 11:02:52 SZU-BPL1078302 kernel: [48615414.187697] --> _nfs41_proc_secinfo_no_name
+Apr 11 11:02:52 SZU-BPL1078302 kernel: [48615414.187700] RPC:       new task initialized, procpid 3533927
+Apr 11 11:02:52 SZU-BPL1078302 kernel: [48615414.187701] RPC:       allocated task 00000000909bdce6
+Apr 11 11:02:52 SZU-BPL1078302 kernel: [48615414.187704] RPC: 58026 __rpc_execute flags=0x4080
+Apr 11 11:02:52 SZU-BPL1078302 kernel: [48615414.187706] --> nfs41_call_sync_prepare data->seq_server 000000009bf5cacf
+Apr 11 11:02:52 SZU-BPL1078302 kernel: [48615414.187708] RPC: 58026 sleep_on(queue "ForeChannel Slot table" time 16448835537)
+Apr 11 11:02:52 SZU-BPL1078302 kernel: [48615414.187751] RPC: 58026 added to queue 0000000013cd5ced "ForeChannel Slot table"
+Apr 11 11:02:52 SZU-BPL1078302 kernel: [48615414.187752] RPC: 58026 sync task going to sleep
+Apr 11 11:03:44 SZU-BPL1078302 kernel: [48615466.140347] -pid- flgs status -client- --rqstp- -timeout ---ops--
+Apr 11 11:03:44 SZU-BPL1078302 kernel: [48615466.140375] 58026 4080      0 70bb5254   (null)        0 4b2acad9 nfsv4 SECINFO_NO_NAME a:rpc_prepare_task [sunrpc] q:ForeChannel Slot table
+... 省略457个

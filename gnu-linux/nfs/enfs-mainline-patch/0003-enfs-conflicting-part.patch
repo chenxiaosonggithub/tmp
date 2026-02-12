@@ -1,0 +1,290 @@
+From d0400d13f929384c6c3e17d431b6c75ae88ce1c9 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Mon, 15 Sep 2025 21:36:45 +0800
+Subject: [PATCH 3/3] enfs: conflicting part
+
+Latest commit of the enfs is:
+960de6c02b85 ("nfs/enfs: remove duplicate definitions")
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/nfs/client.c             |  1 +
+ fs/nfs/fs_context.c         | 18 +++++++++++
+ fs/nfs/internal.h           |  3 ++
+ fs/nfs/nfs3xdr.c            | 62 ++++++++++++++++++++++++++++++++++++-
+ include/linux/nfs_fs_sb.h   |  6 ++++
+ include/linux/sunrpc/clnt.h |  4 ++-
+ net/sunrpc/clnt.c           |  4 ++-
+ net/sunrpc/xprt.c           |  4 +++
+ net/sunrpc/xprtmultipath.c  |  2 ++
+ 9 files changed, 101 insertions(+), 3 deletions(-)
+
+diff --git a/fs/nfs/client.c b/fs/nfs/client.c
+index e4e5b8444449..d56764ccc0a4 100644
+--- a/fs/nfs/client.c
++++ b/fs/nfs/client.c
+@@ -254,6 +254,7 @@ void nfs_free_client(struct nfs_client *clp)
+ 	put_nfs_version(clp->cl_nfs_mod);
+ 	kfree(clp->cl_hostname);
+ 	kfree(clp->cl_acceptor);
++	nfs_free_multi_path_client(clp);
+ 	kfree_rcu(clp, rcu);
+ }
+ EXPORT_SYMBOL_GPL(nfs_free_client);
+diff --git a/fs/nfs/fs_context.c b/fs/nfs/fs_context.c
+index 86d9654b5c38..0fdcea947da4 100644
+--- a/fs/nfs/fs_context.c
++++ b/fs/nfs/fs_context.c
+@@ -98,6 +98,13 @@ enum nfs_param {
+ 	Opt_xprtsec,
+ 	Opt_cert_serial,
+ 	Opt_privkey_serial,
++#if IS_ENABLED(CONFIG_ENFS)
++	Opt_remote_addrs,
++	Opt_local_iplist,
++	Opt_enfs_info,
++	Opt_slookupcache,
++	Opt_alookupcache,
++#endif
+ };
+ 
+ enum {
+@@ -225,6 +232,13 @@ static const struct fs_parameter_spec nfs_fs_parameters[] = {
+ 	fsparam_string("xprtsec",	Opt_xprtsec),
+ 	fsparam_s32("cert_serial",	Opt_cert_serial),
+ 	fsparam_s32("privkey_serial",	Opt_privkey_serial),
++#if IS_ENABLED(CONFIG_ENFS)
++	fsparam_string("localaddrs",	Opt_local_iplist),
++	fsparam_string("remoteaddrs",	Opt_remote_addrs),
++	fsparam_string("enfs_info",	Opt_enfs_info),
++	fsparam_string("slookupcache",	Opt_slookupcache),
++	fsparam_string("alookupcache",	Opt_alookupcache),
++#endif
+ 	{}
+ };
+ 
+@@ -1609,6 +1623,10 @@ static int nfs_fs_context_validate(struct fs_context *fc)
+ 	if (ret < 0)
+ 		return ret;
+ 
++#if IS_ENABLED(CONFIG_ENFS)
++	nfs_multipath_set_mount_data(&ctx->enfs_option, ctx->nfs_server.hostname);
++#endif
++
+ 	/* Load the NFS protocol module if we haven't done so yet */
+ 	if (!ctx->nfs_mod) {
+ 		nfs_mod = find_nfs_version(ctx->version);
+diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
+index 158b8c9e6a7e..cdc971163739 100644
+--- a/fs/nfs/internal.h
++++ b/fs/nfs/internal.h
+@@ -157,6 +157,9 @@ struct nfs_fs_context {
+ 		struct nfs_fattr	*fattr;
+ 		unsigned int		inherited_bsize;
+ 	} clone_data;
++#if IS_ENABLED(CONFIG_ENFS)
++	void *enfs_option; /* struct multipath_mount_options */
++#endif
+ };
+ 
+ enum nfs_lock_status {
+diff --git a/fs/nfs/nfs3xdr.c b/fs/nfs/nfs3xdr.c
+index 59a7790d72ca..7e4845decf4f 100644
+--- a/fs/nfs/nfs3xdr.c
++++ b/fs/nfs/nfs3xdr.c
+@@ -25,7 +25,10 @@
+ 
+ #include "nfstrace.h"
+ #include "internal.h"
+-
++#if IS_ENABLED(CONFIG_ENFS)
++#include "linux/nfs_xdr.h"
++#define EXTEND_CMD_MAX_BUF_LEN 819200 /* 800K */
++#endif
+ #define NFSDBG_FACILITY		NFSDBG_XDR
+ 
+ /*
+@@ -2455,6 +2458,63 @@ static int nfs3_xdr_dec_setacl3res(struct rpc_rqst *req,
+ 
+ #endif  /* CONFIG_NFS_V3_ACL */
+ 
++#if IS_ENABLED(CONFIG_ENFS)
++static int nfs3_xdr_dec_extend3res(struct rpc_rqst *req, struct xdr_stream *xdr,
++	void *result)
++{
++	enum nfs_stat status;
++	int			error;
++
++	struct nfs_extend_xdr_arg *decArg = result;
++	int			length;
++	__be32 *p;
++
++	// check the status
++	error = decode_nfsstat3(xdr, &status);
++
++	if (unlikely(error))
++		goto out;
++
++	if (status != NFS3_OK)
++		goto out_default;
++
++	// important for upgrade scenario
++	memset(decArg->pBuf, '\0', decArg->maxsize);
++
++	// decode legth of opaque data
++	p = xdr_inline_decode(xdr, 4);
++
++	if (unlikely(!p))
++		return -EIO;
++
++	length = be32_to_cpup(p++);
++
++	if (unlikely(length > decArg->maxsize)) {
++		dprintk("NFS: response size (%u) too big , max_size is %d\n", length,
++			decArg->maxsize);
++		return -E2BIG;
++	}
++
++	// decode length number of bytes
++	p = xdr_inline_decode(xdr, length);
++
++	if (unlikely(!p))
++		return -EIO;
++
++	decArg->buflen = length;
++	memcpy(decArg->pBuf, p, decArg->buflen);
++	dprintk("NFS: extend response size (%u)\n", length);
++
++
++out:
++	return error;
++
++
++out_default:
++	return nfs_stat_to_errno(status);
++}
++#endif
++
+ #define PROC(proc, argtype, restype, timer)				\
+ [NFS3PROC_##proc] = {							\
+ 	.p_proc      = NFS3PROC_##proc,					\
+diff --git a/include/linux/nfs_fs_sb.h b/include/linux/nfs_fs_sb.h
+index 9716e22dd041..87a2c1e57145 100644
+--- a/include/linux/nfs_fs_sb.h
++++ b/include/linux/nfs_fs_sb.h
+@@ -135,6 +135,9 @@ struct nfs_client {
+ 	nfs_uuid_t		cl_uuid;
+ 	struct work_struct	cl_local_probe_work;
+ #endif /* CONFIG_NFS_LOCALIO */
++#if IS_ENABLED(CONFIG_ENFS)
++	void *cl_multipath_data; /* multi path private structure (struct multipath_client_info *) */
++#endif
+ };
+ 
+ /*
+@@ -291,6 +294,9 @@ struct nfs_server {
+ 	bool			has_sec_mnt_opts;
+ 	struct kobject		kobj;
+ 	struct rcu_head		rcu;
++#if IS_ENABLED(CONFIG_ENFS)
++	int  enfs_flags;  /* ENFS_SERVER_FLAG_xx */
++#endif
+ };
+ 
+ /* Server capabilities */
+diff --git a/include/linux/sunrpc/clnt.h b/include/linux/sunrpc/clnt.h
+index fa213cd80d4c..995c85d60d94 100644
+--- a/include/linux/sunrpc/clnt.h
++++ b/include/linux/sunrpc/clnt.h
+@@ -64,7 +64,8 @@ struct rpc_clnt {
+ 				cl_autobind : 1,/* use getport() */
+ 				cl_chatty   : 1,/* be verbose */
+ 				cl_shutdown : 1,/* rpc immediate -EIO */
+-				cl_netunreach_fatal : 1;
++				cl_netunreach_fatal : 1,
++				cl_enfs     : 1;/* be enfs */
+ 						/* Treat ENETUNREACH errors as fatal */
+ 	struct xprtsec_parms	cl_xprtsec;	/* transport security policy */
+ 
+@@ -154,6 +155,7 @@ struct rpc_create_args {
+ 	struct xprtsec_parms	xprtsec;
+ 	unsigned long		connect_timeout;
+ 	unsigned long		reconnect_timeout;
++	void *multipath_option;
+ };
+ 
+ struct rpc_add_xprt_test {
+diff --git a/net/sunrpc/clnt.c b/net/sunrpc/clnt.c
+index f8d87e0de036..4c0237676f49 100644
+--- a/net/sunrpc/clnt.c
++++ b/net/sunrpc/clnt.c
+@@ -964,6 +964,8 @@ void rpc_shutdown_client(struct rpc_clnt *clnt)
+ 	wait_event_timeout(destroy_wait,
+ 			   atomic_read(&clnt->cl_task_count) == 0, 1 * HZ);
+ 
++	rpc_multipath_ops_releas_clnt(clnt);
++
+ 	rpc_release_client(clnt);
+ }
+ EXPORT_SYMBOL_GPL(rpc_shutdown_client);
+@@ -2300,7 +2302,7 @@ call_connect_status(struct rpc_task *task)
+ 	/* Check for timeouts before looping back to call_bind */
+ 	task->tk_action = call_bind;
+ out:
+-	rpc_check_timeout(task);
++	rpc_check_timeout(task, true);
+ }
+ 
+ /*
+diff --git a/net/sunrpc/xprt.c b/net/sunrpc/xprt.c
+index 744de1ec1ae2..1b7b0320168e 100644
+--- a/net/sunrpc/xprt.c
++++ b/net/sunrpc/xprt.c
+@@ -283,6 +283,7 @@ int xprt_reserve_xprt(struct rpc_xprt *xprt, struct rpc_task *task)
+ out_unlock:
+ 	xprt_clear_locked(xprt);
+ out_sleep:
++	rpc_multipath_ops_adjust_task_timeout(task, NULL);
+ 	task->tk_status = -EAGAIN;
+ 	if (RPC_IS_SOFT(task) || RPC_IS_SOFTCONN(task))
+ 		rpc_sleep_on_timeout(&xprt->sending, task, NULL,
+@@ -349,6 +350,7 @@ int xprt_reserve_xprt_cong(struct rpc_xprt *xprt, struct rpc_task *task)
+ out_unlock:
+ 	xprt_clear_locked(xprt);
+ out_sleep:
++	rpc_multipath_ops_adjust_task_timeout(task, NULL);
+ 	task->tk_status = -EAGAIN;
+ 	if (RPC_IS_SOFT(task) || RPC_IS_SOFTCONN(task))
+ 		rpc_sleep_on_timeout(&xprt->sending, task, NULL,
+@@ -1903,6 +1905,8 @@ xprt_request_init(struct rpc_task *task)
+ 	req->rq_seqno_count = 0;
+ 	xprt_init_majortimeo(task, req, task->tk_client->cl_timeout);
+ 
++	rpc_multipath_ops_init_task_req(task, req);
++
+ 	trace_xprt_reserve(req);
+ }
+ 
+diff --git a/net/sunrpc/xprtmultipath.c b/net/sunrpc/xprtmultipath.c
+index d463ad6afdee..c8312bcceab2 100644
+--- a/net/sunrpc/xprtmultipath.c
++++ b/net/sunrpc/xprtmultipath.c
+@@ -92,6 +92,7 @@ void rpc_xprt_switch_remove_xprt(struct rpc_xprt_switch *xps,
+ 	spin_unlock(&xps->xps_lock);
+ 	xprt_put(xprt);
+ }
++EXPORT_SYMBOL(rpc_xprt_switch_remove_xprt);
+ 
+ /**
+  * rpc_xprt_switch_get_main_xprt - Get the 'main' xprt for an xprt switch.
+@@ -649,6 +650,7 @@ struct rpc_xprt *xprt_iter_get_xprt(struct rpc_xprt_iter *xpi)
+ 	rcu_read_unlock();
+ 	return xprt;
+ }
++EXPORT_SYMBOL(xprt_iter_get_xprt);
+ 
+ /**
+  * xprt_iter_get_next - Returns the next rpc_xprt following the cursor
+-- 
+2.43.0
+

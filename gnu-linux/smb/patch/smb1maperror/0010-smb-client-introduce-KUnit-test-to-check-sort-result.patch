@@ -1,0 +1,40 @@
+From d9ff4addd12250aa0099f7ed2171454eb1b7eb53 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Sun, 7 Dec 2025 12:21:35 +0800
+Subject: [PATCH 10/30] smb/client: introduce KUnit test to check sort result
+ of ntstatus_to_dos_map array
+
+The KUnit test are executed when cifs.ko is loaded.
+
+The ntstatus_to_dos_map_check_sort() checks whether the array is properly
+sorted.
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/client/netmisc_test.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/fs/smb/client/netmisc_test.c b/fs/smb/client/netmisc_test.c
+index f937b7b3d3f2..a08011621742 100644
+--- a/fs/smb/client/netmisc_test.c
++++ b/fs/smb/client/netmisc_test.c
+@@ -28,11 +28,16 @@ static void __array ## _check_sort(struct kunit *test)			\
+ 	KUNIT_EXPECT_EQ(test, true, is_sorted);				\
+ }
+ 
++/* ntstatus_to_dos_map_check_sort */
++DEFINE_CHECK_SORT_FUNC(ntstatus_to_dos_map, ntstatus_to_dos_num, ntstatus);
++
+ /*
+  * Before running these test cases, the smb_init_maperror()
+  * function is called first.
+  */
+ static struct kunit_case maperror_test_cases[] = {
++	/* check sort */
++	KUNIT_CASE(ntstatus_to_dos_map_check_sort),
+ 	{}
+ };
+ 
+-- 
+2.43.0
+

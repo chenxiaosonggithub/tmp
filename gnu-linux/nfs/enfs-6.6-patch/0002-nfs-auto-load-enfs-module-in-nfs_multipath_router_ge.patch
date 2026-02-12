@@ -1,0 +1,82 @@
+From 63f3212acaf7d824edca8bf66404792cfd932bca Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Sat, 19 Jul 2025 23:53:23 +0800
+Subject: [PATCH 2/2] nfs: auto load enfs module in nfs_multipath_router_get()
+
+Creating nfs multipath client will fail when race happens between
+mount and remove enfs module (Link[1]). Fix this by automatically
+loading enfs module in nfs_multipath_router_get().
+
+Link[1]: https://chenxiaosong.com/course/nfs/issue/openeuler-enfs-create-client-fail.html
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/nfs/enfs_adapter.c | 38 ++++++++++++++++++--------------------
+ 1 file changed, 18 insertions(+), 20 deletions(-)
+
+diff --git a/fs/nfs/enfs_adapter.c b/fs/nfs/enfs_adapter.c
+index 0236aee59023..767db90fff2c 100644
+--- a/fs/nfs/enfs_adapter.c
++++ b/fs/nfs/enfs_adapter.c
+@@ -61,15 +61,31 @@ EXPORT_SYMBOL_GPL(enfs_adapter_unregister);
+ 
+ struct enfs_adapter_ops *nfs_multipath_router_get(void)
+ {
++	int rc;
+ 	struct enfs_adapter_ops *ops;
+ 
+ 	rcu_read_lock();
+ 	ops = rcu_dereference(enfs_adapter);
+ 	if (ops == NULL) {
+ 		rcu_read_unlock();
+-		return NULL;
++
++		dfprintk(MOUNT, "eNFS:   prepare loading eNFS module[%s]\n",
++			 __func__);
++		mutex_lock(&enfs_module_mutex);
++		rc = request_module("enfs");
++		mutex_unlock(&enfs_module_mutex);
++
++		if (rc) {
++			dfprintk(MOUNT,
++				 "eNFS:   failed loading eNFS module[%s]\n",
++				 __func__);
++			return NULL;
++		}
++
++		rcu_read_lock();
++		ops = rcu_dereference(enfs_adapter);
+ 	}
+-	if (!try_module_get(ops->owner))
++	if (ops && !try_module_get(ops->owner))
+ 		ops = NULL;
+ 	rcu_read_unlock();
+ 	return ops;
+@@ -98,25 +114,7 @@ int enfs_parse_mount_options(enum nfsmultipathoptions option, char *str,
+ 	int rc;
+ 	struct enfs_adapter_ops *ops;
+ 
+-	// whether insert enfs.ko or not
+ 	ops = nfs_multipath_router_get();
+-	if (ops == NULL) {
+-		dfprintk(MOUNT, "eNFS:   prepare loading eNFS module[%s]\n",
+-			 __func__);
+-		mutex_lock(&enfs_module_mutex);
+-		rc = request_module("enfs");
+-		mutex_unlock(&enfs_module_mutex);
+-
+-		if (rc) {
+-			dfprintk(MOUNT,
+-				 "eNFS:   failed loading eNFS module[%s]\n",
+-				 __func__);
+-			return -EOPNOTSUPP;
+-		}
+-
+-		ops = nfs_multipath_router_get();
+-	}
+-
+ 	if ((ops == NULL) || (ops->parse_mount_options == NULL) ||
+ 	    !is_valid_option(option)) {
+ 		nfs_multipath_router_put(ops);
+-- 
+2.43.0
+

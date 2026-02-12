@@ -1,0 +1,8 @@
+[ 1008.133240] CIFS: [SMB2_echo:4247] In echo request for conn_id 1
+[ 1008.135184] CIFS: [wait_for_free_credits:621] wait_for_free_credits: remove 1 credits total=0
+[ 1008.137586] CIFS: [__smb_send_rqst:339] Sending smb: smb_len=72
+[ 1008.139300] CIFS: [cifs_echo_request:616] \\192.168.53.209 send echo request: rc = 0
+[ 1008.147383] CIFS: [cifs_demultiplex_thread:1286] RFC1002 header 0x44
+[ 1008.149309] CIFS: [smb2_calc_size:448] SMB2 len 68
+[ 1008.150647] CIFS: [smb2_add_credits:181] smb2_add_credits: added 1 credits total=1
+

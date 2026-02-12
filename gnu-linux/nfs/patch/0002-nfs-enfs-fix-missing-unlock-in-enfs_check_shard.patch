@@ -1,0 +1,53 @@
+From 6d5ff744b65f012b0e777858ed74843ba92e7396 Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Tue, 4 Nov 2025 09:20:02 +0800
+Subject: [PATCH 2/2] nfs/enfs: fix missing unlock in enfs_check_shard
+
+kylin inclusion
+category: bugfix
+bugzilla: todo
+
+--------------------------------
+
+Deadlock and hungtask will occur when kmalloc() fails. Fix this by adding
+the missing unlock.
+
+Fixes: 01f8a9007306 ("nfs/enfs: recreate shard info when re-adding enfs module")
+Co-developed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+---
+ fs/nfs/enfs/shard_route.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/fs/nfs/enfs/shard_route.c b/fs/nfs/enfs/shard_route.c
+index a4db0e0d88a4..7aa42824b19e 100644
+--- a/fs/nfs/enfs/shard_route.c
++++ b/fs/nfs/enfs/shard_route.c
+@@ -1771,7 +1771,7 @@ static int enfs_check_shard(void)
+ 	shard_check_wq = create_workqueue("shard_check_wq");
+ 	if (!shard_check_wq) {
+ 		ret = -ENOMEM;
+-		goto out;
++		goto out2;
+ 	}
+ 
+ 	rcu_read_lock();
+@@ -1799,12 +1799,13 @@ static int enfs_check_shard(void)
+ 			info->server = server;
+ 			queue_work(shard_check_wq, &info->work);
+ 		}
++out:
+ 		spin_unlock(&nn->nfs_client_lock);
+ 		break;
+ 	}
+ 	rcu_read_unlock();
+ 
+-out:
++out2:
+ 	// free shard_check_wq in enfs_shard_exit() if an error occurs
+ 	return ret;
+ }
+-- 
+2.43.0
+

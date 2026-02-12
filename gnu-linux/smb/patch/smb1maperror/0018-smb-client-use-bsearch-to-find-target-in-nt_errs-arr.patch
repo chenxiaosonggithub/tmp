@@ -1,0 +1,56 @@
+From 1ed774b6b6f573fdd0ac4ecdfec13d73909a836f Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Sun, 7 Dec 2025 11:16:44 +0800
+Subject: [PATCH 18/30] smb/client: use bsearch() to find target in nt_errs
+ array
+
+The array currently has 520 elements. When searching for the last element,
+the original loop-based search method requires 520 comparisons, while
+binary search algorithm requires only 9 comparisons.
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/client/netmisc.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
+
+diff --git a/fs/smb/client/netmisc.c b/fs/smb/client/netmisc.c
+index c6fa1389683b..239e5287d4d6 100644
+--- a/fs/smb/client/netmisc.c
++++ b/fs/smb/client/netmisc.c
+@@ -806,6 +806,8 @@ DEFINE_CMP_FUNC(nt_err_code_struct, nt_errcode);
+ 
+ /* search_in_ntstatus_to_dos_map */
+ DEFINE_SEARCH_FUNC(ntstatus_to_dos, ntstatus, ntstatus_to_dos_map, ntstatus_to_dos_num);
++/* search_in_nt_errs */
++DEFINE_SEARCH_FUNC(nt_err_code_struct, nt_errcode, nt_errs, nt_err_num);
+ 
+ /*****************************************************************************
+  Print an error message from the status code
+@@ -813,17 +815,14 @@ DEFINE_SEARCH_FUNC(ntstatus_to_dos, ntstatus, ntstatus_to_dos_map, ntstatus_to_d
+ static void
+ cifs_print_status(__u32 status_code)
+ {
+-	int idx = 0;
++	struct nt_err_code_struct *err_map;
+ 
+-	while (nt_errs[idx].nt_errstr != NULL) {
+-		if (nt_errs[idx].nt_errcode == status_code) {
+-			pr_notice("Status code returned 0x%08x %s\n",
+-				  status_code, nt_errs[idx].nt_errstr);
+-			return;
+-		}
+-		idx++;
+-	}
+-	return;
++	err_map = search_in_nt_errs(status_code);
++	if (!err_map)
++		return;
++
++	pr_notice("Status code returned 0x%08x %s\n",
++		  status_code, err_map->nt_errstr);
+ }
+ 
+ 
+-- 
+2.43.0
+

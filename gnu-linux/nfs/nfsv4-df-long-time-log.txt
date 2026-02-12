@@ -1,0 +1,306 @@
+[509287.484222] RPC: 25155 __rpc_execute flags=0x4080
+[509287.484224] --> nfs41_call_sync_prepare data->seq_server 000000002e620328
+[509287.484228] --> nfs4_alloc_slot used_slots=0000 highest_used=4294967295 max_slots=64
+[509287.484231] <-- nfs4_alloc_slot used_slots=0001 highest_used=0 slotid=0
+[509287.484234] RPC: 25155 call_start nfs4 proc GETATTR (sync)
+[509287.484236] RPC: 25155 call_reserve (status 0)
+[509287.484240] RPC:       wake_up_first(000000009ee600e2 "xprt_sending")
+[509287.484243] RPC: 25155 reserved req 00000000cdf38d08 xid 252029d1
+[509287.484246] RPC: 25155 call_reserveresult (status 0)
+[509287.484248] RPC: 25155 call_refresh (status 0)
+[509287.484250] RPC: 25155 looking up UNIX cred
+[509287.484252] RPC:       looking up UNIX cred
+[509287.484256] RPC: 25155 refreshing UNIX cred 000000009f9985f9
+[509287.484258] RPC: 25155 call_refreshresult (status 0)
+[509287.484261] RPC: 25155 call_allocate (status 0)
+[509287.484264] RPC: 25155 allocated buffer of size 3324 at 00000000e796e169
+[509287.484266] RPC: 25155 call_bind (status 0)
+[509287.484269] RPC: 25155 call_connect xprt 000000001188f8c0 is connected
+[509287.484271] RPC: 25155 call_transmit (status 0)
+[509287.484273] RPC: 25155 xprt_prepare_transmit
+[509287.484275] RPC: 25155 rpc_xdr_encode (status 0)
+[509287.484278] RPC: 25155 marshaling UNIX cred 000000009f9985f9
+[509287.484281] RPC: 25155 using AUTH_UNIX cred 000000009f9985f9 to wrap rpc data
+[509287.484287] encode_sequence: sessionid=65561:1726212483:15:0 seqid=4736 slotid=0 max_slotid=0 cache_this=0
+[509287.484290] RPC: 25155 xprt_transmit(208)
+[509287.484318] RPC:       xs_tcp_send_request(208) = 0
+[509287.484326] RPC: 25155 xmit complete
+[509287.484329] RPC: 25155 sleep_on(queue "xprt_pending" time 4803955320)
+[509287.484332] RPC: 25155 added to queue 00000000b0938eac "xprt_pending"
+[509287.484334] RPC: 25155 setting alarm for 60000 ms
+[509287.484337] RPC:       wake_up_first(000000009ee600e2 "xprt_sending")
+[509287.484339] RPC: 25155 sync task going to sleep
+[509287.486071] RPC:       xs_data_ready...
+[509287.486115] RPC:       xs_tcp_data_recv started
+[509287.486118] RPC:       reading TCP record fragment of length 264
+[509287.486121] RPC:       reading XID (4 bytes)
+[509287.486124] RPC:       reading reply for XID 252029d1
+[509287.486126] RPC:       reading CALL/REPLY flag (4 bytes)
+[509287.486128] RPC:       read reply XID 252029d1
+[509287.486132] RPC:       XID 252029d1 read 256 bytes
+[509287.486136] RPC:       xprt = 000000001188f8c0, tcp_copied = 264, tcp_offset = 264, tcp_reclen = 264
+[509287.486140] RPC: 25155 xid 252029d1 complete (264 bytes received)
+[509287.486143] RPC: 25155 __rpc_wake_up_task (now 4803955322)
+[509287.486145] RPC: 25155 disabling timer
+[509287.486148] RPC: 25155 removed from queue 00000000b0938eac "xprt_pending"
+[509287.486160] RPC:       __rpc_wake_up_task done
+[509287.486162] RPC:       xs_tcp_data_recv done
+[509287.486169] RPC: 25155 sync task resuming
+[509287.486172] RPC: 25155 call_status (status 264)
+[509287.486174] RPC: 25155 call_decode (status 264)
+[509287.486177] RPC: 25155 validating UNIX cred 000000009f9985f9
+[509287.486183] RPC: 25155 using AUTH_UNIX cred 000000009f9985f9 to unwrap rpc data
+[509287.486186] decode_attr_type: type=040000
+[509287.486189] decode_attr_change: change attribute=7413717318535264640
+[509287.486191] decode_attr_size: file size=4096
+[509287.486193] decode_attr_fsid: fsid=(0x1e0/0x0)
+[509287.486195] decode_attr_fileid: fileid=65
+[509287.486197] decode_attr_fs_locations: fs_locations done, error = 0
+[509287.486199] decode_attr_mode: file mode=0755
+[509287.486201] decode_attr_nlink: nlink=3
+[509302.211820] nfs4_renew_state: start
+[509302.211827] RPC:       new task initialized, procpid 25908
+[509302.211829] RPC:       allocated task 0000000083ae8173
+[509302.211838] <-- nfs41_proc_async_sequence status=0
+[509302.211839] nfs4_renew_state: done
+[509302.211848] RPC: 25156 __rpc_execute flags=0x5281
+[509302.211852] --> nfs4_alloc_slot used_slots=0001 highest_used=0 max_slots=64
+[509302.211855] <-- nfs4_alloc_slot used_slots=0003 highest_used=1 slotid=1
+[509302.211859] RPC: 25156 call_start nfs4 proc SEQUENCE (async)
+[509302.211862] RPC: 25156 call_reserve (status 0)
+[509302.211866] RPC:       wake_up_first(000000009ee600e2 "xprt_sending")
+[509302.211869] RPC: 25156 reserved req 00000000de9e0ce8 xid 262029d1
+[509302.211872] RPC: 25156 call_reserveresult (status 0)
+[509302.211874] RPC: 25156 call_refresh (status 0)
+[509302.211878] RPC: 25156 refreshing UNIX cred 0000000041ac4776
+[509302.211881] RPC: 25156 call_refreshresult (status 0)
+[509302.211883] RPC: 25156 call_allocate (status 0)
+[509302.211887] RPC: 25156 allocated buffer of size 596 at 000000000c4db879
+[509302.211889] RPC: 25156 call_bind (status 0)
+[509302.211892] RPC: 25156 call_connect xprt 000000001188f8c0 is connected
+[509302.211895] RPC: 25156 call_transmit (status 0)
+[509302.211896] RPC: 25156 xprt_prepare_transmit
+[509302.211899] RPC: 25156 rpc_xdr_encode (status 0)
+[509302.211901] RPC: 25156 marshaling UNIX cred 0000000041ac4776
+[509302.211904] RPC: 25156 using AUTH_UNIX cred 0000000041ac4776 to wrap rpc data
+[509302.211910] encode_sequence: sessionid=65561:1726212483:15:0 seqid=54 slotid=1 max_slotid=1 cache_this=0
+[509302.211913] RPC: 25156 xprt_transmit(124)
+[509302.211957] RPC:       xs_tcp_send_request(124) = 0
+[509302.211959] RPC: 25156 xmit complete
+[509302.211961] RPC: 25156 sleep_on(queue "xprt_pending" time 4803970048)
+[509302.211964] RPC: 25156 added to queue 00000000b0938eac "xprt_pending"
+[509302.211966] RPC: 25156 setting alarm for 60000 ms
+[509302.211969] RPC:       wake_up_first(000000009ee600e2 "xprt_sending")
+[509302.213398] RPC:       xs_data_ready...
+[509302.213434] RPC:       xs_tcp_data_recv started
+[509302.213437] RPC:       reading TCP record fragment of length 80
+[509302.213439] RPC:       reading XID (4 bytes)
+[509302.213441] RPC:       reading reply for XID 262029d1
+[509302.213443] RPC:       reading CALL/REPLY flag (4 bytes)
+[509302.213445] RPC:       read reply XID 262029d1
+[509302.213448] RPC:       XID 262029d1 read 72 bytes
+[509302.213451] RPC:       xprt = 000000001188f8c0, tcp_copied = 80, tcp_offset = 80, tcp_reclen = 80
+[509302.213454] RPC: 25156 xid 262029d1 complete (80 bytes received)
+[509302.213457] RPC: 25156 __rpc_wake_up_task (now 4803970049)
+[509302.213458] RPC: 25156 disabling timer
+[509302.213461] RPC: 25156 removed from queue 00000000b0938eac "xprt_pending"
+[509302.213472] RPC:       __rpc_wake_up_task done
+[509302.213474] RPC:       xs_tcp_data_recv done
+[509302.213480] RPC: 25156 __rpc_execute flags=0x5a81
+[509302.213483] RPC: 25156 call_status (status 80)
+[509302.213485] RPC: 25156 call_decode (status 80)
+[509302.213488] RPC: 25156 validating UNIX cred 0000000041ac4776
+[509302.213491] RPC: 25156 using AUTH_UNIX cred 0000000041ac4776 to unwrap rpc data
+[509302.213494] RPC: 25156 call_decode result 0
+[509302.213499] --> nfs4_alloc_slot used_slots=0003 highest_used=1 max_slots=64
+[509302.213502] <-- nfs4_alloc_slot used_slots=0007 highest_used=2 slotid=2
+[509302.213504] RPC:       wake_up_first(000000007ead8edc "ForeChannel Slot table")
+[509302.213507] nfs4_free_slot: slotid 2 highest_used_slotid 1
+[509302.213509] nfs41_sequence_process: Error 0 free the slot 
+[509302.213511] RPC:       wake_up_first(000000007ead8edc "ForeChannel Slot table")
+[509302.213514] nfs4_free_slot: slotid 1 highest_used_slotid 0
+[509302.213516] nfs41_sequence_call_done rpc_cred 000000005a84c92c
+[509302.213517] <-- nfs41_sequence_call_done
+[509302.213519] RPC: 25156 return 0, status 0
+[509302.213521] RPC: 25156 release task
+[509302.213527] RPC:       freeing buffer of size 596 at 000000000c4db879
+[509302.213530] RPC: 25156 release request 00000000de9e0ce8
+[509302.213532] RPC:       wake_up_first(00000000270458cc "xprt_backlog")
+[509302.213534] RPC:       rpc_release_client(000000009ee0d4f2)
+[509302.213537] nfs4_schedule_state_renewal: requeueing work. Lease period = 20
+[509302.213540] RPC: 25156 freeing task
+[509307.511394] decode_attr_owner: uid=0
+[509322.691773] nfs4_renew_state: start
+[509322.691780] RPC:       new task initialized, procpid 25908
+[509322.691783] RPC:       allocated task 000000001c683cde
+[509322.691791] <-- nfs41_proc_async_sequence status=0
+[509322.691793] nfs4_renew_state: done
+[509322.691800] RPC: 25157 __rpc_execute flags=0x5281
+[509322.691804] --> nfs4_alloc_slot used_slots=0001 highest_used=0 max_slots=64
+[509322.691807] <-- nfs4_alloc_slot used_slots=0003 highest_used=1 slotid=1
+[509322.691811] RPC: 25157 call_start nfs4 proc SEQUENCE (async)
+[509322.691814] RPC: 25157 call_reserve (status 0)
+[509322.691818] RPC:       wake_up_first(000000009ee600e2 "xprt_sending")
+[509322.691821] RPC: 25157 reserved req 00000000de9e0ce8 xid 272029d1
+[509322.691824] RPC: 25157 call_reserveresult (status 0)
+[509322.691826] RPC: 25157 call_refresh (status 0)
+[509322.691831] RPC: 25157 refreshing UNIX cred 0000000041ac4776
+[509322.691833] RPC: 25157 call_refreshresult (status 0)
+[509322.691836] RPC: 25157 call_allocate (status 0)
+[509322.691839] RPC: 25157 allocated buffer of size 596 at 000000000c4db879
+[509322.691842] RPC: 25157 call_bind (status 0)
+[509322.691844] RPC: 25157 call_connect xprt 000000001188f8c0 is connected
+[509322.691847] RPC: 25157 call_transmit (status 0)
+[509322.691849] RPC: 25157 xprt_prepare_transmit
+[509322.691851] RPC: 25157 rpc_xdr_encode (status 0)
+[509322.691854] RPC: 25157 marshaling UNIX cred 0000000041ac4776
+[509322.691857] RPC: 25157 using AUTH_UNIX cred 0000000041ac4776 to wrap rpc data
+[509322.691863] encode_sequence: sessionid=65561:1726212483:15:0 seqid=55 slotid=1 max_slotid=1 cache_this=0
+[509322.691866] RPC: 25157 xprt_transmit(124)
+[509322.691901] RPC:       xs_tcp_send_request(124) = 0
+[509322.691903] RPC: 25157 xmit complete
+[509322.691906] RPC: 25157 sleep_on(queue "xprt_pending" time 4803990528)
+[509322.691908] RPC: 25157 added to queue 00000000b0938eac "xprt_pending"
+[509322.691910] RPC: 25157 setting alarm for 60000 ms
+[509322.691914] RPC:       wake_up_first(000000009ee600e2 "xprt_sending")
+[509322.692995] RPC:       xs_data_ready...
+[509322.693024] RPC:       xs_tcp_data_recv started
+[509322.693027] RPC:       reading TCP record fragment of length 80
+[509322.693029] RPC:       reading XID (4 bytes)
+[509322.693032] RPC:       reading reply for XID 272029d1
+[509322.693033] RPC:       reading CALL/REPLY flag (4 bytes)
+[509322.693035] RPC:       read reply XID 272029d1
+[509322.693038] RPC:       XID 272029d1 read 72 bytes
+[509322.693044] RPC:       xprt = 000000001188f8c0, tcp_copied = 80, tcp_offset = 80, tcp_reclen = 80
+[509322.693047] RPC: 25157 xid 272029d1 complete (80 bytes received)
+[509322.693049] RPC: 25157 __rpc_wake_up_task (now 4803990529)
+[509322.693051] RPC: 25157 disabling timer
+[509322.693053] RPC: 25157 removed from queue 00000000b0938eac "xprt_pending"
+[509322.693065] RPC:       __rpc_wake_up_task done
+[509322.693069] RPC:       xs_tcp_data_recv done
+[509322.693073] RPC: 25157 __rpc_execute flags=0x5a81
+[509322.693076] RPC: 25157 call_status (status 80)
+[509322.693079] RPC: 25157 call_decode (status 80)
+[509322.693083] RPC: 25157 validating UNIX cred 0000000041ac4776
+[509322.693085] RPC: 25157 using AUTH_UNIX cred 0000000041ac4776 to unwrap rpc data
+[509322.693089] RPC: 25157 call_decode result 0
+[509322.693093] --> nfs4_alloc_slot used_slots=0003 highest_used=1 max_slots=64
+[509322.693098] <-- nfs4_alloc_slot used_slots=0007 highest_used=2 slotid=2
+[509322.693100] RPC:       wake_up_first(000000007ead8edc "ForeChannel Slot table")
+[509322.693103] nfs4_free_slot: slotid 2 highest_used_slotid 1
+[509322.693105] nfs41_sequence_process: Error 0 free the slot 
+[509322.693107] RPC:       wake_up_first(000000007ead8edc "ForeChannel Slot table")
+[509322.693110] nfs4_free_slot: slotid 1 highest_used_slotid 0
+[509322.693112] nfs41_sequence_call_done rpc_cred 000000005a84c92c
+[509322.693113] <-- nfs41_sequence_call_done
+[509322.693116] RPC: 25157 return 0, status 0
+[509322.693117] RPC: 25157 release task
+[509322.693122] RPC:       freeing buffer of size 596 at 000000000c4db879
+[509322.693126] RPC: 25157 release request 00000000de9e0ce8
+[509322.693129] RPC:       wake_up_first(00000000270458cc "xprt_backlog")
+[509322.693131] RPC:       rpc_release_client(000000009ee0d4f2)
+[509322.693134] nfs4_schedule_state_renewal: requeueing work. Lease period = 20
+[509322.693144] RPC: 25157 freeing task
+[509327.534150] decode_attr_group: gid=0
+[509327.534154] decode_attr_rdev: rdev=(0x0:0x0)
+[509327.534156] decode_attr_space_used: space used=4096
+[509327.534159] decode_attr_time_access: atime=1726140575
+[509327.534161] decode_attr_time_metadata: ctime=1726140575
+[509327.534163] decode_attr_time_modify: mtime=1726140575
+[509327.534165] decode_attr_mounted_on_fileid: fileid=65
+[509327.534167] decode_getfattr_attrs: xdr returned 0
+[509327.534169] decode_getfattr_generic: xdr returned 0
+[509327.534172] RPC: 25155 call_decode result 0
+[509327.534177] --> nfs4_alloc_slot used_slots=0001 highest_used=0 max_slots=64
+[509327.534180] <-- nfs4_alloc_slot used_slots=0003 highest_used=1 slotid=1
+[509327.534184] RPC:       wake_up_first(000000007ead8edc "ForeChannel Slot table")
+[509327.534186] nfs4_free_slot: slotid 1 highest_used_slotid 0
+[509327.534188] nfs41_sequence_process: Error 0 free the slot 
+[509327.534191] RPC:       wake_up_first(000000007ead8edc "ForeChannel Slot table")
+[509327.534193] nfs4_free_slot: slotid 0 highest_used_slotid 4294967295
+[509327.534196] RPC: 25155 return 0, status 0
+[509327.534197] RPC: 25155 release task
+[509327.534202] RPC:       freeing buffer of size 3324 at 00000000e796e169
+[509327.534205] RPC: 25155 release request 00000000cdf38d08
+[509327.534207] RPC:       wake_up_first(00000000270458cc "xprt_backlog")
+[509327.534210] RPC:       rpc_release_client(00000000526fdb89)
+[509327.534213] RPC: 25155 freeing task
+[509327.534220] NFS: nfs_update_inode(0:48/65 fh_crc=0xda59a9d1 ct=3 info=0x427e7f)
+[509327.534223] NFS: (0:48/65) revalidation complete
+[509327.534571] NFS: nfs_weak_revalidate: inode 65 is valid
+[509327.534576] RPC:       new task initialized, procpid 26364
+[509327.534578] RPC:       allocated task 000000000e7a0d9d
+[509327.534581] RPC: 25158 __rpc_execute flags=0x4080
+[509327.534584] --> nfs41_call_sync_prepare data->seq_server 000000002e620328
+[509327.534587] --> nfs4_alloc_slot used_slots=0000 highest_used=4294967295 max_slots=64
+[509327.534589] <-- nfs4_alloc_slot used_slots=0001 highest_used=0 slotid=0
+[509327.534592] RPC: 25158 call_start nfs4 proc STATFS (sync)
+[509327.534595] RPC: 25158 call_reserve (status 0)
+[509327.534598] RPC:       wake_up_first(000000009ee600e2 "xprt_sending")
+[509327.534601] RPC: 25158 reserved req 00000000cdf38d08 xid 282029d1
+[509327.534604] RPC: 25158 call_reserveresult (status 0)
+[509327.534606] RPC: 25158 call_refresh (status 0)
+[509327.534608] RPC: 25158 looking up UNIX cred
+[509327.534610] RPC:       looking up UNIX cred
+[509327.534614] RPC: 25158 refreshing UNIX cred 000000009f9985f9
+[509327.534616] RPC: 25158 call_refreshresult (status 0)
+[509327.534619] RPC: 25158 call_allocate (status 0)
+[509327.534622] RPC: 25158 allocated buffer of size 3300 at 00000000cfb8643b
+[509327.534624] RPC: 25158 call_bind (status 0)
+[509327.534627] RPC: 25158 call_connect xprt 000000001188f8c0 is connected
+[509327.534629] RPC: 25158 call_transmit (status 0)
+[509327.534631] RPC: 25158 xprt_prepare_transmit
+[509327.534633] RPC: 25158 rpc_xdr_encode (status 0)
+[509327.534636] RPC: 25158 marshaling UNIX cred 000000009f9985f9
+[509327.534639] RPC: 25158 using AUTH_UNIX cred 000000009f9985f9 to wrap rpc data
+[509327.534645] encode_sequence: sessionid=65561:1726212483:15:0 seqid=4737 slotid=0 max_slotid=0 cache_this=0
+[509327.534648] RPC: 25158 xprt_transmit(208)
+[509327.534692] RPC:       xs_tcp_send_request(208) = 0
+[509327.534693] RPC: 25158 xmit complete
+[509327.534696] RPC: 25158 sleep_on(queue "xprt_pending" time 4803995370)
+[509327.534699] RPC: 25158 added to queue 00000000b0938eac "xprt_pending"
+[509327.534701] RPC: 25158 setting alarm for 60000 ms
+[509327.534704] RPC:       wake_up_first(000000009ee600e2 "xprt_sending")
+[509327.534743] RPC: 25158 sync task going to sleep
+[509327.537122] RPC:       xs_data_ready...
+[509327.537149] RPC:       xs_tcp_data_recv started
+[509327.537152] RPC:       reading TCP record fragment of length 160
+[509327.537154] RPC:       reading XID (4 bytes)
+[509327.537156] RPC:       reading reply for XID 282029d1
+[509327.537158] RPC:       reading CALL/REPLY flag (4 bytes)
+[509327.537160] RPC:       read reply XID 282029d1
+[509327.537163] RPC:       XID 282029d1 read 152 bytes
+[509327.537166] RPC:       xprt = 000000001188f8c0, tcp_copied = 160, tcp_offset = 160, tcp_reclen = 160
+[509327.537169] RPC: 25158 xid 282029d1 complete (160 bytes received)
+[509327.537172] RPC: 25158 __rpc_wake_up_task (now 4803995373)
+[509327.537173] RPC: 25158 disabling timer
+[509327.537176] RPC: 25158 removed from queue 00000000b0938eac "xprt_pending"
+[509327.537182] RPC:       __rpc_wake_up_task done
+[509327.537184] RPC:       xs_tcp_data_recv done
+[509327.537200] RPC: 25158 sync task resuming
+[509327.537203] RPC: 25158 call_status (status 160)
+[509327.537206] RPC: 25158 call_decode (status 160)
+[509327.537209] RPC: 25158 validating UNIX cred 000000009f9985f9
+[509327.537211] RPC: 25158 using AUTH_UNIX cred 000000009f9985f9 to unwrap rpc data
+[509327.537215] decode_attr_files_avail: files avail=2516582400
+[509327.537217] decode_attr_files_free: files free=2516582400
+[509327.537219] decode_attr_files_total: files total=2516582400
+[509327.537221] decode_attr_space_avail: space avail=515395936256
+[509327.537223] decode_attr_space_free: space free=515395936256
+[509327.537225] decode_attr_space_total: space total=515396075520
+[509327.537227] decode_statfs: xdr returned 0!
+[509327.537229] RPC: 25158 call_decode result 0
+[509327.537232] --> nfs4_alloc_slot used_slots=0001 highest_used=0 max_slots=64
+[509327.537235] <-- nfs4_alloc_slot used_slots=0003 highest_used=1 slotid=1
+[509327.537237] RPC:       wake_up_first(000000007ead8edc "ForeChannel Slot table")
+[509327.537240] nfs4_free_slot: slotid 1 highest_used_slotid 0
+[509327.537241] nfs41_sequence_process: Error 0 free the slot 
+[509327.537244] RPC:       wake_up_first(000000007ead8edc "ForeChannel Slot table")
+[509327.537246] nfs4_free_slot: slotid 0 highest_used_slotid 4294967295
+[509327.537249] RPC: 25158 return 0, status 0
+[509327.537250] RPC: 25158 release task
+[509327.537254] RPC:       freeing buffer of size 3300 at 00000000cfb8643b
+[509327.537256] RPC: 25158 release request 00000000cdf38d08
+[509327.537259] RPC:       wake_up_first(00000000270458cc "xprt_backlog")
+[509327.537261] RPC:       rpc_release_client(00000000526fdb89)
+[509327.537263] RPC: 25158 freeing task

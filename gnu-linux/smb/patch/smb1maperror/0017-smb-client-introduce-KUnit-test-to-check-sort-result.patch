@@ -1,0 +1,39 @@
+From 13f28ffa5dc7a37a34e93ef0203f344399d848bc Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Sun, 7 Dec 2025 21:02:19 +0800
+Subject: [PATCH 17/30] smb/client: introduce KUnit test to check sort result
+ of nt_errs array
+
+The KUnit test are executed when cifs.ko is loaded.
+
+The nt_errs_check_sort() checks whether the array is properly sorted.
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/client/netmisc_test.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/fs/smb/client/netmisc_test.c b/fs/smb/client/netmisc_test.c
+index ade5005fecb7..796c39b02073 100644
+--- a/fs/smb/client/netmisc_test.c
++++ b/fs/smb/client/netmisc_test.c
+@@ -30,6 +30,8 @@ static void __array ## _check_sort(struct kunit *test)			\
+ 
+ /* ntstatus_to_dos_map_check_sort */
+ DEFINE_CHECK_SORT_FUNC(ntstatus_to_dos_map, ntstatus_to_dos_num, ntstatus);
++/* nt_errs_check_sort */
++DEFINE_CHECK_SORT_FUNC(nt_errs, nt_err_num, nt_errcode);
+ 
+ #define DEFINE_CHECK_SEARCH_FUNC(__struct_name, __field,		\
+ 				 __array, __num)			\
+@@ -65,6 +67,7 @@ DEFINE_CHECK_SEARCH_FUNC(ntstatus_to_dos, ntstatus, ntstatus_to_dos_map, ntstatu
+ static struct kunit_case maperror_test_cases[] = {
+ 	/* check sort */
+ 	KUNIT_CASE(ntstatus_to_dos_map_check_sort),
++	KUNIT_CASE(nt_errs_check_sort),
+ 	/* check search */
+ 	KUNIT_CASE(ntstatus_to_dos_map_check_search),
+ 	{}
+-- 
+2.43.0
+

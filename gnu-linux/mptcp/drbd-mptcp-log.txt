@@ -1,0 +1,38 @@
+[  944.940213] drbd: initialized. Version: 8.4.11 (api:1/proto:86-101)
+[  944.941174] drbd: srcversion: 773446C6D1FB38CD3103E51 
+[  944.941900] drbd: registered as block device major 147
+[  944.998818] drbd r0: Starting worker thread (from drbdsetup-84 [957])
+[  945.001341] drbd r0/0 drbd0: disk( Diskless -> Attaching ) 
+[  945.003210] drbd r0: Method to ensure write ordering: flush
+[  945.004818] drbd r0/0 drbd0: max BIO size = 4096
+[  945.006147] drbd r0/0 drbd0: drbd_bm_resize called with capacity == 2097016
+[  945.008167] drbd r0/0 drbd0: resync bitmap: bits=262127 words=4096 pages=8
+[  945.010134] drbd0: detected capacity change from 0 to 2097016
+[  945.011813] drbd r0/0 drbd0: size = 1024 MB (1048508 KB)
+[  945.013721] drbd r0/0 drbd0: recounting of set bits took additional 0 jiffies
+[  945.016071] drbd r0/0 drbd0: 1024 MB (262127 bits) marked out-of-sync by on disk bit-map.
+[  945.018886] drbd r0/0 drbd0: Suspended AL updates
+[  945.020439] drbd r0/0 drbd0: disk( Attaching -> Inconsistent ) 
+[  945.022199] drbd r0/0 drbd0: attached to UUIDs 0000000000000004:0000000000000000:0000000000000000:0000000000000000
+[  945.032120] drbd r0: conn( StandAlone -> Unconnected ) 
+[  945.034008] drbd r0: Starting receiver thread (from drbd_w_r0 [958])
+[  945.036353] drbd r0: receiver (re)started
+[  945.037717] drbd r0: conn( Unconnected -> WFConnection ) 
+[  959.454746] drbd r0: sock_recvmsg returned -11
+[  959.456220] drbd r0: conn( WFConnection -> BrokenPipe ) 
+[  959.457772] drbd r0: short read (expected size 8)
+[  959.478649] drbd r0: Connection closed
+[  959.480005] drbd r0: conn( BrokenPipe -> Unconnected ) 
+[  960.542656] drbd r0: conn( Unconnected -> WFConnection ) 
+[  974.813943] drbd r0: sock_recvmsg returned -11
+[  974.815422] drbd r0: conn( WFConnection -> BrokenPipe ) 
+[  974.817072] drbd r0: short read (expected size 8)
+[  974.837859] drbd r0: Connection closed
+[  974.839145] drbd r0: conn( BrokenPipe -> Unconnected ) 
+[  975.901838] drbd r0: conn( Unconnected -> WFConnection ) 
+[  987.101232] drbd r0: sock_recvmsg returned -11
+[  987.102723] drbd r0: conn( WFConnection -> BrokenPipe ) 
+[  987.104296] drbd r0: short read (expected size 8)
+[  987.125138] drbd r0: Connection closed
+[  987.126425] drbd r0: conn( BrokenPipe -> Unconnected ) 
+[  988.189127] drbd r0: conn( Unconnected -> WFConnection ) 

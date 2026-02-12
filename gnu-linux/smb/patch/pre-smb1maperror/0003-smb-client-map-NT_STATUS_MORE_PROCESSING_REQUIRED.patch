@@ -1,0 +1,27 @@
+From e01dbb4f93a50184fe142d11d5fddde24b284a7c Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Thu, 22 Jan 2026 10:51:40 +0800
+Subject: [PATCH 3/7] smb/client: map NT_STATUS_MORE_PROCESSING_REQUIRED
+
+See MS-CIFS 2.2.2.4 STATUS_MORE_PROCESSING_REQUIRED.
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/client/smb1maperror.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/smb/client/smb1maperror.c b/fs/smb/client/smb1maperror.c
+index c1330d32ef09..421a7ab7bdfb 100644
+--- a/fs/smb/client/smb1maperror.c
++++ b/fs/smb/client/smb1maperror.c
+@@ -115,6 +115,7 @@ static const struct {
+ 	{
+ 	ERRSRV, ERR_NOTIFY_ENUM_DIR, NT_STATUS_NOTIFY_ENUM_DIR}, {
+ 	ERRDOS, ERRmoredata, NT_STATUS_BUFFER_OVERFLOW}, {
++	ERRDOS, ERRmoredata, NT_STATUS_MORE_PROCESSING_REQUIRED}, {
+ 	ERRDOS, ERRgeneral, NT_STATUS_UNSUCCESSFUL}, {
+ 	ERRDOS, ERRbadfunc, NT_STATUS_NOT_IMPLEMENTED}, {
+ 	ERRDOS, ERRbadpipe, NT_STATUS_INVALID_INFO_CLASS}, {
+-- 
+2.43.0
+

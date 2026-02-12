@@ -1,0 +1,36 @@
+From 97cb0c18b5b2cde03ec95dffa02b47e76ab88e6c Mon Sep 17 00:00:00 2001
+From: Ye Bin <yebin10@huawei.com>
+Date: Mon, 19 Jan 2026 08:43:12 +0800
+Subject: [PATCH] ext4: make mballoc-test.c test cases runnable when ext4 is
+ built as a module
+
+Currently, the `mballoc-test.c` test cases can only be run when
+`CONFIG_EXT4_KUNIT_TESTS=y`.
+
+This patch allows these test cases to run when ext4 is built as a module.
+
+Reported-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Signed-off-by: Ye Bin <yebin10@huawei.com>
+---
+ fs/ext4/mballoc.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+index 56d50fd3310b..57c8b1af1f49 100644
+--- a/fs/ext4/mballoc.c
++++ b/fs/ext4/mballoc.c
+@@ -7192,6 +7192,10 @@ ext4_mballoc_query_range(
+ 	return error;
+ }
+ 
+-#ifdef CONFIG_EXT4_KUNIT_TESTS
++#define EXT4_KUNIT_AVAILABLE \
++	((IS_MODULE(CONFIG_EXT4_FS) && IS_ENABLED(CONFIG_KUNIT)) || \
++	 (IS_BUILTIN(CONFIG_EXT4_FS) && IS_BUILTIN(CONFIG_KUNIT)))
++
++#if EXT4_KUNIT_AVAILABLE && IS_ENABLED(CONFIG_EXT4_KUNIT_TESTS)
+ #include "mballoc-test.c"
+ #endif
+-- 
+2.43.0
+

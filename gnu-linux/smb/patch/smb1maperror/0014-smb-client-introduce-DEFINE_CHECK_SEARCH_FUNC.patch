@@ -1,0 +1,42 @@
+From c11db71e1d991172c6e0d7b8de02ac72b2556777 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Sun, 7 Dec 2025 22:13:16 +0800
+Subject: [PATCH 14/30] smb/client: introduce DEFINE_CHECK_SEARCH_FUNC()
+
+We are going to define 4 functions to check the search results, introduce
+the macro DEFINE_CHECK_SEARCH_FUNC() to reduce duplicate code.
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/client/netmisc_test.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/fs/smb/client/netmisc_test.c b/fs/smb/client/netmisc_test.c
+index a08011621742..b682098d2fc5 100644
+--- a/fs/smb/client/netmisc_test.c
++++ b/fs/smb/client/netmisc_test.c
+@@ -31,6 +31,21 @@ static void __array ## _check_sort(struct kunit *test)			\
+ /* ntstatus_to_dos_map_check_sort */
+ DEFINE_CHECK_SORT_FUNC(ntstatus_to_dos_map, ntstatus_to_dos_num, ntstatus);
+ 
++#define DEFINE_CHECK_SEARCH_FUNC(__struct_name, __field,		\
++				 __array, __num)			\
++static void __array ## _check_search(struct kunit *test)		\
++{									\
++	unsigned int i;							\
++	struct __struct_name expect, *result;				\
++									\
++	for (i = 0; i < __num; i++) {					\
++		expect = __array[i];					\
++		result = search_in_ ## __array(expect.__field);		\
++		KUNIT_EXPECT_PTR_NE(test, NULL, result);		\
++		test_cmp_ ## __struct_name(test, &expect, result);	\
++	}								\
++}
++
+ /*
+  * Before running these test cases, the smb_init_maperror()
+  * function is called first.
+-- 
+2.43.0
+

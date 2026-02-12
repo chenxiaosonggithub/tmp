@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>SMB3 POSIX Extensions</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="" />
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#posix-fscc-posix-extensions-to-ms-fscc"
+id="toc-posix-fscc-posix-extensions-to-ms-fscc">[POSIX-FSCC] POSIX
+Extensions to MS-FSCC</a>
+<ul>
+<li><a href="#published-version" id="toc-published-version">Published
+Version</a></li>
+<li><a href="#previous-versions" id="toc-previous-versions">Previous
+Versions</a></li>
+</ul></li>
+<li><a href="#introduction" id="toc-introduction">1
+Introduction</a></li>
+<li><a href="#messages-and-structures"
+id="toc-messages-and-structures">2 Messages and Structures</a>
+<ul>
+<li><a href="#common-data-types" id="toc-common-data-types">2.1 Common
+Data Types</a>
+<ul>
+<li><a href="#posix-mode-and-type" id="toc-posix-mode-and-type">2.1.1
+POSIX Mode and Type</a>
+<ul>
+<li><a href="#posix-mode-bit-definitions"
+id="toc-posix-mode-bit-definitions">2.1.1.1 POSIX Mode Bit
+Definitions</a></li>
+<li><a href="#posix-file-type-definition"
+id="toc-posix-file-type-definition">2.1.1.2 POSIX File Type
+Definition</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#structures" id="toc-structures">2.3 Structures</a>
+<ul>
+<li><a href="#file-information-classes"
+id="toc-file-information-classes">2.3.1 File Information
+Classes</a></li>
+<li><a href="#file-system-information-classes"
+id="toc-file-system-information-classes">2.3.2 File System Information
+Classes</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+<style>
+body {
+  font-family: Segoe UI,SegoeUI,Helvetica Neue,Helvetica,Arial,sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+.protocol-table p {
+  margin-top: 0px;
+}
+p {
+  margin-top: 1rem;
+  margin-bottom: 0px;
+}
+table {
+  margin-top: 1rem;
+  border: 1px solid #EAEAEA;
+  border-collapse: collapse;
+  width: 100%;
+}
+table, th, td {
+  border-radius: 3px;
+  padding: 5px;
+}
+th, td {
+  font-size: .875rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  border: 1px solid #bbb;
+  color: #2a2a2a;
+}
+th {
+  background-color: #ededed;
+  font-weight: 600;
+}
+td {
+  padding: 0.5rem;
+  background-color: #fff;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-weight: bold;
+  color: #000;
+}
+h1 {
+  font-size: 28px;
+}
+h2 {
+  font-size: 24px;
+}
+h3 {
+  font-size: 18px;
+}
+h4 {
+  font-size: 16px;
+}
+h5 {
+  font-size: 14px;
+}
+</style>
+<h1 id="posix-fscc-posix-extensions-to-ms-fscc">[POSIX-FSCC] POSIX
+Extensions to MS-FSCC</h1>
+<p>Specifies the MS-FSCC extensions for supporting POSIX compliant
+operating systems.</p>
+<h2 id="published-version">Published Version</h2>
+<table class="protocol-table"><thead>
+  <tr>
+   <th>
+   <p>Date</p>
+   </th>
+   <th>
+   <p>Protocol Revision</p>
+   </th>
+   <th>
+   <p>Revision Class</p>
+   </th>
+   <th>
+   <p>Downloads</p>
+   </th>
+  </tr>
+ </thead><tbody><tr>
+  <td>
+  <p></p>
+  </td>
+  <td>
+  <p></p>
+  </td>
+  <td>
+  <p></p>
+  </td>
+  <td>
+  <p>
+  </p>
+  </td>
+</tr></tbody></table>
+<h2 id="previous-versions">Previous Versions</h2>
+<table class="protocol-table"><thead>
+  <tr>
+   <th>
+   <p>Date</p>
+   </th>
+   <th>
+   <p>Protocol Revision</p>
+   </th>
+   <th>
+   <p>Revision Class</p>
+   </th>
+   <th>
+   <p>Downloads</p>
+   </th>
+  </tr>
+ </thead><tbody>
+ <tr>
+  <td>
+  <p></p>
+  </td>
+  <td>
+  <p></p>
+  </td>
+  <td>
+  <p></p>
+  </td>
+  <td>
+  <p>
+  </p>
+  </td>
+ </tr>
+</tbody></table>
+<h1 id="introduction">1 Introduction</h1>
+<p>The SMB3 POSIX Extensions are extensions to enable POSIX compliant
+operating systems to better interoperate with SMB3 servers and storage
+appliances. This document specified the extensions to the <a
+href="https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-fscc">[MS-FSCC]</a>
+specification. Popular servers such as Samba, Windows Server and others
+support SMB3 by default. These extensions are already implemented in
+multiple clients and servers.</p>
+<h1 id="messages-and-structures">2 Messages and Structures</h1>
+<h2 id="common-data-types">2.1 Common Data Types</h2>
+<h3 id="posix-mode-and-type">2.1.1 POSIX Mode and Type</h3>
+<table class="protocol-table">
+ <tr>
+  <th><p><br>1</p></th>
+  <th><p>3<br>0</p></th>
+  <th><p><br>9</p></th>
+  <th><p><br>8</p></th>
+  <th><p><br>7</p></th>
+  <th><p><br>6</p></th>
+  <th><p><br>5</p></th>
+  <th><p><br>4</p></th>
+  <th><p><br>3</p></th>
+  <th><p><br>2</p></th>
+  <th><p><br>1</p></th>
+  <th><p>2<br>0</p></th>
+  <th><p><br>9</p></th>
+  <th><p><br>8</p></th>
+  <th><p><br>7</p></th>
+  <th><p><br>6</p></th>
+  <th><p><br>5</p></th>
+  <th><p><br>4</p></th>
+  <th><p><br>3</p></th>
+  <th><p><br>2</p></th>
+  <th><p><br>1</p></th>
+  <th><p>1<br>0</p></th>
+  <th><p><br>9</p></th>
+  <th><p><br>8</p></th>
+  <th><p><br>7</p></th>
+  <th><p><br>6</p></th>
+  <th><p><br>5</p></th>
+  <th><p><br>4</p></th>
+  <th><p><br>3</p></th>
+  <th><p><br>2</p></th>
+  <th><p><br>1</p></th>
+  <th><p><br>0</p></th>
+ </tr>
+ <tr>
+  <td colspan="17"><p>Reserved</p></td>
+  <td colspan="3"><p>Type</p></td>
+  <td colspan="1"><p>S<br>U</p></td>
+  <td colspan="1"><p>S<br>G</p></td>
+  <td colspan="1"><p>S<br>T</p></td>
+  <td colspan="1"><p>R<br>U</p></td>
+  <td colspan="1"><p>W<br>U</p></td>
+  <td colspan="1"><p>X<br>U</p></td>
+  <td colspan="1"><p>R<br>G</p></td>
+  <td colspan="1"><p>W<br>G</p></td>
+  <td colspan="1"><p>X<br>G</p></td>
+  <td colspan="1"><p>R<br>O</p></td>
+  <td colspan="1"><p>W<br>O</p></td>
+  <td colspan="1"><p>X<br>O</p></td>
+ </tr>
+</table>
+<h4 id="posix-mode-bit-definitions">2.1.1.1 POSIX Mode Bit
+Definitions</h4>
+<table class="protocol-table">
+ <tr>
+  <th><p>Value</p></th>
+  <th><p>Meaning</p></th>
+ </tr>
+ <tr>
+  <td><p><b>XO</b> (0x00000001)</p></td>
+  <td><p>Others have execute permission <tt>(S_IXOTH)</tt></p></td>
+ </tr>
+ <tr>
+  <td><p><b>WO</b> (0x00000002)</p></td>
+  <td><p>Others have write permission <tt>(S_IWOTH)</tt></p></td>
+ </tr>
+ <tr>
+  <td><p><b>RO</b> (0x00000004)</p></td>
+  <td><p>Others have read permission <tt>(S_IROTH)</tt></p></td>
+ </tr>
+ <tr>
+  <td><p><b>XG</b> (0x00000008)</p></td>
+  <td><p>Group has execute permission <tt>(S_IXGRP)</tt></p></td>
+ </tr>
+ <tr>
+  <td><p><b>WG</b> (0x00000010)</p></td>
+  <td><p>Group has write permission <tt>(S_IWGRP)</tt></p></td>
+ </tr>
+ <tr>
+  <td><p><b>RG</b> (0x00000020)</p></td>
+  <td><p>Group has read permission <tt>(S_IRGRP)</tt></p></td>
+ </tr>
+ <tr>
+  <td><p><b>XU</b> (0x00000040)</p></td>
+  <td><p>User has execute permission <tt>(S_IXUSR)</tt></p></td>
+ </tr>
+ <tr>
+  <td><p><b>WU</b> (0x00000080)</p></td>
+  <td><p>User has write permission <tt>(S_IWUSR)</tt></p></td>
+ </tr>
+ <tr>
+  <td><p><b>RU</b> (0x00000100)</p></td>
+  <td><p>User has read permission <tt>(S_IRUSR)</tt></p></td>
+ </tr>
+ <tr>
+  <td><p><b>ST</b> (0x00000200)</p></td>
+  <td><p>Sticky bit <tt>(S_ISVTX)</tt></p></td>
+ </tr>
+ <tr>
+  <td><p><b>SG</b> (0x00000400)</p></td>
+  <td><p>Set-group-ID bit <tt>(S_ISGID)</tt></p></td>
+ </tr>
+ <tr>
+  <td><p><b>SU</b> (0x00000800)</p></td>
+  <td><p>Set-user-ID bit <tt>(S_ISUID)</tt></p></td>
+ </tr>
+ <tr>
+  <td><p><b>Type</b></p></td>
+  <td><p>The POSIX file type as an enumeration defined in <a href="#posix-file-type-definition">POSIX File Type Definition</a></p></td>
+ </tr>
+</table>
+<h4 id="posix-file-type-definition">2.1.1.2 POSIX File Type
+Definition</h4>
+<p>This defines the file type as an enum. Implementations MUST map these
+to the implementation specific values.</p>
+<table class="protocol-table">
+ <tr>
+  <th><p>Value</p></th>
+  <th><p>Meaning</p></th>
+ </tr>
+ <tr>
+  <td><p><b>0</b></p></td>
+  <td><p>A regular file (<tt>S_IFREG</tt>)</p></td>
+ </tr>
+ <tr>
+  <td><p><b>1</b></p></td>
+  <td><p>A directory (<tt>S_IFDIR</tt>)</p></td>
+ </tr>
+ <tr>
+  <td><p><b>2</b></p></td>
+  <td><p>A symlink (<tt>S_IFLNK</tt>)</p></td>
+ </tr>
+ <tr>
+  <td><p><b>3</b></p></td>
+  <td><p>A character device (<tt>S_IFCHR</tt>)</p></td>
+ </tr>
+ <tr>
+  <td><p><b>4</b></p></td>
+  <td><p>A block device (<tt>S_IFBLK</tt>)</p></td>
+ </tr>
+ <tr>
+  <td><p><b>5</b></p></td>
+  <td><p>A FIFO (<tt>S_IFIFO</tt>)</p></td>
+ </tr>
+ <tr>
+  <td><p><b>6</b></p></td>
+  <td><p>A socket (<tt>S_IFSOCK</tt>)</p></td>
+ </tr>
+</table>
+<h2 id="structures">2.3 Structures</h2>
+<h3 id="file-information-classes">2.3.1 File Information Classes</h3>
+<p>Refer to section <a
+href="https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-fscc/4718fc40-e539-4014-8e33-b675af74e3e1">2.4</a>
+of [MS-FSCC] for additional details. This section only explains details
+relevant to the FilePosixInformation info class.</p>
+<table class="protocol-table"><thead>
+  <tr>
+   <th>
+   <p>File information class</p>
+   </th>
+   <th>
+   <p>Level</p>
+   </th>
+   <th>
+   <p>Uses</p>
+   </th>
+  </tr>
+ </thead><tbody><tr>
+  <td>
+  <p><span><a href="#fileposixinformation">FilePosixInformation</a></span></p>
+  </td>
+  <td>
+  <p>0x64</p>
+  </td>
+  <td>
+  <p>Query</p>
+  </td>
+</tr></tbody></table>
+<h5 id="fileposixinformation">2.3.1.1 FilePosixInformation</h5>
+<p>This information class is used to query file posix information.</p>
+<p>A FILE_POSIX_INFORMATION data element, defined as follows, is
+returned by the server.</p>
+<table class="protocol-table">
+ <tr>
+  <th><p><br>0</p></th>
+  <th><p><br>1</p></th>
+  <th><p><br>2</p></th>
+  <th><p><br>3</p></th>
+  <th><p><br>4</p></th>
+  <th><p><br>5</p></th>
+  <th><p><br>6</p></th>
+  <th><p><br>7</p></th>
+  <th><p><br>8</p></th>
+  <th><p><br>9</p></th>
+  <th><p>1<br>0</p></th>
+  <th><p><br>1</p></th>
+  <th><p><br>2</p></th>
+  <th><p><br>3</p></th>
+  <th><p><br>4</p></th>
+  <th><p><br>5</p></th>
+  <th><p><br>6</p></th>
+  <th><p><br>7</p></th>
+  <th><p><br>8</p></th>
+  <th><p><br>9</p></th>
+  <th><p>2<br>0</p></th>
+  <th><p><br>1</p></th>
+  <th><p><br>2</p></th>
+  <th><p><br>3</p></th>
+  <th><p><br>4</p></th>
+  <th><p><br>5</p></th>
+  <th><p><br>6</p></th>
+  <th><p><br>7</p></th>
+  <th><p><br>8</p></th>
+  <th><p><br>9</p></th>
+  <th><p>3<br>0</p></th>
+  <th><p><br>1</p></th>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>CreationTime</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>...</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>LastAccessTime</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>...</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>LastWriteTime</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>...</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>ChangeTime</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>...</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>EndOfFile</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>...</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>AllocationSize</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>...</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>FileAttributes</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>Inode</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>...</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>Device</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>Reserved</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>NumberOfLinks</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>ReparseTag</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>POSIXMode</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>OwnerSID
+  (variable)</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>...</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>GroupSID
+  (variable)</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>...</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>FilenameLength</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>Filename
+  (variable)</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>...</p>
+  </td>
+ </tr>
+</table>
+<p><strong>CreationTime (8 bytes):</strong> The time when the file was
+created; see section <a
+href="https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-fscc/a69cc039-d288-4673-9598-772b6083f8bf">2.1.1</a>
+of [MS-FSCC]. A valid time for this field is an integer greater than or
+equal to 0. When setting file attributes, a value of 0 indicates to the
+server that it MUST NOT change this attribute. When setting file
+attributes, a value of -1 indicates to the server that it MUST NOT
+change this attribute for all subsequent operations on the same file
+handle. When setting file attributes, a value of -2 indicates to the
+server that it MUST change this attribute for all subsequent operations
+on the same file handle. This field MUST NOT be set to a value less than
+-2.</p>
+<p><strong>LastAccessTime (8 bytes):</strong> The last time the file was
+accessed; see section <a
+href="https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-fscc/a69cc039-d288-4673-9598-772b6083f8bf">2.1.1</a>
+of [MS-FSCC]. A valid time for this field is an integer greater than or
+equal to 0. When setting file attributes, a value of 0 indicates to the
+server that it MUST NOT change this attribute. When setting file
+attributes, a value of -1 indicates to the server that it MUST NOT
+change this attribute for all subsequent operations on the same file
+handle. When setting file attributes, a value of -2 indicates to the
+server that it MUST change this attribute for all subsequent operations
+on the same file handle. This field MUST NOT be set to a value less than
+-2.</p>
+<p><strong>LastWriteTime (8 bytes):</strong> The last time information
+was written to the file; see section <a
+href="https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-fscc/a69cc039-d288-4673-9598-772b6083f8bf">2.1.1</a>
+of [MS-FSCC]. A valid time for this field is an integer greater than or
+equal to 0. When setting file attributes, a value of 0 indicates to the
+server that it MUST NOT change this attribute. When setting file
+attributes, a value of -1 indicates to the server that it MUST NOT
+change this attribute for all subsequent operations on the same file
+handle. When setting file attributes, a value of -2 indicates to the
+server that it MUST change this attribute for all subsequent operations
+on the same file handle. This field MUST NOT be set to a value less than
+-2.</p>
+<p><strong>ChangeTime (8 bytes):</strong> The last time the file was
+changed; see section <a
+href="https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-fscc/a69cc039-d288-4673-9598-772b6083f8bf">2.1.1</a>
+of [MS-FSCC]. A valid time for this field is an integer greater than or
+equal to 0. When setting file attributes, a value of 0 indicates to the
+server that it MUST NOT change this attribute. When setting file
+attributes, a value of -1 indicates to the server that it MUST NOT
+change this attribute for all subsequent operations on the same file
+handle. When setting file attributes, a value of -2 indicates to the
+server that it MUST change this attribute for all subsequent operations
+on the same file handle. This field MUST NOT be set to a value less than
+-2.</p>
+<p><strong>EndOfFile (8 bytes):</strong> The size of the file.</p>
+<p><strong>AllocationSize (8 bytes):</strong> The size allocated on disk
+for the file.</p>
+<p><strong>FileAttributes (4 bytes):</strong> A 32-bit unsigned integer
+that contains the file attributes. Valid file attributes are specified
+in section <a
+href="https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-fscc/ca28ec38-f155-4768-81d6-4bfeb8586fc9">2.6</a>
+of [MS-FSCC].</p>
+<p><strong>Inode (8 bytes):</strong> The POSIX inode for the file.</p>
+<p><strong>FileId (4 bytes):</strong> The POSIX fileId for the file.</p>
+<p><strong>Reserved (4 bytes):</strong> A 32-bit field. This field is
+reserved. This field can be set to any value, and MUST be ignored.</p>
+<p><strong>NumberOfLinks (4 bytes):</strong> The number of hard links to
+the file.</p>
+<p><strong>ReparseTag (4 bytes):</strong> The reparse tag, as defined in
+section <a
+href="https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-fscc/c8e77b37-3909-4fe6-a4ea-2b9d423b1ee4">2.1.2.1</a>
+of [MS-FSCC].</p>
+<p><strong>POSIXMode (4 bytes):</strong> The POSIX mode as defined in <a
+href="fscc_posix_extensions.html#posix-mode">POSIX-FSCC 2.1.1</a>.</p>
+<p><strong>OwnerSID (variable):</strong> The owner SID as defined in <a
+href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-identifiers">Microsoft
+Security identifiers</a>.</p>
+<p><strong>GroupSID (variable):</strong> The group SID as defined in <a
+href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-identifiers">Microsoft
+Security identifiers</a>.</p>
+<p><strong>FilenameLength (4 bytes):</strong> The length, in bytes, of
+the filename.</p>
+<p><strong>Filename (variable):</strong> A variable-length buffer
+containing the filename, the length specified by
+<strong>FilenameLength</strong>.</p>
+<h3 id="file-system-information-classes">2.3.2 File System Information
+Classes</h3>
+<p>Refer to section <a
+href="https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-fscc/ee12042a-9352-46e3-9f67-c094b75fe6c3">2.5</a>
+of [MS-FSCC] for additional details. This section only explains details
+relevant to the FileFsPosixInformation info class.</p>
+<table class="protocol-table"><thead>
+  <tr>
+   <th>
+   <p>File system information class</p>
+   </th>
+   <th>
+   <p>Level</p>
+   </th>
+   <th>
+   <p>Uses</p>
+   </th>
+  </tr>
+ </thead><tbody><tr>
+  <td>
+  <p><span><a href="#filefsposixinformation">FileFsPosixInformation</a></span></p>
+  </td>
+  <td>
+  <p>0x64</p>
+  </td>
+  <td>
+  <p>Query</p>
+  </td>
+</tr></tbody></table>
+<h5 id="filefsposixinformation">2.3.2.1 FileFsPosixInformation</h5>
+<p>This information class is used to query file system posix
+information.</p>
+<p>A FILE_FS_POSIX_INFORMATION data element, defined as follows, is
+returned by the server.</p>
+<table class="protocol-table">
+ <tr>
+  <th><p><br>0</p></th>
+  <th><p><br>1</p></th>
+  <th><p><br>2</p></th>
+  <th><p><br>3</p></th>
+  <th><p><br>4</p></th>
+  <th><p><br>5</p></th>
+  <th><p><br>6</p></th>
+  <th><p><br>7</p></th>
+  <th><p><br>8</p></th>
+  <th><p><br>9</p></th>
+  <th><p>1<br>0</p></th>
+  <th><p><br>1</p></th>
+  <th><p><br>2</p></th>
+  <th><p><br>3</p></th>
+  <th><p><br>4</p></th>
+  <th><p><br>5</p></th>
+  <th><p><br>6</p></th>
+  <th><p><br>7</p></th>
+  <th><p><br>8</p></th>
+  <th><p><br>9</p></th>
+  <th><p>2<br>0</p></th>
+  <th><p><br>1</p></th>
+  <th><p><br>2</p></th>
+  <th><p><br>3</p></th>
+  <th><p><br>4</p></th>
+  <th><p><br>5</p></th>
+  <th><p><br>6</p></th>
+  <th><p><br>7</p></th>
+  <th><p><br>8</p></th>
+  <th><p><br>9</p></th>
+  <th><p>3<br>0</p></th>
+  <th><p><br>1</p></th>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>OptimalTransferSize</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>BlockSize</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>TotalBlocks</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>...</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>BlocksAvailable</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>...</p>
+  </td>
+ </tr>
+
+ <tr>
+  <td colspan="32">
+  <p>UserBlocksAvailable</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>...</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>TotalFileNodes</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>...</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>FreeFileNodes</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>...</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>FsIdentifier</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="32">
+  <p>...</p>
+  </td>
+ </tr>
+</table>
+<p><strong>OptimalTransferSize (4 bytes)</strong>: The preferred length
+of I/O requests for files on this file system., from
+<code>struct statvfs.f_bsize</code>.</p>
+<p><strong>BlockSize (4 bytes)</strong>: The size in bytes of the
+minimum unit of allocation on this filesystem, from
+<code>struct statvfs.f_frsize</code>.</p>
+<p><strong>TotalBlocks (8 bytes)</strong>: Size of filesystem in
+<em>BlockSize</em> units, from <code>struct statvfs.f_blocks</code>.</p>
+<p><strong>BlocksAvailable (8 bytes)</strong>: Number of free blocks in
+<em>BlockSize</em> units, from <code>struct statvfs.f_bfree</code>.</p>
+<p><strong>UserBlocksAvailable (8 bytes)</strong>: Number of free blocks
+for unprivileged users in <em>BlockSize</em> units, from
+<code>struct statvfs.f_bavail</code>.</p>
+<p><strong>TotalFileNodes (8 bytes)</strong>: Number of inodes, from
+<code>struct statvfs.f_files</code>.</p>
+<p><strong>FreeFileNodes (8 bytes)</strong>: Number of free inodes, from
+<code>struct statvfs.f_ffree</code>.</p>
+<p><strong>FsIdentifier (8 bytes)</strong>: Filesystem ID, from
+<code>struct statvfs.f_fsid</code>.</p>
+</body>
+</html>

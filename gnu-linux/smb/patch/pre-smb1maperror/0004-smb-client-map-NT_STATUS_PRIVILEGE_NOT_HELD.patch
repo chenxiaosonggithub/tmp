@@ -1,0 +1,27 @@
+From 67b104f2aec61aeca03a924774612063951513e6 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Thu, 22 Jan 2026 10:53:57 +0800
+Subject: [PATCH 4/7] smb/client: map NT_STATUS_PRIVILEGE_NOT_HELD
+
+See MS-CIFS 2.2.2.4 STATUS_PRIVILEGE_NOT_HELD.
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/client/smb1maperror.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/smb/client/smb1maperror.c b/fs/smb/client/smb1maperror.c
+index 421a7ab7bdfb..ceba8754f03b 100644
+--- a/fs/smb/client/smb1maperror.c
++++ b/fs/smb/client/smb1maperror.c
+@@ -116,6 +116,7 @@ static const struct {
+ 	ERRSRV, ERR_NOTIFY_ENUM_DIR, NT_STATUS_NOTIFY_ENUM_DIR}, {
+ 	ERRDOS, ERRmoredata, NT_STATUS_BUFFER_OVERFLOW}, {
+ 	ERRDOS, ERRmoredata, NT_STATUS_MORE_PROCESSING_REQUIRED}, {
++	ERRDOS, ERRnoaccess, NT_STATUS_PRIVILEGE_NOT_HELD}, {
+ 	ERRDOS, ERRgeneral, NT_STATUS_UNSUCCESSFUL}, {
+ 	ERRDOS, ERRbadfunc, NT_STATUS_NOT_IMPLEMENTED}, {
+ 	ERRDOS, ERRbadpipe, NT_STATUS_INVALID_INFO_CLASS}, {
+-- 
+2.43.0
+

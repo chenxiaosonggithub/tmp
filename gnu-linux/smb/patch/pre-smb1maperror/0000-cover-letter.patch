@@ -1,0 +1,27 @@
+From db1d48e91f5964ef29ce2b8502d7ad5c8273d5e3 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Thu, 22 Jan 2026 13:07:11 +0800
+Subject: [PATCH 0/7] smb/client: update SMB1 maperror, part 2
+
+This is a preparation to improve the search speed of the SMB1 maperror.
+
+The previous work is here:
+part 1: https://lore.kernel.org/linux-cifs/20260121114912.2138032-1-chenxiaosong.chenxiaosong@linux.dev/
+
+ChenXiaoSong (7):
+  smb/client: map NT_STATUS_NOTIFY_ENUM_DIR
+  smb/client: map NT_STATUS_BUFFER_OVERFLOW
+  smb/client: map NT_STATUS_MORE_PROCESSING_REQUIRED
+  smb/client: map NT_STATUS_PRIVILEGE_NOT_HELD
+  smb/client: rename to NT_STATUS_SOME_NOT_MAPPED
+  smb/client: rename to NT_ERROR_INVALID_DATATYPE
+  smb/client: move NT_STATUS_MORE_ENTRIES
+
+ fs/smb/client/nterr.c        |  3 ++-
+ fs/smb/client/nterr.h        | 12 ++++++------
+ fs/smb/client/smb1maperror.c |  4 ++++
+ 3 files changed, 12 insertions(+), 7 deletions(-)
+
+-- 
+2.43.0
+

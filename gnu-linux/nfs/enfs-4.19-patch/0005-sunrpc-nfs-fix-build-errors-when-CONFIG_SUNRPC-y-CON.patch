@@ -1,0 +1,313 @@
+From 205b25e314785fe20fc2399e8c903a06aa6b2dce Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Wed, 15 Jan 2025 02:13:42 +0000
+Subject: [PATCH 5/5] sunrpc, nfs: fix build errors when CONFIG_SUNRPC=y &&
+ CONFIG_ENFS=m
+
+There are build errors as follows:
+
+  ld: net/sunrpc/clnt.c:878: undefined reference to `rpc_multipath_ops_releas_clnt'
+  ld: net/sunrpc/clnt.c:994: undefined reference to `rpc_task_release_xprt'
+  ld: net/sunrpc/clnt.c:1030: undefined reference to `rpc_task_get_xprt'
+  ld: net/sunrpc/clnt.c:2009: undefined reference to `rpc_multipath_ops_prepare_transmit'
+  ld: net/sunrpc/clnt.c:1038: undefined reference to `rpc_multipath_ops_set_transport'
+  ld: net/sunrpc/clnt.c:1030: undefined reference to `rpc_task_get_xprt'
+  ld: net/sunrpc/clnt.c:1038: undefined reference to `rpc_multipath_ops_set_transport'
+  ld: net/sunrpc/clnt.c:1030: undefined reference to `rpc_task_get_xprt'
+  ld: net/sunrpc/clnt.c:497: undefined reference to `rpc_multipath_ops_create_clnt'
+  ld: net/sunrpc/clnt.c:2327: undefined reference to `rpc_multipath_ops_failover_handle'
+  ld: net/sunrpc/clnt.c:1637: undefined reference to `rpc_multipath_ops_task_need_call_start_again'
+  ld: net/sunrpc/clnt.c:994: undefined reference to `rpc_task_release_xprt'
+  ld: net/sunrpc/clnt.c:994: undefined reference to `rpc_task_release_xprt'
+  ld: net/sunrpc/xprt.c:264: undefined reference to `rpc_multipath_ops_adjust_task_timeout'
+  ld: net/sunrpc/xprt.c:568: undefined reference to `rpc_multipath_ops_adjust_task_timeout'
+  ld: net/sunrpc/xprt.c:1358: undefined reference to `rpc_multipath_ops_init_task_req'
+  ld: net/sunrpc/xprt.c:1569: undefined reference to `rpc_multipath_ops_destroy_xprt'
+  ld: net/sunrpc/xprt.c:1441: undefined reference to `rpc_multipath_ops_xprt_iostat'
+  ld: net/sunrpc/xprt.c:1545: undefined reference to `rpc_multipath_ops_create_xprt'
+  ld: net/sunrpc/sched.c:968: undefined reference to `rpc_task_get_xprt'
+
+SUNRPC should not use CONFIG_ENFS, so fix it by introducing
+CONFIG_SUNRPC_ENFS.
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/nfs/Kconfig                             |  1 +
+ include/linux/nfs_fs_sb.h                  |  2 +-
+ include/linux/sunrpc/clnt.h                |  8 ++++----
+ include/linux/sunrpc/sched.h               |  6 +++---
+ include/linux/sunrpc/sunrpc_enfs_adapter.h |  2 +-
+ include/linux/sunrpc/xprt.h                |  2 +-
+ include/linux/sunrpc/xprtmultipath.h       |  4 ++--
+ net/sunrpc/Kconfig                         |  4 ++++
+ net/sunrpc/Makefile                        |  2 +-
+ net/sunrpc/clnt.c                          | 16 ++++++++--------
+ net/sunrpc/sched.c                         |  2 +-
+ net/sunrpc/xprtmultipath.c                 |  2 +-
+ 12 files changed, 28 insertions(+), 23 deletions(-)
+
+diff --git a/fs/nfs/Kconfig b/fs/nfs/Kconfig
+index 872c9b7671b1..ad40c53febec 100644
+--- a/fs/nfs/Kconfig
++++ b/fs/nfs/Kconfig
+@@ -200,6 +200,7 @@ config NFS_DEBUG
+ config ENFS
+ 	tristate "NFS client support for ENFS"
+ 	depends on NFS_FS
++	select SUNRPC_ENFS
+ 	default n
+ 	help
+ 	  This option enables support multipath of the NFS protocol
+diff --git a/include/linux/nfs_fs_sb.h b/include/linux/nfs_fs_sb.h
+index ebba8a9b1bf4..81faa19396c3 100644
+--- a/include/linux/nfs_fs_sb.h
++++ b/include/linux/nfs_fs_sb.h
+@@ -125,7 +125,7 @@ struct nfs_client {
+ 	struct net		*cl_net;
+ 	struct list_head	pending_cb_stateids;
+ 
+-#if IS_ENABLED(CONFIG_ENFS)
++#if IS_ENABLED(CONFIG_SUNRPC_ENFS)
+ 	/* multi path private structure (struct multipath_client_info *) */
+ 	void *cl_multipath_data;
+ #endif
+diff --git a/include/linux/sunrpc/clnt.h b/include/linux/sunrpc/clnt.h
+index eadfe3274a99..b78d7b44bda0 100644
+--- a/include/linux/sunrpc/clnt.h
++++ b/include/linux/sunrpc/clnt.h
+@@ -72,7 +72,7 @@ struct rpc_clnt {
+ 	struct rpc_xprt_iter	cl_xpi;
+ 	struct super_block *pipefs_sb;
+ 
+-#if IS_ENABLED(CONFIG_ENFS)
++#if IS_ENABLED(CONFIG_SUNRPC_ENFS)
+ 	bool cl_enfs;
+ #endif
+ };
+@@ -129,7 +129,7 @@ struct rpc_create_args {
+ 	unsigned long		flags;
+ 	char			*client_name;
+ 	struct svc_xprt		*bc_xprt;	/* NFSv4.1 backchannel */
+-#if IS_ENABLED(CONFIG_ENFS)
++#if IS_ENABLED(CONFIG_SUNRPC_ENFS)
+ 	void *multipath_option;
+ #endif
+ };
+@@ -229,12 +229,12 @@ bool rpc_clnt_xprt_switch_has_addr(struct rpc_clnt *clnt,
+ 			const struct sockaddr *sap);
+ void rpc_cleanup_clids(void);
+ 
+-#if IS_ENABLED(CONFIG_ENFS)
++#if IS_ENABLED(CONFIG_SUNRPC_ENFS)
+ int
+ rpc_clnt_test_xprt(struct rpc_clnt *clnt, struct rpc_xprt *xprt,
+ 		   const struct rpc_call_ops *ops, void *data, int flags);
+ struct rpc_xprt *rpc_task_get_next_xprt(struct rpc_clnt *clnt);
+-#endif /* CONFIG_ENFS */
++#endif /* CONFIG_SUNRPC_ENFS */
+ 
+ static inline int rpc_reply_expected(struct rpc_task *task)
+ {
+diff --git a/include/linux/sunrpc/sched.h b/include/linux/sunrpc/sched.h
+index a6eb45eea4e9..0be3b5c9565e 100644
+--- a/include/linux/sunrpc/sched.h
++++ b/include/linux/sunrpc/sched.h
+@@ -90,7 +90,7 @@ struct rpc_task {
+ 				tk_garb_retry : 2,
+ 				tk_cred_retry : 2,
+ 				tk_rebind_retry : 2;
+-#if IS_ENABLED(CONFIG_ENFS)
++#if IS_ENABLED(CONFIG_SUNRPC_ENFS)
+ 	unsigned long		tk_major_timeo;	/* major timeout ticks */
+ #endif
+ };
+@@ -121,7 +121,7 @@ struct rpc_task_setup {
+  */
+ #define RPC_TASK_ASYNC		0x0001		/* is an async task */
+ #define RPC_TASK_SWAPPER	0x0002		/* is swapping in/out */
+-#if IS_ENABLED(CONFIG_ENFS)
++#if IS_ENABLED(CONFIG_SUNRPC_ENFS)
+ #define RPC_TASK_FIXED	0x0004		/* detect xprt status task */
+ #endif
+ #define RPC_CALL_MAJORSEEN	0x0020		/* major timeout seen */
+@@ -263,7 +263,7 @@ void		rpc_destroy_mempool(void);
+ extern struct workqueue_struct *rpciod_workqueue;
+ extern struct workqueue_struct *xprtiod_workqueue;
+ void		rpc_prepare_task(struct rpc_task *task);
+-#if IS_ENABLED(CONFIG_ENFS)
++#if IS_ENABLED(CONFIG_SUNRPC_ENFS)
+ void rpc_init_task_retry_counters(struct rpc_task *task);
+ #endif
+ 
+diff --git a/include/linux/sunrpc/sunrpc_enfs_adapter.h b/include/linux/sunrpc/sunrpc_enfs_adapter.h
+index cdd7fa699db2..5b8111c74aeb 100644
+--- a/include/linux/sunrpc/sunrpc_enfs_adapter.h
++++ b/include/linux/sunrpc/sunrpc_enfs_adapter.h
+@@ -6,7 +6,7 @@
+ #define _SUNRPC_ENFS_ADAPTER_H_
+ #include <linux/sunrpc/clnt.h>
+ 
+-#if IS_ENABLED(CONFIG_ENFS)
++#if IS_ENABLED(CONFIG_SUNRPC_ENFS)
+ 
+ static inline void rpc_xps_nactive_add_one(struct rpc_xprt_switch *xps)
+ {
+diff --git a/include/linux/sunrpc/xprt.h b/include/linux/sunrpc/xprt.h
+index 2e47b3577947..bab180eeea8e 100644
+--- a/include/linux/sunrpc/xprt.h
++++ b/include/linux/sunrpc/xprt.h
+@@ -279,7 +279,7 @@ struct rpc_xprt {
+ 	atomic_t		inject_disconnect;
+ #endif
+ 	struct rcu_head		rcu;
+-#if IS_ENABLED(CONFIG_ENFS)
++#if IS_ENABLED(CONFIG_SUNRPC_ENFS)
+ 	atomic_long_t	queuelen;
+ 	void *multipath_context;
+ #endif
+diff --git a/include/linux/sunrpc/xprtmultipath.h b/include/linux/sunrpc/xprtmultipath.h
+index 5677a46eec3b..1850e61785a1 100644
+--- a/include/linux/sunrpc/xprtmultipath.h
++++ b/include/linux/sunrpc/xprtmultipath.h
+@@ -22,7 +22,7 @@ struct rpc_xprt_switch {
+ 	const struct rpc_xprt_iter_ops *xps_iter_ops;
+ 
+ 	struct rcu_head		xps_rcu;
+-#if IS_ENABLED(CONFIG_ENFS)
++#if IS_ENABLED(CONFIG_SUNRPC_ENFS)
+ 	unsigned int		xps_nactive;
+ 	atomic_long_t		xps_queuelen;
+ 	unsigned long		xps_tmp_time;
+@@ -74,7 +74,7 @@ extern struct rpc_xprt *xprt_iter_get_next(struct rpc_xprt_iter *xpi);
+ 
+ extern bool rpc_xprt_switch_has_addr(struct rpc_xprt_switch *xps,
+ 		const struct sockaddr *sap);
+-#if IS_ENABLED(CONFIG_ENFS)
++#if IS_ENABLED(CONFIG_SUNRPC_ENFS)
+ extern void xprt_switch_add_xprt_locked(struct rpc_xprt_switch *xps,
+ 		struct rpc_xprt *xprt);
+ #endif
+diff --git a/net/sunrpc/Kconfig b/net/sunrpc/Kconfig
+index ac09ca803296..d72369ab6a1d 100644
+--- a/net/sunrpc/Kconfig
++++ b/net/sunrpc/Kconfig
+@@ -62,3 +62,7 @@ config SUNRPC_XPRT_RDMA
+ 
+ 	  If unsure, or you know there is no RDMA capability on your
+ 	  hardware platform, say N.
++
++config SUNRPC_ENFS
++	bool "sunrpc for ENFS"
++	depends on SUNRPC
+diff --git a/net/sunrpc/Makefile b/net/sunrpc/Makefile
+index fe4e3b28c5d1..dfd3a1087767 100644
+--- a/net/sunrpc/Makefile
++++ b/net/sunrpc/Makefile
+@@ -19,4 +19,4 @@ sunrpc-$(CONFIG_SUNRPC_DEBUG) += debugfs.o
+ sunrpc-$(CONFIG_SUNRPC_BACKCHANNEL) += backchannel_rqst.o
+ sunrpc-$(CONFIG_PROC_FS) += stats.o
+ sunrpc-$(CONFIG_SYSCTL) += sysctl.o
+-sunrpc-$(CONFIG_ENFS) += sunrpc_enfs_adapter.o
++sunrpc-$(CONFIG_SUNRPC_ENFS) += sunrpc_enfs_adapter.o
+diff --git a/net/sunrpc/clnt.c b/net/sunrpc/clnt.c
+index 02633da2e506..c1122f406b31 100644
+--- a/net/sunrpc/clnt.c
++++ b/net/sunrpc/clnt.c
+@@ -989,7 +989,7 @@ void rpc_task_release_transport(struct rpc_task *task)
+ 
+ 	if (xprt) {
+ 		task->tk_xprt = NULL;
+-#if IS_ENABLED(CONFIG_ENFS)
++#if IS_ENABLED(CONFIG_SUNRPC_ENFS)
+ 		if (task->tk_client) {
+ 			rpc_task_release_xprt(task->tk_client, xprt);
+ 			return;
+@@ -1004,7 +1004,7 @@ void rpc_task_release_client(struct rpc_task *task)
+ {
+ 	struct rpc_clnt *clnt = task->tk_client;
+ 
+-#if IS_ENABLED(CONFIG_ENFS)
++#if IS_ENABLED(CONFIG_SUNRPC_ENFS)
+ 	rpc_task_release_transport(task);
+ #endif
+ 
+@@ -1018,12 +1018,12 @@ void rpc_task_release_client(struct rpc_task *task)
+ 		rpc_release_client(clnt);
+ 	}
+ 
+-	if (!IS_ENABLED(CONFIG_ENFS))
++	if (!IS_ENABLED(CONFIG_SUNRPC_ENFS))
+ 		rpc_task_release_transport(task);
+ 
+ }
+ 
+-#if IS_ENABLED(CONFIG_ENFS)
++#if IS_ENABLED(CONFIG_SUNRPC_ENFS)
+ struct rpc_xprt *
+ rpc_task_get_next_xprt(struct rpc_clnt *clnt)
+ {
+@@ -1037,7 +1037,7 @@ void rpc_task_set_transport(struct rpc_task *task, struct rpc_clnt *clnt)
+ {
+ 	rpc_multipath_ops_set_transport(task, clnt);
+ 	if (!task->tk_xprt)
+-#if IS_ENABLED(CONFIG_ENFS)
++#if IS_ENABLED(CONFIG_SUNRPC_ENFS)
+ 		task->tk_xprt = rpc_task_get_next_xprt(clnt);
+ #else
+ 		task->tk_xprt = xprt_iter_get_next(&clnt->cl_xpi);
+@@ -1632,7 +1632,7 @@ call_reserveresult(struct rpc_task *task)
+ 		return;
+ 	case -EIO:	/* probably a shutdown */
+ 		break;
+-#if IS_ENABLED(CONFIG_ENFS)
++#if IS_ENABLED(CONFIG_SUNRPC_ENFS)
+ 	case -ETIMEDOUT:	/* woken up; restart */
+ 		if (rpc_multipath_ops_task_need_call_start_again(task)) {
+ 			rpc_task_release_transport(task);
+@@ -2846,7 +2846,7 @@ int rpc_clnt_add_xprt(struct rpc_clnt *clnt,
+ 		xprt->ops->set_connect_timeout(xprt,
+ 				connect_timeout,
+ 				reconnect_timeout);
+-#if IS_ENABLED(CONFIG_ENFS)
++#if IS_ENABLED(CONFIG_SUNRPC_ENFS)
+ 	if (!clnt->cl_enfs)
+ 		rpc_xprt_switch_set_roundrobin(xps);
+ #else
+@@ -3014,7 +3014,7 @@ rpc_clnt_swap_deactivate(struct rpc_clnt *clnt)
+ EXPORT_SYMBOL_GPL(rpc_clnt_swap_deactivate);
+ #endif /* CONFIG_SUNRPC_SWAP */
+ 
+-#if IS_ENABLED(CONFIG_ENFS)
++#if IS_ENABLED(CONFIG_SUNRPC_ENFS)
+ /* rpc_clnt_test_xprt - Test and add a new transport to a rpc_clnt
+  * @clnt: pointer to struct rpc_clnt
+  * @xprt: pointer struct rpc_xprt
+diff --git a/net/sunrpc/sched.c b/net/sunrpc/sched.c
+index 3d97d7639e34..36b38c751443 100644
+--- a/net/sunrpc/sched.c
++++ b/net/sunrpc/sched.c
+@@ -964,7 +964,7 @@ static void rpc_init_task(struct rpc_task *task, const struct rpc_task_setup *ta
+ 	/* Initialize workqueue for async tasks */
+ 	task->tk_workqueue = task_setup_data->workqueue;
+ 
+-#if IS_ENABLED(CONFIG_ENFS)
++#if IS_ENABLED(CONFIG_SUNRPC_ENFS)
+ 	task->tk_xprt = rpc_task_get_xprt(task_setup_data->rpc_client,
+ 					  xprt_get(task_setup_data->rpc_xprt));
+ #else
+diff --git a/net/sunrpc/xprtmultipath.c b/net/sunrpc/xprtmultipath.c
+index 6b3709d5ed6e..cfe39382d39c 100644
+--- a/net/sunrpc/xprtmultipath.c
++++ b/net/sunrpc/xprtmultipath.c
+@@ -107,7 +107,7 @@ struct rpc_xprt_switch *xprt_switch_alloc(struct rpc_xprt *xprt,
+ 		spin_lock_init(&xps->xps_lock);
+ 		kref_init(&xps->xps_kref);
+ 		xps->xps_nxprts = 0;
+-#if IS_ENABLED(CONFIG_ENFS)
++#if IS_ENABLED(CONFIG_SUNRPC_ENFS)
+ 		xps->xps_nactive = 0;
+ 		atomic_long_set(&xps->xps_queuelen, 0);
+ #endif
+-- 
+2.34.1
+

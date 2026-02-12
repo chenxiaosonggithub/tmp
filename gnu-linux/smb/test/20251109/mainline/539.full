@@ -1,0 +1,12 @@
+File system does not support unwritten extents.
+File system magic#: 0xfe534d42
+Allocation size: 1048576
+
+21. Test file SEEK_HOLE that was created by PUNCH_HOLE
+21.01 SEEK_DATA expected 0 or 0, got 0.                           succ
+21.02 SEEK_HOLE expected 1048576 or 3145728, got 3145728.         succ
+21.03 SEEK_DATA expected 2097152 or 2097152, got 1048576.         FAIL
+
+seek sanity check failed!
+umount: //192.168.53.210/cifsd-test2: no mount point specified.
+umount: //192.168.53.210/cifsd-test2: no mount point specified.

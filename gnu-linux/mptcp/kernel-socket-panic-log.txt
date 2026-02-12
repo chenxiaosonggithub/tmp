@@ -1,0 +1,25 @@
+[  148.339588] kernel_sendmsg, buffer: data 36                                                                         
+[  148.341004] kernel_recvmsg 7 bytes, buffer: data 36                                                                                                                                                                                        
+[  149.363523] Oops: int3: 0000 [#1] PREEMPT SMP NOPTI
+[  149.363535] CPU: 12 UID: 0 PID: 929 Comm: socket client t Tainted: G           OE      6.13.0-rc7+ #14
+[  149.363544] Tainted: [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
+[  149.363546] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+[  149.363549] RIP: 0010:0xffffffffc0401170
+[  149.363558] Code: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc <cc> cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc
+[  149.363562] RSP: 0018:ffffc9000134ba38 EFLAGS: 00000246
+[  149.363567] RAX: 0000000000000000 RBX: ffffc9000134bac8 RCX: 0000000000000002
+[  149.363570] RDX: 0000000000000000 RSI: 0000000000000246 RDI: 0000000000000000
+[  149.363573] RBP: ffffc9000134bee8 R08: 00000000ffffffff R09: ffffc90000113df0
+[  149.363576] R10: ffffc9000146fdd0 R11: 0000000000000000 R12: 0000000000000024
+[  149.363580] R13: 0000000000000000 R14: ffffffffc0401010 R15: 0000000000000000
+[  149.363585] FS:  0000000000000000(0000) GS:ffff88842fc00000(0000) knlGS:0000000000000000
+[  149.363589] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  149.363592] CR2: 00007ff8ea48b458 CR3: 0000000003836000 CR4: 0000000000350ef0
+[  149.363598] Call Trace:
+[  149.363601]  <TASK>
+[  149.363944]  kthread+0x127/0x130
+[  149.363958]  ret_from_fork+0x41/0x50
+[  149.363971]  ret_from_fork_asm+0x1a/0x30       
+[  149.363988]  </TASK>                     
+[  149.363990] Modules linked in: kernel_socket_server(OE) [last unloaded: kernel_socket_client(OE)]
+[  149.364000] ---[ end trace 0000000000000000 ]---

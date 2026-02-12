@@ -1,0 +1,40 @@
+From fe99c54ec32994895994ced5d397a205f347cc5e Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Sun, 7 Dec 2025 14:32:58 +0800
+Subject: [PATCH 30/30] smb/client: introduce KUnit test to check search result
+ of mapping_table_ERRSRV array
+
+The KUnit test are executed when cifs.ko is loaded.
+
+The mapping_table_ERRSRV_check_search() checks whether all elements can be
+correctly found in the array.
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/client/netmisc_test.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/fs/smb/client/netmisc_test.c b/fs/smb/client/netmisc_test.c
+index 4a82edd58dcc..fa8e98b46e88 100644
+--- a/fs/smb/client/netmisc_test.c
++++ b/fs/smb/client/netmisc_test.c
+@@ -83,6 +83,8 @@ DEFINE_CHECK_SEARCH_FUNC(ntstatus_to_dos, ntstatus, ntstatus_to_dos_map, ntstatu
+ DEFINE_CHECK_SEARCH_FUNC(nt_err_code_struct, nt_errcode, nt_errs, nt_err_num);
+ /* mapping_table_ERRDOS_check_search */
+ DEFINE_CHECK_SEARCH_FUNC(smb_to_posix_error, smb_err, mapping_table_ERRDOS, errdos_num);
++/* mapping_table_ERRSRV_check_search */
++DEFINE_CHECK_SEARCH_FUNC(smb_to_posix_error, smb_err, mapping_table_ERRSRV, errsrv_num);
+ 
+ /*
+  * Before running these test cases, the smb_init_maperror()
+@@ -98,6 +100,7 @@ static struct kunit_case maperror_test_cases[] = {
+ 	KUNIT_CASE(ntstatus_to_dos_map_check_search),
+ 	KUNIT_CASE(nt_errs_check_search),
+ 	KUNIT_CASE(mapping_table_ERRDOS_check_search),
++	KUNIT_CASE(mapping_table_ERRSRV_check_search),
+ 	{}
+ };
+ 
+-- 
+2.43.0
+

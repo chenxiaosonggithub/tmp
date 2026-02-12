@@ -1,0 +1,64 @@
+From 39fd7c7824c076214a3184ff97944efd43b9627f Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Wed, 15 Jan 2025 02:06:36 +0000
+Subject: [PATCH] nfs: auto load enfs module
+
+In order to use enfs more easily, load enfs module automatically
+when needed.
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/nfs/enfs/Makefile  |  2 +-
+ fs/nfs/enfs_adapter.c | 12 ++++++++++--
+ 2 files changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/fs/nfs/enfs/Makefile b/fs/nfs/enfs/Makefile
+index 6e83eb23c668..6c6d2fac6fcc 100644
+--- a/fs/nfs/enfs/Makefile
++++ b/fs/nfs/enfs/Makefile
+@@ -1,4 +1,4 @@
+-obj-m   += enfs.o
++obj-$(CONFIG_ENFS)   += enfs.o
+ 
+ #EXTRA_CFLAGS += -I$(PWD)/..
+ 
+diff --git a/fs/nfs/enfs_adapter.c b/fs/nfs/enfs_adapter.c
+index e0f3841c1886..190f4fc07349 100644
+--- a/fs/nfs/enfs_adapter.c
++++ b/fs/nfs/enfs_adapter.c
+@@ -17,6 +17,7 @@
+ #include "iostat.h"
+ 
+ struct enfs_adapter_ops __rcu *enfs_adapter;
++static DEFINE_MUTEX(enfs_module_mutex);
+ 
+ int enfs_adapter_register(struct enfs_adapter_ops *ops)
+ {
+@@ -44,15 +45,22 @@ EXPORT_SYMBOL_GPL(enfs_adapter_unregister);
+ 
+ struct enfs_adapter_ops *nfs_multipath_router_get(void)
+ {
++	int rc;
+ 	struct enfs_adapter_ops *ops;
+ 
+ 	rcu_read_lock();
+ 	ops = rcu_dereference(enfs_adapter);
+ 	if (ops == NULL) {
+ 		rcu_read_unlock();
+-		return NULL;
++		mutex_lock(&enfs_module_mutex);
++		rc = request_module("enfs");
++		mutex_unlock(&enfs_module_mutex);
++		if (rc)
++			return ERR_PTR(rc);
++		rcu_read_lock();
++		ops = rcu_dereference(enfs_adapter);
+ 	}
+-	if (!try_module_get(ops->owner))
++	if (ops && !try_module_get(ops->owner))
+ 		ops = NULL;
+ 	rcu_read_unlock();
+ 	return ops;
+-- 
+2.34.1
+

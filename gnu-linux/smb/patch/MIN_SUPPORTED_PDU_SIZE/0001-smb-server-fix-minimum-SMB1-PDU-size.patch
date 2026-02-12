@@ -1,0 +1,42 @@
+From bda4ab7c87e240f7fe0d88491b039860d0a8848e Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 19 Dec 2025 09:04:17 +0800
+Subject: [PATCH v4 1/2] smb/server: fix minimum SMB1 PDU size
+
+Since the RFC1002 header has been removed from `struct smb_hdr`,
+the minimum SMB1 PDU size should be updated as well.
+
+Fixes: 83bfbd0bb902 ("cifs: Remove the RFC1002 header from smb_hdr")
+Suggested-by: David Howells <dhowells@redhat.com>
+Suggested-by: Namjae Jeon <linkinjeon@kernel.org>
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/connection.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/fs/smb/server/connection.c b/fs/smb/server/connection.c
+index b6b4f1286b9c..c801edd6f1ae 100644
+--- a/fs/smb/server/connection.c
++++ b/fs/smb/server/connection.c
+@@ -295,7 +295,8 @@ bool ksmbd_conn_alive(struct ksmbd_conn *conn)
+ 	return true;
+ }
+ 
+-#define SMB1_MIN_SUPPORTED_HEADER_SIZE (sizeof(struct smb_hdr))
++/* "+2" for BCC field (ByteCount, 2 bytes) */
++#define SMB1_MIN_SUPPORTED_PDU_SIZE (sizeof(struct smb_hdr) + 2)
+ #define SMB2_MIN_SUPPORTED_HEADER_SIZE (sizeof(struct smb2_hdr) + 4)
+ 
+ /**
+@@ -363,7 +364,7 @@ int ksmbd_conn_handler_loop(void *p)
+ 		if (pdu_size > MAX_STREAM_PROT_LEN)
+ 			break;
+ 
+-		if (pdu_size < SMB1_MIN_SUPPORTED_HEADER_SIZE)
++		if (pdu_size < SMB1_MIN_SUPPORTED_PDU_SIZE)
+ 			break;
+ 
+ 		/* 4 for rfc1002 length field */
+-- 
+2.43.0
+

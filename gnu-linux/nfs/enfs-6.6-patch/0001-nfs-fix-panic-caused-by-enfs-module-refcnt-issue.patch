@@ -1,0 +1,66 @@
+From 280294ca2f56010a03e530483b15dd94060ce163 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Thu, 17 Jul 2025 15:52:11 +0800
+Subject: [PATCH 1/2] nfs: fix panic caused by enfs module refcnt issue
+
+There is panic as follows (Link[1]):
+
+ BUG: kernel NULL pointer dereference, address: 0000000000000104
+ ...
+ RIP: 0010:xprt_switch_get+0x1a/0x60
+ ...
+ Call Trace:
+  <TASK>
+  shard_update_work.constprop.0+0x71/0x220 [enfs]
+  shard_update_loop+0x219/0x290 [enfs]
+  kthread+0xfb/0x130
+  ret_from_fork+0x40/0x60
+  ret_from_fork_asm+0x1b/0x30
+ ...
+ ---[ end Kernel panic - not syncing: Fatal exception ]---
+
+Reproducer:
+
+  1. mount -t nfs -o vers=3 localaddrs=xxx,remoteaddrs=xxx ${server_ip}:/svr/export /mnt/
+  2. modprobe -r enfs
+  3. umount /mnt
+  4. mount -t nfs -o vers=3 localaddrs=xxx,remoteaddrs=xxx ${server_ip}:/svr/export /mnt/
+  5. wait 60s, and panic
+
+Fix it by holding the module refcnt until the client is freed.
+
+Link[1]: https://chenxiaosong.com/course/nfs/issue/openeuler-enfs-null-ptr-deref-in-xprt_switch_get.html
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/nfs/enfs_adapter.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/fs/nfs/enfs_adapter.c b/fs/nfs/enfs_adapter.c
+index 2d67cd31a1cd..0236aee59023 100644
+--- a/fs/nfs/enfs_adapter.c
++++ b/fs/nfs/enfs_adapter.c
+@@ -163,7 +163,10 @@ int nfs_create_multi_path_client(struct nfs_client *client,
+ 	if (ops != NULL && ops->client_info_init != NULL)
+ 		ret = ops->client_info_init((void *)&client->cl_multipath_data,
+ 					    cl_init);
+-	nfs_multipath_router_put(ops);
++
++	// hold the module refcnt if client_info_init() successful
++	if (ret)
++		nfs_multipath_router_put(ops);
+ 
+ 	return ret;
+ }
+@@ -180,6 +183,9 @@ void nfs_free_multi_path_client(struct nfs_client *clp)
+ 	if (ops != NULL && ops->client_info_free != NULL)
+ 		ops->client_info_free(clp->cl_multipath_data);
+ 	nfs_multipath_router_put(ops);
++
++	// release the module refcnt got in nfs_create_multi_path_client()
++	nfs_multipath_router_put(ops);
+ }
+ 
+ int nfs_multipath_client_match(void *src, void *dst)
+-- 
+2.43.0
+

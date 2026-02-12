@@ -1,0 +1,68 @@
+From 593ce9e6216fb2b4b4006dd5296b05523cbc4ec8 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Wed, 15 Jan 2025 02:08:28 +0000
+Subject: [PATCH 2/5] nfs: fix panic caused by enfs module refcnt issue
+
+There is panic as follows:
+
+  BUG: unable to handle kernel paging request at ffffffffc01a8390
+  CPU: 12 PID: 648 Comm: umount.nfs4 Not tainted 4.19.90+ #11
+  Call Trace:
+   rpc_run_task+0x15f/0x180 [sunrpc]
+   rpc_call_sync+0x51/0xa0 [sunrpc]
+   nfs4_proc_destroy_session+0x95/0x120 [nfsv4]
+   nfs4_destroy_session+0x2a/0xf0 [nfsv4]
+   nfs41_shutdown_client+0x126/0x160 [nfsv4]
+   nfs4_free_client+0x2a/0xc0 [nfsv4]
+   nfs_put_client.part.0+0xe7/0x100 [nfs]
+   nfs_free_server+0x5c/0xa0 [nfs]
+   nfs_kill_super+0x32/0x50 [nfs]
+   deactivate_locked_super+0x35/0x80
+   deactivate_super+0x40/0x50
+   cleanup_mnt+0x71/0xb0
+   __cleanup_mnt+0x12/0x20
+   task_work_run+0x70/0xa0
+   exit_to_usermode_loop+0xbf/0xd0
+   do_syscall_64+0x1f7/0x260
+   entry_SYSCALL_64_after_hwframe+0x5c/0xc1
+
+Reproducer:
+  1. mount -t nfs -o localaddrs=xxx,remoteaddrs=xxx $server_ip:/ /mnt/
+  2. modprobe -r enfs
+  3. umount /mnt
+
+Fix it by holding the module refcnt until the client is freed.
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/nfs/enfs_adapter.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/fs/nfs/enfs_adapter.c b/fs/nfs/enfs_adapter.c
+index 68e4c49a7e94..e3ba81205274 100644
+--- a/fs/nfs/enfs_adapter.c
++++ b/fs/nfs/enfs_adapter.c
+@@ -126,7 +126,9 @@ int nfs_create_multi_path_client(struct nfs_client *client,
+ 	if (ops != NULL && ops->client_info_init != NULL)
+ 		ret = ops->client_info_init(
+ 			(void *)&client->cl_multipath_data, cl_init);
+-	nfs_multipath_router_put(ops);
++	// hold the module refcnt if client_info_init() successful
++	if (!client->cl_multipath_data)
++		nfs_multipath_router_put(ops);
+ 
+ 	return ret;
+ }
+@@ -143,6 +145,9 @@ void nfs_free_multi_path_client(struct nfs_client *clp)
+ 	if (ops != NULL && ops->client_info_free != NULL)
+ 		ops->client_info_free(clp->cl_multipath_data);
+ 	nfs_multipath_router_put(ops);
++
++	// release the module refcnt got in nfs_create_multi_path_client()
++	nfs_multipath_router_put(ops);
+ }
+ 
+ int nfs_multipath_client_match(struct nfs_client *clp,
+-- 
+2.34.1
+

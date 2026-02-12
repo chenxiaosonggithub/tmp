@@ -1,0 +1,45 @@
+From 771511f4142e92f9c9b2d51d91941c9f0388ff8e Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Wed, 15 Jan 2025 02:10:13 +0000
+Subject: [PATCH 3/5] nfs: fix build error when CONFIG_ENFS=y
+
+Fix the following build error:
+
+  ld: fs/nfs/enfs/enfs_init.c:24: multiple definition of `enfs_adapter'; \
+      fs/nfs/enfs_adapter.c:19: first defined here
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/nfs/enfs/enfs_init.c | 2 +-
+ fs/nfs/enfs_adapter.c   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/nfs/enfs/enfs_init.c b/fs/nfs/enfs/enfs_init.c
+index 4b55608191a7..e699ab4c96a1 100644
+--- a/fs/nfs/enfs/enfs_init.c
++++ b/fs/nfs/enfs/enfs_init.c
+@@ -21,7 +21,7 @@
+ #include "enfs_multipath.h"
+ #include "mgmt_init.h"
+ 
+-struct enfs_adapter_ops enfs_adapter = {
++static struct enfs_adapter_ops enfs_adapter = {
+ 	.name				= "enfs",
+ 	.owner				= THIS_MODULE,
+ 	.parse_mount_options     = nfs_multipath_parse_options,
+diff --git a/fs/nfs/enfs_adapter.c b/fs/nfs/enfs_adapter.c
+index e3ba81205274..1c6c5ff77c7d 100644
+--- a/fs/nfs/enfs_adapter.c
++++ b/fs/nfs/enfs_adapter.c
+@@ -16,7 +16,7 @@
+ #include "enfs_adapter.h"
+ #include "iostat.h"
+ 
+-struct enfs_adapter_ops __rcu *enfs_adapter;
++static struct enfs_adapter_ops __rcu *enfs_adapter;
+ 
+ int enfs_adapter_register(struct enfs_adapter_ops *ops)
+ {
+-- 
+2.34.1
+

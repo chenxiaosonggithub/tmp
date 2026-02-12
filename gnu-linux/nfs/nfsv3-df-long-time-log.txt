@@ -1,0 +1,183 @@
+[510403.907318] NFS: nfs_weak_revalidate: inode 349110336 is valid
+[510403.907323] NFS: revalidating (0:44/349110336)
+[510403.907325] NFS call  getattr
+[510403.907329] RPC:       new task initialized, procpid 23871
+[510403.907331] RPC:       allocated task 0000000005dc998b
+[510403.907336] RPC:   275 __rpc_execute flags=0x80
+[510403.907339] RPC:   275 call_start nfs3 proc GETATTR (sync)
+[510403.907341] RPC:   275 call_reserve (status 0)
+[510403.907346] RPC:       wake_up_first(000000008c3c84d4 "xprt_sending")
+[510403.907349] RPC:   275 reserved req 000000004159de5a xid 2cc1bab8
+[510403.907351] RPC:   275 call_reserveresult (status 0)
+[510403.907353] RPC:   275 call_refresh (status 0)
+[510403.907355] RPC:   275 looking up UNIX cred
+[510403.907357] RPC:       looking up UNIX cred
+[510403.907361] RPC:   275 refreshing UNIX cred 00000000cde71851
+[510403.907363] RPC:   275 call_refreshresult (status 0)
+[510403.907365] RPC:   275 call_allocate (status 0)
+[510403.907369] RPC:   275 allocated buffer of size 648 at 00000000523b882e
+[510403.907371] RPC:   275 call_bind (status 0)
+[510403.907374] RPC:   275 call_connect xprt 00000000a126907a is not connected
+[510403.907376] RPC:   275 xprt_connect xprt 00000000a126907a is not connected
+[510403.907379] RPC:   275 sleep_on(queue "xprt_pending" time 4805072523)
+[510403.907382] RPC:   275 added to queue 000000003d6cf1b4 "xprt_pending"
+[510403.907384] RPC:   275 setting alarm for 60000 ms
+[510403.907386] RPC:       xs_connect scheduled xprt 00000000a126907a
+[510403.907398] RPC:   275 sync task going to sleep
+[510403.907419] RPC:       xs_bind 0.0.0.0:864: ok (0)
+[510403.907423] RPC:       worker connecting xprt 00000000a126907a via tcp to 130.115.200.165 (port 2049)
+[510403.907469] RPC:       00000000a126907a connect status 115 connected 0 sock state 2
+[510403.907472] RPC:       wake_up_first(000000008c3c84d4 "xprt_sending")
+[510403.908266] RPC:       xs_error_report client 00000000a126907a, error=104...
+[510403.908269] RPC:   275 __rpc_wake_up_task (now 4805072524)
+[510403.908271] RPC:   275 disabling timer
+[510403.908274] RPC:   275 removed from queue 000000003d6cf1b4 "xprt_pending"
+[510403.908296] RPC:       __rpc_wake_up_task done
+[510403.908298] RPC:       xs_tcp_state_change client 00000000a126907a...
+[510403.908301] RPC:       state 7 conn 0 dead 0 zapped 1 sk_shutdown 0
+[510403.908314] RPC:       xs_tcp_state_change client 00000000a126907a...
+[510403.908316] RPC:   275 sync task resuming
+[510403.908319] RPC:       state 7 conn 0 dead 0 zapped 1 sk_shutdown 3
+[510403.908320] RPC:   275 xprt_connect_status: retrying
+[510403.908323] RPC:   275 call_connect_status (status -104)
+[510403.908326] RPC:   275 sleep_on(queue "delayq" time 4805072524)
+[510403.908332] RPC:   275 added to queue 000000000db4bcdb "delayq"
+[510403.908334] RPC:       wake_up_first(000000008c3c84d4 "xprt_sending")
+[510403.908336] RPC:   275 setting alarm for 3000 ms
+[510403.908338] RPC:   275 sync task going to sleep
+[510406.968250] RPC:   275 timeout
+[510406.968273] RPC:   275 __rpc_wake_up_task (now 4805075584)
+[510406.968277] RPC:   275 disabling timer
+[510406.968282] RPC:   275 removed from queue 000000000db4bcdb "delayq"
+[510406.968288] RPC:       __rpc_wake_up_task done
+[510406.968304] RPC:   275 sync task resuming
+[510406.968306] RPC:   275 call_timeout (minor)
+[510406.968309] RPC:   275 call_bind (status 0)
+[510406.968312] RPC:   275 call_connect xprt 00000000a126907a is not connected
+[510406.968315] RPC:   275 xprt_connect xprt 00000000a126907a is not connected
+[510406.968318] RPC:   275 sleep_on(queue "xprt_pending" time 4805075584)
+[510406.968320] RPC:   275 added to queue 000000003d6cf1b4 "xprt_pending"
+[510406.968322] RPC:   275 setting alarm for 120000 ms
+[510406.968325] RPC:       xs_connect scheduled xprt 00000000a126907a
+[510406.968337] RPC:   275 sync task going to sleep
+[510406.968371] RPC:       xs_bind 0.0.0.0:864: ok (0)
+[510406.968375] RPC:       worker connecting xprt 00000000a126907a via tcp to 130.115.200.165 (port 2049)
+[510406.968425] RPC:       00000000a126907a connect status 115 connected 0 sock state 2
+[510406.968428] RPC:       wake_up_first(000000008c3c84d4 "xprt_sending")
+[510406.970731] RPC:       xs_tcp_state_change client 00000000a126907a...
+[510406.970747] RPC:       state 1 conn 0 dead 0 zapped 1 sk_shutdown 0
+[510406.970752] RPC:   275 __rpc_wake_up_task (now 4805075586)
+[510406.970755] RPC:   275 disabling timer
+[510406.970760] RPC:   275 removed from queue 000000003d6cf1b4 "xprt_pending"
+[510406.970771] RPC:       __rpc_wake_up_task done
+[510406.970788] RPC:   275 sync task resuming
+[510406.970791] RPC:   275 xprt_connect_status: retrying
+[510406.970794] RPC:   275 call_connect_status (status -11)
+[510406.970796] RPC:   275 call_timeout (minor)
+[510406.970798] RPC:   275 call_bind (status 0)
+[510406.970801] RPC:   275 call_connect xprt 00000000a126907a is connected
+[510406.970805] RPC:   275 call_transmit (status 0)
+[510406.970809] RPC:   275 xprt_prepare_transmit
+[510406.970812] RPC:   275 rpc_xdr_encode (status 0)
+[510406.970815] RPC:   275 marshaling UNIX cred 00000000cde71851
+[510406.970819] RPC:   275 using AUTH_UNIX cred 00000000cde71851 to wrap rpc data
+[510406.970822] RPC:   275 xprt_transmit(128)
+[510406.970852] RPC:       xs_tcp_send_request(128) = 0
+[510406.970854] RPC:   275 xmit complete
+[510406.970858] RPC:   275 sleep_on(queue "xprt_pending" time 4805075586)
+[510406.970861] RPC:   275 added to queue 000000003d6cf1b4 "xprt_pending"
+[510406.970863] RPC:   275 setting alarm for 180000 ms
+[510406.970867] RPC:       wake_up_first(000000008c3c84d4 "xprt_sending")
+[510406.970869] RPC:   275 sync task going to sleep
+[510406.973280] RPC:       xs_data_ready...
+[510406.973307] RPC:       xs_tcp_data_recv started
+[510406.973309] RPC:       reading TCP record fragment of length 112
+[510406.973311] RPC:       reading XID (4 bytes)
+[510406.973314] RPC:       reading request with XID 2cc1bab8
+[510406.973316] RPC:       reading CALL/REPLY flag (4 bytes)
+[510406.973318] RPC:       read reply XID 2cc1bab8
+[510406.973322] RPC:       XID 2cc1bab8 read 104 bytes
+[510406.973326] RPC:       xprt = 00000000a126907a, tcp_copied = 112, tcp_offset = 112, tcp_reclen = 112
+[510406.973329] RPC:   275 xid 2cc1bab8 complete (112 bytes received)
+[510406.973332] RPC:   275 __rpc_wake_up_task (now 4805075589)
+[510406.973334] RPC:   275 disabling timer
+[510406.973336] RPC:   275 removed from queue 000000003d6cf1b4 "xprt_pending"
+[510406.973348] RPC:       __rpc_wake_up_task done
+[510406.973350] RPC:       xs_tcp_data_recv done
+[510406.973356] RPC:   275 sync task resuming
+[510406.973359] RPC:   275 call_status (status 112)
+[510406.973362] RPC:   275 call_decode (status 112)
+[510406.973365] RPC:   275 validating UNIX cred 00000000cde71851
+[510406.973368] RPC:   275 using AUTH_UNIX cred 00000000cde71851 to unwrap rpc data
+[510406.973371] RPC:   275 call_decode result 0
+[510406.973374] RPC:   275 return 0, status 0
+[510406.973375] RPC:   275 release task
+[510406.973379] RPC:       freeing buffer of size 648 at 00000000523b882e
+[510406.973391] RPC:   275 release request 000000004159de5a
+[510406.973394] RPC:       wake_up_first(000000007f910368 "xprt_backlog")
+[510406.973396] RPC:       rpc_release_client(0000000068e40883)
+[510406.973398] RPC:   275 freeing task
+[510406.973400] NFS reply getattr: 0
+[510406.973406] NFS: nfs_update_inode(0:44/349110336 fh_crc=0xad1d65e9 ct=2 info=0x27e7f)
+[510406.973410] NFS: (0:44/349110336) revalidation complete
+[510406.973792] NFS: nfs_weak_revalidate: inode 349110336 is valid
+[510406.973794] NFS call  fsstat
+[510406.973797] RPC:       new task initialized, procpid 23871
+[510406.973799] RPC:       allocated task 0000000005dc998b
+[510406.973802] RPC:   276 __rpc_execute flags=0x80
+[510406.973805] RPC:   276 call_start nfs3 proc FSSTAT (sync)
+[510406.973808] RPC:   276 call_reserve (status 0)
+[510406.973811] RPC:       wake_up_first(000000008c3c84d4 "xprt_sending")
+[510406.973814] RPC:   276 reserved req 000000004159de5a xid 2dc1bab8
+[510406.973816] RPC:   276 call_reserveresult (status 0)
+[510406.973818] RPC:   276 call_refresh (status 0)
+[510406.973820] RPC:   276 looking up UNIX cred
+[510406.973821] RPC:       looking up UNIX cred
+[510406.973825] RPC:   276 refreshing UNIX cred 00000000cde71851
+[510406.973827] RPC:   276 call_refreshresult (status 0)
+[510406.973830] RPC:   276 call_allocate (status 0)
+[510406.973833] RPC:   276 allocated buffer of size 704 at 00000000523b882e
+[510406.973835] RPC:   276 call_bind (status 0)
+[510406.973837] RPC:   276 call_connect xprt 00000000a126907a is connected
+[510406.973839] RPC:   276 call_transmit (status 0)
+[510406.973841] RPC:   276 xprt_prepare_transmit
+[510406.973843] RPC:   276 rpc_xdr_encode (status 0)
+[510406.973846] RPC:   276 marshaling UNIX cred 00000000cde71851
+[510406.973848] RPC:   276 using AUTH_UNIX cred 00000000cde71851 to wrap rpc data
+[510406.973851] RPC:   276 xprt_transmit(128)
+[510406.973877] RPC:       xs_tcp_send_request(128) = 0
+[510406.973888] RPC:   276 xmit complete
+[510406.973891] RPC:   276 sleep_on(queue "xprt_pending" time 4805075589)
+[510406.973894] RPC:   276 added to queue 000000003d6cf1b4 "xprt_pending"
+[510406.973896] RPC:   276 setting alarm for 60000 ms
+[510406.973898] RPC:       wake_up_first(000000008c3c84d4 "xprt_sending")
+[510406.973900] RPC:   276 sync task going to sleep
+[510406.976171] RPC:       xs_data_ready...
+[510406.976201] RPC:       xs_tcp_data_recv started
+[510406.976203] RPC:       reading TCP record fragment of length 168
+[510406.976205] RPC:       reading XID (4 bytes)
+[510406.976207] RPC:       reading reply for XID 2dc1bab8
+[510406.976209] RPC:       reading CALL/REPLY flag (4 bytes)
+[510406.976211] RPC:       read reply XID 2dc1bab8
+[510406.976213] RPC:       XID 2dc1bab8 read 160 bytes
+[510406.976217] RPC:       xprt = 00000000a126907a, tcp_copied = 168, tcp_offset = 168, tcp_reclen = 168
+[510406.976219] RPC:   276 xid 2dc1bab8 complete (168 bytes received)
+[510406.976224] RPC:   276 __rpc_wake_up_task (now 4805075591)
+[510406.976238] RPC:   276 disabling timer
+[510406.976241] RPC:   276 removed from queue 000000003d6cf1b4 "xprt_pending"
+[510406.976245] RPC:       __rpc_wake_up_task done
+[510406.976249] RPC:       xs_tcp_data_recv done
+[510406.976253] RPC:   276 sync task resuming
+[510406.976256] RPC:   276 call_status (status 168)
+[510406.976258] RPC:   276 call_decode (status 168)
+[510406.976261] RPC:   276 validating UNIX cred 00000000cde71851
+[510406.976266] RPC:   276 using AUTH_UNIX cred 00000000cde71851 to unwrap rpc data
+[510406.976268] RPC:   276 call_decode result 0
+[510406.976271] RPC:   276 return 0, status 0
+[510406.976272] RPC:   276 release task
+[510406.976275] RPC:       freeing buffer of size 704 at 00000000523b882e
+[510406.976278] RPC:   276 release request 000000004159de5a
+[510406.976280] RPC:       wake_up_first(000000007f910368 "xprt_backlog")
+[510406.976282] RPC:       rpc_release_client(0000000068e40883)
+[510406.976284] RPC:   276 freeing task
+[510406.976286] NFS reply fsstat: 0

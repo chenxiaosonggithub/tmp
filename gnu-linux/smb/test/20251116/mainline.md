@@ -1,0 +1,1 @@
+[The mainline version (3a8660878839 Linux 6.18-rc1) was tested on 2025-11-13, click here to view the test results](https://github.com/chenxiaosonggithub/tmp/tree/master/gnu-linux/smb/test/20251113/mainline).

@@ -1,0 +1,56 @@
+From c5dec4d7fe058545c4cc98dc484914747889223c Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Mon, 15 Sep 2025 21:15:59 +0800
+Subject: [PATCH 1/3] Revert "sunrpc: Remove unused xprt_iter_get_xprt"
+
+This reverts commit ee0d90d4b97a9787ed55b22c85c72376329d86ac.
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ include/linux/sunrpc/xprtmultipath.h |  1 +
+ net/sunrpc/xprtmultipath.c           | 17 +++++++++++++++++
+ 2 files changed, 18 insertions(+)
+
+diff --git a/include/linux/sunrpc/xprtmultipath.h b/include/linux/sunrpc/xprtmultipath.h
+index e4db5022fe92..c827c6ef0bc5 100644
+--- a/include/linux/sunrpc/xprtmultipath.h
++++ b/include/linux/sunrpc/xprtmultipath.h
+@@ -76,6 +76,7 @@ extern struct rpc_xprt_switch *xprt_iter_xchg_switch(
+ 		struct rpc_xprt_switch *newswitch);
+ 
+ extern struct rpc_xprt *xprt_iter_xprt(struct rpc_xprt_iter *xpi);
++extern struct rpc_xprt *xprt_iter_get_xprt(struct rpc_xprt_iter *xpi);
+ extern struct rpc_xprt *xprt_iter_get_next(struct rpc_xprt_iter *xpi);
+ 
+ extern bool rpc_xprt_switch_has_addr(struct rpc_xprt_switch *xps,
+diff --git a/net/sunrpc/xprtmultipath.c b/net/sunrpc/xprtmultipath.c
+index 4c5e08b0aa64..91cf89dbc04f 100644
+--- a/net/sunrpc/xprtmultipath.c
++++ b/net/sunrpc/xprtmultipath.c
+@@ -623,6 +623,23 @@ struct rpc_xprt *xprt_iter_get_helper(struct rpc_xprt_iter *xpi,
+ 	return ret;
+ }
+ 
++/**
++ * xprt_iter_get_xprt - Returns the rpc_xprt pointed to by the cursor
++ * @xpi: pointer to rpc_xprt_iter
++ *
++ * Returns a reference to the struct rpc_xprt that is currently
++ * pointed to by the cursor.
++ */
++struct rpc_xprt *xprt_iter_get_xprt(struct rpc_xprt_iter *xpi)
++{
++	struct rpc_xprt *xprt;
++
++	rcu_read_lock();
++	xprt = xprt_iter_get_helper(xpi, xprt_iter_ops(xpi)->xpi_xprt);
++	rcu_read_unlock();
++	return xprt;
++}
++
+ /**
+  * xprt_iter_get_next - Returns the next rpc_xprt following the cursor
+  * @xpi: pointer to rpc_xprt_iter
+-- 
+2.43.0
+

@@ -1,0 +1,817 @@
+PID: 227403  TASK: ffff9ab00f915e00  CPU: 108  COMMAND: "dmap_br"
+ #0 [ffffaa3edc39fc40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3edc39fce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3edc39fce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3edc39fd20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3edc39fe40] do_futex at ffffffff87350187
+ #5 [ffffaa3edc39fec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3edc39ff38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3edc39ff50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007ffdf17cb660  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f918076eb48  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f918076eb70
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 0000000000000000
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f918076eb20
+    R13: 0000000000000000  R14: 0000000000000000  R15: 00007f918076eb70
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 227404  TASK: ffff9a82888cc680  CPU: 48  COMMAND: "dmap_br"
+ #0 [ffffaa3edaff3c40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3edaff3ce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3edaff3ce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3edaff3d20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3edaff3e40] do_futex at ffffffff87350187
+ #5 [ffffaa3edaff3ec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3edaff3f38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3edaff3f50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f917ec0a380  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f918076ec40  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f918076ec68
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 0000000000000013
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f918076ec18
+    R13: 0000000000000000  R14: 0000000000000000  R15: 00007f918076ec68
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 228116  TASK: ffff9ab038124680  CPU: 36  COMMAND: "dmap_br"
+ #0 [ffffaa3edc8ebb30] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3edc8ebbd0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3edc8ebbd8] rpc_wait_bit_killable at ffffffffc106330e [sunrpc]
+ #3 [ffffaa3edc8ebbf0] __wait_on_bit at ffffffff87a9afd4
+ #4 [ffffaa3edc8ebc28] out_of_line_wait_on_bit at ffffffff87a9b0b1
+ #5 [ffffaa3edc8ebc78] __rpc_execute at ffffffffc1063fd0 [sunrpc]
+ #6 [ffffaa3edc8ebcd0] rpc_run_task at ffffffffc1057e69 [sunrpc]
+ #7 [ffffaa3edc8ebd10] rpc_call_sync at ffffffffc1059ab0 [sunrpc]
+ #8 [ffffaa3edc8ebd68] nfs3_rpc_wrapper.constprop.14 at ffffffffc03e658f [nfsv3]
+ #9 [ffffaa3edc8ebd88] nfs3_proc_getattr at ffffffffc03e71e8 [nfsv3]
+#10 [ffffaa3edc8ebdc8] __nfs_revalidate_inode at ffffffffc063e54f [nfs]
+#11 [ffffaa3edc8ebdf8] nfs_revalidate_mapping at ffffffffc063edc0 [nfs]
+#12 [ffffaa3edc8ebe28] nfs_file_read at ffffffffc0639da1 [nfs]
+#13 [ffffaa3edc8ebe50] new_sync_read at ffffffff874c42ea
+#14 [ffffaa3edc8ebed0] vfs_read at ffffffff874c6e79
+#15 [ffffaa3edc8ebf00] ksys_pread64 at ffffffff874c74f1
+#16 [ffffaa3edc8ebf38] do_syscall_64 at ffffffff8720430b
+#17 [ffffaa3edc8ebf50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc702f  RSP: 00007f917dac5180  RFLAGS: 00000293
+    RAX: ffffffffffffffda  RBX: 0000000000010cc1  RCX: 00007f9182bc702f
+    RDX: 0000000000000200  RSI: 00007f91787ec600  RDI: 0000000000010cc1
+    RBP: 00007f91787ec600   R8: 0000000000000000   R9: 00007f91789d9348
+    R10: 0000000066a3f600  R11: 0000000000000293  R12: 0000000000000200
+    R13: 0000000066a3f600  R14: 0000000000000200  R15: 0000000000000000
+    ORIG_RAX: 0000000000000011  CS: 0033  SS: 002b
+
+PID: 228117  TASK: ffff9ab038125e00  CPU: 26  COMMAND: "dmap_br"
+ #0 [ffffaa3edd1d7c40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3edd1d7ce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3edd1d7ce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3edd1d7d20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3edd1d7e40] do_futex at ffffffff87350187
+ #5 [ffffaa3edd1d7ec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3edd1d7f38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3edd1d7f50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f917d9c4870  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917eac91f0  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917eac921c
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 00007f917eac9268
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917eac91c8
+    R13: 00000000000023a3  R14: 0000000000000000  R15: 00007f917eac921c
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 228118  TASK: ffff9ab038122f00  CPU: 125  COMMAND: "dmap_br"
+ #0 [ffffaa3ee9163c40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3ee9163ce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3ee9163ce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3ee9163d20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3ee9163e40] do_futex at ffffffff87350187
+ #5 [ffffaa3ee9163ec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3ee9163f38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3ee9163f50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f917d8c3870  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917eac91f0  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917eac9218
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 00007f917eac9268
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917eac91c8
+    R13: 00000000000023a0  R14: 0000000000000000  R15: 00007f917eac9218
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 228119  TASK: ffff9aa653338000  CPU: 18  COMMAND: "dmap_br"
+ #0 [ffffaa3ee916bc40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3ee916bce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3ee916bce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3ee916bd20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3ee916be40] do_futex at ffffffff87350187
+ #5 [ffffaa3ee916bec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3ee916bf38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3ee916bf50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f917d7c2870  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917eac91f0  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917eac921c
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 00007f917eac9268
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917eac91c8
+    R13: 00000000000023a5  R14: 0000000000000000  R15: 00007f917eac921c
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 228120  TASK: ffff9aa653339780  CPU: 17  COMMAND: "dmap_br"
+ #0 [ffffaa3ee9173c40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3ee9173ce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3ee9173ce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3ee9173d20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3ee9173e40] do_futex at ffffffff87350187
+ #5 [ffffaa3ee9173ec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3ee9173f38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3ee9173f50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f917d6c1870  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917eac91f0  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917eac921c
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 00007f917eac9268
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917eac91c8
+    R13: 00000000000023a7  R14: 0000000000000000  R15: 00007f917eac921c
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 228121  TASK: ffff9aa65333c680  CPU: 59  COMMAND: "dmap_br"
+ #0 [ffffaa3ee917bc40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3ee917bce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3ee917bce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3ee917bd20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3ee917be40] do_futex at ffffffff87350187
+ #5 [ffffaa3ee917bec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3ee917bf38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3ee917bf50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f917d5c0460  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917eac9268  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917eac9294
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 0000000000000001
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917eac9240
+    R13: 0000000000001ac3  R14: 0000000000000000  R15: 00007f917eac9294
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237011  TASK: ffff99b11e57de00  CPU: 44  COMMAND: "dmap_br"
+ #0 [ffffaa3eec773b30] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eec773bd0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eec773bd8] rpc_wait_bit_killable at ffffffffc106330e [sunrpc]
+ #3 [ffffaa3eec773bf0] __wait_on_bit at ffffffff87a9afd4
+ #4 [ffffaa3eec773c28] out_of_line_wait_on_bit at ffffffff87a9b0b1
+ #5 [ffffaa3eec773c78] __rpc_execute at ffffffffc1063fd0 [sunrpc]
+ #6 [ffffaa3eec773cd0] rpc_run_task at ffffffffc1057e69 [sunrpc]
+ #7 [ffffaa3eec773d10] rpc_call_sync at ffffffffc1059ab0 [sunrpc]
+ #8 [ffffaa3eec773d68] nfs3_rpc_wrapper.constprop.14 at ffffffffc03e658f [nfsv3]
+ #9 [ffffaa3eec773d88] nfs3_proc_getattr at ffffffffc03e71e8 [nfsv3]
+#10 [ffffaa3eec773dc8] __nfs_revalidate_inode at ffffffffc063e54f [nfs]
+#11 [ffffaa3eec773df8] nfs_revalidate_mapping at ffffffffc063edc0 [nfs]
+#12 [ffffaa3eec773e28] nfs_file_read at ffffffffc0639da1 [nfs]
+#13 [ffffaa3eec773e50] new_sync_read at ffffffff874c42ea
+#14 [ffffaa3eec773ed0] vfs_read at ffffffff874c6e79
+#15 [ffffaa3eec773f00] ksys_pread64 at ffffffff874c74f1
+#16 [ffffaa3eec773f38] do_syscall_64 at ffffffff8720430b
+#17 [ffffaa3eec773f50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc702f  RSP: 00007f917d4bf180  RFLAGS: 00000293
+    RAX: ffffffffffffffda  RBX: 0000000000010cc2  RCX: 00007f9182bc702f
+    RDX: 0000000000000200  RSI: 00007f91783c1000  RDI: 0000000000010cc2
+    RBP: 00007f91783c1000   R8: 0000000000000000   R9: 00007f9178807f58
+    R10: 0000000058cc9600  R11: 0000000000000293  R12: 0000000000000200
+    R13: 0000000058cc9600  R14: 0000000000000200  R15: 0000000000000000
+    ORIG_RAX: 0000000000000011  CS: 0033  SS: 002b
+
+PID: 237012  TASK: ffff9ab0132c0000  CPU: 119  COMMAND: "dmap_br"
+ #0 [ffffaa3eec78bc40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eec78bce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eec78bce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eec78bd20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eec78be40] do_futex at ffffffff87350187
+ #5 [ffffaa3eec78bec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eec78bf38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eec78bf50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f917d3be870  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917eaea1f0  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917eaea218
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 00007f917eaea268
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917eaea1c8
+    R13: 00000000000000f6  R14: 0000000000000000  R15: 00007f917eaea218
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237013  TASK: ffff9a6efaeb0000  CPU: 122  COMMAND: "dmap_br"
+ #0 [ffffaa3eef193c40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eef193ce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eef193ce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eef193d20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eef193e40] do_futex at ffffffff87350187
+ #5 [ffffaa3eef193ec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eef193f38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eef193f50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f917d2bd870  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917eaea1f0  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917eaea218
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 00007f917eaea268
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917eaea1c8
+    R13: 00000000000000fa  R14: 0000000000000000  R15: 00007f917eaea218
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237014  TASK: ffff9a6efaeb2f00  CPU: 2   COMMAND: "dmap_br"
+ #0 [ffffaa3eef19bc40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eef19bce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eef19bce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eef19bd20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eef19be40] do_futex at ffffffff87350187
+ #5 [ffffaa3eef19bec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eef19bf38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eef19bf50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f917d1bc870  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917eaea1f0  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917eaea218
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 00007f917eaea268
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917eaea1c8
+    R13: 00000000000000f8  R14: 0000000000000000  R15: 00007f917eaea218
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237015  TASK: ffff9a6efaeb5e00  CPU: 6   COMMAND: "dmap_br"
+ #0 [ffffaa3eef1a3c40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eef1a3ce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eef1a3ce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eef1a3d20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eef1a3e40] do_futex at ffffffff87350187
+ #5 [ffffaa3eef1a3ec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eef1a3f38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eef1a3f50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f917d0bb870  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917eaea1f0  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917eaea21c
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 00007f917eaea268
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917eaea1c8
+    R13: 00000000000000f5  R14: 0000000000000000  R15: 00007f917eaea21c
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237016  TASK: ffff9a89ce2b1780  CPU: 120  COMMAND: "dmap_br"
+ #0 [ffffaa3eef1abc40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eef1abce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eef1abce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eef1abd20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eef1abe40] do_futex at ffffffff87350187
+ #5 [ffffaa3eef1abec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eef1abf38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eef1abf50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f917cfba460  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917eaea268  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917eaea290
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 0000000000000001
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917eaea240
+    R13: 00000000000000d4  R14: 0000000000000000  R15: 00007f917eaea290
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237017  TASK: ffff9a89ce2b4680  CPU: 19  COMMAND: "dmap_br"
+ #0 [ffffaa3eef1b3b30] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eef1b3bd0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eef1b3bd8] rpc_wait_bit_killable at ffffffffc106330e [sunrpc]
+ #3 [ffffaa3eef1b3bf0] __wait_on_bit at ffffffff87a9afd4
+ #4 [ffffaa3eef1b3c28] out_of_line_wait_on_bit at ffffffff87a9b0b1
+ #5 [ffffaa3eef1b3c78] __rpc_execute at ffffffffc1063fd0 [sunrpc]
+ #6 [ffffaa3eef1b3cd0] rpc_run_task at ffffffffc1057e69 [sunrpc]
+ #7 [ffffaa3eef1b3d10] rpc_call_sync at ffffffffc1059ab0 [sunrpc]
+ #8 [ffffaa3eef1b3d68] nfs3_rpc_wrapper.constprop.14 at ffffffffc03e658f [nfsv3]
+ #9 [ffffaa3eef1b3d88] nfs3_proc_getattr at ffffffffc03e71e8 [nfsv3]
+#10 [ffffaa3eef1b3dc8] __nfs_revalidate_inode at ffffffffc063e54f [nfs]
+#11 [ffffaa3eef1b3df8] nfs_revalidate_mapping at ffffffffc063edc0 [nfs]
+#12 [ffffaa3eef1b3e28] nfs_file_read at ffffffffc0639da1 [nfs]
+#13 [ffffaa3eef1b3e50] new_sync_read at ffffffff874c42ea
+#14 [ffffaa3eef1b3ed0] vfs_read at ffffffff874c6e79
+#15 [ffffaa3eef1b3f00] ksys_pread64 at ffffffff874c74f1
+#16 [ffffaa3eef1b3f38] do_syscall_64 at ffffffff8720430b
+#17 [ffffaa3eef1b3f50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc702f  RSP: 00007f917ceb9180  RFLAGS: 00000293
+    RAX: ffffffffffffffda  RBX: 0000000000010cc3  RCX: 00007f9182bc702f
+    RDX: 0000000000000200  RSI: 00007f9178110c00  RDI: 0000000000010cc3
+    RBP: 00007f9178110c00   R8: 0000000000000000   R9: 00007f9178868378
+    R10: 0000000058fec000  R11: 0000000000000293  R12: 0000000000000200
+    R13: 0000000058fec000  R14: 0000000000000200  R15: 0000000000000000
+    ORIG_RAX: 0000000000000011  CS: 0033  SS: 002b
+
+PID: 237018  TASK: ffff9a89ce2b0000  CPU: 29  COMMAND: "dmap_br"
+ #0 [ffffaa3eef1bbc40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eef1bbce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eef1bbce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eef1bbd20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eef1bbe40] do_futex at ffffffff87350187
+ #5 [ffffaa3eef1bbec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eef1bbf38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eef1bbf50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f917cdb8870  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917dac71f0  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917dac7218
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 00007f917dac7268
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917dac71c8
+    R13: 00000000000000d4  R14: 0000000000000000  R15: 00007f917dac7218
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237019  TASK: ffff9a89ce2b2f00  CPU: 106  COMMAND: "dmap_br"
+ #0 [ffffaa3eef1c3c40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eef1c3ce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eef1c3ce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eef1c3d20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eef1c3e40] do_futex at ffffffff87350187
+ #5 [ffffaa3eef1c3ec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eef1c3f38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eef1c3f50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f917ccb7870  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917dac71f0  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917dac7218
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 00007f917dac7268
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917dac71c8
+    R13: 00000000000000d6  R14: 0000000000000000  R15: 00007f917dac7218
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237020  TASK: ffff9a89ce2b5e00  CPU: 34  COMMAND: "dmap_br"
+ #0 [ffffaa3eef1cbc40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eef1cbce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eef1cbce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eef1cbd20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eef1cbe40] do_futex at ffffffff87350187
+ #5 [ffffaa3eef1cbec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eef1cbf38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eef1cbf50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f917cbb6870  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917dac71f0  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917dac721c
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 00007f917dac7268
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917dac71c8
+    R13: 00000000000000d9  R14: 0000000000000000  R15: 00007f917dac721c
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237021  TASK: ffff99b11a1caf00  CPU: 62  COMMAND: "dmap_br"
+ #0 [ffffaa3eef1d3c40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eef1d3ce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eef1d3ce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eef1d3d20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eef1d3e40] do_futex at ffffffff87350187
+ #5 [ffffaa3eef1d3ec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eef1d3f38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eef1d3f50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f917cab5870  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917dac71f0  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917dac721c
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 00007f917dac7268
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917dac71c8
+    R13: 00000000000000db  R14: 0000000000000000  R15: 00007f917dac721c
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237022  TASK: ffff99b11a1cc680  CPU: 73  COMMAND: "dmap_br"
+ #0 [ffffaa3eef1dbc40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eef1dbce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eef1dbce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eef1dbd20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eef1dbe40] do_futex at ffffffff87350187
+ #5 [ffffaa3eef1dbec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eef1dbf38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eef1dbf50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f917c9b4460  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917dac7268  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917dac7290
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 0000000000000001
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917dac7240
+    R13: 00000000000000c8  R14: 0000000000000000  R15: 00007f917dac7290
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237107  TASK: ffff9aa86ebf1780  CPU: 66  COMMAND: "dmap_br"
+ #0 [ffffaa3eee57bb30] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eee57bbd0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eee57bbd8] rpc_wait_bit_killable at ffffffffc106330e [sunrpc]
+ #3 [ffffaa3eee57bbf0] __wait_on_bit at ffffffff87a9afd4
+ #4 [ffffaa3eee57bc28] out_of_line_wait_on_bit at ffffffff87a9b0b1
+ #5 [ffffaa3eee57bc78] __rpc_execute at ffffffffc1063fd0 [sunrpc]
+ #6 [ffffaa3eee57bcd0] rpc_run_task at ffffffffc1057e69 [sunrpc]
+ #7 [ffffaa3eee57bd10] rpc_call_sync at ffffffffc1059ab0 [sunrpc]
+ #8 [ffffaa3eee57bd68] nfs3_rpc_wrapper.constprop.14 at ffffffffc03e658f [nfsv3]
+ #9 [ffffaa3eee57bd88] nfs3_proc_getattr at ffffffffc03e71e8 [nfsv3]
+#10 [ffffaa3eee57bdc8] __nfs_revalidate_inode at ffffffffc063e54f [nfs]
+#11 [ffffaa3eee57bdf8] nfs_revalidate_mapping at ffffffffc063edc0 [nfs]
+#12 [ffffaa3eee57be28] nfs_file_read at ffffffffc0639da1 [nfs]
+#13 [ffffaa3eee57be50] new_sync_read at ffffffff874c42ea
+#14 [ffffaa3eee57bed0] vfs_read at ffffffff874c6e79
+#15 [ffffaa3eee57bf00] ksys_pread64 at ffffffff874c74f1
+#16 [ffffaa3eee57bf38] do_syscall_64 at ffffffff8720430b
+#17 [ffffaa3eee57bf50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc702f  RSP: 00007f917c8b3180  RFLAGS: 00000293
+    RAX: ffffffffffffffda  RBX: 0000000000010cc4  RCX: 00007f9182bc702f
+    RDX: 0000000000000200  RSI: 00007f917e5d8200  RDI: 0000000000010cc4
+    RBP: 00007f917e5d8200   R8: 0000000000000000   R9: 00007f9178546118
+    R10: 0000000050b06a00  R11: 0000000000000293  R12: 0000000000000200
+    R13: 0000000050b06a00  R14: 0000000000000200  R15: 0000000000000000
+    ORIG_RAX: 0000000000000011  CS: 0033  SS: 002b
+
+PID: 237108  TASK: ffff9aa86ebf4680  CPU: 58  COMMAND: "dmap_br"
+ #0 [ffffaa3ee97dfc40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3ee97dfce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3ee97dfce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3ee97dfd20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3ee97dfe40] do_futex at ffffffff87350187
+ #5 [ffffaa3ee97dfec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3ee97dff38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3ee97dff50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f917c7b2870  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917dae71f0  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917dae721c
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 00007f917dae7268
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917dae71c8
+    R13: 00000000000000e7  R14: 0000000000000000  R15: 00007f917dae721c
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237109  TASK: ffff9aa86ebf0000  CPU: 3   COMMAND: "dmap_br"
+ #0 [ffffaa3eef37bc40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eef37bce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eef37bce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eef37bd20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eef37be40] do_futex at ffffffff87350187
+ #5 [ffffaa3eef37bec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eef37bf38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eef37bf50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f917c6b1870  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917dae71f0  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917dae721c
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 00007f917dae7268
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917dae71c8
+    R13: 00000000000000e9  R14: 0000000000000000  R15: 00007f917dae721c
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237110  TASK: ffff9aa86ebf5e00  CPU: 69  COMMAND: "dmap_br"
+ #0 [ffffaa3eef383c40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eef383ce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eef383ce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eef383d20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eef383e40] do_futex at ffffffff87350187
+ #5 [ffffaa3eef383ec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eef383f38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eef383f50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f917c5b0870  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917dae71f0  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917dae7218
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 00007f917dae7268
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917dae71c8
+    R13: 00000000000000e4  R14: 0000000000000000  R15: 00007f917dae7218
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237111  TASK: ffff9ab0133bc680  CPU: 74  COMMAND: "dmap_br"
+ #0 [ffffaa3eef38bc40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eef38bce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eef38bce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eef38bd20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eef38be40] do_futex at ffffffff87350187
+ #5 [ffffaa3eef38bec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eef38bf38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eef38bf50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f917c4af870  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917dae71f0  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917dae721c
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 00007f917dae7268
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917dae71c8
+    R13: 00000000000000eb  R14: 0000000000000000  R15: 00007f917dae721c
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237112  TASK: ffff9ab0133bde00  CPU: 103  COMMAND: "dmap_br"
+ #0 [ffffaa3eef393c40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eef393ce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eef393ce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eef393d20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eef393e40] do_futex at ffffffff87350187
+ #5 [ffffaa3eef393ec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eef393f38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eef393f50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f917c3ae460  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917dae7268  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917dae7290
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 0000000000000001
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917dae7240
+    R13: 00000000000000c0  R14: 0000000000000000  R15: 00007f917dae7290
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237138  TASK: ffff9a7f4ebd0000  CPU: 11  COMMAND: "dmap_br"
+ #0 [ffffaa3eeb1a3b30] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eeb1a3bd0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eeb1a3bd8] rpc_wait_bit_killable at ffffffffc106330e [sunrpc]
+ #3 [ffffaa3eeb1a3bf0] __wait_on_bit at ffffffff87a9afd4
+ #4 [ffffaa3eeb1a3c28] out_of_line_wait_on_bit at ffffffff87a9b0b1
+ #5 [ffffaa3eeb1a3c78] __rpc_execute at ffffffffc1063fd0 [sunrpc]
+ #6 [ffffaa3eeb1a3cd0] rpc_run_task at ffffffffc1057e69 [sunrpc]
+ #7 [ffffaa3eeb1a3d10] rpc_call_sync at ffffffffc1059ab0 [sunrpc]
+ #8 [ffffaa3eeb1a3d68] nfs3_rpc_wrapper.constprop.14 at ffffffffc03e658f [nfsv3]
+ #9 [ffffaa3eeb1a3d88] nfs3_proc_getattr at ffffffffc03e71e8 [nfsv3]
+#10 [ffffaa3eeb1a3dc8] __nfs_revalidate_inode at ffffffffc063e54f [nfs]
+#11 [ffffaa3eeb1a3df8] nfs_revalidate_mapping at ffffffffc063edc0 [nfs]
+#12 [ffffaa3eeb1a3e28] nfs_file_read at ffffffffc0639da1 [nfs]
+#13 [ffffaa3eeb1a3e50] new_sync_read at ffffffff874c42ea
+#14 [ffffaa3eeb1a3ed0] vfs_read at ffffffff874c6e79
+#15 [ffffaa3eeb1a3f00] ksys_pread64 at ffffffff874c74f1
+#16 [ffffaa3eeb1a3f38] do_syscall_64 at ffffffff8720430b
+#17 [ffffaa3eeb1a3f50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc702f  RSP: 00007f917c2ad180  RFLAGS: 00000293
+    RAX: ffffffffffffffda  RBX: 0000000000010cc6  RCX: 00007f9182bc702f
+    RDX: 0000000000000200  RSI: 00007f917e5dc200  RDI: 0000000000010cc6
+    RBP: 00007f917e5dc200   R8: 0000000000000000   R9: 00007f9178374d28
+    R10: 000000004d077c00  R11: 0000000000000293  R12: 0000000000000200
+    R13: 000000004d077c00  R14: 0000000000000200  R15: 0000000000000000
+    ORIG_RAX: 0000000000000011  CS: 0033  SS: 002b
+
+PID: 237139  TASK: ffff9a7f4ebd2f00  CPU: 127  COMMAND: "dmap_br"
+ #0 [ffffaa3eeb453c40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eeb453ce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eeb453ce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eeb453d20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eeb453e40] do_futex at ffffffff87350187
+ #5 [ffffaa3eeb453ec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eeb453f38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eeb453f50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f917c1ac870  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917db071f0  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917db07218
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 00007f917db07268
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917db071c8
+    R13: 00000000000000d8  R14: 0000000000000000  R15: 00007f917db07218
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237140  TASK: ffff9a7f4ebd4680  CPU: 64  COMMAND: "dmap_br"
+ #0 [ffffaa3eef3f3c40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eef3f3ce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eef3f3ce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eef3f3d20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eef3f3e40] do_futex at ffffffff87350187
+ #5 [ffffaa3eef3f3ec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eef3f3f38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eef3f3f50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f90ffff2870  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917db071f0  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917db07218
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 00007f917db07268
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917db071c8
+    R13: 00000000000000da  R14: 0000000000000000  R15: 00007f917db07218
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237141  TASK: ffff9a7f4ebd1780  CPU: 7   COMMAND: "dmap_br"
+ #0 [ffffaa3eef3fbc40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eef3fbce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eef3fbce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eef3fbd20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eef3fbe40] do_futex at ffffffff87350187
+ #5 [ffffaa3eef3fbec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eef3fbf38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eef3fbf50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f90ffef1870  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917db071f0  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917db07218
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 00007f917db07268
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917db071c8
+    R13: 00000000000000dc  R14: 0000000000000000  R15: 00007f917db07218
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237142  TASK: ffff9a7f4ebd5e00  CPU: 72  COMMAND: "dmap_br"
+ #0 [ffffaa3eef403c40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eef403ce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eef403ce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eef403d20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eef403e40] do_futex at ffffffff87350187
+ #5 [ffffaa3eef403ec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eef403f38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eef403f50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f90ffdf0870  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917db071f0  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917db07218
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 00007f917db07268
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917db071c8
+    R13: 00000000000000d6  R14: 0000000000000000  R15: 00007f917db07218
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237143  TASK: ffff9ab0243f1780  CPU: 123  COMMAND: "dmap_br"
+ #0 [ffffaa3eef40bc40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eef40bce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eef40bce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eef40bd20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eef40be40] do_futex at ffffffff87350187
+ #5 [ffffaa3eef40bec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eef40bf38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eef40bf50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f90ffcef460  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917db07268  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917db07294
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 0000000000000001
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917db07240
+    R13: 00000000000000b7  R14: 0000000000000000  R15: 00007f917db07294
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237177  TASK: ffff9aa8de678000  CPU: 48  COMMAND: "dmap_br"
+ #0 [ffffaa3eef49bb30] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eef49bbd0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eef49bbd8] rpc_wait_bit_killable at ffffffffc106330e [sunrpc]
+ #3 [ffffaa3eef49bbf0] __wait_on_bit at ffffffff87a9afd4
+ #4 [ffffaa3eef49bc28] out_of_line_wait_on_bit at ffffffff87a9b0b1
+ #5 [ffffaa3eef49bc78] __rpc_execute at ffffffffc1063fd0 [sunrpc]
+ #6 [ffffaa3eef49bcd0] rpc_run_task at ffffffffc1057e69 [sunrpc]
+ #7 [ffffaa3eef49bd10] rpc_call_sync at ffffffffc1059ab0 [sunrpc]
+ #8 [ffffaa3eef49bd68] nfs3_rpc_wrapper.constprop.14 at ffffffffc03e658f [nfsv3]
+ #9 [ffffaa3eef49bd88] nfs3_proc_getattr at ffffffffc03e71e8 [nfsv3]
+#10 [ffffaa3eef49bdc8] __nfs_revalidate_inode at ffffffffc063e54f [nfs]
+#11 [ffffaa3eef49bdf8] nfs_revalidate_mapping at ffffffffc063edc0 [nfs]
+#12 [ffffaa3eef49be28] nfs_file_read at ffffffffc0639da1 [nfs]
+#13 [ffffaa3eef49be50] new_sync_read at ffffffff874c42ea
+#14 [ffffaa3eef49bed0] vfs_read at ffffffff874c6e79
+#15 [ffffaa3eef49bf00] ksys_pread64 at ffffffff874c74f1
+#16 [ffffaa3eef49bf38] do_syscall_64 at ffffffff8720430b
+#17 [ffffaa3eef49bf50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc702f  RSP: 00007f90ffbee180  RFLAGS: 00000293
+    RAX: ffffffffffffffda  RBX: 0000000000010cc7  RCX: 00007f9182bc702f
+    RDX: 0000000000000200  RSI: 00007f9180812a00  RDI: 0000000000010cc7
+    RBP: 00007f9180812a00   R8: 0000000000000000   R9: 00007f9178052ac8
+    R10: 000000004d9ccc00  R11: 0000000000000293  R12: 0000000000000200
+    R13: 000000004d9ccc00  R14: 0000000000000200  R15: 0000000000000000
+    ORIG_RAX: 0000000000000011  CS: 0033  SS: 002b
+
+PID: 237178  TASK: ffff99b11e94c680  CPU: 57  COMMAND: "dmap_br"
+ #0 [ffffaa3eef4a3c40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eef4a3ce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eef4a3ce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eef4a3d20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eef4a3e40] do_futex at ffffffff87350187
+ #5 [ffffaa3eef4a3ec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eef4a3f38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eef4a3f50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f90ffaed870  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917db271f0  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917db27218
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 00007f917db27268
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917db271c8
+    R13: 00000000000000b0  R14: 0000000000000000  R15: 00007f917db27218
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237179  TASK: ffff99b11dfc9780  CPU: 59  COMMAND: "dmap_br"
+ #0 [ffffaa3eef4abc40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eef4abce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eef4abce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eef4abd20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eef4abe40] do_futex at ffffffff87350187
+ #5 [ffffaa3eef4abec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eef4abf38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eef4abf50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f90ff9ec870  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917db271f0  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917db27218
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 00007f917db27268
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917db271c8
+    R13: 00000000000000b2  R14: 0000000000000000  R15: 00007f917db27218
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237180  TASK: ffff9ab037659780  CPU: 8   COMMAND: "dmap_br"
+ #0 [ffffaa3eef4b3c40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eef4b3ce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eef4b3ce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eef4b3d20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eef4b3e40] do_futex at ffffffff87350187
+ #5 [ffffaa3eef4b3ec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eef4b3f38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eef4b3f50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f90ff8eb870  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917db271f0  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917db27218
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 00007f917db27268
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917db271c8
+    R13: 00000000000000b4  R14: 0000000000000000  R15: 00007f917db27218
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237181  TASK: ffff9ab03765af00  CPU: 47  COMMAND: "dmap_br"
+ #0 [ffffaa3eef4bbc40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eef4bbce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eef4bbce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eef4bbd20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eef4bbe40] do_futex at ffffffff87350187
+ #5 [ffffaa3eef4bbec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eef4bbf38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eef4bbf50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f90ff7ea870  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917db271f0  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917db2721c
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 00007f917db27268
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917db271c8
+    R13: 00000000000000b7  R14: 0000000000000000  R15: 00007f917db2721c
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237182  TASK: ffff9ab03765de00  CPU: 75  COMMAND: "dmap_br"
+ #0 [ffffaa3eef4c3c40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eef4c3ce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eef4c3ce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eef4c3d20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eef4c3e40] do_futex at ffffffff87350187
+ #5 [ffffaa3eef4c3ec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eef4c3f38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eef4c3f50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f90ff6e9460  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917db27268  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917db27290
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 0000000000000001
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917db27240
+    R13: 00000000000000ac  R14: 0000000000000000  R15: 00007f917db27290
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237382  TASK: ffff99b11e518000  CPU: 52  COMMAND: "dmap_br"
+ #0 [ffffaa3eec7a3b30] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eec7a3bd0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eec7a3bd8] rpc_wait_bit_killable at ffffffffc106330e [sunrpc]
+ #3 [ffffaa3eec7a3bf0] __wait_on_bit at ffffffff87a9afd4
+ #4 [ffffaa3eec7a3c28] out_of_line_wait_on_bit at ffffffff87a9b0b1
+ #5 [ffffaa3eec7a3c78] __rpc_execute at ffffffffc1063fd0 [sunrpc]
+ #6 [ffffaa3eec7a3cd0] rpc_run_task at ffffffffc1057e69 [sunrpc]
+ #7 [ffffaa3eec7a3d10] rpc_call_sync at ffffffffc1059ab0 [sunrpc]
+ #8 [ffffaa3eec7a3d68] nfs3_rpc_wrapper.constprop.14 at ffffffffc03e658f [nfsv3]
+ #9 [ffffaa3eec7a3d88] nfs3_proc_getattr at ffffffffc03e71e8 [nfsv3]
+#10 [ffffaa3eec7a3dc8] __nfs_revalidate_inode at ffffffffc063e54f [nfs]
+#11 [ffffaa3eec7a3df8] nfs_revalidate_mapping at ffffffffc063edc0 [nfs]
+#12 [ffffaa3eec7a3e28] nfs_file_read at ffffffffc0639da1 [nfs]
+#13 [ffffaa3eec7a3e50] new_sync_read at ffffffff874c42ea
+#14 [ffffaa3eec7a3ed0] vfs_read at ffffffff874c6e79
+#15 [ffffaa3eec7a3f00] ksys_pread64 at ffffffff874c74f1
+#16 [ffffaa3eec7a3f38] do_syscall_64 at ffffffff8720430b
+#17 [ffffaa3eec7a3f50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc702f  RSP: 00007f90ff5e8180  RFLAGS: 00000293
+    RAX: ffffffffffffffda  RBX: 0000000000010bfe  RCX: 00007f9182bc702f
+    RDX: 0000000000000200  RSI: 00007f91809dea00  RDI: 0000000000010bfe
+    RBP: 00007f91809dea00   R8: 0000000000000000   R9: 00007f917e2c80f8
+    R10: 0000000046893600  R11: 0000000000000293  R12: 0000000000000200
+    R13: 0000000046893600  R14: 0000000000000200  R15: 0000000000000000
+    ORIG_RAX: 0000000000000011  CS: 0033  SS: 002b
+
+PID: 237383  TASK: ffff9aa904858000  CPU: 60  COMMAND: "dmap_br"
+ #0 [ffffaa3eec703c40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eec703ce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eec703ce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eec703d20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eec703e40] do_futex at ffffffff87350187
+ #5 [ffffaa3eec703ec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eec703f38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eec703f50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f90ff4e7870  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917e2671f0  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917e267218
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 00007f917e267268
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917e2671c8
+    R13: 00000000000000ae  R14: 0000000000000000  R15: 00007f917e267218
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237384  TASK: ffff9aa904859780  CPU: 65  COMMAND: "dmap_br"
+ #0 [ffffaa3eef8f3c40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eef8f3ce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eef8f3ce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eef8f3d20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eef8f3e40] do_futex at ffffffff87350187
+ #5 [ffffaa3eef8f3ec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eef8f3f38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eef8f3f50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f90ff3e6870  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917e2671f0  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917e267218
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 00007f917e267268
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917e2671c8
+    R13: 00000000000000b0  R14: 0000000000000000  R15: 00007f917e267218
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237385  TASK: ffff9aa90485c680  CPU: 5   COMMAND: "dmap_br"
+ #0 [ffffaa3eef8fbc40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eef8fbce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eef8fbce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eef8fbd20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eef8fbe40] do_futex at ffffffff87350187
+ #5 [ffffaa3eef8fbec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eef8fbf38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eef8fbf50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f90ff2e5870  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917e2671f0  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917e267218
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 00007f917e267268
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917e2671c8
+    R13: 00000000000000b2  R14: 0000000000000000  R15: 00007f917e267218
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237386  TASK: ffff9a450eb42f00  CPU: 15  COMMAND: "dmap_br"
+ #0 [ffffaa3eef903c40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eef903ce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eef903ce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eef903d20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eef903e40] do_futex at ffffffff87350187
+ #5 [ffffaa3eef903ec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eef903f38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eef903f50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f90ff1e4870  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917e2671f0  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917e267218
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 00007f917e267268
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917e2671c8
+    R13: 00000000000000b4  R14: 0000000000000000  R15: 00007f917e267218
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b
+
+PID: 237387  TASK: ffff9a450eb45e00  CPU: 10  COMMAND: "dmap_br"
+ #0 [ffffaa3eef90bc40] __schedule at ffffffff87a9a4e6
+ #1 [ffffaa3eef90bce0] schedule at ffffffff87a9ab88
+ #2 [ffffaa3eef90bce8] futex_wait_queue_me at ffffffff8734cb51
+ #3 [ffffaa3eef90bd20] futex_wait at ffffffff8734d9db
+ #4 [ffffaa3eef90be40] do_futex at ffffffff87350187
+ #5 [ffffaa3eef90bec0] __x64_sys_futex at ffffffff8735074b
+ #6 [ffffaa3eef90bf38] do_syscall_64 at ffffffff8720430b
+ #7 [ffffaa3eef90bf50] entry_SYSCALL_64_after_hwframe at ffffffff87c00088
+    RIP: 00007f9182bc310c  RSP: 00007f90ff0e3460  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 00007f917e267268  RCX: 00007f9182bc310c
+    RDX: 0000000000000000  RSI: 0000000000000080  RDI: 00007f917e267290
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 0000000000000001
+    R10: 0000000000000000  R11: 0000000000000246  R12: 00007f917e267240
+    R13: 00000000000000a8  R14: 0000000000000000  R15: 00007f917e267290
+    ORIG_RAX: 00000000000000ca  CS: 0033  SS: 002b

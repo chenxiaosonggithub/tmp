@@ -1,0 +1,40 @@
+From 30c479ec4e09f1a7f88fb54ce2963fc2069153d6 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Sun, 7 Dec 2025 09:33:31 +0800
+Subject: [PATCH 07/30] smb/client: introduce DEFINE_CMP_FUNC()
+
+We are going to define 3 comparison functions, introduce this macro to
+reduce duplicate code.
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/client/netmisc.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/fs/smb/client/netmisc.c b/fs/smb/client/netmisc.c
+index 9ec20601cee2..73c40ae91607 100644
+--- a/fs/smb/client/netmisc.c
++++ b/fs/smb/client/netmisc.c
+@@ -24,6 +24,19 @@
+ #include "cifs_debug.h"
+ #include "nterr.h"
+ 
++/* Define a comparison function for ascending order. */
++#define DEFINE_CMP_FUNC(__struct_name, __field)				\
++static int cmp_ ## __struct_name(const void *_a, const void *_b)	\
++{									\
++	const struct __struct_name *a = _a, *b = _b;			\
++									\
++	if (a->__field < b->__field)					\
++		return -1;						\
++	if (a->__field > b->__field)					\
++		return 1;						\
++	return 0;							\
++}
++
+ struct smb_to_posix_error {
+ 	__u16 smb_err;
+ 	int posix_code;
+-- 
+2.43.0
+

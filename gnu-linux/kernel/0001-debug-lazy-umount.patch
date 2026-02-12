@@ -1,0 +1,104 @@
+From ec28a27a7773144e26a756d2969f8b62b2e3d88b Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Thu, 7 Aug 2025 21:52:01 +0800
+Subject: [PATCH] debug lazy umount
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/namespace.c | 31 +++++++++++++++++++++++++++++--
+ 1 file changed, 29 insertions(+), 2 deletions(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 54c59e091919..1ae3078dea8a 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -33,10 +33,25 @@
+ #include <linux/shmem_fs.h>
+ #include <linux/mnt_idmapping.h>
+ #include <linux/pidfs.h>
++#include <mydebug.h>
+ 
+ #include "pnode.h"
+ #include "internal.h"
+ 
++#define lazy_umount_print(mnt)				\
++	do {							\
++		if (mnt && mnt->mnt.mnt_sb && \
++		    !strcmp(mnt->mnt.mnt_sb->s_type->name, "nfs4"))	   \
++			mydebug_print("mnt_id:%d\n", mnt->mnt_id); \
++	} while (0)
++
++#define lazy_umount_dump_stack(mnt)				\
++	do {							\
++		if (mnt && mnt->mnt.mnt_sb && \
++		    !strcmp(mnt->mnt.mnt_sb->s_type->name, "nfs4"))	   \
++			mydebug_dump_stack(); \
++	} while (0)
++
+ /* Maximum number of mounts in a mount namespace */
+ static unsigned int sysctl_mount_max __read_mostly = 100000;
+ 
+@@ -388,6 +403,7 @@ static struct mount *alloc_vfsmnt(const char *name)
+ 		RB_CLEAR_NODE(&mnt->mnt_node);
+ 		mnt->mnt.mnt_idmap = &nop_mnt_idmap;
+ 	}
++	lazy_umount_print(mnt);
+ 	return mnt;
+ 
+ #ifdef CONFIG_SMP
+@@ -1174,6 +1190,8 @@ static void mnt_add_to_ns(struct mnt_namespace *ns, struct mount *mnt)
+ 	struct rb_node *parent = NULL;
+ 	bool mnt_first_node = true, mnt_last_node = true;
+ 
++	lazy_umount_dump_stack(mnt);
++
+ 	WARN_ON(mnt_ns_attached(mnt));
+ 	mnt->mnt_ns = ns;
+ 	while (*link) {
+@@ -1415,6 +1433,7 @@ static void cleanup_mnt(struct mount *mnt)
+ 	fsnotify_vfsmount_delete(&mnt->mnt);
+ 	dput(mnt->mnt.mnt_root);
+ 	deactivate_super(mnt->mnt.mnt_sb);
++	lazy_umount_print(mnt);
+ 	mnt_free_id(mnt);
+ 	call_rcu(&mnt->mnt_rcu, delayed_free_vfsmnt);
+ }
+@@ -2011,8 +2030,10 @@ static int do_umount(struct mount *mnt, int flags)
+ 		 * Special case for "unmounting" root ...
+ 		 * we just try to remount it readonly.
+ 		 */
++		lazy_umount_print(mnt);
+ 		if (!ns_capable(sb->s_user_ns, CAP_SYS_ADMIN))
+ 			return -EPERM;
++		lazy_umount_print(mnt);
+ 		return do_umount_root(sb);
+ 	}
+ 
+@@ -2026,16 +2047,22 @@ static int do_umount(struct mount *mnt, int flags)
+ 
+ 	event++;
+ 	if (flags & MNT_DETACH) {
+-		if (mnt_ns_attached(mnt) || !list_empty(&mnt->mnt_list))
++		lazy_umount_print(mnt);
++		if (mnt_ns_attached(mnt) || !list_empty(&mnt->mnt_list)) {
++			lazy_umount_print(mnt);
+ 			umount_tree(mnt, UMOUNT_PROPAGATE);
++		}
+ 		retval = 0;
+ 	} else {
++		lazy_umount_print(mnt);
+ 		smp_mb(); // paired with __legitimize_mnt()
+ 		shrink_submounts(mnt);
+ 		retval = -EBUSY;
+ 		if (!propagate_mount_busy(mnt, 2)) {
+-			if (mnt_ns_attached(mnt) || !list_empty(&mnt->mnt_list))
++			if (mnt_ns_attached(mnt) || !list_empty(&mnt->mnt_list)) {
++				lazy_umount_print(mnt);
+ 				umount_tree(mnt, UMOUNT_PROPAGATE|UMOUNT_SYNC);
++			}
+ 			retval = 0;
+ 		}
+ 	}
+-- 
+2.43.0
+

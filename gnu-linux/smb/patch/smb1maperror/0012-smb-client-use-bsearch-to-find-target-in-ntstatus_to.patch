@@ -1,0 +1,61 @@
+From 556eaddf11d48f837b9d9609f14aa6d1ba849440 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Sun, 7 Dec 2025 12:27:34 +0800
+Subject: [PATCH 12/30] smb/client: use bsearch() to find target in
+ ntstatus_to_dos_map array
+
+The array currently has 525 elements. When searching for the last element,
+the original loop-based search method requires 525 comparisons, while
+binary search algorithm requires only 9 comparisons.
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/client/netmisc.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
+
+diff --git a/fs/smb/client/netmisc.c b/fs/smb/client/netmisc.c
+index 8a84f826d486..55100c2c14cf 100644
+--- a/fs/smb/client/netmisc.c
++++ b/fs/smb/client/netmisc.c
+@@ -803,6 +803,9 @@ static unsigned int ntstatus_to_dos_num = sizeof(ntstatus_to_dos_map) /
+ /* cmp_ntstatus_to_dos */
+ DEFINE_CMP_FUNC(ntstatus_to_dos, ntstatus);
+ 
++/* search_in_ntstatus_to_dos_map */
++DEFINE_SEARCH_FUNC(ntstatus_to_dos, ntstatus, ntstatus_to_dos_map, ntstatus_to_dos_num);
++
+ /*****************************************************************************
+  Print an error message from the status code
+  *****************************************************************************/
+@@ -826,19 +829,21 @@ cifs_print_status(__u32 status_code)
+ static void
+ ntstatus_to_dos(__u32 ntstatus, __u8 *eclass, __u16 *ecode)
+ {
+-	int i;
++	struct ntstatus_to_dos *err_map;
++
+ 	if (ntstatus == 0) {
+ 		*eclass = 0;
+ 		*ecode = 0;
+ 		return;
+ 	}
+-	for (i = 0; ntstatus_to_dos_map[i].ntstatus; i++) {
+-		if (ntstatus == ntstatus_to_dos_map[i].ntstatus) {
+-			*eclass = ntstatus_to_dos_map[i].dos_class;
+-			*ecode = ntstatus_to_dos_map[i].dos_code;
+-			return;
+-		}
++
++	err_map = search_in_ntstatus_to_dos_map(ntstatus);
++	if (err_map) {
++		*eclass = err_map->dos_class;
++		*ecode = err_map->dos_code;
++		return;
+ 	}
++
+ 	*eclass = ERRHRD;
+ 	*ecode = ERRgeneral;
+ }
+-- 
+2.43.0
+

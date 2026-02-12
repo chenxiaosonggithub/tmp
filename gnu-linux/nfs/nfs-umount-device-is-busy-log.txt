@@ -1,0 +1,33 @@
+[  122.532765] NFS: permission(0:55/1), mask=0x81, res=-10
+[  122.534243] NFS call  access
+[  122.535449] NFS: nfs_update_inode(0:55/1 fh_crc=0x62d40c52 ct=2 info=0x27e7f)
+[  122.537446] NFS: change_attr change on server for file 0:55/1
+[  122.539106] NFS reply access: 0
+[  122.540045] NFS: permission(0:55/1), mask=0x1, res=0
+[  122.541426] NFS: lookup(/dir)
+[  122.542296] NFS call  lookup /dir
+[  122.543556] NFS: nfs_update_inode(0:55/1 fh_crc=0x62d40c52 ct=2 info=0x27e7f)
+[  122.545526] NFS reply lookup: 0
+[  122.546426] NFS: nfs_fhget(0:55/30 fh_crc=0xaab1c9bd ct=1)
+[  122.547945] NFS call  access
+[  122.548990] NFS: nfs_update_inode(0:55/30 fh_crc=0xaab1c9bd ct=1 info=0x27e7f)
+[  122.551034] NFS reply access: 0
+[  122.551953] NFS: permission(0:55/30), mask=0x1, res=0
+[  122.553367] NFS: permission(0:55/30), mask=0x3, res=0
+[  122.554769] NFS: create(0:55/30), file
+[  122.555823] NFS call  create file
+[  122.556767] NFS call getacl
+[  122.557780] NFS reply getacl: 0
+[  122.558706] NFS: nfs_update_inode(0:55/30 fh_crc=0xaab1c9bd ct=1 info=0x27e7f)
+[  122.560902] NFS: nfs_update_inode(0:55/30 fh_crc=0xaab1c9bd ct=1 info=0x27e7f)
+[  122.562904] NFS: nfs_update_inode(0:55/31 fh_crc=0xdd9421f1 ct=1 info=0x27e7f)
+[  122.564883] NFS: nfs_fhget(0:55/31 fh_crc=0xdd9421f1 ct=1)
+[  122.566398] NFS reply create: 0
+[  122.567308] NFS: open file(dir/file)
+[  122.568342] NFS: permission(0:55/31), mask=0x20, res=0
+[  122.569776] kernel_open_file_init:27, open file success
+[  122.571219] NFS: read(dir/file, 4096@0)
+[  122.572346] NFS: initiated pgio call (req 0:55/31, 4096 bytes @ offset 0)
+[  122.574267] nfs_do_local_read: vfs_read count=4096 pos=0
+[  122.575816] nfs_local_read_done: read 10 bytes eof 1.
+[  122.577355] kernel_open_file_init:35, read success, data: something

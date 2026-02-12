@@ -1,0 +1,141 @@
+From 116043f058f91407e5877d7d302b081a695c5174 Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Tue, 4 Nov 2025 09:17:43 +0800
+Subject: [PATCH 1/2] nfs/enfs: make the unstable state timeout configurable
+
+kylin inclusion
+category: feature
+bugzilla: todo
+
+--------------------------------
+
+The unstable state timeout can be configured through the
+/etc/enfs/config.ini file. When it is set to 0, the unstable state
+detection feature is disabled.
+
+Co-developed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+---
+ fs/nfs/enfs/enfs.h        |  2 +-
+ fs/nfs/enfs/enfs_config.c | 11 +++++++++++
+ fs/nfs/enfs/enfs_config.h |  1 +
+ fs/nfs/enfs/pm_ping.c     | 13 ++++++++++---
+ 4 files changed, 23 insertions(+), 4 deletions(-)
+
+diff --git a/fs/nfs/enfs/enfs.h b/fs/nfs/enfs/enfs.h
+index ba6ad1a85d20..18ba9953eb1c 100644
+--- a/fs/nfs/enfs/enfs.h
++++ b/fs/nfs/enfs/enfs.h
+@@ -33,7 +33,7 @@
+ #define ENFS_MAX_MOUNT_COUNT 256
+ #define EXTEND_MAX_DNS_NAME_LEN 256
+ 
+-#define ENFS_UNSTABLE_STATE_TIMEOUT	(30 * 60) /* seconds */
++#define ENFS_MAX_UNSTABLE_STATE_TIMEOUT	(30 * 60) /* seconds */
+ #define ENFS_RECONNECT_TIME_CNT	3
+ 
+ struct nfs_ip_list {
+diff --git a/fs/nfs/enfs/enfs_config.c b/fs/nfs/enfs/enfs_config.c
+index 8f8f7784a1e4..aee4ecdf2057 100644
+--- a/fs/nfs/enfs/enfs_config.c
++++ b/fs/nfs/enfs/enfs_config.c
+@@ -71,6 +71,7 @@ struct enfs_config_info {
+ 	int32_t link_count_total;
+ 	int32_t native_link_io_enable;
+ 	int32_t create_path_no_route;
++	int32_t unstable_state_timeout;
+ };
+ 
+ struct enfs_config_value_info {
+@@ -133,6 +134,8 @@ static int32_t enfs_check_and_assign_int_value(char *field_name, char *value,
+ 		  &g_enfs_config_info.native_link_io_enable },
+ 		{ "create_path_no_route",
+ 		  &g_enfs_config_info.create_path_no_route },
++		{ "unstable_state_timeout",
++		  &g_enfs_config_info.unstable_state_timeout },
+ 	};
+ 
+ 	int_value = enfs_check_config_value(value, min_value, max_value);
+@@ -285,6 +288,8 @@ static const struct enfs_config_value_info g_check_and_assign_value[] = {
+ 	  MIN_ENFS_MAX_LINK_COUNT, ENFS_MAX_LINK_COUNT },
+ 	{ "native_link_io_enable", enfs_check_and_assign_int_value, 0, 1 },
+ 	{ "create_path_no_route", enfs_check_and_assign_int_value, 0, 1 },
++	{ "unstable_state_timeout", enfs_check_and_assign_int_value,
++	  0, ENFS_MAX_UNSTABLE_STATE_TIMEOUT },
+ };
+ 
+ static int32_t enfs_read_config_file_in_openeuler(char *buffer, char *file_path)
+@@ -437,6 +442,7 @@ int32_t enfs_config_load(void)
+ 	g_enfs_config_info.link_count_total = DEFAULT_ENFS_MAX_LINK_COUNT;
+ 	g_enfs_config_info.native_link_io_enable = 1;
+ 	g_enfs_config_info.create_path_no_route = 0;
++	g_enfs_config_info.unstable_state_timeout = ENFS_MAX_UNSTABLE_STATE_TIMEOUT;
+ 
+ 	table_len = sizeof(g_check_and_assign_value) /
+ 		    sizeof(g_check_and_assign_value[0]);
+@@ -536,6 +542,11 @@ int32_t enfs_get_create_path_no_route(void)
+ 	return g_enfs_config_info.create_path_no_route;
+ }
+ 
++int32_t enfs_get_unstable_state_timeout(void)
++{
++	return g_enfs_config_info.unstable_state_timeout;
++}
++
+ bool enfs_check_config_wwn(uint64_t wwn)
+ {
+ 	int count;
+diff --git a/fs/nfs/enfs/enfs_config.h b/fs/nfs/enfs/enfs_config.h
+index ad48d68bb4fa..a8f9a43c1f83 100644
+--- a/fs/nfs/enfs/enfs_config.h
++++ b/fs/nfs/enfs/enfs_config.h
+@@ -51,6 +51,7 @@ int32_t enfs_get_config_link_count_per_mount(void);
+ int32_t enfs_get_config_link_count_total(void);
+ int32_t enfs_get_native_link_io_status(void);
+ int32_t enfs_get_create_path_no_route(void);
++int32_t enfs_get_unstable_state_timeout(void);
+ bool enfs_check_config_wwn(uint64_t wwn);
+ bool enfs_whitelist_filte(char *ip_addr);
+ int32_t enfs_config_load(void);
+diff --git a/fs/nfs/enfs/pm_ping.c b/fs/nfs/enfs/pm_ping.c
+index 42e37b48b7dc..5a69e2127857 100644
+--- a/fs/nfs/enfs/pm_ping.c
++++ b/fs/nfs/enfs/pm_ping.c
+@@ -153,7 +153,7 @@ enfs_update_reconnect_time(
+ 
+ 	while (time->tail != time->head) {
+ 		if (now_ms - time->time[time->tail] <
+-		    ENFS_UNSTABLE_STATE_TIMEOUT * 1000)
++		    enfs_get_unstable_state_timeout() * 1000)
+ 			break;
+ 		/* timed out */
+ 		time->tail = enfs_get_next_time_idx(time->tail);
+@@ -165,7 +165,14 @@ static void enfs_check_reconnect(struct rpc_xprt *xprt)
+ 	struct enfs_xprt_context *ctx = NULL;
+ 	struct enfs_reconnect_time *time;
+ 	bool is_empty, is_full, is_normal;
+-	enum enfs_path_state curr_state = pm_get_path_state(xprt);
++	enum enfs_path_state curr_state;
++
++	if (enfs_get_unstable_state_timeout() == 0) {
++		pm_set_path_state(xprt, PM_STATE_NORMAL);
++		return;
++	}
++
++	curr_state = pm_get_path_state(xprt);
+ 
+ 	xprt_get(xprt);
+ 
+@@ -258,7 +265,7 @@ bool enfs_test_reconnect_time(void)
+ 	if (!match)
+ 		return false;
+ 
+-	ms = begin_ms + 5000 + ENFS_UNSTABLE_STATE_TIMEOUT * 1000 + 1;
++	ms = begin_ms + 5000 + ENFS_MAX_UNSTABLE_STATE_TIMEOUT * 1000 + 1;
+ 	cookie += 1;
+ 	enfs_log_info("%lld ms, cookie:%d\n", ms, cookie);
+ 	enfs_update_reconnect_time(&time, ms, cookie);
+-- 
+2.43.0
+

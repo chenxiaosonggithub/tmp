@@ -1,0 +1,5 @@
+[  546.144667] ksmbd: [ksmbd_netdev_event:545] netdev-up event: netdev(lo) is going up
+[  546.146976] ksmbd: [ksmbd_netdev_event:545] netdev-up event: netdev(ens2) is going up
+[  591.110721] ksmbd: [ksmbd_netdev_event:555] netdev-down event: netdev(lo) is going down
+[  591.113188] ksmbd: [ksmbd_kthread_fn:267] releasing socket
+

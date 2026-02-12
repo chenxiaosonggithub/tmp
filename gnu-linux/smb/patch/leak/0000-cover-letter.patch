@@ -1,0 +1,26 @@
+From 897a60ae6ea640db49161a73dbf88a8638330401 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Mon, 29 Dec 2025 11:13:10 +0800
+Subject: [PATCH v2 0/1] smb/server: fix some refcount leaks
+
+v1: https://lore.kernel.org/linux-cifs/20251229021330.1026506-1-chenxiaosong.chenxiaosong@linux.dev/
+v1->v2:
+  - Call ksmbd_put_durable_fd() immediately after ksmbd_vfs_getattr() has completed.
+
+The following patches from v1 have already been merged into ksmbd.git ksmbd-for-next-next:
+ - 0d762babd1db smb/server: fix refcount leak in parse_durable_handle_context()
+
+My dear team member, ZhangGuoDong, has caught some refcount leak issues.
+
+Other patches pending review (including those from others) can be found at the following link:
+https://chenxiaosong.com/en/smb-patch.html
+
+ZhangGuoDong (1):
+  smb/server: fix refcount leak in smb2_open()
+
+ fs/smb/server/smb2pdu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+-- 
+2.43.0
+

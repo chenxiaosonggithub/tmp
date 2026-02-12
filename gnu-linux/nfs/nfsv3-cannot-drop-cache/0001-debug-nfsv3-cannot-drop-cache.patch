@@ -1,0 +1,76 @@
+From 9afdbafea9160e03da6a4e5e4c26d72df59619f3 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Sun, 14 Dec 2025 15:06:06 +0800
+Subject: [PATCH] debug nfsv3-cannot-drop-cache
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Change-Id: I32c8810cfd5aa11328853de4b9a027040ddbafe9
+---
+ fs/nfs/file.c  | 3 ++-
+ fs/nfs/write.c | 8 +++++++-
+ 2 files changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/fs/nfs/file.c b/fs/nfs/file.c
+index b5d1c1393382..0ca2e7b85f8b 100644
+--- a/fs/nfs/file.c
++++ b/fs/nfs/file.c
+@@ -416,7 +416,8 @@ static void nfs_invalidate_page(struct page *page, unsigned int offset,
+ 	dfprintk(PAGECACHE, "NFS: invalidate_page(%p, %u, %u)\n",
+ 		 page, offset, length);
+ 
+-	if (offset != 0 || length < PAGE_SIZE)
++	// if (offset != 0 || length < PAGE_SIZE)
++	if (1)
+ 		return;
+ 	/* Cancel any unstarted writes on this page */
+ 	nfs_wb_page_cancel(page_file_mapping(page)->host, page);
+diff --git a/fs/nfs/write.c b/fs/nfs/write.c
+index 706ed79e23e2..844a7bdf19da 100644
+--- a/fs/nfs/write.c
++++ b/fs/nfs/write.c
+@@ -599,6 +599,7 @@ nfs_lock_and_join_requests(struct page *page)
+ 
+ static void nfs_write_error_remove_page(struct nfs_page *req)
+ {
++	mydebug_print("page:%px, inode:%px\n", req->wb_page, req->wb_context->dentry->d_inode);
+ 	nfs_end_page_writeback(req);
+ 	generic_error_remove_page(page_file_mapping(req->wb_page),
+ 				  req->wb_page);
+@@ -638,6 +639,7 @@ static int nfs_page_async_flush(struct nfs_pageio_descriptor *pgio,
+ 	WARN_ON_ONCE(test_bit(PG_CLEAN, &req->wb_flags));
+ 
+ 	ret = req->wb_context->error;
++	ret = -EDQUOT;
+ 	/* If there is a fatal error that covers this write, just exit */
+ 	if (nfs_error_is_fatal_on_server(ret))
+ 		goto out_launder;
+@@ -808,6 +810,7 @@ static void nfs_inode_remove_request(struct nfs_page *req)
+ 
+ 		spin_lock(&mapping->private_lock);
+ 		if (likely(head->wb_page && !PageSwapCache(head->wb_page))) {
++			mydebug_dump_stack();
+ 			set_page_private(head->wb_page, 0);
+ 			ClearPagePrivate(head->wb_page);
+ 			clear_bit(PG_MAPPED, &head->wb_flags);
+@@ -1127,7 +1130,9 @@ static struct nfs_page *nfs_try_to_update_request(struct inode *inode,
+ 	 * Note: nfs_flush_incompatible() will already
+ 	 * have flushed out requests having wrong owners.
+ 	 */
+-	if (offset > rqend || end < req->wb_offset)
++	// if (offset > rqend || end < req->wb_offset)
++	// 因为这个条件不好构造，所以这里直接改成满足条件
++	if (1)
+ 		goto out_flushme;
+ 
+ 	/* Okay, the request matches. Update the region */
+@@ -1146,6 +1151,7 @@ static struct nfs_page *nfs_try_to_update_request(struct inode *inode,
+ 	 * nfs_lock_and_join_requests() cannot preserve
+ 	 * commit flags, so we have to replay the write.
+ 	 */
++	mydebug_print("\n");
+ 	nfs_mark_request_dirty(req);
+ 	nfs_unlock_and_release_request(req);
+ 	error = nfs_wb_page(inode, page);
+-- 
+2.43.0
+

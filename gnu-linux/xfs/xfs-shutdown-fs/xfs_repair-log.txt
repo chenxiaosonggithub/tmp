@@ -1,0 +1,75 @@
+Cannot get host filesystem geometry.
+Repair may fail if there is a sector size mismatch between
+the image and the host filesystem.
+Phase 1 - find and verify superblock...
+Cannot get host filesystem geometry.
+Repair may fail if there is a sector size mismatch between
+the image and the host filesystem.
+        - reporting progress in intervals of 15 minutes
+Phase 2 - using internal log
+        - zero log...
+ALERT: The filesystem has valuable metadata changes in a log which is being
+ignored because the -n option was used.  Expect spurious inconsistencies
+which may be resolved by first mounting the filesystem to replay the log.
+        - 14:53:13: zeroing log - 64000 of 64000 blocks done
+        - scan filesystem freespace and inode maps...
+agf_freeblks 3997090, counted 4111777 in ag 0
+agf_longest 14556, counted 14846 in ag 0
+sb_icount 30592, counted 30400
+sb_ifree 9471, counted 9566
+sb_fdblocks 36891964, counted 37481606
+        - 14:53:13: scanning filesystem freespace - 16 of 16 allocation groups done
+        - found root inode chunk
+Phase 3 - for each AG...
+        - scan (but don't clear) agi unlinked lists...
+        - 14:53:13: scanning agi unlinked lists - 16 of 16 allocation groups done
+        - process known inodes and perform inode discovery...
+        - agno = 0
+        - agno = 15
+        - agno = 1
+        - agno = 2
+        - agno = 3
+        - agno = 4
+        - agno = 5
+        - agno = 6
+        - agno = 7
+        - agno = 8
+        - agno = 9
+        - agno = 10
+        - agno = 11
+        - agno = 12
+        - agno = 13
+        - agno = 14
+        - 14:53:13: process known inodes and inode discovery - 30400 of 30592 inodes done
+        - process newly discovered inodes...
+        - 14:53:13: process newly discovered inodes - 16 of 16 allocation groups done
+Phase 4 - check for duplicate blocks...
+        - setting up duplicate extent list...
+        - 14:53:13: setting up duplicate extent list - 16 of 16 allocation groups done
+        - check for inodes claiming duplicate blocks...
+        - agno = 0
+        - agno = 1
+        - agno = 4
+        - agno = 9
+        - agno = 8
+        - agno = 15
+        - agno = 7
+        - agno = 6
+        - agno = 3
+        - agno = 10
+        - agno = 11
+        - agno = 13
+        - agno = 12
+        - agno = 5
+        - agno = 2
+        - agno = 14
+        - 14:53:13: check for inodes claiming duplicate blocks - 30400 of 30592 inodes done
+No modify flag set, skipping phase 5
+Phase 6 - check inode connectivity...
+        - traversing filesystem ...
+        - traversal finished ...
+        - moving disconnected inodes to lost+found ...
+Phase 7 - verify link counts...
+        - 14:53:13: verify and correct link counts - 16 of 16 allocation groups done
+No modify flag set, skipping filesystem flush and exiting.
+
