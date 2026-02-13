@@ -304,6 +304,7 @@ EOF
 kylinos_physical()
 {
 	echo "查看版本信息: cat /etc/kylin-build"
+	echo "需要执行: sudo iptables -F"
 	echo "禁用kysec: 把`grub.cfg`新生成的启动项里的`security=kysec`改成`security= `（注意后面有空格）, vim替换: %s/kysec/ /g"
 	echo "  sudo cp /boot/grub/grub.cfg /boot/grub/grub.cfg.bak # x86_64"
 	echo "  sudo cp /boot/efi/boot/grub/grub.cfg /boot/efi/boot/grub/grub.cfg.bak # arm64"
