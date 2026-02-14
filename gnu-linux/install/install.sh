@@ -322,7 +322,7 @@ kylinos_physical()
 	git clone https://gitee.com/chenxiaosonggitee/tmp.git
 	git clone https://gitee.com/chenxiaosonggitee/private-blog.git
 	cp ~/code/private-blog/src/ssh/ ~ -rf
-	cp /home/chenxiaosong/code/tmp/gnu-linux/install/thunderbird.sh ~ -rf
+	cp /home/chenxiaosong/code/tmp/gnu-linux/install/kylin/thunderbird.sh ~ -rf
 	sudo cp /home/chenxiaosong/code/tmp/gnu-linux/install/kylin/touchpad-* /usr/share/applications/ # 然后设置快捷键打开和关闭触摸板
 
 	echo "指纹驱动下载: https://www.greatwall.com.cn/%e6%9c%8d%e5%8a%a1%e4%b8%8e%e6%8a%80%e6%9c%af/service-html-2"
