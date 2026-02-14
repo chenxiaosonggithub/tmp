@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Mouse Scroll Up
+Name[zh_CN]=鼠标向上滚动
+Exec=/bin/bash -c "/usr/bin/xdotool click 4"
+StartupNotify=false
+Terminal=false
+Type=Application
+Categories=Utility;
+Comment=Scroll mouse up
+Comment[zh_CN]=模拟鼠标向上滚动

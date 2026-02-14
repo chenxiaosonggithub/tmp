@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Mouse Scroll Down
+Name[zh_CN]=鼠标向下滚动
+Exec=/bin/bash -c "/usr/bin/xdotool click 5"
+StartupNotify=false
+Terminal=false
+Type=Application
+Categories=Utility;
+Comment=Scroll mouse down
+Comment[zh_CN]=模拟鼠标向下滚动

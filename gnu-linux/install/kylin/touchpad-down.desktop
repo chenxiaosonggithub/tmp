@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Touchpad Down
+Name[zh_CN]=触摸板关闭
+# 查看触摸板名字 xinput list
+Exec=/bin/bash -c 'xinput disable "BLTP7853:00 347D:7853 Touchpad"'
+StartupNotify=false
+Terminal=false
+Type=Application
+Categories=Utility;
+Comment=Touchpad disable
+Comment[zh_CN]=触摸板关闭
