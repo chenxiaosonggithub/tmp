@@ -1,7 +1,7 @@
-From 3eb3ebac0282023a0519f4bb1c89e88566c463a5 Mon Sep 17 00:00:00 2001
+From d0dc2cd1a1f7b33b8f2f5d0daee5a18f09d0021d Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Tue, 2 Dec 2025 11:59:22 +0800
-Subject: [PATCH 4/5] smb: introduce struct create_posix_ctxt_rsp
+Subject: [PATCH v3 4/5] smb: introduce struct create_posix_ctxt_rsp
 
 Modify the following places:
 
@@ -9,7 +9,6 @@ Modify the following places:
   - some fields in "struct create_posix_rsp" -> "struct create_posix_ctxt_rsp"
   - create_posix_rsp_buf(): offsetof(..., nlink) -> offsetof(..., ctxt_rsp)
 
-Co-developed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
 ---
@@ -21,7 +20,7 @@ Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
  5 files changed, 30 insertions(+), 16 deletions(-)
 
 diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
-index 5d57c895ca37..b532eb2026ae 100644
+index 7f3edf42b9c3..f8825160355d 100644
 --- a/fs/smb/client/smb2pdu.c
 +++ b/fs/smb/client/smb2pdu.c
 @@ -2362,9 +2362,9 @@ parse_posix_ctxt(struct create_context *cc, struct smb2_file_all_info *info,
@@ -66,10 +65,10 @@ index 78bb99f29d38..4928fb620233 100644
  	struct smb_sid group; /* var-sized on the wire */
  } __packed;
 diff --git a/fs/smb/common/smb2pdu.h b/fs/smb/common/smb2pdu.h
-index 9a0685902233..c46b15e9a2d5 100644
+index 85a4248d4f29..5dd4ab245453 100644
 --- a/fs/smb/common/smb2pdu.h
 +++ b/fs/smb/common/smb2pdu.h
-@@ -1771,4 +1771,21 @@ struct smb2_lease_ack {
+@@ -1775,4 +1775,21 @@ struct smb2_lease_ack {
  #define SET_MINIMUM_RIGHTS (FILE_READ_EA | FILE_READ_ATTRIBUTES \
  				| READ_CONTROL | SYNCHRONIZE)
  
@@ -92,7 +91,7 @@ index 9a0685902233..c46b15e9a2d5 100644
 +
  #endif				/* _COMMON_SMB2PDU_H */
 diff --git a/fs/smb/server/oplock.c b/fs/smb/server/oplock.c
-index 1f07ebf431d7..8658402ff893 100644
+index a5967ac46604..171758ed94b2 100644
 --- a/fs/smb/server/oplock.c
 +++ b/fs/smb/server/oplock.c
 @@ -1703,7 +1703,7 @@ void create_posix_rsp_buf(char *cc, struct ksmbd_file *fp)
@@ -118,7 +117,7 @@ index 1f07ebf431d7..8658402ff893 100644
  	 * SidBuffer(44) contain two sids(Domain sid(28), UNIX group sid(16)).
  	 * Domain sid(28) = revision(1) + num_subauth(1) + authority(6) +
 diff --git a/fs/smb/server/smb2pdu.h b/fs/smb/server/smb2pdu.h
-index 66cdc8e4a648..09311a9eb1de 100644
+index 9b3c4c9acb11..dc6a81c64fd5 100644
 --- a/fs/smb/server/smb2pdu.h
 +++ b/fs/smb/server/smb2pdu.h
 @@ -83,13 +83,11 @@ struct create_durable_rsp {
@@ -138,5 +137,5 @@ index 66cdc8e4a648..09311a9eb1de 100644
  	u8 SidBuffer[44];
  } __packed;
 -- 
-2.43.0
+2.52.0
 

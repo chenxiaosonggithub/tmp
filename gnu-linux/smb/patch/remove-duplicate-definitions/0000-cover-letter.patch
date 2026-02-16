@@ -1,64 +1,53 @@
-From 71ca7c68025867557803440fb399fdf8dbcab643 Mon Sep 17 00:00:00 2001
-From: ChenXiaoSong <chenxiaosong@kylinos.cn>
-Date: Thu, 11 Dec 2025 22:02:44 +0800
-Subject: [PATCH v2 0/7] smb: move duplicate definitions into common header file, part 2
+From 7bd273ec08afbceebdd4a057e5b9e46c0431bf58 Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Mon, 16 Feb 2026 07:51:04 +0000
+Subject: [PATCH v3 0/5] smb: move duplicate definitions into common header file, part 2
 
-For more detailed information about the patches to be reviewed, please see the link:
-https://chenxiaosong.com/en/smb-patch.html
+v2->v3:
+  - Patch #01: "__u32 VolumeSerialNumber" -> "__le32 VolumeSerialNumber"
+  - Patch #02: rebased on cifs-2.6.git for-next
+  - Add patch #03
+
+v1: https://lore.kernel.org/all/20251209011020.3270989-1-chenxiaosong.chenxiaosong@linux.dev/
+v2: https://lore.kernel.org/linux-cifs/20251211143228.172470-1-chenxiaosong.chenxiaosong@linux.dev/
+The following patches from v1 and v2 have already been merged into mainline:
+  - 94d5b8dbc5d9 smb: move some SMB1 definitions into common/smb1pdu.h
+  - 2b6abb893e71 smb: move File Attributes definitions into common/fscc.h
+  - c97503321ed3 smb: update struct duplicate_extents_to_file_ex
+  - 2e0d224d8988 smb/server: add comment to FileSystemName of FileFsAttributeInformation
+  - ab0347e67dac smb/client: remove DeviceType Flags and Device Characteristics definitions
+  - 08c2a7d2bae9 smb: move file_notify_information to common/fscc.h
+  - 6539e18517b6 smb: move SMB2 Notify Action Flags into common/smb2pdu.h
+  - 9ec7629b430a smb: move notify completion filter flags into common/smb2pdu.h
+  - bcdd6cfaf2ec smb: add documentation references for smb2 change notify definitions
 
 This is a continuous effort to move duplicated definitions in both client
 and server into common header files, which makes the code easier to maintain.
 
 The previous work is here:
-part 1: https://lore.kernel.org/linux-cifs/20251117112838.473051-1-chenxiaosong.chenxiaosong@linux.dev/
-
-v1: https://lore.kernel.org/all/20251209011020.3270989-1-chenxiaosong.chenxiaosong@linux.dev/
-The following patches from v1 have already been merged into cifs-2.6.git for-next and ksmbd.git ksmbd-for-next:
-  - smb/server: add comment to FileSystemName of FileFsAttributeInformation
-  - smb/client: remove DeviceType Flags and Device Characteristics definitions
-  - smb: move file_notify_information to common/fscc.h
-  - smb: move SMB2 Notify Action Flags into common/smb2pdu.h
-  - smb: move notify completion filter flags into common/smb2pdu.h
-  - smb: add documentation references for smb2 change notify definitions
-
-The following patches from this version(v2) have already been merged into cifs-2.6.git for-next:
-  - smb: move some SMB1 definitions into common/smb1pdu.h
-  - smb: move File Attributes definitions into common/fscc.h
-  - smb: update struct duplicate_extents_to_file_ex
-
-v1->v2:
-  - Patch #0001: update FILE_ATTRIBUTE_MASK value
-  - Patch #0002: `__u64 StructureSize` -> `__le64 StructureSize`
-  - Patch #0003: conflicts have been resolved
-
-ChenXiaoSong (2):
-  smb: move File Attributes definitions into common/fscc.h
-  smb: update struct duplicate_extents_to_file_ex
+  - part 1: https://lore.kernel.org/linux-cifs/20251117112838.473051-1-chenxiaosong.chenxiaosong@linux.dev/
 
 ZhangGuoDong (5):
-  smb: move some SMB1 definitions into common/smb1pdu.h
   smb: move smb3_fs_vol_info into common/fscc.h
   smb: move some definitions from common/smb2pdu.h into common/fscc.h
+  smb: move file_basic_info into common/fscc.h
   smb: introduce struct create_posix_ctxt_rsp
   smb: introduce struct file_posix_info
 
- fs/smb/client/cifspdu.h    |   2 +-
- fs/smb/client/inode.c      |  22 +-
+ fs/smb/client/inode.c      |  22 +--
  fs/smb/client/readdir.c    |  28 +--
  fs/smb/client/reparse.h    |   4 +-
+ fs/smb/client/smb1pdu.h    |   9 -
  fs/smb/client/smb2pdu.c    |   9 +-
  fs/smb/client/smb2pdu.h    |  21 +-
- fs/smb/common/fscc.h       | 415 ++++++++++++++++++++++++++++++++++-
- fs/smb/common/smb1pdu.h    |  56 +++++
- fs/smb/common/smb2pdu.h    | 432 ++-----------------------------------
- fs/smb/common/smbglob.h    |   2 -
+ fs/smb/common/fscc.h       | 379 ++++++++++++++++++++++++++++++++++++-
+ fs/smb/common/smb2pdu.h    | 360 ++---------------------------------
  fs/smb/server/oplock.c     |   8 +-
- fs/smb/server/smb2pdu.c    |  84 ++++----
- fs/smb/server/smb2pdu.h    |  27 +--
- fs/smb/server/smb_common.h |   9 +-
- 14 files changed, 572 insertions(+), 547 deletions(-)
- create mode 100644 fs/smb/common/smb1pdu.h
+ fs/smb/server/smb2pdu.c    |  98 +++++-----
+ fs/smb/server/smb2pdu.h    |  36 +---
+ fs/smb/server/smb_common.h |   8 -
+ 12 files changed, 486 insertions(+), 496 deletions(-)
 
 -- 
-2.43.0
+2.52.0
 

@@ -1,7 +1,7 @@
-From f355a9f7ac51ebb61fce6a56d60d9d067a80354a Mon Sep 17 00:00:00 2001
+From db47d03ec90f024dde754eba33b038846ab6b38e Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Sun, 16 Nov 2025 16:21:00 +0800
-Subject: [PATCH 2/5] smb: move smb3_fs_vol_info into common/fscc.h
+Subject: [PATCH v3 1/5] smb: move smb3_fs_vol_info into common/fscc.h
 
 The structure definition on the server side is specified in MS-CIFS
 2.2.8.2.3, but we should instead refer to MS-FSCC 2.5.9, just as the
@@ -15,9 +15,9 @@ Modify the following places:
 
 Then move it into common header file.
 
-Co-developed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
-Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Reviewed-by: Steve French <stfrench@microsoft.com>
 ---
  fs/smb/common/fscc.h       | 11 +++++++++++
  fs/smb/common/smb2pdu.h    | 11 -----------
@@ -26,7 +26,7 @@ Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
  4 files changed, 16 insertions(+), 24 deletions(-)
 
 diff --git a/fs/smb/common/fscc.h b/fs/smb/common/fscc.h
-index 0123f34db1e8..5949facd005a 100644
+index 0123f34db1e8..d2e00eba1a98 100644
 --- a/fs/smb/common/fscc.h
 +++ b/fs/smb/common/fscc.h
 @@ -138,6 +138,17 @@ typedef struct {
@@ -37,7 +37,7 @@ index 0123f34db1e8..5949facd005a 100644
 +#define MAX_VOL_LABEL_LEN	32
 +struct smb3_fs_vol_info {
 +	__le64	VolumeCreationTime;
-+	__u32	VolumeSerialNumber;
++	__le32	VolumeSerialNumber;
 +	__le32	VolumeLabelLength; /* includes trailing null */
 +	__u8	SupportsObjects; /* True if eg like NTFS, supports objects */
 +	__u8	Reserved;
@@ -48,10 +48,10 @@ index 0123f34db1e8..5949facd005a 100644
  typedef struct {
  	__le32 DeviceType;
 diff --git a/fs/smb/common/smb2pdu.h b/fs/smb/common/smb2pdu.h
-index 28460c3d4979..5dfdf9ec11c7 100644
+index e482c86ceb00..69dd7c792804 100644
 --- a/fs/smb/common/smb2pdu.h
 +++ b/fs/smb/common/smb2pdu.h
-@@ -1938,17 +1938,6 @@ struct smb2_fs_control_info {
+@@ -1942,17 +1942,6 @@ struct smb2_fs_control_info {
  	__le32 Padding;
  } __packed;
  
@@ -70,10 +70,10 @@ index 28460c3d4979..5dfdf9ec11c7 100644
  struct smb2_oplock_break {
  	struct smb2_hdr hdr;
 diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index 27f87a13f20a..77a5c4f8a3e9 100644
+index cbb31efdbaa2..966a499d2eb8 100644
 --- a/fs/smb/server/smb2pdu.c
 +++ b/fs/smb/server/smb2pdu.c
-@@ -5514,11 +5514,11 @@ static int smb2_get_info_filesystem(struct ksmbd_work *work,
+@@ -5531,11 +5531,11 @@ static int smb2_get_info_filesystem(struct ksmbd_work *work,
  	}
  	case FS_VOLUME_INFORMATION:
  	{
@@ -87,7 +87,7 @@ index 27f87a13f20a..77a5c4f8a3e9 100644
  		info->VolumeCreationTime = 0;
  		serial_crc = crc32_le(serial_crc, share->name,
  				      strlen(share->name));
-@@ -5527,14 +5527,14 @@ static int smb2_get_info_filesystem(struct ksmbd_work *work,
+@@ -5544,14 +5544,14 @@ static int smb2_get_info_filesystem(struct ksmbd_work *work,
  		serial_crc = crc32_le(serial_crc, ksmbd_netbios_name(),
  				      strlen(ksmbd_netbios_name()));
  		/* Taking dummy value of serial number*/
@@ -106,7 +106,7 @@ index 27f87a13f20a..77a5c4f8a3e9 100644
  		break;
  	}
 diff --git a/fs/smb/server/smb_common.h b/fs/smb/server/smb_common.h
-index 95bf1465387b..afd18a96e54f 100644
+index ca7e3610d074..b090b56743c4 100644
 --- a/fs/smb/server/smb_common.h
 +++ b/fs/smb/server/smb_common.h
 @@ -90,14 +90,6 @@ struct smb_negotiate_rsp {
@@ -125,5 +125,5 @@ index 95bf1465387b..afd18a96e54f 100644
  #define STRING_LENGTH 28
  
 -- 
-2.43.0
+2.52.0
 

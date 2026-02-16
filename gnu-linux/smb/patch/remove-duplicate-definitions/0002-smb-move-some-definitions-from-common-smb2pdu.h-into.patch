@@ -1,23 +1,23 @@
-From ea98e42c99d8ac53e0e8c85068dd405413222ff2 Mon Sep 17 00:00:00 2001
+From 10f1dbabba30c5f50dc54ac629b6b11d3b6d65da Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
-Date: Mon, 1 Dec 2025 16:59:27 +0800
-Subject: [PATCH 3/5] smb: move some definitions from common/smb2pdu.h into
+Date: Mon, 16 Feb 2026 07:10:05 +0000
+Subject: [PATCH v3 2/5] smb: move some definitions from common/smb2pdu.h into
  common/fscc.h
 
-Only add some documentation references, no other changes.
-
 These definitions are specified in MS-FSCC, so move them into fscc.h.
+
+Only add some documentation references, no other changes.
 
 Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
 Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Reviewed-by: Steve French <stfrench@microsoft.com>
 ---
- fs/smb/common/fscc.h    | 316 ++++++++++++++++++++++++++++++++++++++++
- fs/smb/common/smb2pdu.h | 307 --------------------------------------
- 2 files changed, 316 insertions(+), 307 deletions(-)
+ fs/smb/common/fscc.h    | 315 ++++++++++++++++++++++++++++++++++++++++
+ fs/smb/common/smb2pdu.h | 307 ---------------------------------------
+ 2 files changed, 315 insertions(+), 307 deletions(-)
 
 diff --git a/fs/smb/common/fscc.h b/fs/smb/common/fscc.h
-index 5949facd005a..14688ab7ebd5 100644
+index d2e00eba1a98..b209d818e95e 100644
 --- a/fs/smb/common/fscc.h
 +++ b/fs/smb/common/fscc.h
 @@ -12,6 +12,210 @@
@@ -135,7 +135,7 @@ index 5949facd005a..14688ab7ebd5 100644
 +	__le32	Reserved;
 +} __packed;
 +
-+/* See MS-FSCC 2.3.56.1 */
++/* DesiredUsage flags see MS-FSCC 2.3.56.1 */
 +#define FILE_USAGE_INVALID_RANGE	0x00000000
 +#define FILE_USAGE_VALID_CACHED_DATA	0x00000001
 +#define FILE_USAGE_NONCACHED_DATA	0x00000002
@@ -308,7 +308,7 @@ index 5949facd005a..14688ab7ebd5 100644
  /* See MS-FSCC 2.5.1 */
  #define MAX_FS_NAME_LEN		52
  typedef struct {
-@@ -130,6 +390,46 @@ typedef struct {
+@@ -130,6 +390,45 @@ typedef struct {
  #define FILE_CASE_PRESERVED_NAMES	0x00000002
  #define FILE_CASE_SENSITIVE_SEARCH	0x00000001
  
@@ -340,7 +340,6 @@ index 5949facd005a..14688ab7ebd5 100644
 +#define SSINFO_FLAGS_PARTITION_ALIGNED_ON_DEVICE 0x00000002
 +#define SSINFO_FLAGS_NO_SEEK_PENALTY		0x00000004
 +#define SSINFO_FLAGS_TRIM_ENABLED		0x00000008
-+
 +/* sector size info struct */
 +struct smb3_fs_ss_info {
 +	__le32 LogicalBytesPerSector;
@@ -355,7 +354,7 @@ index 5949facd005a..14688ab7ebd5 100644
  /* See MS-FSCC 2.5.8 */
  typedef struct {
  	__le64 TotalAllocationUnits;
-@@ -200,6 +500,22 @@ typedef struct {
+@@ -200,6 +499,22 @@ typedef struct {
  #define FILE_ATTRIBUTE_NO_SCRUB_DATA_LE		cpu_to_le32(FILE_ATTRIBUTE_NO_SCRUB_DATA)
  #define FILE_ATTRIBUTE_MASK_LE			cpu_to_le32(FILE_ATTRIBUTE_MASK)
  
@@ -379,10 +378,10 @@ index 5949facd005a..14688ab7ebd5 100644
   * Response contains array of the following structures
   * See MS-FSCC 2.7.1
 diff --git a/fs/smb/common/smb2pdu.h b/fs/smb/common/smb2pdu.h
-index 5dfdf9ec11c7..9a0685902233 100644
+index 69dd7c792804..85a4248d4f29 100644
 --- a/fs/smb/common/smb2pdu.h
 +++ b/fs/smb/common/smb2pdu.h
-@@ -1003,22 +1003,6 @@ struct smb2_set_info_rsp {
+@@ -1006,22 +1006,6 @@ struct smb2_set_info_rsp {
  #define FILE_NOTIFY_CHANGE_STREAM_SIZE		0x00000400
  #define FILE_NOTIFY_CHANGE_STREAM_WRITE		0x00000800
  
@@ -405,7 +404,7 @@ index 5dfdf9ec11c7..9a0685902233 100644
  /* See MS-SMB2 2.2.35 */
  struct smb2_change_notify_req {
  	struct smb2_hdr hdr;
-@@ -1495,105 +1479,6 @@ struct network_interface_info_ioctl_rsp {
+@@ -1499,105 +1483,6 @@ struct network_interface_info_ioctl_rsp {
  	};
  } __packed;
  
@@ -511,7 +510,7 @@ index 5dfdf9ec11c7..9a0685902233 100644
  /* Integrity ChecksumAlgorithm choices for above */
  #define	CHECKSUM_TYPE_NONE	0x0000
  #define	CHECKSUM_TYPE_CRC64	0x0002
-@@ -1602,72 +1487,6 @@ struct fsctl_set_integrity_info_ex_req {
+@@ -1606,72 +1491,6 @@ struct fsctl_set_integrity_info_ex_req {
  /* Integrity flags for above */
  #define FSCTL_INTEGRITY_FLAG_CHECKSUM_ENFORCEMENT_OFF	0x00000001
  
@@ -584,7 +583,7 @@ index 5dfdf9ec11c7..9a0685902233 100644
  struct validate_negotiate_info_req {
  	__le32 Capabilities;
  	__u8   Guid[SMB2_CLIENT_GUID_SIZE];
-@@ -1787,84 +1606,6 @@ struct smb2_query_info_rsp {
+@@ -1791,84 +1610,6 @@ struct smb2_query_info_rsp {
  	__u8   Buffer[];
  } __packed;
  
@@ -669,7 +668,7 @@ index 5dfdf9ec11c7..9a0685902233 100644
  /* Level 100 query info */
  struct smb311_posix_qinfo {
  	__le64 CreationTime;
-@@ -1890,54 +1631,6 @@ struct smb311_posix_qinfo {
+@@ -1894,54 +1635,6 @@ struct smb311_posix_qinfo {
  	 */
  } __packed;
  
@@ -725,5 +724,5 @@ index 5dfdf9ec11c7..9a0685902233 100644
  struct smb2_oplock_break {
  	struct smb2_hdr hdr;
 -- 
-2.43.0
+2.52.0
 
