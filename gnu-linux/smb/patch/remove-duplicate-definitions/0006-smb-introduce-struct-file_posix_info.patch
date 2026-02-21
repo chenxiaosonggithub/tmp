@@ -1,7 +1,7 @@
-From 7bd273ec08afbceebdd4a057e5b9e46c0431bf58 Mon Sep 17 00:00:00 2001
+From 8b5f93cc195bf641b4f116b7a3233c4293ee2855 Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Tue, 2 Dec 2025 10:01:05 +0800
-Subject: [PATCH v3 5/5] smb: introduce struct file_posix_info
+Subject: [PATCH 6/6] smb: introduce struct file_posix_info
 
 Modify the following places:
 
@@ -9,8 +9,8 @@ Modify the following places:
   - some fields in "struct smb311_posix_qinfo" -> "struct file_posix_info"
   - some fields in "struct smb2_posix_info" -> "struct file_posix_info"
 
-Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
  fs/smb/client/inode.c   | 22 ++++++------
  fs/smb/client/readdir.c | 28 ++++++++--------
@@ -143,7 +143,7 @@ index 570b0d25aeba..410ee9133aea 100644
  
  	} else {
 diff --git a/fs/smb/client/smb2pdu.h b/fs/smb/client/smb2pdu.h
-index 4928fb620233..07ba081750fb 100644
+index 75f973341cfb..d5ec89b3d1f2 100644
 --- a/fs/smb/client/smb2pdu.h
 +++ b/fs/smb/client/smb2pdu.h
 @@ -269,20 +269,7 @@ struct create_posix_rsp {
@@ -169,7 +169,7 @@ index 4928fb620233..07ba081750fb 100644
  	 * var sized owner SID
  	 * var sized group SID
 diff --git a/fs/smb/common/fscc.h b/fs/smb/common/fscc.h
-index 716864b173fd..117bdc73e2a6 100644
+index b4ccddca9256..0d8c522f757a 100644
 --- a/fs/smb/common/fscc.h
 +++ b/fs/smb/common/fscc.h
 @@ -537,9 +537,50 @@ struct file_notify_information {
@@ -261,7 +261,7 @@ index 5dd4ab245453..f78dbf00a545 100644
  struct smb2_oplock_break {
  	struct smb2_hdr hdr;
 diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index eb2129ab7156..1b372363cbf7 100644
+index 15641993cc57..5b3a151372d8 100644
 --- a/fs/smb/server/smb2pdu.c
 +++ b/fs/smb/server/smb2pdu.c
 @@ -4051,44 +4051,44 @@ static int smb2_populate_readdir_entry(struct ksmbd_conn *conn, int info_level,

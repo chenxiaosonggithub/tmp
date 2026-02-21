@@ -1,0 +1,209 @@
+From 897d759693e49d90ba19aafbbd29bc0fedaf690e Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Sun, 16 Nov 2025 16:21:00 +0800
+Subject: [PATCH 2/6] smb: move filesystem_vol_info into common/fscc.h
+
+The structure definition on the server side is specified in MS-CIFS
+2.2.8.2.3, but we should instead refer to MS-FSCC 2.5.9, just as the
+client side does.
+
+Modify the following places:
+
+  - smb3_fs_vol_info -> filesystem_vol_info
+  - SerialNumber -> VolumeSerialNumber
+  - VolumeLabelSize -> VolumeLabelLength
+  - struct smb_mnt_fs_info: __le32  vol_serial_number
+  - struct cifs_tcon: __le32  vol_serial_number
+
+Then move it into common header file.
+
+Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Reviewed-by: Steve French <stfrench@microsoft.com>
+---
+ fs/smb/client/cifs_debug.c |  2 +-
+ fs/smb/client/cifs_ioctl.h |  2 +-
+ fs/smb/client/cifsfs.c     |  2 +-
+ fs/smb/client/cifsglob.h   |  2 +-
+ fs/smb/client/fscache.c    |  2 +-
+ fs/smb/client/smb2pdu.c    |  6 +++---
+ fs/smb/common/fscc.h       | 11 +++++++++++
+ fs/smb/common/smb2pdu.h    | 11 -----------
+ fs/smb/server/smb2pdu.c    |  4 ++--
+ fs/smb/server/smb_common.h |  8 --------
+ 10 files changed, 21 insertions(+), 29 deletions(-)
+
+diff --git a/fs/smb/client/cifs_debug.c b/fs/smb/client/cifs_debug.c
+index 217444e3e6d0..8bb909a57edf 100644
+--- a/fs/smb/client/cifs_debug.c
++++ b/fs/smb/client/cifs_debug.c
+@@ -92,7 +92,7 @@ static void cifs_debug_tcon(struct seq_file *m, struct cifs_tcon *tcon)
+ 	else
+ 		seq_printf(m, " type: %d ", dev_type);
+ 
+-	seq_printf(m, "Serial Number: 0x%x", tcon->vol_serial_number);
++	seq_printf(m, "Serial Number: 0x%x", le32_to_cpu(tcon->vol_serial_number));
+ 
+ 	if ((tcon->seal) ||
+ 	    (tcon->ses->session_flags & SMB2_SESSION_FLAG_ENCRYPT_DATA) ||
+diff --git a/fs/smb/client/cifs_ioctl.h b/fs/smb/client/cifs_ioctl.h
+index b51ce64fcccf..ee36ec9812e1 100644
+--- a/fs/smb/client/cifs_ioctl.h
++++ b/fs/smb/client/cifs_ioctl.h
+@@ -11,7 +11,7 @@ struct smb_mnt_fs_info {
+ 	__u32	version; /* 0001 */
+ 	__u16	protocol_id;
+ 	__u16	tcon_flags;
+-	__u32	vol_serial_number;
++	__le32	vol_serial_number;
+ 	__u32	vol_create_time;
+ 	__u32	share_caps;
+ 	__u32	share_flags;
+diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
+index afda1d7c1ee1..ba799e7813b6 100644
+--- a/fs/smb/client/cifsfs.c
++++ b/fs/smb/client/cifsfs.c
+@@ -371,7 +371,7 @@ cifs_statfs(struct dentry *dentry, struct kstatfs *buf)
+ 	else
+ 		buf->f_namelen = PATH_MAX;
+ 
+-	buf->f_fsid.val[0] = tcon->vol_serial_number;
++	buf->f_fsid.val[0] = le32_to_cpu(tcon->vol_serial_number);
+ 	/* are using part of create time for more randomness, see man statfs */
+ 	buf->f_fsid.val[1] =  (int)le64_to_cpu(tcon->vol_create_time);
+ 
+diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
+index 080ea601c209..b73ab93568ac 100644
+--- a/fs/smb/client/cifsglob.h
++++ b/fs/smb/client/cifsglob.h
+@@ -1270,7 +1270,7 @@ struct cifs_tcon {
+ 	__le32 capabilities;
+ 	__u32 share_flags;
+ 	__u32 maximal_access;
+-	__u32 vol_serial_number;
++	__le32 vol_serial_number;
+ 	__le64 vol_create_time;
+ 	__u64 snapshot_time; /* for timewarp tokens - timestamp of snapshot */
+ 	__u32 handle_timeout; /* persistent and durable handle timeout in ms */
+diff --git a/fs/smb/client/fscache.c b/fs/smb/client/fscache.c
+index 01424a5cdb99..9801b7fa58ac 100644
+--- a/fs/smb/client/fscache.c
++++ b/fs/smb/client/fscache.c
+@@ -29,7 +29,7 @@ static void cifs_fscache_fill_volume_coherency(
+ 	memset(cd, 0, sizeof(*cd));
+ 	cd->resource_id		= cpu_to_le64(tcon->resource_id);
+ 	cd->vol_create_time	= tcon->vol_create_time;
+-	cd->vol_serial_number	= cpu_to_le32(tcon->vol_serial_number);
++	cd->vol_serial_number	= tcon->vol_serial_number;
+ }
+ 
+ int cifs_fscache_get_super_cookie(struct cifs_tcon *tcon)
+diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
+index 7f3edf42b9c3..afb8471a1416 100644
+--- a/fs/smb/client/smb2pdu.c
++++ b/fs/smb/client/smb2pdu.c
+@@ -6169,8 +6169,8 @@ SMB2_QFS_attr(const unsigned int xid, struct cifs_tcon *tcon,
+ 		max_len = sizeof(struct smb3_fs_ss_info);
+ 		min_len = sizeof(struct smb3_fs_ss_info);
+ 	} else if (level == FS_VOLUME_INFORMATION) {
+-		max_len = sizeof(struct smb3_fs_vol_info) + MAX_VOL_LABEL_LEN;
+-		min_len = sizeof(struct smb3_fs_vol_info);
++		max_len = sizeof(struct filesystem_vol_info) + MAX_VOL_LABEL_LEN;
++		min_len = sizeof(struct filesystem_vol_info);
+ 	} else {
+ 		cifs_dbg(FYI, "Invalid qfsinfo level %d\n", level);
+ 		return -EINVAL;
+@@ -6225,7 +6225,7 @@ SMB2_QFS_attr(const unsigned int xid, struct cifs_tcon *tcon,
+ 		tcon->perf_sector_size =
+ 			le32_to_cpu(ss_info->PhysicalBytesPerSectorForPerf);
+ 	} else if (level == FS_VOLUME_INFORMATION) {
+-		struct smb3_fs_vol_info *vol_info = (struct smb3_fs_vol_info *)
++		struct filesystem_vol_info *vol_info = (struct filesystem_vol_info *)
+ 			(offset + (char *)rsp);
+ 		tcon->vol_serial_number = vol_info->VolumeSerialNumber;
+ 		tcon->vol_create_time = vol_info->VolumeCreationTime;
+diff --git a/fs/smb/common/fscc.h b/fs/smb/common/fscc.h
+index 0123f34db1e8..2e7a83e96d8a 100644
+--- a/fs/smb/common/fscc.h
++++ b/fs/smb/common/fscc.h
+@@ -138,6 +138,17 @@ typedef struct {
+ 	__le32 BytesPerSector;
+ } __packed FILE_SYSTEM_SIZE_INFO;	/* size info, level 0x103 */
+ 
++/* volume info struct - see MS-FSCC 2.5.9 */
++#define MAX_VOL_LABEL_LEN	32
++struct filesystem_vol_info {
++	__le64	VolumeCreationTime;
++	__le32	VolumeSerialNumber;
++	__le32	VolumeLabelLength; /* includes trailing null */
++	__u8	SupportsObjects; /* True if eg like NTFS, supports objects */
++	__u8	Reserved;
++	__u8	VolumeLabel[]; /* variable len */
++} __packed;
++
+ /* See MS-FSCC 2.5.10 */
+ typedef struct {
+ 	__le32 DeviceType;
+diff --git a/fs/smb/common/smb2pdu.h b/fs/smb/common/smb2pdu.h
+index e482c86ceb00..69dd7c792804 100644
+--- a/fs/smb/common/smb2pdu.h
++++ b/fs/smb/common/smb2pdu.h
+@@ -1942,17 +1942,6 @@ struct smb2_fs_control_info {
+ 	__le32 Padding;
+ } __packed;
+ 
+-/* volume info struct - see MS-FSCC 2.5.9 */
+-#define MAX_VOL_LABEL_LEN	32
+-struct smb3_fs_vol_info {
+-	__le64	VolumeCreationTime;
+-	__u32	VolumeSerialNumber;
+-	__le32	VolumeLabelLength; /* includes trailing null */
+-	__u8	SupportsObjects; /* True if eg like NTFS, supports objects */
+-	__u8	Reserved;
+-	__u8	VolumeLabel[]; /* variable len */
+-} __packed;
+-
+ /* See MS-SMB2 2.2.23 through 2.2.25 */
+ struct smb2_oplock_break {
+ 	struct smb2_hdr hdr;
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index cbb31efdbaa2..9a1e9005c471 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -5544,12 +5544,12 @@ static int smb2_get_info_filesystem(struct ksmbd_work *work,
+ 		serial_crc = crc32_le(serial_crc, ksmbd_netbios_name(),
+ 				      strlen(ksmbd_netbios_name()));
+ 		/* Taking dummy value of serial number*/
+-		info->SerialNumber = cpu_to_le32(serial_crc);
++		info->VolumeSerialNumber = cpu_to_le32(serial_crc);
+ 		len = smbConvertToUTF16((__le16 *)info->VolumeLabel,
+ 					share->name, PATH_MAX,
+ 					conn->local_nls, 0);
+ 		len = len * 2;
+-		info->VolumeLabelSize = cpu_to_le32(len);
++		info->VolumeLabelLength = cpu_to_le32(len);
+ 		info->Reserved = 0;
+ 		sz = sizeof(struct filesystem_vol_info) + len;
+ 		rsp->OutputBufferLength = cpu_to_le32(sz);
+diff --git a/fs/smb/server/smb_common.h b/fs/smb/server/smb_common.h
+index ca7e3610d074..b090b56743c4 100644
+--- a/fs/smb/server/smb_common.h
++++ b/fs/smb/server/smb_common.h
+@@ -90,14 +90,6 @@ struct smb_negotiate_rsp {
+ 	__le16 ByteCount;
+ } __packed;
+ 
+-struct filesystem_vol_info {
+-	__le64 VolumeCreationTime;
+-	__le32 SerialNumber;
+-	__le32 VolumeLabelSize;
+-	__le16 Reserved;
+-	__le16 VolumeLabel[];
+-} __packed;
+-
+ #define EXTENDED_INFO_MAGIC 0x43667364	/* Cfsd */
+ #define STRING_LENGTH 28
+ 
+-- 
+2.52.0
+

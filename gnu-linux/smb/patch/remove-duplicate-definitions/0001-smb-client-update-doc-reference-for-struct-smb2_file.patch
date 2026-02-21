@@ -1,0 +1,30 @@
+From d946d3947c3a395b9fe8f1cf85d87aba3bd1204e Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Thu, 19 Feb 2026 15:15:50 +0000
+Subject: [PATCH 1/6] smb/client: update doc reference for struct
+ smb2_file_id_information
+
+Fix the typo.
+
+Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/client/smb2pdu.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/smb/client/smb2pdu.h b/fs/smb/client/smb2pdu.h
+index 78bb99f29d38..d0404f852a72 100644
+--- a/fs/smb/client/smb2pdu.h
++++ b/fs/smb/client/smb2pdu.h
+@@ -224,7 +224,7 @@ struct smb2_file_reparse_point_info {
+ 	__le32 Tag;
+ } __packed;
+ 
+-/* See MS-FSCC 2.4.21 */
++/* See MS-FSCC 2.4.26 */
+ struct smb2_file_id_information {
+ 	__le64	VolumeSerialNumber;
+ 	__u64  PersistentFileId; /* opaque endianness */
+-- 
+2.52.0
+

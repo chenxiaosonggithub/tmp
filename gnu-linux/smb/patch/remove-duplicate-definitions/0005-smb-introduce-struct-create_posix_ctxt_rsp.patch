@@ -1,26 +1,27 @@
-From d0dc2cd1a1f7b33b8f2f5d0daee5a18f09d0021d Mon Sep 17 00:00:00 2001
+From 713b2e1e9050109340e76a37a0ed3cd22e289218 Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Tue, 2 Dec 2025 11:59:22 +0800
-Subject: [PATCH v3 4/5] smb: introduce struct create_posix_ctxt_rsp
+Subject: [PATCH 5/6] smb: introduce struct create_posix_ctxt_rsp
 
 Modify the following places:
 
   - introduce new struct create_posix_ctxt_rsp
   - some fields in "struct create_posix_rsp" -> "struct create_posix_ctxt_rsp"
   - create_posix_rsp_buf(): offsetof(..., nlink) -> offsetof(..., ctxt_rsp)
+  - parse_posix_ctxt(): posix->ctxt_rsp.... = *(__le32 *)(beg + ...)
 
-Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
- fs/smb/client/smb2pdu.c |  9 +++++----
+ fs/smb/client/smb2pdu.c | 10 ++++++----
  fs/smb/client/smb2pdu.h |  6 ++----
  fs/smb/common/smb2pdu.h | 17 +++++++++++++++++
  fs/smb/server/oplock.c  |  8 ++++----
  fs/smb/server/smb2pdu.h |  6 ++----
- 5 files changed, 30 insertions(+), 16 deletions(-)
+ 5 files changed, 31 insertions(+), 16 deletions(-)
 
 diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
-index 7f3edf42b9c3..f8825160355d 100644
+index afb8471a1416..4e50bbf93729 100644
 --- a/fs/smb/client/smb2pdu.c
 +++ b/fs/smb/client/smb2pdu.c
 @@ -2362,9 +2362,9 @@ parse_posix_ctxt(struct create_context *cc, struct smb2_file_all_info *info,
@@ -30,24 +31,25 @@ index 7f3edf42b9c3..f8825160355d 100644
 -	posix->nlink = le32_to_cpu(*(__le32 *)(beg + 0));
 -	posix->reparse_tag = le32_to_cpu(*(__le32 *)(beg + 4));
 -	posix->mode = le32_to_cpu(*(__le32 *)(beg + 8));
-+	posix->ctxt_rsp.nlink = le32_to_cpu(*(__le32 *)(beg + 0));
-+	posix->ctxt_rsp.reparse_tag = le32_to_cpu(*(__le32 *)(beg + 4));
-+	posix->ctxt_rsp.mode = le32_to_cpu(*(__le32 *)(beg + 8));
++	posix->ctxt_rsp.nlink = *(__le32 *)(beg + 0);
++	posix->ctxt_rsp.reparse_tag = *(__le32 *)(beg + 4);
++	posix->ctxt_rsp.mode = *(__le32 *)(beg + 8);
  
  	sid = beg + 12;
  	sid_len = posix_info_sid_size(sid, end);
-@@ -2383,7 +2383,8 @@ parse_posix_ctxt(struct create_context *cc, struct smb2_file_all_info *info,
+@@ -2383,7 +2383,9 @@ parse_posix_ctxt(struct create_context *cc, struct smb2_file_all_info *info,
  	memcpy(&posix->group, sid, sid_len);
  
  	cifs_dbg(FYI, "nlink=%d mode=%o reparse_tag=%x\n",
 -		 posix->nlink, posix->mode, posix->reparse_tag);
-+		 posix->ctxt_rsp.nlink, posix->ctxt_rsp.mode,
-+		 posix->ctxt_rsp.reparse_tag);
++		 le32_to_cpu(posix->ctxt_rsp.nlink),
++		 le32_to_cpu(posix->ctxt_rsp.mode),
++		 le32_to_cpu(posix->ctxt_rsp.reparse_tag));
  }
  
  int smb2_parse_contexts(struct TCP_Server_Info *server,
 diff --git a/fs/smb/client/smb2pdu.h b/fs/smb/client/smb2pdu.h
-index 78bb99f29d38..4928fb620233 100644
+index d0404f852a72..75f973341cfb 100644
 --- a/fs/smb/client/smb2pdu.h
 +++ b/fs/smb/client/smb2pdu.h
 @@ -251,11 +251,9 @@ struct smb2_file_id_extd_directory_info {

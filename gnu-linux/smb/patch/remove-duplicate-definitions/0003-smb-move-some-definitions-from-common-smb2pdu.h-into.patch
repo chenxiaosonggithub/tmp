@@ -1,7 +1,7 @@
-From 10f1dbabba30c5f50dc54ac629b6b11d3b6d65da Mon Sep 17 00:00:00 2001
+From 2eb2f6a2acfde63ba590aca218a91e740d705e52 Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Mon, 16 Feb 2026 07:10:05 +0000
-Subject: [PATCH v3 2/5] smb: move some definitions from common/smb2pdu.h into
+Subject: [PATCH 3/6] smb: move some definitions from common/smb2pdu.h into
  common/fscc.h
 
 These definitions are specified in MS-FSCC, so move them into fscc.h.
@@ -17,7 +17,7 @@ Reviewed-by: Steve French <stfrench@microsoft.com>
  2 files changed, 315 insertions(+), 307 deletions(-)
 
 diff --git a/fs/smb/common/fscc.h b/fs/smb/common/fscc.h
-index d2e00eba1a98..b209d818e95e 100644
+index 2e7a83e96d8a..567e47975d13 100644
 --- a/fs/smb/common/fscc.h
 +++ b/fs/smb/common/fscc.h
 @@ -12,6 +12,210 @@

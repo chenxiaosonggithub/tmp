@@ -1,7 +1,7 @@
-From 1e47ad70c06aea7443cfb869b4d2f8e444345860 Mon Sep 17 00:00:00 2001
+From f55177d788a19c9eb7d347023116677a511cef69 Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Sun, 15 Feb 2026 15:22:31 +0000
-Subject: [PATCH v3 3/5] smb: move file_basic_info into common/fscc.h
+Subject: [PATCH 4/6] smb: move file_basic_info into common/fscc.h
 
 This struct definition is specified in MS-FSCC, so move them into fscc.h.
 
@@ -40,7 +40,7 @@ index 97f7e1244a8b..7584e94d9b2b 100644
  	__le64 AllocationSize; /* Note old Samba srvr rounds this up too much */
  } __packed; /* size used on disk, for level 0x103 for set, 0x105 for query */
 diff --git a/fs/smb/common/fscc.h b/fs/smb/common/fscc.h
-index b209d818e95e..716864b173fd 100644
+index 567e47975d13..b4ccddca9256 100644
 --- a/fs/smb/common/fscc.h
 +++ b/fs/smb/common/fscc.h
 @@ -216,6 +216,16 @@ struct smb2_file_all_info { /* data block encoding of response to level 18 */
@@ -61,7 +61,7 @@ index b209d818e95e..716864b173fd 100644
  typedef struct {
  	__le32 NextEntryOffset;
 diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index 966a499d2eb8..eb2129ab7156 100644
+index 9a1e9005c471..15641993cc57 100644
 --- a/fs/smb/server/smb2pdu.c
 +++ b/fs/smb/server/smb2pdu.c
 @@ -4838,7 +4838,7 @@ static void get_file_access_info(struct smb2_query_info_rsp *rsp,
