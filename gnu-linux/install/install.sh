@@ -205,6 +205,15 @@ fedora_vm()
 	printf "1\n1\n" | pdbedit -a -u root # -a: 新增，这里的用户名必须是系统用户名（在/etc/passwd中有）
 
 	# ksmbd
+	dnf install -y git gcc pkgconf autoconf automake libtool make meson ninja-build gawk libnl3-devel glib2-devel
+	git clone https://github.com/cifsd-team/ksmbd-tools.git
+	cd ksmbd-tools
+	./autogen.sh
+	./configure --with-rundir=/run # --prefix=/usr/local/sbin --sysconfdir=/usr/local/etc
+	make -j`nproc`
+	sudo make install -j`nproc`
+	cp /home/chenxiaosong/code/blog/course/smb/src/test/ksmbd.conf /usr/local/etc/ksmbd/
+	printf "1\n1\n" | sudo ksmbd.adduser --add root # 这里的用户名必须是系统用户名（在/etc/passwd中有）
 	command cp /home/chenxiaosong/code/blog/course/smb/src/ksmbd-svr-setup.sh ~
 }
 
