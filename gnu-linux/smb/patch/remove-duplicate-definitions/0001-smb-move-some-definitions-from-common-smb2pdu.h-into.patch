@@ -1,7 +1,7 @@
-From 2eb2f6a2acfde63ba590aca218a91e740d705e52 Mon Sep 17 00:00:00 2001
+From d13cdc8c4dfee10c82222855bab212b9f481c257 Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Mon, 16 Feb 2026 07:10:05 +0000
-Subject: [PATCH 3/6] smb: move some definitions from common/smb2pdu.h into
+Subject: [PATCH v4 1/5] smb: move some definitions from common/smb2pdu.h into
  common/fscc.h
 
 These definitions are specified in MS-FSCC, so move them into fscc.h.
@@ -17,7 +17,7 @@ Reviewed-by: Steve French <stfrench@microsoft.com>
  2 files changed, 315 insertions(+), 307 deletions(-)
 
 diff --git a/fs/smb/common/fscc.h b/fs/smb/common/fscc.h
-index 2e7a83e96d8a..567e47975d13 100644
+index 0123f34db1e8..415cba02d1c9 100644
 --- a/fs/smb/common/fscc.h
 +++ b/fs/smb/common/fscc.h
 @@ -12,6 +12,210 @@
@@ -354,7 +354,7 @@ index 2e7a83e96d8a..567e47975d13 100644
  /* See MS-FSCC 2.5.8 */
  typedef struct {
  	__le64 TotalAllocationUnits;
-@@ -200,6 +499,22 @@ typedef struct {
+@@ -189,6 +488,22 @@ typedef struct {
  #define FILE_ATTRIBUTE_NO_SCRUB_DATA_LE		cpu_to_le32(FILE_ATTRIBUTE_NO_SCRUB_DATA)
  #define FILE_ATTRIBUTE_MASK_LE			cpu_to_le32(FILE_ATTRIBUTE_MASK)
  
@@ -378,7 +378,7 @@ index 2e7a83e96d8a..567e47975d13 100644
   * Response contains array of the following structures
   * See MS-FSCC 2.7.1
 diff --git a/fs/smb/common/smb2pdu.h b/fs/smb/common/smb2pdu.h
-index 69dd7c792804..85a4248d4f29 100644
+index e482c86ceb00..538e7a12ea93 100644
 --- a/fs/smb/common/smb2pdu.h
 +++ b/fs/smb/common/smb2pdu.h
 @@ -1006,22 +1006,6 @@ struct smb2_set_info_rsp {
@@ -720,9 +720,9 @@ index 69dd7c792804..85a4248d4f29 100644
 -	__le32 Padding;
 -} __packed;
 -
- /* See MS-SMB2 2.2.23 through 2.2.25 */
- struct smb2_oplock_break {
- 	struct smb2_hdr hdr;
+ /* volume info struct - see MS-FSCC 2.5.9 */
+ #define MAX_VOL_LABEL_LEN	32
+ struct smb3_fs_vol_info {
 -- 
-2.52.0
+2.53.0
 

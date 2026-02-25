@@ -1,7 +1,10 @@
-From 8b5f93cc195bf641b4f116b7a3233c4293ee2855 Mon Sep 17 00:00:00 2001
+From 408357a3cbae62a7814bb72273c70791d5dcf0d1 Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Tue, 2 Dec 2025 10:01:05 +0800
-Subject: [PATCH 6/6] smb: introduce struct file_posix_info
+Subject: [PATCH v4 5/5] smb: introduce struct file_posix_info
+
+Extract the non-variable part of struct smb311_posix_qinfo/file_posix_info
+into a new struct.
 
 Modify the following places:
 
@@ -23,10 +26,10 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  8 files changed, 108 insertions(+), 124 deletions(-)
 
 diff --git a/fs/smb/client/inode.c b/fs/smb/client/inode.c
-index c23c057162e6..b183db7bbb52 100644
+index 3e844c55ab8a..ebed32bf1c05 100644
 --- a/fs/smb/client/inode.c
 +++ b/fs/smb/client/inode.c
-@@ -840,16 +840,16 @@ static void smb311_posix_info_to_fattr(struct cifs_fattr *fattr,
+@@ -842,16 +842,16 @@ static void smb311_posix_info_to_fattr(struct cifs_fattr *fattr,
  	memset(fattr, 0, sizeof(*fattr));
  
  	/* no fattr->flags to set */
@@ -49,7 +52,7 @@ index c23c057162e6..b183db7bbb52 100644
  
  	if (data->adjust_tz) {
  		fattr->cf_ctime.tv_sec += tcon->ses->server->timeAdj;
-@@ -860,11 +860,11 @@ static void smb311_posix_info_to_fattr(struct cifs_fattr *fattr,
+@@ -862,11 +862,11 @@ static void smb311_posix_info_to_fattr(struct cifs_fattr *fattr,
  	 * The srv fs device id is overridden on network mount so setting
  	 * @fattr->cf_rdev isn't needed here.
  	 */
@@ -67,10 +70,10 @@ index c23c057162e6..b183db7bbb52 100644
  
  	if (cifs_open_data_reparse(data) &&
 diff --git a/fs/smb/client/readdir.c b/fs/smb/client/readdir.c
-index 67a8555efa1e..29dfaffaa5bb 100644
+index be22bbc4a65a..6239d70e7984 100644
 --- a/fs/smb/client/readdir.c
 +++ b/fs/smb/client/readdir.c
-@@ -246,22 +246,22 @@ cifs_posix_to_fattr(struct cifs_fattr *fattr, struct smb2_posix_info *info,
+@@ -247,22 +247,22 @@ cifs_posix_to_fattr(struct cifs_fattr *fattr, struct smb2_posix_info *info,
  	posix_info_parse(info, NULL, &parsed);
  
  	memset(fattr, 0, sizeof(*fattr));
@@ -103,7 +106,7 @@ index 67a8555efa1e..29dfaffaa5bb 100644
  					    fattr->cf_cifsattrs & ATTR_DIRECTORY);
  	fattr->cf_dtype = S_DT(fattr->cf_mode);
  
-@@ -276,9 +276,9 @@ cifs_posix_to_fattr(struct cifs_fattr *fattr, struct smb2_posix_info *info,
+@@ -277,9 +277,9 @@ cifs_posix_to_fattr(struct cifs_fattr *fattr, struct smb2_posix_info *info,
  	}
  
  	cifs_dbg(FYI, "posix fattr: dev %d, reparse %d, mode %o\n",
@@ -116,7 +119,7 @@ index 67a8555efa1e..29dfaffaa5bb 100644
  
  	sid_to_id(cifs_sb, &parsed.owner, fattr, SIDOWNER);
  	sid_to_id(cifs_sb, &parsed.group, fattr, SIDGROUP);
-@@ -515,7 +515,7 @@ static void cifs_fill_dirent_posix(struct cifs_dirent *de,
+@@ -517,7 +517,7 @@ static void cifs_fill_dirent_posix(struct cifs_dirent *de,
  	de->name = parsed.name;
  	de->namelen = parsed.name_len;
  	de->resume_key = info->Ignored;
@@ -126,7 +129,7 @@ index 67a8555efa1e..29dfaffaa5bb 100644
  
  static void cifs_fill_dirent_unix(struct cifs_dirent *de,
 diff --git a/fs/smb/client/reparse.h b/fs/smb/client/reparse.h
-index 570b0d25aeba..410ee9133aea 100644
+index 0164dc47bdfd..57dccca0e9d4 100644
 --- a/fs/smb/client/reparse.h
 +++ b/fs/smb/client/reparse.h
 @@ -106,10 +106,10 @@ static inline bool cifs_open_data_reparse(struct cifs_open_info_data *data)
@@ -143,10 +146,10 @@ index 570b0d25aeba..410ee9133aea 100644
  
  	} else {
 diff --git a/fs/smb/client/smb2pdu.h b/fs/smb/client/smb2pdu.h
-index 75f973341cfb..d5ec89b3d1f2 100644
+index 30d70097fe2f..74a332d9cbeb 100644
 --- a/fs/smb/client/smb2pdu.h
 +++ b/fs/smb/client/smb2pdu.h
-@@ -269,20 +269,7 @@ struct create_posix_rsp {
+@@ -274,20 +274,7 @@ struct create_posix_rsp {
  struct smb2_posix_info {
  	__le32 NextEntryOffset;
  	__u32 Ignored;
@@ -225,7 +228,7 @@ index b4ccddca9256..0d8c522f757a 100644
  	/* For undefined recommended transfer size return -1 in that field */
  	__le32 OptimalTransferSize;  /* bsize on some os, iosize on other os */
 diff --git a/fs/smb/common/smb2pdu.h b/fs/smb/common/smb2pdu.h
-index 5dd4ab245453..f78dbf00a545 100644
+index 85a4248d4f29..9abfabb79dad 100644
 --- a/fs/smb/common/smb2pdu.h
 +++ b/fs/smb/common/smb2pdu.h
 @@ -1610,31 +1610,6 @@ struct smb2_query_info_rsp {
@@ -261,7 +264,7 @@ index 5dd4ab245453..f78dbf00a545 100644
  struct smb2_oplock_break {
  	struct smb2_hdr hdr;
 diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index 15641993cc57..5b3a151372d8 100644
+index b5dcd9cff2e2..460bf835ad40 100644
 --- a/fs/smb/server/smb2pdu.c
 +++ b/fs/smb/server/smb2pdu.c
 @@ -4051,44 +4051,44 @@ static int smb2_populate_readdir_entry(struct ksmbd_conn *conn, int info_level,
@@ -393,10 +396,10 @@ index 15641993cc57..5b3a151372d8 100644
  	/*
  	 * Sids(32) contain two sids(Domain sid(16), UNIX group sid(16)).
 diff --git a/fs/smb/server/smb2pdu.h b/fs/smb/server/smb2pdu.h
-index dc6a81c64fd5..1eec48607666 100644
+index e7cf573e59f0..f05273f48bd0 100644
 --- a/fs/smb/server/smb2pdu.h
 +++ b/fs/smb/server/smb2pdu.h
-@@ -276,30 +276,11 @@ struct create_sd_buf_req {
+@@ -281,30 +281,11 @@ struct create_sd_buf_req {
  struct smb2_posix_info {
  	__le32 NextEntryOffset;
  	__u32 Ignored;
@@ -429,5 +432,5 @@ index dc6a81c64fd5..1eec48607666 100644
  
  /* functions */
 -- 
-2.52.0
+2.53.0
 

@@ -1,0 +1,58 @@
+From 4ee92c405a3674f77e4862e72bfb8b050c853f4a Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Wed, 25 Feb 2026 02:43:10 +0000
+Subject: [PATCH v4 4/5] smb: update some doc references
+
+To make it easier to locate the documentation during development.
+
+Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/client/smb2pdu.h | 7 +++++--
+ fs/smb/server/smb2pdu.h | 5 ++++-
+ 2 files changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/fs/smb/client/smb2pdu.h b/fs/smb/client/smb2pdu.h
+index 78bb99f29d38..30d70097fe2f 100644
+--- a/fs/smb/client/smb2pdu.h
++++ b/fs/smb/client/smb2pdu.h
+@@ -224,7 +224,7 @@ struct smb2_file_reparse_point_info {
+ 	__le32 Tag;
+ } __packed;
+ 
+-/* See MS-FSCC 2.4.21 */
++/* See MS-FSCC 2.4.26 */
+ struct smb2_file_id_information {
+ 	__le64	VolumeSerialNumber;
+ 	__u64  PersistentFileId; /* opaque endianness */
+@@ -251,7 +251,10 @@ struct smb2_file_id_extd_directory_info {
+ 
+ extern char smb2_padding[7];
+ 
+-/* equivalent of the contents of SMB3.1.1 POSIX open context response */
++/*
++ * See POSIX-SMB2 2.2.14.2.16
++ * Link: https://gitlab.com/samba-team/smb3-posix-spec/-/blob/master/smb3_posix_extensions.md
++ */
+ struct create_posix_rsp {
+ 	u32 nlink;
+ 	u32 reparse_tag;
+diff --git a/fs/smb/server/smb2pdu.h b/fs/smb/server/smb2pdu.h
+index 9b3c4c9acb11..e7cf573e59f0 100644
+--- a/fs/smb/server/smb2pdu.h
++++ b/fs/smb/server/smb2pdu.h
+@@ -83,7 +83,10 @@ struct create_durable_rsp {
+ 	} Data;
+ } __packed;
+ 
+-/* equivalent of the contents of SMB3.1.1 POSIX open context response */
++/*
++ * See POSIX-SMB2 2.2.14.2.16
++ * Link: https://gitlab.com/samba-team/smb3-posix-spec/-/blob/master/smb3_posix_extensions.md
++ */
+ struct create_posix_rsp {
+ 	struct create_context_hdr ccontext;
+ 	__u8    Name[16];
+-- 
+2.53.0
+
