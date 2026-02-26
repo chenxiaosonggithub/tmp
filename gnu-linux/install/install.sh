@@ -205,6 +205,15 @@ fedora_vm()
 	printf "1\n1\n" | pdbedit -a -u root # -a: 新增，这里的用户名必须是系统用户名（在/etc/passwd中有）
 
 	# ksmbd
+	dnf install -y git gcc pkgconf autoconf automake libtool make meson ninja-build gawk libnl3-devel glib2-devel
+	git clone https://github.com/cifsd-team/ksmbd-tools.git
+	cd ksmbd-tools
+	./autogen.sh
+	./configure --with-rundir=/run # --prefix=/usr/local/sbin --sysconfdir=/usr/local/etc
+	make -j`nproc`
+	sudo make install -j`nproc`
+	cp /home/chenxiaosong/code/blog/course/smb/src/test/ksmbd.conf /usr/local/etc/ksmbd/
+	printf "1\n1\n" | sudo ksmbd.adduser --add root # 这里的用户名必须是系统用户名（在/etc/passwd中有）
 	command cp /home/chenxiaosong/code/blog/course/smb/src/ksmbd-svr-setup.sh ~
 }
 
@@ -303,6 +312,11 @@ EOF
 
 kylinos_physical()
 {
+	sudo apt-get update -y
+	sudo apt install -y git virt-manager samba nginx pandoc jq apache2-utils tmux vim-gtk3
+	sudo apt install -y thunderbird # 点击图标启动会闪退，需要安全模块启动 thunderbird -safe-mode
+	sudo apt install -y libvirt-daemon-system # 解决virt-manager报错: The libvirtd service does not appear to be installed
+
 	echo "查看版本信息: cat /etc/kylin-build"
 	echo "需要执行: sudo iptables -F"
 	echo "禁用kysec: 把`grub.cfg`新生成的启动项里的`security=kysec`改成`security= `（注意后面有空格）, vim替换: %s/kysec/ /g"
@@ -310,11 +324,6 @@ kylinos_physical()
 	echo "  sudo cp /boot/efi/boot/grub/grub.cfg /boot/efi/boot/grub/grub.cfg.bak # arm64"
 	echo "  sudo vim /boot/grub/grub.cfg # x86"
 	echo "  sudo vim /boot/efi/boot/grub/grub.cfg # arm64"
-
-	sudo apt-get update -y
-	sudo apt install -y git virt-manager samba nginx pandoc jq apache2-utils tmux
-	sudo apt install -y thunderbird # 点击图标启动会闪退，需要安全模块启动 thunderbird -safe-mode
-	sudo apt install -y libvirt-daemon-system # 解决virt-manager报错: The libvirtd service does not appear to be installed
 
 	mkdir ~/code -p
 	cd ~/code

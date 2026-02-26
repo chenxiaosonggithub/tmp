@@ -1,12 +1,13 @@
-From 7bd273ec08afbceebdd4a057e5b9e46c0431bf58 Mon Sep 17 00:00:00 2001
+From 408357a3cbae62a7814bb72273c70791d5dcf0d1 Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
-Date: Mon, 16 Feb 2026 07:51:04 +0000
-Subject: [PATCH v3 0/5] smb: move duplicate definitions into common header file, part 2
+Date: Wed, 25 Feb 2026 03:54:18 +0000
+Subject: [PATCH v4 0/5] smb: move duplicate definitions into common header file, part 2
 
-v2->v3:
-  - Patch #01: "__u32 VolumeSerialNumber" -> "__le32 VolumeSerialNumber"
-  - Patch #02: rebased on cifs-2.6.git for-next
-  - Add patch #03
+v3->v4:
+  - Patch #03: __le32  VolumeSerialNumber
+  - Add patch #04
+
+v3: https://lore.kernel.org/linux-cifs/20260216082018.156695-1-zhang.guodong@linux.dev/
 
 v1: https://lore.kernel.org/all/20251209011020.3270989-1-chenxiaosong.chenxiaosong@linux.dev/
 v2: https://lore.kernel.org/linux-cifs/20251211143228.172470-1-chenxiaosong.chenxiaosong@linux.dev/
@@ -28,26 +29,30 @@ The previous work is here:
   - part 1: https://lore.kernel.org/linux-cifs/20251117112838.473051-1-chenxiaosong.chenxiaosong@linux.dev/
 
 ZhangGuoDong (5):
-  smb: move smb3_fs_vol_info into common/fscc.h
   smb: move some definitions from common/smb2pdu.h into common/fscc.h
   smb: move file_basic_info into common/fscc.h
-  smb: introduce struct create_posix_ctxt_rsp
+  smb: move filesystem_vol_info into common/fscc.h
+  smb: update some doc references
   smb: introduce struct file_posix_info
 
+ fs/smb/client/cifs_debug.c |   2 +-
+ fs/smb/client/cifs_ioctl.h |   2 +-
+ fs/smb/client/cifsfs.c     |   2 +-
+ fs/smb/client/cifsglob.h   |   2 +-
+ fs/smb/client/fscache.c    |   2 +-
  fs/smb/client/inode.c      |  22 +--
  fs/smb/client/readdir.c    |  28 +--
  fs/smb/client/reparse.h    |   4 +-
  fs/smb/client/smb1pdu.h    |   9 -
- fs/smb/client/smb2pdu.c    |   9 +-
- fs/smb/client/smb2pdu.h    |  21 +-
+ fs/smb/client/smb2pdu.c    |   6 +-
+ fs/smb/client/smb2pdu.h    |  22 +--
  fs/smb/common/fscc.h       | 379 ++++++++++++++++++++++++++++++++++++-
- fs/smb/common/smb2pdu.h    | 360 ++---------------------------------
- fs/smb/server/oplock.c     |   8 +-
- fs/smb/server/smb2pdu.c    |  98 +++++-----
- fs/smb/server/smb2pdu.h    |  36 +---
+ fs/smb/common/smb2pdu.h    | 343 ---------------------------------
+ fs/smb/server/smb2pdu.c    |  93 ++++-----
+ fs/smb/server/smb2pdu.h    |  35 +---
  fs/smb/server/smb_common.h |   8 -
- 12 files changed, 486 insertions(+), 496 deletions(-)
+ 16 files changed, 471 insertions(+), 488 deletions(-)
 
 -- 
-2.52.0
+2.53.0
 
