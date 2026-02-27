@@ -5,10 +5,8 @@ fi
 distribution=$1
 machine=$2
 
-top_path=/home/chenxiaosong
-code_path=$top_path/code/
-. ${code_path}/blog/src/blog-web/repos.sh
-. ${code_path}/private-blog/script/repos.sh
+. /home/chenxiaosong/code/blog/src/blog-web/repos.sh
+. /home/chenxiaosong/code/private-blog/script/repos.sh
 
 clone_all_repos()
 {
@@ -17,8 +15,8 @@ clone_all_repos()
 	for ((index=0; index<${element_count}; index=$((index + ${count_per_line})))); do
 		# is_push_github=${repos_array[${index}]}
 		local repo=${repos_array[${index}+1]}
-		if [ ! -d "$code_path/$repo" ]; then
-			cd $code_path
+		if [ ! -d "/home/chenxiaosong/code/$repo" ]; then
+			cd /home/chenxiaosong/code
 			git clone -o gitee git@gitee.com:chenxiaosonggitee/$repo.git
 		fi
 	done
@@ -26,7 +24,7 @@ clone_all_repos()
 
 cp_config_file()
 {
-	cd ${code_path}/blog/course/gnu-linux/src/config-file
+	cd /home/chenxiaosong/code/blog/course/gnu-linux/src/config-file
 	bash cp-to-home.sh
 }
 
@@ -84,12 +82,12 @@ EOF
 
 cfg_qemu()
 {
-	mkdir -p $top_path/qemu-kernel/bash-image/fedora
-	mkdir -p $top_path/qemu-kernel/vm/1.fedora
-	mkdir -p $top_path/qemu-kernel/vm/2.fedora
-	cp $code_path/blog/course/kernel/src/x86_64/update-base.sh $top_path/qemu-kernel/bash-image/fedora
-	cp $code_path/blog/course/kernel/src/x86_64/create-qcow2.sh $top_path/qemu-kernel/bash-image/fedora
-	cp $code_path/tmp/gnu-linux/kernel/etc-qemu-ifup /etc/qemu-ifup
+	mkdir -p /home/chenxiaosong/qemu-kernel/bash-image/fedora
+	mkdir -p /home/chenxiaosong/qemu-kernel/vm/1.fedora
+	mkdir -p /home/chenxiaosong/qemu-kernel/vm/2.fedora
+	cp /home/chenxiaosong/code/blog/course/kernel/src/x86_64/update-base.sh /home/chenxiaosong/qemu-kernel/bash-image/fedora
+	cp /home/chenxiaosong/code/blog/course/kernel/src/x86_64/create-qcow2.sh /home/chenxiaosong/qemu-kernel/bash-image/fedora
+	cp /home/chenxiaosong/code/tmp/gnu-linux/kernel/etc-qemu-ifup /etc/qemu-ifup
 	sudo chmod 755 /etc/qemu-ifup
 }
 
@@ -139,8 +137,8 @@ fedora_docker()
 	sudo dnf install -y nginx pandoc jq httpd-tools
 	sudo dnf install bash-completion -y
 
-	if [ ! -d "$code_path/global-6.6.14" ]; then
-		cd $code_path
+	if [ ! -d "/home/chenxiaosong/code/global-6.6.14" ]; then
+		cd /home/chenxiaosong/code
 		wget https://ftp.gnu.org/pub/gnu/global/global-6.6.14.tar.gz
 		tar xvf global-6.6.14.tar.gz
 		rm global-6.6.14.tar.gz -rf
