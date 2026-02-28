@@ -242,12 +242,15 @@ fedora_physical()
 
 	tip_perm
 	install_code_server
+
+	echo "virt-manager创建qcow2镜像: qemu-img create -f qcow2 image.qcow2 512G"
 }
 
 ubuntu_physical()
 {
 	sudo apt-get update -y
-	sudo apt install -y openssh-server net-tools git virt-manager vim tmux pm-utils samba virtiofsd cifs-utils wakeonlan vim-gtk3 remmina fuse
+	# fuse 在ubuntu24.04上不能安装，否则图形界面就芭比q了
+	sudo apt install -y openssh-server net-tools git virt-manager vim tmux pm-utils samba virtiofsd cifs-utils wakeonlan vim-gtk3 remmina
 	sudo apt install -y nginx pandoc jq apache2-utils
 	sudo apt install bash-completion -y
 	sudo systemctl enable ssh
