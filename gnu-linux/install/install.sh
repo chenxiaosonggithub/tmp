@@ -1,10 +1,3 @@
-if [ $# -ne 2 ]; then
-	echo "用法: $0 <fedora/ubuntu/kylinos/windows> <physical/docker/vm>"
-	exit 1
-fi
-distribution=$1
-machine=$2
-
 . /home/chenxiaosong/code/blog/src/blog-web/repos.sh
 . /home/chenxiaosong/code/private-blog/script/repos.sh
 
@@ -21,6 +14,11 @@ clone_all_repos()
 		fi
 	done
 }
+
+# 运行这个脚本只做获取git仓库的工作
+# 其他操作请到最后面查看相应的函数
+clone_all_repos
+exit
 
 cp_config_file()
 {
@@ -355,30 +353,12 @@ windows_physical()
 	# git（免安装）: https://git-scm.com/install/windows
 }
 
-case "$distribution-$machine" in
-fedora-physical)
-	fedora_physical
-	;;
-fedora-docker)
-	fedora_docker
-	;;
-fedora-vm)
-	fedora_vm
-	;;
-ubuntu-physical)
-	ubuntu_physical
-	;;
-ubuntu-docker)
-	ubuntu_docker
-	;;
-kylinos-physical)
-	kylinos_physical
-	;;
-windows-physical)
-	windows_physical
-	;;
-*)
-	echo "Invalid argument: $distribution $machine"
-	;;
-esac
+# 请根据发行版和机器查看以下函数
+# fedora_physical
+# fedora_docker
+# fedora_vm
+# ubuntu_physical
+# ubuntu_docker
+# kylinos_physical
+# windows_physical
 
