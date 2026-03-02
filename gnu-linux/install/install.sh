@@ -100,14 +100,14 @@ cfg_9p() {
 	#   user:libvirt-qemu:--x
 	#   group::r-x
 	#   mask::r-x
-	#   other::---"
+	#   other::---
 
-	# sudo setfacl -x u:libvirt-qemu /home/chenxiaosong # 删除user:libvirt-qemu:--x"
-	sudo setfacl -m u:libvirt-qemu:rwx /home/chenxiaosong # user:libvirt-qemu:rwx"
-	# sudo setfacl -m u:libvirt-qemu:x /home/chenxiaosong # 重新生成user:libvirt-qemu:--x"
-	sudo setfacl -m m:rwx /home/chenxiaosong # mask::rwx"
-	sudo setfacl -m g::rwx /home/chenxiaosong # group::rwx"
-	# sudo setfacl -m o::rwx /home/chenxiaosong # 这个不能设置，否则不能免密登录"
+	# sudo setfacl -x u:libvirt-qemu /home/chenxiaosong # 删除user:libvirt-qemu:--x
+	sudo setfacl -m u:libvirt-qemu:rwx /home/chenxiaosong # user:libvirt-qemu:rwx
+	# sudo setfacl -m u:libvirt-qemu:x /home/chenxiaosong # 重新生成user:libvirt-qemu:--x
+	sudo setfacl -m m:rwx /home/chenxiaosong # mask::rwx
+	sudo setfacl -m g::rwx /home/chenxiaosong # group::rwx
+	# sudo setfacl -m o::rwx /home/chenxiaosong # 这个不能设置，否则不能免密登录
 }
 
 cfg_proxy()
@@ -120,9 +120,9 @@ install_code_server()
 {
 	curl -fsSL https://code-server.dev/install.sh | sh
 	sudo systemctl enable --now code-server@$USER
-	echo "请修改 ${HOME}/.config/code-server/config.yaml, 当不需要密码时修改成auth: none"
-	echo "然后再执行 sudo systemctl restart code-server@$USER"
-	echo "浏览器输入http://localhost:8888（8888是config.yaml配置文件中配置的端口）"
+	vim ${HOME}/.config/code-server/config.yaml # 当不需要密码时修改成auth: none
+	sudo systemctl restart code-server@$USER
+	# 浏览器输入http://localhost:8888（8888是config.yaml配置文件中配置的端口）
 }
 
 fedora_docker()
@@ -227,21 +227,22 @@ fedora_physical()
 	sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 	sudo systemctl enable --now docker
 	cfg_docker
-	echo "现在可以执行:"
-	echo "	docker pull fedora:latest"
-	echo "	docker tag fedora:latest raw-fedora:latest"
-	echo "	docker tag fedora:latest workspace-fedora:latest"
-	echo "	docker rmi fedora:latest (或 docker image rm fedora:latest)"
-	echo "启动和更新镜像请查看以下两个脚本:"
-	echo "	/home/chenxiaosong/code/blog/course/gnu-linux/src/start-docker.sh"
-	echo "	/home/chenxiaosong/code/blog/course/gnu-linux/src/update-docker-image.sh"
+	# 现在可以执行以下命令获取镜像
+	docker pull fedora:latest
+	docker tag fedora:latest raw-fedora:latest
+	docker tag fedora:latest workspace-fedora:latest
+	docker rmi fedora:latest (或 docker image rm fedora:latest)
+	# 启动和更新镜像请查看以下两个脚本:
+	#   /home/chenxiaosong/code/blog/course/gnu-linux/src/start-docker.sh
+	#   /home/chenxiaosong/code/blog/course/gnu-linux/src/update-docker-image.sh
 
 	# cp /home/chenxiaosong/code/tmp/gnu-linux/install/aorus/* ~ # 10.42.20.210
 
 	tip_perm
 	install_code_server
 
-	echo "virt-manager创建qcow2镜像: qemu-img create -f qcow2 image.qcow2 512G"
+	# virt-manager创建qcow2镜像
+	qemu-img create -f qcow2 image.qcow2 512G
 }
 
 ubuntu_physical()
@@ -272,17 +273,17 @@ EOF
 	sudo apt update -y
 	sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y # 最新版本
 	cfg_docker
-	echo "现在可以执行:"
-	echo "	docker pull ubuntu:24.04"
-	echo "	docker tag ubuntu:24.04 raw-ubuntu:24.04"
-	echo "	docker tag ubuntu:24.04 workspace-ubuntu:24.04"
-	echo "	docker rmi ubuntu:24.04 (或 docker image rm ubuntu:24.04)"
-	echo "启动和更新镜像请参考以下两个脚本(需要修改docker_name和image_name):"
-	echo "	/home/chenxiaosong/code/blog/course/gnu-linux/src/start-docker.sh"
-	echo "	/home/chenxiaosong/code/blog/course/gnu-linux/src/update-docker-image.sh"
+	# 现在可以执行以下命令获取镜像
+	docker pull ubuntu:24.04
+	docker tag ubuntu:24.04 raw-ubuntu:24.04
+	docker tag ubuntu:24.04 workspace-ubuntu:24.04
+	docker rmi ubuntu:24.04 (或 docker image rm ubuntu:24.04)
+	# 启动和更新镜像请参考以下两个脚本(需要修改docker_name和image_name):
+	#   /home/chenxiaosong/code/blog/course/gnu-linux/src/start-docker.sh
+	#   /home/chenxiaosong/code/blog/course/gnu-linux/src/update-docker-image.sh
 
-	echo "cpolar安装: https://chenxiaosong.com/course/gnu-linux/ssh-reverse.html#cpolar"
-	echo "花生壳安装: https://chenxiaosong.com/course/gnu-linux/ssh-reverse.html#oray"
+	# cpolar安装: https://chenxiaosong.com/course/gnu-linux/ssh-reverse.html#cpolar
+	# 花生壳安装: https://chenxiaosong.com/course/gnu-linux/ssh-reverse.html#oray
 
 	tip_perm
 	install_code_server
@@ -316,13 +317,13 @@ kylinos_physical()
 	sudo apt install -y thunderbird # 点击图标启动会闪退，需要安全模块启动 thunderbird -safe-mode
 	sudo apt install -y libvirt-daemon-system # 解决virt-manager报错: The libvirtd service does not appear to be installed
 
-	echo "查看版本信息: cat /etc/kylin-build"
-	echo "需要执行: sudo iptables -F"
-	echo "禁用kysec: 把`grub.cfg`新生成的启动项里的`security=kysec`改成`security= `（注意后面有空格）, vim替换: %s/kysec/ /g"
-	echo "  sudo cp /boot/grub/grub.cfg /boot/grub/grub.cfg.bak # x86_64"
-	echo "  sudo cp /boot/efi/boot/grub/grub.cfg /boot/efi/boot/grub/grub.cfg.bak # arm64"
-	echo "  sudo vim /boot/grub/grub.cfg # x86"
-	echo "  sudo vim /boot/efi/boot/grub/grub.cfg # arm64"
+	cat /etc/kylin-build # 查看版本信息
+	sudo iptables -F
+	# 禁用kysec: 把`grub.cfg`新生成的启动项里的`security=kysec`改成`security= `（注意后面有空格）, vim替换: %s/kysec/ /g
+	sudo cp /boot/grub/grub.cfg /boot/grub/grub.cfg.bak # x86_64
+	sudo cp /boot/efi/boot/grub/grub.cfg /boot/efi/boot/grub/grub.cfg.bak # arm64
+	sudo vim /boot/grub/grub.cfg # x86
+	sudo vim /boot/efi/boot/grub/grub.cfg # arm64
 
 	mkdir ~/code -p
 	cd ~/code
@@ -333,11 +334,11 @@ kylinos_physical()
 	cp /home/chenxiaosong/code/tmp/gnu-linux/install/kylin/thunderbird.sh ~ -rf
 	sudo cp /home/chenxiaosong/code/tmp/gnu-linux/install/kylin/touchpad-* /usr/share/applications/ # 然后设置快捷键打开和关闭触摸板
 
-	echo "指纹驱动下载: https://www.greatwall.com.cn/%e6%9c%8d%e5%8a%a1%e4%b8%8e%e6%8a%80%e6%9c%af/service-html-2"
-	echo "人脸驱动要在'生物识别'开关附近点击3个点打开'高级设置', 然后打开驱动"
-	echo "电源设置成: 按电源键和合盖执行睡眠"
-	echo "键盘设置成: 关闭按键提示"
-	echo "软件商店安装: 向日葵客户端企业版、ToDesk、微信、chromium、wps、美图秀秀"
+	# 指纹驱动下载: https://www.greatwall.com.cn/%e6%9c%8d%e5%8a%a1%e4%b8%8e%e6%8a%80%e6%9c%af/service-html-2
+	# 人脸驱动要在'生物识别'开关附近点击3个点打开'高级设置', 然后打开驱动
+	# 电源设置成: 按电源键和合盖执行睡眠
+	# 键盘设置成: 关闭按键提示
+	# 软件商店安装: 向日葵客户端企业版、ToDesk、微信、chromium、wps、美图秀秀
 
 	physical_common
 	install_code_server
