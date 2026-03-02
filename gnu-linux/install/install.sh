@@ -20,6 +20,13 @@ clone_all_repos()
 clone_all_repos
 exit
 
+install_linux()
+{
+	# 参考: https://chenxiaosong.com/course/gnu-linux/install.html
+	# sdb是u盘
+	sudo dd if=xxx.iso of=/dev/sdb
+}
+
 cp_config_file()
 {
 	cd /home/chenxiaosong/code/blog/course/gnu-linux/src/config-file
@@ -90,10 +97,10 @@ cfg_qemu()
 
 cfg_9p() {
 	# virt-manager中以9p挂载家目录，设置权限:
-	# getfacl /home/chenxiaosong
-	#   file: ../chenxiaosong
-	#   owner: chenxiaosong
-	#   group: chenxiaosong
+	getfacl /home/chenxiaosong
+	#   # file: ../chenxiaosong
+	#   # owner: chenxiaosong
+	#   # group: chenxiaosong
 	#   user::rwx
 	#   user:libvirt-qemu:--x
 	#   group::r-x
@@ -213,6 +220,8 @@ fedora_vm()
 
 fedora_physical()
 {
+	install_linux
+
 	sudo dnf install -y ibus*wubi* openssh-server vim virt-manager git samba
 	sudo systemctl enable sshd
 	sudo systemctl restart sshd
@@ -245,6 +254,8 @@ fedora_physical()
 
 ubuntu_physical()
 {
+	install_linux
+
 	sudo apt-get update -y
 	# fuse 在ubuntu24.04上不能安装，否则图形界面就芭比q了
 	sudo apt install -y openssh-server net-tools git virt-manager vim tmux pm-utils samba virtiofsd cifs-utils wakeonlan vim-gtk3 remmina
@@ -310,6 +321,8 @@ EOF
 
 kylinos_physical()
 {
+	install_linux
+
 	sudo apt-get update -y
 	sudo apt install -y git virt-manager samba nginx pandoc jq apache2-utils tmux vim-gtk3
 	sudo apt install -y thunderbird # 点击图标启动会闪退，需要安全模块启动 thunderbird -safe-mode
@@ -345,6 +358,7 @@ kylinos_physical()
 
 windows_physical()
 {
+	# 安装windows: https://chenxiaosong.com/src/windows/windows.html
 	# ThinkPad X390驱动: https://newthink.lenovo.com.cn/driveList.html?selname=ThinkPad%20X390
 	# autohotkey更改键位(v1.1好像没有免安装版本): https://chenxiaosong.com/src/keyboard/keyboard.html#win
 	# MobaXterm（免安装）: https://mobaxterm.mobatek.net/download-home-edition.html
