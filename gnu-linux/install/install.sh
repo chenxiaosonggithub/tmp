@@ -346,7 +346,7 @@ kylinos_physical()
 windows_physical()
 {
 	# ThinkPad X390驱动: https://newthink.lenovo.com.cn/driveList.html?selname=ThinkPad%20X390
-	# autohotkey更改键位(v1.1好像没有免安装版本): https://chenxiaosong.com/src/keybord/keybord.html#win
+	# autohotkey更改键位(v1.1好像没有免安装版本): https://chenxiaosong.com/src/keyboard/keyboard.html#win
 	# MobaXterm（免安装）: https://mobaxterm.mobatek.net/download-home-edition.html
 	# vscode（免安装）: https://code.visualstudio.com/Download
 	# wireshark（免安装）: https://www.wireshark.org/#download
