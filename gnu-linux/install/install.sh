@@ -25,7 +25,7 @@ clone_all_repos()
 cp_config_file()
 {
 	cd /home/chenxiaosong/code/blog/course/gnu-linux/src/config-file
-	bash cp-to-home.sh
+	bash copy-to-home.sh
 }
 
 tip_perm()
@@ -192,7 +192,7 @@ fedora_vm()
 	cd /home/chenxiaosong/code
 	git clone https://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git
 	cd /home/chenxiaosong/code/blog/course/gnu-linux/src/config-file
-	bash cp-to-home.sh
+	bash copy-to-home.sh
 	cd /home/chenxiaosong/code/blog/course/kernel/src/script
 	command cp parse-cmdline.sh ~
 
