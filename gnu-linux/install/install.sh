@@ -30,12 +30,10 @@ cp_config_file()
 
 tip_perm()
 {
-	echo
-	echo "fedora如果安装了virt-manager请修改 /etc/group"
-	echo "	libvirt:x:988:chenxiaosong (增加)"
-	echo "ubuntu virt-manager使用前可以要先重启一下（应该也有办法不重启就能用），如果在远程操作可能有权限问题，但可通过以下方式解决:"
-	echo "  sudo chown libvirt-qemu:kvm image.qcow2 # 在本地环境操作virt-manager会直接修改"
-	echo
+	# fedora如果安装了virt-manager请修改 /etc/group
+	# 	libvirt:x:988:chenxiaosong (增加)
+	# ubuntu virt-manager使用前可以要先重启一下（应该也有办法不重启就能用），如果在远程操作可能有权限问题，但可通过以下方式解决:
+	sudo chown libvirt-qemu:kvm image.qcow2 # 在本地环境操作virt-manager会直接修改"
 }
 
 physical_common()
@@ -46,16 +44,17 @@ physical_common()
 	echo "source /usr/share/bash-completion/completions/git" >> ~/.bashrc
 	source ~/.bashrc
 
-	echo "执行以下脚本复制脚本:"
-	echo "  cp /home/chenxiaosong/code/tmp/gnu-linux/install/tianyi/* ~ # 10.42.20.206"
-	echo "  cp /home/chenxiaosong/code/tmp/gnu-linux/install/aorus/* ~ # 10.42.20.210"
-	echo "  cp /home/chenxiaosong/code/tmp/gnu-linux/install/chown-blog.sh ~"
+	# 执行以下脚本复制脚本:"
+	cp /home/chenxiaosong/code/tmp/gnu-linux/install/tianyi/* ~ # 10.42.20.206
+	cp /home/chenxiaosong/code/tmp/gnu-linux/install/aorus/* ~ # 10.42.20.210
+	cp /home/chenxiaosong/code/tmp/gnu-linux/install/chown-blog.sh ~
 
 	sudo cp /home/chenxiaosong/code/tmp/gnu-linux/install/smb.conf /etc/samba/
-	echo "samba新增用户: sudo pdbedit -a -u $USER"
-	echo "samba重启服务:"
-	echo "  sudo systemctl restart smbd # ubuntu"
-	echo "  sudo systemctl restart smb # fedora"
+	# samba新增用户
+	sudo pdbedit -a -u $USER
+	# samba重启服务
+	sudo systemctl restart smbd # ubuntu"
+	sudo systemctl restart smb # fedora"
 }
 
 docker_common()
