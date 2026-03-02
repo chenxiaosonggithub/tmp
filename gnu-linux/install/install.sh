@@ -91,24 +91,23 @@ cfg_qemu()
 }
 
 cfg_9p() {
-	echo
-	echo "virt-manager中以9p挂载家目录，设置权限:"
-	echo "getfacl /home/chenxiaosong
-# file: ../chenxiaosong
-# owner: chenxiaosong
-# group: chenxiaosong
-user::rwx
-user:libvirt-qemu:--x
-group::r-x
-mask::r-x
-other::---"
-	echo "# sudo setfacl -x u:libvirt-qemu /home/chenxiaosong # 删除user:libvirt-qemu:--x"
-	echo "sudo setfacl -m u:libvirt-qemu:rwx /home/chenxiaosong # user:libvirt-qemu:rwx"
-	echo "# sudo setfacl -m u:libvirt-qemu:x /home/chenxiaosong # 重新生成user:libvirt-qemu:--x"
-	echo "sudo setfacl -m m:rwx /home/chenxiaosong # mask::rwx"
-	echo "sudo setfacl -m g::rwx /home/chenxiaosong # group::rwx"
-	echo "# sudo setfacl -m o::rwx /home/chenxiaosong # 这个不能设置，否则不能免密登录"
-	echo
+	# virt-manager中以9p挂载家目录，设置权限:
+	# getfacl /home/chenxiaosong
+	#   file: ../chenxiaosong
+	#   owner: chenxiaosong
+	#   group: chenxiaosong
+	#   user::rwx
+	#   user:libvirt-qemu:--x
+	#   group::r-x
+	#   mask::r-x
+	#   other::---"
+
+	# sudo setfacl -x u:libvirt-qemu /home/chenxiaosong # 删除user:libvirt-qemu:--x"
+	sudo setfacl -m u:libvirt-qemu:rwx /home/chenxiaosong # user:libvirt-qemu:rwx"
+	# sudo setfacl -m u:libvirt-qemu:x /home/chenxiaosong # 重新生成user:libvirt-qemu:--x"
+	sudo setfacl -m m:rwx /home/chenxiaosong # mask::rwx"
+	sudo setfacl -m g::rwx /home/chenxiaosong # group::rwx"
+	# sudo setfacl -m o::rwx /home/chenxiaosong # 这个不能设置，否则不能免密登录"
 }
 
 cfg_proxy()
