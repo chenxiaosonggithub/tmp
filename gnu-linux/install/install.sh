@@ -359,12 +359,13 @@ kylinos_physical()
 windows_physical()
 {
 	# 安装windows: https://chenxiaosong.com/src/windows/windows.html
-	# ThinkPad X390驱动: https://newthink.lenovo.com.cn/driveList.html?selname=ThinkPad%20X390
-	# autohotkey更改键位(v1.1好像没有免安装版本): https://chenxiaosong.com/src/keyboard/keyboard.html#win
+	# ThinkPad X390驱动（好像不安装也可以）: https://newthink.lenovo.com.cn/driveList.html?selname=ThinkPad%20X390
+	# git（免安装）: https://git-scm.com/install/windows
+	# autohotkey更改键位(安装): https://chenxiaosong.com/src/keyboard/keyboard.html#win
+	# 设置 > 蓝牙和其他设备 > 键盘 > 关闭"使用Print Screen键捕获屏幕"
 	# MobaXterm（免安装）: https://mobaxterm.mobatek.net/download-home-edition.html
 	# vscode（免安装）: https://code.visualstudio.com/Download
 	# wireshark（免安装）: https://www.wireshark.org/#download
-	# git（免安装）: https://git-scm.com/install/windows
 }
 
 # 请根据发行版和机器查看以下函数
