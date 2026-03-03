@@ -1,7 +1,7 @@
-From e0f715cd57792feb2b907ad826667870f19b3505 Mon Sep 17 00:00:00 2001
+From 86f50f704eba78bd3f2924ae8c8028cc55e9a1ee Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Sun, 15 Feb 2026 15:22:31 +0000
-Subject: [PATCH v4 2/5] smb: move file_basic_info into common/fscc.h
+Subject: [PATCH v5 5/7] smb: move file_basic_info into common/fscc.h
 
 This struct definition is specified in MS-FSCC, so move them into fscc.h.
 
@@ -61,10 +61,10 @@ index 415cba02d1c9..076cbcffa26a 100644
  typedef struct {
  	__le32 NextEntryOffset;
 diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index 95901a78951c..c787d9fd6dd2 100644
+index 743c629fe7ec..5126394337bc 100644
 --- a/fs/smb/server/smb2pdu.c
 +++ b/fs/smb/server/smb2pdu.c
-@@ -4838,7 +4838,7 @@ static void get_file_access_info(struct smb2_query_info_rsp *rsp,
+@@ -4839,7 +4839,7 @@ static void get_file_access_info(struct smb2_query_info_rsp *rsp,
  static int get_file_basic_info(struct smb2_query_info_rsp *rsp,
  			       struct ksmbd_file *fp, void *rsp_org)
  {
@@ -73,7 +73,7 @@ index 95901a78951c..c787d9fd6dd2 100644
  	struct kstat stat;
  	u64 time;
  	int ret;
-@@ -4854,7 +4854,7 @@ static int get_file_basic_info(struct smb2_query_info_rsp *rsp,
+@@ -4855,7 +4855,7 @@ static int get_file_basic_info(struct smb2_query_info_rsp *rsp,
  	if (ret)
  		return ret;
  
@@ -82,7 +82,7 @@ index 95901a78951c..c787d9fd6dd2 100644
  	basic_info->CreationTime = cpu_to_le64(fp->create_time);
  	time = ksmbd_UnixTimeToNT(stat.atime);
  	basic_info->LastAccessTime = cpu_to_le64(time);
-@@ -4863,9 +4863,9 @@ static int get_file_basic_info(struct smb2_query_info_rsp *rsp,
+@@ -4864,9 +4864,9 @@ static int get_file_basic_info(struct smb2_query_info_rsp *rsp,
  	time = ksmbd_UnixTimeToNT(stat.ctime);
  	basic_info->ChangeTime = cpu_to_le64(time);
  	basic_info->Attributes = fp->f_ci->m_fattr;
@@ -94,7 +94,7 @@ index 95901a78951c..c787d9fd6dd2 100644
  	return 0;
  }
  
-@@ -6136,7 +6136,7 @@ static int smb2_create_link(struct ksmbd_work *work,
+@@ -6137,7 +6137,7 @@ static int smb2_create_link(struct ksmbd_work *work,
  }
  
  static int set_file_basic_info(struct ksmbd_file *fp,
@@ -103,7 +103,7 @@ index 95901a78951c..c787d9fd6dd2 100644
  			       struct ksmbd_share_config *share)
  {
  	struct iattr attrs;
-@@ -6418,10 +6418,10 @@ static int smb2_set_info_file(struct ksmbd_work *work, struct ksmbd_file *fp,
+@@ -6419,10 +6419,10 @@ static int smb2_set_info_file(struct ksmbd_work *work, struct ksmbd_file *fp,
  	switch (req->FileInfoClass) {
  	case FILE_BASIC_INFORMATION:
  	{
@@ -117,10 +117,10 @@ index 95901a78951c..c787d9fd6dd2 100644
  	case FILE_ALLOCATION_INFORMATION:
  	{
 diff --git a/fs/smb/server/smb2pdu.h b/fs/smb/server/smb2pdu.h
-index 257c6d26df26..9b3c4c9acb11 100644
+index 8b6eafb70dca..e7cf573e59f0 100644
 --- a/fs/smb/server/smb2pdu.h
 +++ b/fs/smb/server/smb2pdu.h
-@@ -183,15 +183,6 @@ struct smb2_file_alignment_info {
+@@ -186,15 +186,6 @@ struct smb2_file_alignment_info {
  	__le32 AlignmentRequirement;
  } __packed;
  
@@ -137,5 +137,5 @@ index 257c6d26df26..9b3c4c9acb11 100644
  	__le32 FileNameLength;
  	char FileName[];
 -- 
-2.53.0
+2.52.0
 

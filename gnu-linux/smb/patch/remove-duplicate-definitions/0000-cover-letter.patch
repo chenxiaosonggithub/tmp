@@ -1,16 +1,20 @@
-From 408357a3cbae62a7814bb72273c70791d5dcf0d1 Mon Sep 17 00:00:00 2001
+From cb7c64284853ab5a9883232de052ec8729191125 Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
-Date: Wed, 25 Feb 2026 03:54:18 +0000
-Subject: [PATCH v4 0/5] smb: move duplicate definitions into common header file, part 2
+Date: Tue, 3 Mar 2026 14:50:54 +0000
+Subject: [PATCH v5 0/7] smb: fix some bugs, move duplicate definitions into common header file, part 2
 
-v3->v4:
-  - Patch #03: __le32  VolumeSerialNumber
-  - Add patch #04
+v4->v5:
+  - Add patch #01 #02 #03
+  - Patch #06: keep vol_serial_number as u32 in smb_mnt_fs_info and cifs_tcon
+  - Patch #07:
+    - Add new flexible array member `sids_and_name[]` to file_posix_info
+    - smb311_posix_qinfo -> file_posix_info
 
-v3: https://lore.kernel.org/linux-cifs/20260216082018.156695-1-zhang.guodong@linux.dev/
+v4: https://lore.kernel.org/linux-cifs/20260225041100.707468-1-zhang.guodong@linux.dev/
 
 v1: https://lore.kernel.org/all/20251209011020.3270989-1-chenxiaosong.chenxiaosong@linux.dev/
 v2: https://lore.kernel.org/linux-cifs/20251211143228.172470-1-chenxiaosong.chenxiaosong@linux.dev/
+
 The following patches from v1 and v2 have already been merged into mainline:
   - 94d5b8dbc5d9 smb: move some SMB1 definitions into common/smb1pdu.h
   - 2b6abb893e71 smb: move File Attributes definitions into common/fscc.h
@@ -22,37 +26,42 @@ The following patches from v1 and v2 have already been merged into mainline:
   - 9ec7629b430a smb: move notify completion filter flags into common/smb2pdu.h
   - bcdd6cfaf2ec smb: add documentation references for smb2 change notify definitions
 
+The following patches from v4 have already been merged into cifs-2.6.git for-next:
+  - smb: update some doc references
+
 This is a continuous effort to move duplicated definitions in both client
 and server into common header files, which makes the code easier to maintain.
 
 The previous work is here:
   - part 1: https://lore.kernel.org/linux-cifs/20251117112838.473051-1-chenxiaosong.chenxiaosong@linux.dev/
 
-ZhangGuoDong (5):
+ZhangGuoDong (7):
+  smb/client: fix buffer size for smb311_posix_qinfo in
+    smb2_compound_op()
+  smb/client: fix buffer size for smb311_posix_qinfo in
+    SMB311_posix_query_info()
+  smb/client: remove unused SMB311_posix_query_info()
   smb: move some definitions from common/smb2pdu.h into common/fscc.h
   smb: move file_basic_info into common/fscc.h
   smb: move filesystem_vol_info into common/fscc.h
-  smb: update some doc references
   smb: introduce struct file_posix_info
 
- fs/smb/client/cifs_debug.c |   2 +-
- fs/smb/client/cifs_ioctl.h |   2 +-
- fs/smb/client/cifsfs.c     |   2 +-
  fs/smb/client/cifsglob.h   |   2 +-
- fs/smb/client/fscache.c    |   2 +-
- fs/smb/client/inode.c      |  22 +--
+ fs/smb/client/inode.c      |   2 +-
  fs/smb/client/readdir.c    |  28 +--
- fs/smb/client/reparse.h    |   4 +-
+ fs/smb/client/reparse.h    |   2 +-
  fs/smb/client/smb1pdu.h    |   9 -
- fs/smb/client/smb2pdu.c    |   6 +-
- fs/smb/client/smb2pdu.h    |  22 +--
- fs/smb/common/fscc.h       | 379 ++++++++++++++++++++++++++++++++++++-
- fs/smb/common/smb2pdu.h    | 343 ---------------------------------
- fs/smb/server/smb2pdu.c    |  93 ++++-----
- fs/smb/server/smb2pdu.h    |  35 +---
+ fs/smb/client/smb2inode.c  |   4 +-
+ fs/smb/client/smb2pdu.c    |  26 +--
+ fs/smb/client/smb2pdu.h    |  21 +--
+ fs/smb/client/smb2proto.h  |   3 -
+ fs/smb/common/fscc.h       | 371 ++++++++++++++++++++++++++++++++++++-
+ fs/smb/common/smb2pdu.h    | 343 ----------------------------------
+ fs/smb/server/smb2pdu.c    |  65 +++----
+ fs/smb/server/smb2pdu.h    |  30 +--
  fs/smb/server/smb_common.h |   8 -
- 16 files changed, 471 insertions(+), 488 deletions(-)
+ 14 files changed, 428 insertions(+), 486 deletions(-)
 
 -- 
-2.53.0
+2.52.0
 
