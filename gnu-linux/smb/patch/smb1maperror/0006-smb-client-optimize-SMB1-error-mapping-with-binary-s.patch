@@ -1,0 +1,116 @@
+From 0a1be773a65d2acb54c2a717c9521c6a08a5bbc1 Mon Sep 17 00:00:00 2001
+From: Huiwen He <hehuiwen@kylinos.cn>
+Date: Wed, 18 Feb 2026 00:31:38 +0800
+Subject: [PATCH 6/7] smb/client: optimize SMB1 error mapping with binary
+ search
+
+Currently, map_smb_to_linux_error() uses linear searches for both
+mapping_table_ERRDOS and mapping_table_ERRSRV.
+
+Refactor this by introducing a helper function smb1_map_to_posix() that
+implements binary search(as the tables are sorted). This improves lookup
+performance and reduces code duplication.
+
+Also remove the sentinel entries from the mapping tables as they are no
+longer needed with ARRAY_SIZE().
+
+Signed-off-by: Huiwen He <hehuiwen@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/client/smb1maperror.c | 53 ++++++++++++++++--------------------
+ 1 file changed, 24 insertions(+), 29 deletions(-)
+
+diff --git a/fs/smb/client/smb1maperror.c b/fs/smb/client/smb1maperror.c
+index bf1d2fc6e511..3e6a2afe7ab3 100644
+--- a/fs/smb/client/smb1maperror.c
++++ b/fs/smb/client/smb1maperror.c
+@@ -21,12 +21,10 @@ struct smb_to_posix_error {
+ 
+ static const struct smb_to_posix_error mapping_table_ERRDOS[] = {
+ #include "smberr_dos_map.h"
+-	{0, 0}
+ };
+ 
+ static const struct smb_to_posix_error mapping_table_ERRSRV[] = {
+ #include "smberr_srv_map.h"
+-	{0, 0}
+ };
+ 
+ /*****************************************************************************
+@@ -50,6 +48,26 @@ ntstatus_to_dos(__u32 ntstatus)
+ 	return NULL;
+ }
+ 
++static int
++smb1_map_to_posix(const struct smb_to_posix_error *table,
++		  int num_entries, __u16 smb_err)
++{
++	int low = 0, high = num_entries - 1;
++
++	while (low <= high) {
++		int mid = low + (high - low) / 2;
++
++		if (table[mid].smb_err == smb_err)
++			return table[mid].posix_code;
++
++		if (table[mid].smb_err < smb_err)
++			low = mid + 1;
++		else
++			high = mid - 1;
++	}
++	return -EIO;
++}
++
+ /*****************************************************************************
+  *Print an error message from the status code
+  *****************************************************************************/
+@@ -65,7 +83,6 @@ int
+ map_smb_to_linux_error(char *buf, bool logErr)
+ {
+ 	struct smb_hdr *smb = (struct smb_hdr *)buf;
+-	unsigned int i;
+ 	int rc = -EIO;	/* if transport error smb error may not be set */
+ 	__u8 smberrclass;
+ 	__u16 smberrcode;
+@@ -104,34 +121,12 @@ map_smb_to_linux_error(char *buf, bool logErr)
+ 	/* DOS class smb error codes - map DOS */
+ 	if (smberrclass == ERRDOS) {
+ 		/* 1 byte field no need to byte reverse */
+-		for (i = 0;
+-		     i <
+-		     sizeof(mapping_table_ERRDOS) /
+-		     sizeof(struct smb_to_posix_error); i++) {
+-			if (mapping_table_ERRDOS[i].smb_err == 0)
+-				break;
+-			else if (mapping_table_ERRDOS[i].smb_err ==
+-								smberrcode) {
+-				rc = mapping_table_ERRDOS[i].posix_code;
+-				break;
+-			}
+-			/* else try next error mapping one to see if match */
+-		}
++		rc = smb1_map_to_posix(mapping_table_ERRDOS,
++				       ARRAY_SIZE(mapping_table_ERRDOS), smberrcode);
+ 	} else if (smberrclass == ERRSRV) {
+ 		/* server class of error codes */
+-		for (i = 0;
+-		     i <
+-		     sizeof(mapping_table_ERRSRV) /
+-		     sizeof(struct smb_to_posix_error); i++) {
+-			if (mapping_table_ERRSRV[i].smb_err == 0)
+-				break;
+-			else if (mapping_table_ERRSRV[i].smb_err ==
+-								smberrcode) {
+-				rc = mapping_table_ERRSRV[i].posix_code;
+-				break;
+-			}
+-			/* else try next error mapping to see if match */
+-		}
++		rc = smb1_map_to_posix(mapping_table_ERRSRV,
++				       ARRAY_SIZE(mapping_table_ERRSRV), smberrcode);
+ 	}
+ 	/* else ERRHRD class errors or junk  - return EIO */
+ 
+-- 
+2.53.0
+

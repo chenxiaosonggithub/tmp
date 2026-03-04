@@ -1,0 +1,26 @@
+- 全部补丁已加上Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+- 有些补丁有小修改，请在修改后的补丁上继续修改: https://gitee.com/chenxiaosonggitee/tmp/tree/master/gnu-linux/smb/patch/smb1maperror
+
+- 1. smb/client: annotate nterr.h with DOS error codes
+  - 总体可以
+  - commit message中的脚本已经缩进
+
+- 2. smb/client: annotate smberr.h with POSIX error codes
+  - 为了更好review，可以把这个补丁放在处理完第一个数组之后
+  - commit message中的脚本已经缩进
+
+- 3. smb/client: automate sorted error map generation via unified script
+  - gen_smb2_mapping不删除，增加一个gen_smb1_mapping
+
+- 4. smb/client: replace nt_errs with ntstatus_to_dos_map
+  - cifs_print_status()继续使用原来的while，不相关的内容暂时尽量少改动，因为后面会用二分查找替换掉整个逻辑
+
+- 5. smb/client: refactor ntstatus_to_dos() and cifs_print_status()
+  - 能不能不重构？因为后面会用二分查找替换
+  - avoiding redundant lookups: 怎么理解？哪里有减少冗余的查找，减少了多少？
+
+- 6. smb/client: optimize SMB1 error mapping with binary search
+  - 不要自己写二分查找逻辑，直接用__inline_bsearch()接口，参考: https://lore.kernel.org/linux-cifs/20260106071507.1420900-5-chenxiaosong.chenxiaosong@linux.dev/
+
+- 7. smb/client: optimize NT status lookup with binary search
+  - 和上一个补丁一样，不要自己写二分查找逻辑，直接用__inline_bsearch()接口，参考: https://lore.kernel.org/linux-cifs/20260106071507.1420900-5-chenxiaosong.chenxiaosong@linux.dev/
