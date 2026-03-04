@@ -1,4 +1,4 @@
-From c3d315e0db63c60fe8bf0b951b120e392dd96f31 Mon Sep 17 00:00:00 2001
+From ef320a5bd646a2d152031640ba0a5eaa591fe5b0 Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
 Date: Wed, 18 Feb 2026 00:34:30 +0800
 Subject: [PATCH 7/7] smb/client: optimize NT status lookup with binary search
@@ -9,6 +9,7 @@ binary search to improve lookup performance.
 Also remove the sentinel entry as it is no longer needed with ARRAY_SIZE().
 
 Signed-off-by: Huiwen He <hehuiwen@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
  fs/smb/client/smb1maperror.c | 16 +++++++++++-----
  1 file changed, 11 insertions(+), 5 deletions(-)
