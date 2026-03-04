@@ -41,8 +41,14 @@ tip_perm()
 	sudo chown libvirt-qemu:kvm image.qcow2 # 在本地环境操作virt-manager会直接修改"
 }
 
+set_alias()
+{
+	alias gitlog='git log --oneline --date=short --format="%cd %ad %h %s %an <%ae>"'
+}
+
 physical_common()
 {
+	set_alias
 	cp_config_file
 	clone_all_repos
 	sudo chmod 700 /bin/systemctl
@@ -64,6 +70,7 @@ physical_common()
 
 docker_common()
 {
+	set_alias
 	cp /home/chenxiaosong/code/blog/course/kernel/src/build.sh /home/chenxiaosong/code/
 	echo "source /usr/share/bash-completion/completions/git" >> ~/.bashrc
 	cp /home/chenxiaosong/code/tmp/gnu-linux/install/emacs.d/ ~/.emacs.d -rf
