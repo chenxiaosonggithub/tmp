@@ -46,8 +46,21 @@ set_alias()
 	alias gitlog='git log --oneline --date=short --format="%cd %ad %h %s %an <%ae>"'
 }
 
+add_swap()
+{
+	sudo fallocate -l 8G /swapfile
+	sudo chmod 600 /swapfile
+	ls -lh /swapfile
+	sudo mkswap /swapfile
+	sudo swapon /swapfile
+	sudo swapon -s
+	# 在/etc/fstab最后一行添加: /swapfile  none  swap  sw  0  0
+	sudo vi /etc/fstab
+}
+
 physical_common()
 {
+	add_swap
 	set_alias
 	cp_config_file
 	clone_all_repos
