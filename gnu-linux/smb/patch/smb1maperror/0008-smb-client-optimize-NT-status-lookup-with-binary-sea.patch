@@ -1,0 +1,65 @@
+From eac7a46aad58a5885c0a17f622b8f435cf18df6d Mon Sep 17 00:00:00 2001
+From: Huiwen He <hehuiwen@kylinos.cn>
+Date: Wed, 18 Feb 2026 00:34:30 +0800
+Subject: [PATCH 8/8] smb/client: optimize NT status lookup with binary search
+
+The ntstatus_to_dos_map[] table is sorted. Replace the linear search with
+binary search to improve lookup performance.
+
+Also remove the sentinel entry as it is no longer needed with ARRAY_SIZE().
+
+Signed-off-by: Huiwen He <hehuiwen@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/client/smb1maperror.c | 25 ++++++++++++++++---------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
+
+diff --git a/fs/smb/client/smb1maperror.c b/fs/smb/client/smb1maperror.c
+index f2f8f5fffeb4..bd375652aef3 100644
+--- a/fs/smb/client/smb1maperror.c
++++ b/fs/smb/client/smb1maperror.c
+@@ -43,10 +43,21 @@ static const struct smb_to_posix_error mapping_table_ERRSRV[] = {
+ /*****************************************************************************
+  *convert a NT status code to a dos class/code
+  *****************************************************************************/
++static __always_inline int ntstatus_to_dos_cmp(const void *key, const void *element)
++{
++	__u32 k = *(__u32 *)key;
++	const struct nt_err_code_struct *e = element;
++
++	if (k < e->ntstatus)
++		return -1;
++	if (k > e->ntstatus)
++		return 1;
++	return 0;
++}
++
+ /* NT status -> dos error map */
+ static const struct nt_err_code_struct ntstatus_to_dos_map[] = {
+ #include "smb1_mapping_table.c"
+-	{0, 0, 0, NULL}
+ };
+ 
+ /*****************************************************************************
+@@ -63,14 +74,10 @@ cifs_print_status(const struct nt_err_code_struct *map)
+ static const struct nt_err_code_struct *
+ ntstatus_to_dos(__u32 ntstatus)
+ {
+-	int idx = 0;
+-
+-	while (ntstatus_to_dos_map[idx].nt_errstr) {
+-		if (ntstatus == ntstatus_to_dos_map[idx].ntstatus)
+-			return &ntstatus_to_dos_map[idx];
+-		idx++;
+-	}
+-	return NULL;
++	return __inline_bsearch(&ntstatus, ntstatus_to_dos_map,
++			       ARRAY_SIZE(ntstatus_to_dos_map),
++			       sizeof(struct nt_err_code_struct),
++			       ntstatus_to_dos_cmp);
+ }
+ 
+ static int
+-- 
+2.53.0
+

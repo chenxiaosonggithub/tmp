@@ -1,10 +1,10 @@
-From 3b6b3791edb551ea9963486c78e5b3c4bd721acd Mon Sep 17 00:00:00 2001
+From c362de1d8819e8350b887bf9fd2bf7f8439297cf Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
 Date: Wed, 18 Feb 2026 00:30:55 +0800
-Subject: [PATCH 5/7] smb/client: refactor ntstatus_to_dos() and
+Subject: [PATCH 6/8] smb/client: avoid redundant lookups in
  cifs_print_status()
 
-Modify ntstatus_to_dos() to return a 'const struct nt_err_code_struct *'
+Refactor ntstatus_to_dos() to return a 'const struct nt_err_code_struct *'
 instead of using output parameters. This allows callers to access all
 fields of the mapping entry directly.
 
@@ -17,47 +17,47 @@ and use the new pointer-based interfaces.
 Signed-off-by: Huiwen He <hehuiwen@kylinos.cn>
 Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
- fs/smb/client/smb1maperror.c | 54 ++++++++++++++++--------------------
- 1 file changed, 24 insertions(+), 30 deletions(-)
+ fs/smb/client/smb1maperror.c | 55 ++++++++++++++++--------------------
+ 1 file changed, 24 insertions(+), 31 deletions(-)
 
 diff --git a/fs/smb/client/smb1maperror.c b/fs/smb/client/smb1maperror.c
-index 645c7aca2b55..bf1d2fc6e511 100644
+index 547ecbcb0ecb..be99d6eaf5cd 100644
 --- a/fs/smb/client/smb1maperror.c
 +++ b/fs/smb/client/smb1maperror.c
-@@ -38,42 +38,27 @@ static const struct nt_err_code_struct ntstatus_to_dos_map[] = {
- 	{0, 0, 0, NULL}
- };
- 
--/*****************************************************************************
-- Print an error message from the status code
-- *****************************************************************************/
--static void
+@@ -42,40 +42,24 @@ static const struct nt_err_code_struct ntstatus_to_dos_map[] = {
+  Print an error message from the status code
+  *****************************************************************************/
+ static void
 -cifs_print_status(__u32 status_code)
++cifs_print_status(const struct nt_err_code_struct *map)
++{
++	if (map)
++		pr_notice("Status code returned 0x%08x %s\n",
++			  map->ntstatus, map->nt_errstr);
++}
++
 +static const struct nt_err_code_struct *
 +ntstatus_to_dos(__u32 ntstatus)
  {
- 	int i;
+ 	int idx = 0;
  
- 	for (i = 0; ntstatus_to_dos_map[i].nt_errstr; i++) {
--		if (ntstatus_to_dos_map[i].ntstatus == status_code) {
+ 	while (ntstatus_to_dos_map[idx].nt_errstr) {
+-		if (ntstatus_to_dos_map[idx].nt_errcode == status_code) {
 -			pr_notice("Status code returned 0x%08x %s\n",
--				  status_code, ntstatus_to_dos_map[i].nt_errstr);
+-				  status_code, ntstatus_to_dos_map[idx].nt_errstr);
 -			return;
 -		}
-+		if (ntstatus == ntstatus_to_dos_map[i].ntstatus)
-+			return &ntstatus_to_dos_map[i];
++		if (ntstatus == ntstatus_to_dos_map[idx].ntstatus)
++			return &ntstatus_to_dos_map[idx];
+ 		idx++;
  	}
-+	return NULL;
- }
- 
+-	return;
+-}
 -
-+/*****************************************************************************
-+ *Print an error message from the status code
-+ *****************************************************************************/
- static void
+-
+-static void
 -ntstatus_to_dos(__u32 ntstatus, __u8 *eclass, __u16 *ecode)
-+cifs_print_status(const struct nt_err_code_struct *map)
- {
+-{
 -	int i;
 -	if (ntstatus == 0) {
 -		*eclass = 0;
@@ -73,13 +73,11 @@ index 645c7aca2b55..bf1d2fc6e511 100644
 -	}
 -	*eclass = ERRHRD;
 -	*ecode = ERRgeneral;
-+	if (map)
-+		pr_notice("Status code returned 0x%08x %s\n",
-+			  map->ntstatus, map->nt_errstr);
++	return NULL;
  }
  
  int
-@@ -95,11 +80,20 @@ map_smb_to_linux_error(char *buf, bool logErr)
+@@ -97,11 +81,20 @@ map_smb_to_linux_error(char *buf, bool logErr)
  		/* translate the newer STATUS codes to old style SMB errors
  		 * and then to POSIX errors */
  		__u32 err = le32_to_cpu(smb->Status.CifsError);

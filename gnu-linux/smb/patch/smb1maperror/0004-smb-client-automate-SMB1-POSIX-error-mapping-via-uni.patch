@@ -1,0 +1,189 @@
+From dde2bbe0d2dabd49c956be09e5815cc88e138900 Mon Sep 17 00:00:00 2001
+From: Huiwen He <hehuiwen@kylinos.cn>
+Date: Mon, 9 Mar 2026 15:41:16 +0800
+Subject: [PATCH 4/8] smb/client: automate SMB1 POSIX error mapping via unified
+ script
+
+Extend the 'gen_smb1_mapping' script to support generating POSIX error
+mapping tables for both ERRDOS and ERRSRV classes. The script parses
+annotations from 'smberr.h' and generates sorted mapping arrays at
+compile time.
+
+This ensures that the mapping logic remains synchronized with the
+source headers and facilitates faster error mapping lookups via future
+binary search implementation.
+
+Update the Makefile to generate 'smberr_dos_map.h' and 'smberr_srv_map.h'.
+Modify 'smb1maperror.c' to use these generated headers, allowing for
+the removal of the manual 'mapping_table_ERRDOS' and
+'mapping_table_ERRSRV' arrays.
+
+Signed-off-by: Huiwen He <hehuiwen@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/client/Makefile         | 14 +++++--
+ fs/smb/client/gen_smb1_mapping | 19 +++++++++
+ fs/smb/client/smb1maperror.c   | 77 +---------------------------------
+ 3 files changed, 32 insertions(+), 78 deletions(-)
+
+diff --git a/fs/smb/client/Makefile b/fs/smb/client/Makefile
+index abb7e29faceb..8c36a7e5a447 100644
+--- a/fs/smb/client/Makefile
++++ b/fs/smb/client/Makefile
+@@ -54,9 +54,17 @@ $(obj)/smb1_mapping_table.c: MAP_MODE := smb1-nt
+ $(obj)/smb1_mapping_table.c: $(src)/nterr.h $(src)/gen_smb1_mapping FORCE
+ 	$(call if_changed,gen_map)
+ 
+-$(obj)/smb1maperror.o: $(obj)/smb1_mapping_table.c
++$(obj)/smberr_dos_map.h: MAP_MODE := smb1-posix-ERRDOS
++$(obj)/smberr_dos_map.h: $(src)/smberr.h $(src)/gen_smb1_mapping FORCE
++	$(call if_changed,gen_map)
++
++$(obj)/smberr_srv_map.h: MAP_MODE := smb1-posix-ERRSRV
++$(obj)/smberr_srv_map.h: $(src)/smberr.h $(src)/gen_smb1_mapping FORCE
++	$(call if_changed,gen_map)
++
++$(obj)/smb1maperror.o: $(obj)/smb1_mapping_table.c $(obj)/smberr_dos_map.h $(obj)/smberr_srv_map.h
+ 
+-targets += smb1_mapping_table.c
++targets += smb1_mapping_table.c smberr_dos_map.h smberr_srv_map.h
+ #
+ # Build the SMB2 error mapping table from smb2status.h
+ #
+@@ -71,4 +79,4 @@ quiet_cmd_gen_smb2_mapping = GEN     $@
+ 
+ obj-$(CONFIG_SMB_KUNIT_TESTS) += smb2maperror_test.o
+ 
+-clean-files	+= smb2_mapping_table.c smb1_mapping_table.c
++clean-files	+= smb2_mapping_table.c smb1_mapping_table.c smberr_dos_map.h smberr_srv_map.h
+diff --git a/fs/smb/client/gen_smb1_mapping b/fs/smb/client/gen_smb1_mapping
+index 5b77d6cbe735..b591eceee29f 100644
+--- a/fs/smb/client/gen_smb1_mapping
++++ b/fs/smb/client/gen_smb1_mapping
+@@ -29,6 +29,21 @@ if ($mode eq "smb1-nt") {
+             push @list, { val => $val, name => $name, class => $class, code => $code };
+         }
+     }
++} elsif ($mode =~ /^smb1-posix-(ERRDOS|ERRSRV)$/) {
++    # Logic for parsing annotated smberr.h
++    my $target_class = $1;
++    my $current_class = "";
++    while (<$in>) {
++        if (m!generated with the ERRDOS error class!) { $current_class = "ERRDOS"; }
++        elsif (m!generated with the ERRSRV error class!) { $current_class = "ERRSRV"; }
++        next if ($current_class ne $target_class);
++
++        if (m!^#define\s+([A-Za-z0-9_]+)\s+([0-9a-fA-FxX]+)\s*//\s*(-[A-Z0-9_]+)!) {
++            my ($name, $val_str, $error) = ($1, $2, $3);
++            my $val = ($val_str =~ /^0x/i) ? hex($val_str) : $val_str;
++            push @list, { val => $val, name => $name, error => $error };
++        }
++    }
+ }
+ close($in);
+ 
+@@ -42,5 +57,9 @@ if ($mode eq "smb1-nt") {
+     foreach my $e (@list) {
+         printf $out "\t{ %s, %s, %s, \"%s\" },\n", $e->{class}, $e->{code}, $e->{name}, $e->{name};
+     }
++} elsif ($mode =~ /^smb1-posix-/) {
++    foreach my $e (@list) {
++        printf $out "\t{%s, %s},\n", $e->{name}, $e->{error};
++    }
+ }
+ close($out);
+diff --git a/fs/smb/client/smb1maperror.c b/fs/smb/client/smb1maperror.c
+index 0ef472ba017b..0f2dc5244cb9 100644
+--- a/fs/smb/client/smb1maperror.c
++++ b/fs/smb/client/smb1maperror.c
+@@ -20,85 +20,12 @@ struct smb_to_posix_error {
+ };
+ 
+ static const struct smb_to_posix_error mapping_table_ERRDOS[] = {
+-	{ERRbadfunc, -EINVAL},
+-	{ERRbadfile, -ENOENT},
+-	{ERRbadpath, -ENOTDIR},
+-	{ERRnofids, -EMFILE},
+-	{ERRnoaccess, -EACCES},
+-	{ERRbadfid, -EBADF},
+-	{ERRbadmcb, -EIO},
+-	{ERRnomem, -EREMOTEIO},
+-	{ERRbadmem, -EFAULT},
+-	{ERRbadenv, -EFAULT},
+-	{ERRbadformat, -EINVAL},
+-	{ERRbadaccess, -EACCES},
+-	{ERRbaddata, -EIO},
+-	{ERRbaddrive, -ENXIO},
+-	{ERRremcd, -EACCES},
+-	{ERRdiffdevice, -EXDEV},
+-	{ERRnofiles, -ENOENT},
+-	{ERRwriteprot, -EROFS},
+-	{ERRbadshare, -EBUSY},
+-	{ERRlock, -EACCES},
+-	{ERRunsup, -EINVAL},
+-	{ERRnosuchshare, -ENXIO},
+-	{ERRfilexists, -EEXIST},
+-	{ERRinvparm, -EINVAL},
+-	{ERRdiskfull, -ENOSPC},
+-	{ERRinvname, -ENOENT},
+-	{ERRunknownlevel, -EOPNOTSUPP},
+-	{ERRdirnotempty, -ENOTEMPTY},
+-	{ERRnotlocked, -ENOLCK},
+-	{ERRcancelviolation, -ENOLCK},
+-	{ERRalreadyexists, -EEXIST},
+-	{ERRmoredata, -EOVERFLOW},
+-	{ERReasnotsupported, -EOPNOTSUPP},
+-	{ErrQuota, -EDQUOT},
+-	{ErrNotALink, -ENOLINK},
+-	{ERRnetlogonNotStarted, -ENOPROTOOPT},
+-	{ERRsymlink, -EOPNOTSUPP},
+-	{ErrTooManyLinks, -EMLINK},
++#include "smberr_dos_map.h"
+ 	{0, 0}
+ };
+ 
+ static const struct smb_to_posix_error mapping_table_ERRSRV[] = {
+-	{ERRerror, -EIO},
+-	{ERRbadpw, -EACCES},  /* was EPERM */
+-	{ERRbadtype, -EREMOTE},
+-	{ERRaccess, -EACCES},
+-	{ERRinvtid, -ENXIO},
+-	{ERRinvnetname, -ENXIO},
+-	{ERRinvdevice, -ENXIO},
+-	{ERRqfull, -ENOSPC},
+-	{ERRqtoobig, -ENOSPC},
+-	{ERRqeof, -EIO},
+-	{ERRinvpfid, -EBADF},
+-	{ERRsmbcmd, -EBADRQC},
+-	{ERRsrverror, -EIO},
+-	{ERRbadBID, -EIO},
+-	{ERRfilespecs, -EINVAL},
+-	{ERRbadLink, -EIO},
+-	{ERRbadpermits, -EINVAL},
+-	{ERRbadPID, -ESRCH},
+-	{ERRsetattrmode, -EINVAL},
+-	{ERRpaused, -EHOSTDOWN},
+-	{ERRmsgoff, -EHOSTDOWN},
+-	{ERRnoroom, -ENOSPC},
+-	{ERRrmuns, -EUSERS},
+-	{ERRtimeout, -ETIME},
+-	{ERRnoresource, -EREMOTEIO},
+-	{ERRtoomanyuids, -EUSERS},
+-	{ERRbaduid, -EACCES},
+-	{ERRusempx, -EIO},
+-	{ERRusestd, -EIO},
+-	{ERR_NOTIFY_ENUM_DIR, -ENOBUFS},
+-	{ERRnoSuchUser, -EACCES},
+-	{ERRaccountexpired, -EKEYEXPIRED},
+-	{ERRbadclient, -EACCES},
+-	{ERRbadLogonTime, -EACCES},
+-	{ERRpasswordExpired, -EKEYEXPIRED},
+-
+-	{ERRnosupport, -EINVAL},
++#include "smberr_srv_map.h"
+ 	{0, 0}
+ };
+ 
+-- 
+2.53.0
+

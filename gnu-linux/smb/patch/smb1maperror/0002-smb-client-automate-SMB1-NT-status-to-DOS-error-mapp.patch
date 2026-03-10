@@ -1,87 +1,73 @@
-From 5c09815bfa1c0ceafe3d6ea50391311661ac8ef6 Mon Sep 17 00:00:00 2001
+From cf609556edfb316d8dbc7a5b77f974df8a04f520 Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
-Date: Tue, 17 Feb 2026 23:47:21 +0800
-Subject: [PATCH 3/7] smb/client: automate sorted error map generation via
- unified script
+Date: Mon, 9 Mar 2026 15:30:36 +0800
+Subject: [PATCH 2/8] smb/client: automate SMB1 NT status to DOS error mapping
 
-Unify SMB1 and SMB2 error mapping table generation into a single Perl
-script `gen_error_map.pl`. This script parses annotations from header
-file comments (`nterr.h`, `smberr.h`, and `smb2status.h`) to generate
-mapping arrays at compile time.
+Introduce 'gen_smb1_mapping' script to automate the generation of the
+NT status to DOS error mapping table for SMB1. This script parses
+annotations from 'nterr.h' to generate the 'smb1_mapping_table.c' array
+at compile time.
 
-The generated arrays are numerically sorted during the build process
-to ensure a consistent structure, providing the necessary groundwork
-for the future introduction of binary search lookups.
+The generated array is numerically sorted during the build process to
+ensure a consistent structure, providing the necessary groundwork for
+future introduction of binary search lookups.
 
-This refactoring removes the obsolete `gen_smb2_mapping` script and
-ensures that the mapping logic remains synchronized with the source
-headers.
+Update the Makefile to include the generation process and modify
+'smb1maperror.c' to use the generated table, removing the redundant
+manual 'ntstatus_to_dos_map' array.
 
 Signed-off-by: Huiwen He <hehuiwen@kylinos.cn>
 Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
- fs/smb/client/Makefile         |  30 +-
- fs/smb/client/gen_error_map.pl |  84 +++++
- fs/smb/client/gen_smb2_mapping |  86 -----
- fs/smb/client/smb1maperror.c   | 628 +--------------------------------
- 4 files changed, 111 insertions(+), 717 deletions(-)
- create mode 100644 fs/smb/client/gen_error_map.pl
- delete mode 100644 fs/smb/client/gen_smb2_mapping
+ fs/smb/client/Makefile         |  15 +-
+ fs/smb/client/gen_smb1_mapping |  46 +++
+ fs/smb/client/smb1maperror.c   | 551 +--------------------------------
+ 3 files changed, 63 insertions(+), 549 deletions(-)
+ create mode 100644 fs/smb/client/gen_smb1_mapping
 
 diff --git a/fs/smb/client/Makefile b/fs/smb/client/Makefile
-index 26b6105f04d1..a7c55385a5d0 100644
+index 26b6105f04d1..abb7e29faceb 100644
 --- a/fs/smb/client/Makefile
 +++ b/fs/smb/client/Makefile
-@@ -45,17 +45,31 @@ cifs-$(CONFIG_CIFS_ALLOW_INSECURE_LEGACY) += \
+@@ -44,6 +44,19 @@ cifs-$(CONFIG_CIFS_ALLOW_INSECURE_LEGACY) += \
+ 
  cifs-$(CONFIG_CIFS_COMPRESSION) += compress.o compress/lz77.o
  
- #
--# Build the SMB2 error mapping table from smb2status.h
-+# Build the CIFS/SMB error mapping tables from header file annotations
- #
--$(obj)/smb2_mapping_table.c: $(src)/../common/smb2status.h \
--			    $(src)/gen_smb2_mapping
--	$(call cmd,gen_smb2_mapping)
++#
++# Build the SMB1 error mapping tables from nterr.h and smberr.h
++#
 +quiet_cmd_gen_map = GEN     $@
-+      cmd_gen_map = perl $(src)/gen_error_map.pl $(MAP_MODE) $< $@
- 
--$(obj)/smb2maperror.o: $(obj)/smb2_mapping_table.c
++      cmd_gen_map = perl $(src)/gen_smb1_mapping $(MAP_MODE) $< $@
++
 +$(obj)/smb1_mapping_table.c: MAP_MODE := smb1-nt
-+$(obj)/smb1_mapping_table.c: $(src)/nterr.h $(src)/gen_error_map.pl FORCE
++$(obj)/smb1_mapping_table.c: $(src)/nterr.h $(src)/gen_smb1_mapping FORCE
 +	$(call if_changed,gen_map)
 +
-+$(obj)/smberr_dos_map.h: MAP_MODE := smb1-posix-ERRDOS
-+$(obj)/smberr_dos_map.h: $(src)/smberr.h $(src)/gen_error_map.pl FORCE
-+	$(call if_changed,gen_map)
++$(obj)/smb1maperror.o: $(obj)/smb1_mapping_table.c
 +
-+$(obj)/smberr_srv_map.h: MAP_MODE := smb1-posix-ERRSRV
-+$(obj)/smberr_srv_map.h: $(src)/smberr.h $(src)/gen_error_map.pl FORCE
-+	$(call if_changed,gen_map)
- 
--quiet_cmd_gen_smb2_mapping = GEN     $@
--      cmd_gen_smb2_mapping = perl $(src)/gen_smb2_mapping $< $@
-+$(obj)/smb2_mapping_table.c: MAP_MODE := smb2-status
-+$(obj)/smb2_mapping_table.c: $(srctree)/fs/smb/common/smb2status.h $(src)/gen_error_map.pl FORCE
-+	$(call if_changed,gen_map)
-+
-+$(obj)/smb1maperror.o: $(obj)/smb1_mapping_table.c $(obj)/smberr_dos_map.h $(obj)/smberr_srv_map.h
-+$(obj)/smb2maperror.o: $(obj)/smb2_mapping_table.c
++targets += smb1_mapping_table.c
+ #
+ # Build the SMB2 error mapping table from smb2status.h
+ #
+@@ -58,4 +71,4 @@ quiet_cmd_gen_smb2_mapping = GEN     $@
  
  obj-$(CONFIG_SMB_KUNIT_TESTS) += smb2maperror_test.o
  
 -clean-files	+= smb2_mapping_table.c
-+targets += smb1_mapping_table.c smberr_dos_map.h smberr_srv_map.h smb2_mapping_table.c
-+clean-files	+= smb2_mapping_table.c smb1_mapping_table.c smberr_dos_map.h smberr_srv_map.h
-diff --git a/fs/smb/client/gen_error_map.pl b/fs/smb/client/gen_error_map.pl
++clean-files	+= smb2_mapping_table.c smb1_mapping_table.c
+diff --git a/fs/smb/client/gen_smb1_mapping b/fs/smb/client/gen_smb1_mapping
 new file mode 100644
-index 000000000000..afdbb474c89e
+index 000000000000..5b77d6cbe735
 --- /dev/null
-+++ b/fs/smb/client/gen_error_map.pl
-@@ -0,0 +1,84 @@
++++ b/fs/smb/client/gen_smb1_mapping
+@@ -0,0 +1,46 @@
 +#!/usr/bin/perl -w
 +# SPDX-License-Identifier: GPL-2.0-or-later
 +#
-+# Unified script to generate CIFS/SMB error mapping tables.
++# Script to generate SMB1 error mapping tables.
++#
++# Copyright (C) 2026 KylinSoft Corporation. All Rights Reserved.
++# Written by Huiwen He (hehuiwen@kylinos.cn)
 +#
 +use strict;
 +
@@ -106,30 +92,6 @@ index 000000000000..afdbb474c89e
 +            push @list, { val => $val, name => $name, class => $class, code => $code };
 +        }
 +    }
-+} elsif ($mode eq "smb2-status") {
-+    # Logic from gen_smb2_mapping
-+    while (<$in>) {
-+        if (m!^#define\s*([A-Za-z0-9_]+)\s+cpu_to_le32[(]([0-9a-fA-Fx]+)[)]\s+//\s+([-A-Z0-9_]+)!) {
-+            my ($status, $code_hex, $error) = ($1, $2, $3);
-+            next if ($status =~ /^STATUS_SEVERITY/);
-+            push @list, { val => hex($code_hex), name => $status, error => $error, code_hex => $code_hex };
-+        }
-+    }
-+} elsif ($mode =~ /^smb1-posix-(ERRDOS|ERRSRV)$/) {
-+    # Logic from our previous generate_smberr_posix_map.pl
-+    my $target_class = $1;
-+    my $current_class = "";
-+    while (<$in>) {
-+        if (m!generated with the ERRDOS error class!) { $current_class = "ERRDOS"; }
-+        elsif (m!generated with the ERRSRV error class!) { $current_class = "ERRSRV"; }
-+        next if ($current_class ne $target_class);
-+
-+        if (m!^#define\s+([A-Za-z0-9_]+)\s+([0-9a-fA-FxX]+)\s*//\s*(\S+)!) {
-+            my ($name, $val_str, $error) = ($1, $2, $3);
-+            my $val = ($val_str =~ /^0x/i) ? hex($val_str) : $val_str;
-+            push @list, { val => $val, name => $name, error => $error };
-+        }
-+    }
 +}
 +close($in);
 +
@@ -143,210 +105,13 @@ index 000000000000..afdbb474c89e
 +    foreach my $e (@list) {
 +        printf $out "\t{ %s, %s, %s, \"%s\" },\n", $e->{class}, $e->{code}, $e->{name}, $e->{name};
 +    }
-+} elsif ($mode eq "smb2-status") {
-+    my $full_status = "";
-+    for (my $i = 0; $i < scalar @list; $i++) {
-+        my $e = $list[$i];
-+        next if ($e->{val} == 0);
-+        $full_status .= $e->{name};
-+        if ($i < $#list && $list[$i+1]->{val} == $e->{val}) {
-+            $full_status .= " or ";
-+            next;
-+        }
-+        printf $out "{ %s, %s, \"%s\" },\n", $e->{code_hex}, $e->{error}, $full_status;
-+        $full_status = "";
-+    }
-+} elsif ($mode =~ /^smb1-posix-/) {
-+    foreach my $e (@list) {
-+        printf $out "\t{%s, %s},\n", $e->{name}, $e->{error};
-+    }
 +}
 +close($out);
-diff --git a/fs/smb/client/gen_smb2_mapping b/fs/smb/client/gen_smb2_mapping
-deleted file mode 100644
-index eb9fa727ddd8..000000000000
---- a/fs/smb/client/gen_smb2_mapping
-+++ /dev/null
-@@ -1,86 +0,0 @@
--#!/usr/bin/perl -w
--# SPDX-License-Identifier: GPL-2.0-or-later
--#
--# Generate an SMB2 status -> error mapping table,
--# sorted by NT status code (cpu-endian, ascending).
--#
--# Copyright (C) 2025 Red Hat, Inc. All Rights Reserved.
--# Written by David Howells (dhowells@redhat.com)
--#
--use strict;
--
--if ($#ARGV != 1) {
--	print STDERR "Format: ", $0, " <in-h-file> <out-c-file>\n";
--	exit(2);
--}
--
--my %statuses = ();
--my @list = ();
--
--#
--# Read the file
--#
--open IN_FILE, "<$ARGV[0]" || die;
--while (<IN_FILE>) {
--	chomp;
--
--	if (m!^#define\s*([A-Za-z0-9_]+)\s+cpu_to_le32[(]([0-9a-fA-Fx]+)[)]\s+//\s+([-A-Z0-9_]+)!) {
--		my $status = $1;
--		my $code = $2;
--		my $ncode = hex($2);
--		my $error = $3;
--		my $s;
--
--		next if ($status =~ /^STATUS_SEVERITY/);
--
--		die "Duplicate status $status"
--			if exists($statuses{$status});
--
--		my %s = (
--			status => $status,
--			code   => $code,
--			ncode  => $ncode,
--			error  => $error
--		);
--		$statuses{$status} = \%s;
--		push @list, \%s;
--	}
--}
--close IN_FILE || die;
--
--
--@list = sort( { $a->{ncode} <=> $b->{ncode} } @list);
--
--open OUT_FILE, ">$ARGV[1]" || die;
--my $list_size = scalar @list;
--my $full_status = "";
--for (my $i = 0; $i < $list_size; $i++) {
--	my $entry = $list[$i];
--	my $status = $entry->{status};
--	my $code   = $entry->{code};
--	my $ncode  = $entry->{ncode};
--	my $error  = $entry->{error};
--
--	next if ($ncode == 0);
--
--	$full_status .= $status;
--	# There may be synonyms
--	if ($i < $list_size - 1) {
--		my $next_entry = $list[$i + 1];
--		my $next_ncode = $next_entry->{ncode};
--		if ($next_ncode == $ncode) {
--			$full_status .= " or ";
--			next;
--		}
--	}
--
--	my $pad = " ";
--	if (length($full_status) < 40) {
--		my $n = 40 - length($full_status);
--		$pad = "\t" x ((($n-1) / 8) + 1);
--	}
--	print(OUT_FILE "{ $code, $error, \"$full_status\" },\n");
--
--	$full_status = "";
--}
--close OUT_FILE || die;
 diff --git a/fs/smb/client/smb1maperror.c b/fs/smb/client/smb1maperror.c
-index e1964fd2b85e..0f2dc5244cb9 100644
+index e1964fd2b85e..0ef472ba017b 100644
 --- a/fs/smb/client/smb1maperror.c
 +++ b/fs/smb/client/smb1maperror.c
-@@ -20,85 +20,12 @@ struct smb_to_posix_error {
- };
- 
- static const struct smb_to_posix_error mapping_table_ERRDOS[] = {
--	{ERRbadfunc, -EINVAL},
--	{ERRbadfile, -ENOENT},
--	{ERRbadpath, -ENOTDIR},
--	{ERRnofids, -EMFILE},
--	{ERRnoaccess, -EACCES},
--	{ERRbadfid, -EBADF},
--	{ERRbadmcb, -EIO},
--	{ERRnomem, -EREMOTEIO},
--	{ERRbadmem, -EFAULT},
--	{ERRbadenv, -EFAULT},
--	{ERRbadformat, -EINVAL},
--	{ERRbadaccess, -EACCES},
--	{ERRbaddata, -EIO},
--	{ERRbaddrive, -ENXIO},
--	{ERRremcd, -EACCES},
--	{ERRdiffdevice, -EXDEV},
--	{ERRnofiles, -ENOENT},
--	{ERRwriteprot, -EROFS},
--	{ERRbadshare, -EBUSY},
--	{ERRlock, -EACCES},
--	{ERRunsup, -EINVAL},
--	{ERRnosuchshare, -ENXIO},
--	{ERRfilexists, -EEXIST},
--	{ERRinvparm, -EINVAL},
--	{ERRdiskfull, -ENOSPC},
--	{ERRinvname, -ENOENT},
--	{ERRunknownlevel, -EOPNOTSUPP},
--	{ERRdirnotempty, -ENOTEMPTY},
--	{ERRnotlocked, -ENOLCK},
--	{ERRcancelviolation, -ENOLCK},
--	{ERRalreadyexists, -EEXIST},
--	{ERRmoredata, -EOVERFLOW},
--	{ERReasnotsupported, -EOPNOTSUPP},
--	{ErrQuota, -EDQUOT},
--	{ErrNotALink, -ENOLINK},
--	{ERRnetlogonNotStarted, -ENOPROTOOPT},
--	{ERRsymlink, -EOPNOTSUPP},
--	{ErrTooManyLinks, -EMLINK},
-+#include "smberr_dos_map.h"
- 	{0, 0}
- };
- 
- static const struct smb_to_posix_error mapping_table_ERRSRV[] = {
--	{ERRerror, -EIO},
--	{ERRbadpw, -EACCES},  /* was EPERM */
--	{ERRbadtype, -EREMOTE},
--	{ERRaccess, -EACCES},
--	{ERRinvtid, -ENXIO},
--	{ERRinvnetname, -ENXIO},
--	{ERRinvdevice, -ENXIO},
--	{ERRqfull, -ENOSPC},
--	{ERRqtoobig, -ENOSPC},
--	{ERRqeof, -EIO},
--	{ERRinvpfid, -EBADF},
--	{ERRsmbcmd, -EBADRQC},
--	{ERRsrverror, -EIO},
--	{ERRbadBID, -EIO},
--	{ERRfilespecs, -EINVAL},
--	{ERRbadLink, -EIO},
--	{ERRbadpermits, -EINVAL},
--	{ERRbadPID, -ESRCH},
--	{ERRsetattrmode, -EINVAL},
--	{ERRpaused, -EHOSTDOWN},
--	{ERRmsgoff, -EHOSTDOWN},
--	{ERRnoroom, -ENOSPC},
--	{ERRrmuns, -EUSERS},
--	{ERRtimeout, -ETIME},
--	{ERRnoresource, -EREMOTEIO},
--	{ERRtoomanyuids, -EUSERS},
--	{ERRbaduid, -EACCES},
--	{ERRusempx, -EIO},
--	{ERRusestd, -EIO},
--	{ERR_NOTIFY_ENUM_DIR, -ENOBUFS},
--	{ERRnoSuchUser, -EACCES},
--	{ERRaccountexpired, -EKEYEXPIRED},
--	{ERRbadclient, -EACCES},
--	{ERRbadLogonTime, -EACCES},
--	{ERRpasswordExpired, -EKEYEXPIRED},
--
--	{ERRnosupport, -EINVAL},
-+#include "smberr_srv_map.h"
- 	{0, 0}
- };
- 
-@@ -110,555 +37,10 @@ static const struct {
+@@ -110,555 +110,10 @@ static const struct {
  	__u8 dos_class;
  	__u16 dos_code;
  	__u32 ntstatus;

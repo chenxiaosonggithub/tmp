@@ -1,7 +1,7 @@
-From f92dbf806ba0851940519e19cab95bc299916068 Mon Sep 17 00:00:00 2001
+From 61dfef854ddd449dce95d6943e279d7cd9d0856e Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
 Date: Tue, 17 Feb 2026 22:38:00 +0800
-Subject: [PATCH 1/7] smb/client: annotate nterr.h with DOS error codes
+Subject: [PATCH 1/8] smb/client: annotate nterr.h with DOS error codes
 
 Add comments to NT_STATUS definitions in nterr.h indicating the
 corresponding DOS error class and code.
