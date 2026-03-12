@@ -58,6 +58,11 @@ add_swap()
 	sudo vi /etc/fstab
 }
 
+setup_nginx()
+{
+	htpasswd -c /etc/nginx/.htpasswd chenxiaosong
+}
+
 physical_common()
 {
 	add_swap
@@ -160,6 +165,8 @@ fedora_docker()
 	sudo dnf install -y nginx pandoc jq httpd-tools
 	sudo dnf install bash-completion -y
 
+	setup_nginx
+
 	if [ ! -d "/home/chenxiaosong/code/global-6.6.14" ]; then
 		cd /home/chenxiaosong/code
 		wget https://ftp.gnu.org/pub/gnu/global/global-6.6.14.tar.gz
@@ -179,6 +186,8 @@ ubuntu_docker()
 	sudo apt install -y vim git build-essential qemu-system flex bison bc kmod pahole libelf-dev libssl-dev libncurses-dev zstd
 	apt install bash-completion -y # 为了解决docker 中git不会自动补全
 	sudo apt install -y nginx pandoc jq apache2-utils
+
+	setup_nginx
 
 	apt install -y language-pack-zh-hans fonts-wqy-zenhei fonts-wqy-microhei
 	echo "export LANG=zh_CN.UTF-8" >> ~/.bashrc
@@ -258,7 +267,7 @@ fedora_physical()
 	docker pull fedora:latest
 	docker tag fedora:latest raw-fedora:latest
 	docker tag fedora:latest workspace-fedora:latest
-	docker rmi fedora:latest (或 docker image rm fedora:latest)
+	docker rmi fedora:latest # (或 docker image rm fedora:latest)
 	# 启动和更新镜像请查看以下两个脚本:
 	#   /home/chenxiaosong/code/blog/course/gnu-linux/src/start-docker.sh
 	#   /home/chenxiaosong/code/blog/course/gnu-linux/src/update-docker-image.sh
@@ -284,6 +293,7 @@ ubuntu_physical()
 	sudo systemctl enable ssh
 	sudo systemctl restart ssh
 
+	setup_nginx
 	physical_common
 
 	cfg_proxy
@@ -306,7 +316,7 @@ EOF
 	docker pull ubuntu:24.04
 	docker tag ubuntu:24.04 raw-ubuntu:24.04
 	docker tag ubuntu:24.04 workspace-ubuntu:24.04
-	docker rmi ubuntu:24.04 (或 docker image rm ubuntu:24.04)
+	docker rmi ubuntu:24.04 # (或 docker image rm ubuntu:24.04)
 	# 启动和更新镜像请参考以下两个脚本(需要修改docker_name和image_name):
 	#   /home/chenxiaosong/code/blog/course/gnu-linux/src/start-docker.sh
 	#   /home/chenxiaosong/code/blog/course/gnu-linux/src/update-docker-image.sh
