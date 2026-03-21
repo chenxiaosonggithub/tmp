@@ -1,4 +1,4 @@
-From ab686805495ab7f9d945626eb7fccab7d1bd65e6 Mon Sep 17 00:00:00 2001
+From 7828881bd8c0c2622e0b7e44f5df02872cbb5c68 Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
 Date: Wed, 18 Feb 2026 00:30:14 +0800
 Subject: [PATCH 5/8] smb/client: replace nt_errs with ntstatus_to_dos_map
@@ -745,7 +745,7 @@ index 2045a66e55fd..fd5c91e822cb 100644
  #define NT_ERROR_INVALID_PARAMETER     0x0057
  #define NT_ERROR_INSUFFICIENT_BUFFER   0x007a
 diff --git a/fs/smb/client/smb1maperror.c b/fs/smb/client/smb1maperror.c
-index 0f2dc5244cb9..547ecbcb0ecb 100644
+index 5cc27b52e7d8..5f8dc33e8ff6 100644
 --- a/fs/smb/client/smb1maperror.c
 +++ b/fs/smb/client/smb1maperror.c
 @@ -33,12 +33,7 @@ static const struct smb_to_posix_error mapping_table_ERRSRV[] = {

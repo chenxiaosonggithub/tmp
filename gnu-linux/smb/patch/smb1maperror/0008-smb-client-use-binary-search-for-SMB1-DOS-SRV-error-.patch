@@ -1,8 +1,8 @@
-From a8311aba86bb872ae5b5349448c03fc8d86d9b41 Mon Sep 17 00:00:00 2001
+From 7c1c0b75abe7a22f1c9936779809b8361f3d63d2 Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
 Date: Wed, 18 Feb 2026 00:31:38 +0800
-Subject: [PATCH 7/8] smb/client: optimize SMB1 error mapping with binary
- search
+Subject: [PATCH 8/8] smb/client: use binary search for SMB1 DOS/SRV error
+ mapping
 
 Currently, map_smb_to_linux_error() uses linear searches for both
 mapping_table_ERRDOS and mapping_table_ERRSRV.
@@ -21,7 +21,7 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  1 file changed, 29 insertions(+), 29 deletions(-)
 
 diff --git a/fs/smb/client/smb1maperror.c b/fs/smb/client/smb1maperror.c
-index be99d6eaf5cd..f2f8f5fffeb4 100644
+index 0f8e013655c8..92f0205aed69 100644
 --- a/fs/smb/client/smb1maperror.c
 +++ b/fs/smb/client/smb1maperror.c
 @@ -8,6 +8,7 @@
@@ -36,31 +36,31 @@ index be99d6eaf5cd..f2f8f5fffeb4 100644
  	int posix_code;
  };
  
-+static __always_inline int smb1_posix_error_cmp(const void *key, const void *element)
++static __always_inline int smb1_posix_error_cmp(const void *_key, const void *_pivot)
 +{
-+	__u16 k = *(__u16 *)key;
-+	const struct smb_to_posix_error *e = element;
++	__u16 key = *(__u16 *)_key;
++	const struct smb_to_posix_error *pivot = _pivot;
 +
-+	if (k < e->smb_err)
++	if (key < pivot->smb_err)
 +		return -1;
-+	if (k > e->smb_err)
++	if (key > pivot->smb_err)
 +		return 1;
 +	return 0;
 +}
 +
  static const struct smb_to_posix_error mapping_table_ERRDOS[] = {
- #include "smberr_dos_map.h"
+ #include "smberr_dos_map.c"
 -	{0, 0}
  };
  
  static const struct smb_to_posix_error mapping_table_ERRSRV[] = {
- #include "smberr_srv_map.h"
+ #include "smberr_srv_map.c"
 -	{0, 0}
  };
  
  /*****************************************************************************
-@@ -62,11 +73,22 @@ ntstatus_to_dos(__u32 ntstatus)
- 	return NULL;
+@@ -59,11 +70,22 @@ ntstatus_to_dos(__u32 ntstatus)
+ 			       ntstatus_to_dos_cmp);
  }
  
 +static int
@@ -83,7 +83,7 @@ index be99d6eaf5cd..f2f8f5fffeb4 100644
  	int rc = -EIO;	/* if transport error smb error may not be set */
  	__u8 smberrclass;
  	__u16 smberrcode;
-@@ -105,34 +127,12 @@ map_smb_to_linux_error(char *buf, bool logErr)
+@@ -102,34 +124,12 @@ map_smb_to_linux_error(char *buf, bool logErr)
  	/* DOS class smb error codes - map DOS */
  	if (smberrclass == ERRDOS) {
  		/* 1 byte field no need to byte reverse */

@@ -5,30 +5,26 @@
   - 总体可以
 
 - 2. smb/client: automate SMB1 NT status to DOS error mapping
-  - gen_smb1_mapping脚本别人一看就知道是ai写的，不能只是大致理解意思，每一行都要仔细检查，可读性和规范性都要保证
-  - gen_smb1_mapping缩进要用tab，而不是4个空格
-  - gen_smb1_mapping脚本中的`if ($mode eq "smb1-nt")`判断是不是可以删掉
-  - 注释`# Logic from generate_smb1_maperror.pl`，generate_smb1_maperror.pl脚本不存在吧？
-  - fs/smb/client/Makefile 参考后面的smb2写法，保持一致
+  - .gitignore中把smb1_mapping_table.c放前面，已修改
+  - smb1-generated-y命名太奇怪了，-y是什么意思
+  - 为什么要加`targets +=`这一句，能不能去掉，和smb2一样
+  - $(call if_changed,gen_smb1_mapping) 能不能改成$(call cmd,gen_smb1_mapping)
+  - Makefile请改成和smb2一样的处理，比较容易被接受
 
 - 3. smb/client: annotate smberr.h with POSIX error codes
   - 总体可以
 
 - 4. smb/client: automate SMB1 POSIX error mapping via unified script
-  - 和第二个补丁一样，gen_smb1_mapping缩进要用tab，而不是4个空格
-  - 和第二个补丁一样，不能让人一看就知道是ai写的，每一行都要仔细检查，可读性和规范性都要保证
+  - .gitignore是不是还要加上smberr_dos_map.c和smberr_srv_map.c
 
 - 5. smb/client: replace nt_errs with ntstatus_to_dos_map
   - 总体可以
 
-- 6.  smb/client: avoid redundant lookups in cifs_print_status()
-  - 和上一版本一样，以下两个问题
-  - 能不能不重构？因为后面会用二分查找替换
-  - avoiding redundant lookups: 怎么理解？哪里有减少冗余的查找，减少了多少？
+- 6.  smb/client: refactor ntstatus_to_dos() to return mapping entry
+  - 总体可以
 
-- 7. smb/client: optimize SMB1 error mapping with binary search
-  - 比较函数smb1_posix_error_cmp()中的变量命名最好和cmp_smb2_status()中的保持一致，参考: https://lore.kernel.org/linux-cifs/20260106071507.1420900-5-chenxiaosong.chenxiaosong@linux.dev/
+- 7. smb/client: use binary search for NT status to DOS mapping
+  - 总体可以
 
-- 8. smb/client: optimize NT status lookup with binary search
-  - 和上一个补丁一样，不要自己写二分查找逻辑，直接用__inline_bsearch()接口，参考: https://lore.kernel.org/linux-cifs/20260106071507.1420900-5-chenxiaosong.chenxiaosong@linux.dev/
-  - ntstatus_to_dos_cmp()中的变量命名最好和cmp_smb2_status()中的保持一致，参考: https://lore.kernel.org/linux-cifs/20260106071507.1420900-5-chenxiaosong.chenxiaosong@linux.dev/
+- 8. smb/client: use binary search for SMB1 DOS/SRV error mapping
+  - 考虑把__u32换成u32 ?

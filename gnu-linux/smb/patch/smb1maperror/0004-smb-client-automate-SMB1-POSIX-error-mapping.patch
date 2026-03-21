@@ -1,8 +1,7 @@
-From dde2bbe0d2dabd49c956be09e5815cc88e138900 Mon Sep 17 00:00:00 2001
+From 025a09435ba723c7b7a1cfb33a699e6c70ee5c34 Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
 Date: Mon, 9 Mar 2026 15:41:16 +0800
-Subject: [PATCH 4/8] smb/client: automate SMB1 POSIX error mapping via unified
- script
+Subject: [PATCH 4/8] smb/client: automate SMB1 POSIX error mapping
 
 Extend the 'gen_smb1_mapping' script to support generating POSIX error
 mapping tables for both ERRDOS and ERRSRV classes. The script parses
@@ -13,87 +12,98 @@ This ensures that the mapping logic remains synchronized with the
 source headers and facilitates faster error mapping lookups via future
 binary search implementation.
 
-Update the Makefile to generate 'smberr_dos_map.h' and 'smberr_srv_map.h'.
-Modify 'smb1maperror.c' to use these generated headers, allowing for
-the removal of the manual 'mapping_table_ERRDOS' and
-'mapping_table_ERRSRV' arrays.
+Update the Makefile to generate 'smberr_dos_map.c' and 'smberr_srv_map.c'.
+Modify 'smb1maperror.c' to use these generated tables, allowing for the
+removal of the manual 'mapping_table_ERRDOS' and 'mapping_table_ERRSRV'
+arrays.
 
 Signed-off-by: Huiwen He <hehuiwen@kylinos.cn>
 Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
- fs/smb/client/Makefile         | 14 +++++--
- fs/smb/client/gen_smb1_mapping | 19 +++++++++
+ fs/smb/client/Makefile         | 12 +++++-
+ fs/smb/client/gen_smb1_mapping | 25 ++++++++++-
  fs/smb/client/smb1maperror.c   | 77 +---------------------------------
- 3 files changed, 32 insertions(+), 78 deletions(-)
+ 3 files changed, 35 insertions(+), 79 deletions(-)
 
 diff --git a/fs/smb/client/Makefile b/fs/smb/client/Makefile
-index abb7e29faceb..8c36a7e5a447 100644
+index 959cb92e3eb0..c92897a6b7c3 100644
 --- a/fs/smb/client/Makefile
 +++ b/fs/smb/client/Makefile
-@@ -54,9 +54,17 @@ $(obj)/smb1_mapping_table.c: MAP_MODE := smb1-nt
+@@ -45,13 +45,21 @@ cifs-$(CONFIG_CIFS_ALLOW_INSECURE_LEGACY) += \
+ cifs-$(CONFIG_CIFS_COMPRESSION) += compress.o compress/lz77.o
+ 
+ #
+-# Build the SMB1 error mapping tables from nterr.h
++# Build the SMB1 error mapping tables from nterr.h and smberr.h
+ #
+-smb1-generated-y := smb1_mapping_table.c
++smb1-generated-y := smb1_mapping_table.c \
++                    smberr_dos_map.c \
++                    smberr_srv_map.c
+ 
  $(obj)/smb1_mapping_table.c: $(src)/nterr.h $(src)/gen_smb1_mapping FORCE
- 	$(call if_changed,gen_map)
+ 	$(call if_changed,gen_smb1_mapping)
  
--$(obj)/smb1maperror.o: $(obj)/smb1_mapping_table.c
-+$(obj)/smberr_dos_map.h: MAP_MODE := smb1-posix-ERRDOS
-+$(obj)/smberr_dos_map.h: $(src)/smberr.h $(src)/gen_smb1_mapping FORCE
-+	$(call if_changed,gen_map)
++$(obj)/smberr_dos_map.c: $(src)/smberr.h $(src)/gen_smb1_mapping FORCE
++	$(call if_changed,gen_smb1_mapping)
 +
-+$(obj)/smberr_srv_map.h: MAP_MODE := smb1-posix-ERRSRV
-+$(obj)/smberr_srv_map.h: $(src)/smberr.h $(src)/gen_smb1_mapping FORCE
-+	$(call if_changed,gen_map)
++$(obj)/smberr_srv_map.c: $(src)/smberr.h $(src)/gen_smb1_mapping FORCE
++	$(call if_changed,gen_smb1_mapping)
 +
-+$(obj)/smb1maperror.o: $(obj)/smb1_mapping_table.c $(obj)/smberr_dos_map.h $(obj)/smberr_srv_map.h
+ $(obj)/smb1maperror.o: $(addprefix $(obj)/, $(smb1-generated-y))
  
--targets += smb1_mapping_table.c
-+targets += smb1_mapping_table.c smberr_dos_map.h smberr_srv_map.h
- #
- # Build the SMB2 error mapping table from smb2status.h
- #
-@@ -71,4 +79,4 @@ quiet_cmd_gen_smb2_mapping = GEN     $@
- 
- obj-$(CONFIG_SMB_KUNIT_TESTS) += smb2maperror_test.o
- 
--clean-files	+= smb2_mapping_table.c smb1_mapping_table.c
-+clean-files	+= smb2_mapping_table.c smb1_mapping_table.c smberr_dos_map.h smberr_srv_map.h
+ quiet_cmd_gen_smb1_mapping = GEN     $@
 diff --git a/fs/smb/client/gen_smb1_mapping b/fs/smb/client/gen_smb1_mapping
-index 5b77d6cbe735..b591eceee29f 100644
+index 8a3576205821..436c62c8090c 100644
 --- a/fs/smb/client/gen_smb1_mapping
 +++ b/fs/smb/client/gen_smb1_mapping
-@@ -29,6 +29,21 @@ if ($mode eq "smb1-nt") {
-             push @list, { val => $val, name => $name, class => $class, code => $code };
-         }
-     }
-+} elsif ($mode =~ /^smb1-posix-(ERRDOS|ERRSRV)$/) {
-+    # Logic for parsing annotated smberr.h
-+    my $target_class = $1;
-+    my $current_class = "";
-+    while (<$in>) {
-+        if (m!generated with the ERRDOS error class!) { $current_class = "ERRDOS"; }
-+        elsif (m!generated with the ERRSRV error class!) { $current_class = "ERRSRV"; }
-+        next if ($current_class ne $target_class);
-+
-+        if (m!^#define\s+([A-Za-z0-9_]+)\s+([0-9a-fA-FxX]+)\s*//\s*(-[A-Z0-9_]+)!) {
-+            my ($name, $val_str, $error) = ($1, $2, $3);
-+            my $val = ($val_str =~ /^0x/i) ? hex($val_str) : $val_str;
-+            push @list, { val => $val, name => $name, error => $error };
-+        }
-+    }
+@@ -14,6 +14,7 @@ my $out_file = shift || die "Usage: $0 <in-file> <out-file>";
+ my $input_name  = (split m|/|, $in_file)[-1];
+ my $script_name = (split m|/|, $0)[-1];
+ my @list     = ();
++my $current_class = "";
+ 
+ # Parse annotated entries from the input file
+ open(my $in, "<", $in_file) or die "Cannot open $in_file: $!";
+@@ -29,6 +30,17 @@ if ($in_file =~ /nterr\.h$/) {
+ 			push @list, { val => $val, name => $name, class => $class, code => $code };
+ 		}
+ 	}
++} elsif ($in_file =~ /smberr\.h$/) {
++	while (<$in>) {
++		if (/generated with the (\w+) error class/) {
++			$current_class = $1;
++		}
++		if (/^\s*#define\s+(ERR[A-Za-z0-9_]+)\s+([0-9a-fA-FxX]+)\s*\/\/\s*(-[A-Z0-9_]+)/) {
++			my ($name, $val_str, $error) = ($1, $2, $3);
++			my $val = ($val_str =~ /^0x/i) ? hex($val_str) : $val_str;
++			push @list, { val => $val, name => $name, error => $error, class => $current_class };
++		}
++	}
  }
  close($in);
  
-@@ -42,5 +57,9 @@ if ($mode eq "smb1-nt") {
-     foreach my $e (@list) {
-         printf $out "\t{ %s, %s, %s, \"%s\" },\n", $e->{class}, $e->{code}, $e->{name}, $e->{name};
-     }
-+} elsif ($mode =~ /^smb1-posix-/) {
-+    foreach my $e (@list) {
-+        printf $out "\t{%s, %s},\n", $e->{name}, $e->{error};
-+    }
+@@ -38,7 +50,16 @@ close($in);
+ # Generate the C mapping table output
+ open(my $out, ">", $out_file) or die "Cannot open $out_file: $!";
+ print $out "/* Autogenerated from $input_name by $script_name */\n\n";
+-foreach my $e (@list) {
+-	printf $out "\t{ %s, %s, %s, \"%s\" },\n", $e->{class}, $e->{code}, $e->{name}, $e->{name};
++if ($in_file =~ /nterr\.h$/) {
++	foreach my $e (@list) {
++		printf $out "\t{ %s, %s, %s, \"%s\" },\n", $e->{class}, $e->{code}, $e->{name}, $e->{name};
++	}
++} elsif ($in_file =~ /smberr\.h$/) {
++	my $filter = ($out_file =~ /dos/) ? "ERRDOS" : ($out_file =~ /srv/ ? "ERRSRV" : "");
++	foreach my $e (@list) {
++		if (!$filter || $e->{class} eq $filter) {
++			printf $out "\t{%s, %s},\n", $e->{name}, $e->{error};
++		}
++	}
  }
  close($out);
 diff --git a/fs/smb/client/smb1maperror.c b/fs/smb/client/smb1maperror.c
-index 0ef472ba017b..0f2dc5244cb9 100644
+index 59229415c444..5cc27b52e7d8 100644
 --- a/fs/smb/client/smb1maperror.c
 +++ b/fs/smb/client/smb1maperror.c
 @@ -20,85 +20,12 @@ struct smb_to_posix_error {
@@ -138,7 +148,7 @@ index 0ef472ba017b..0f2dc5244cb9 100644
 -	{ERRnetlogonNotStarted, -ENOPROTOOPT},
 -	{ERRsymlink, -EOPNOTSUPP},
 -	{ErrTooManyLinks, -EMLINK},
-+#include "smberr_dos_map.h"
++#include "smberr_dos_map.c"
  	{0, 0}
  };
  
@@ -180,7 +190,7 @@ index 0ef472ba017b..0f2dc5244cb9 100644
 -	{ERRpasswordExpired, -EKEYEXPIRED},
 -
 -	{ERRnosupport, -EINVAL},
-+#include "smberr_srv_map.h"
++#include "smberr_srv_map.c"
  	{0, 0}
  };
  
