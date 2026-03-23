@@ -1,7 +1,7 @@
-From 71e26c069e6b4a3407afa513023a07de709ac489 Mon Sep 17 00:00:00 2001
+From cc7b527f269ad7e394d4b8d0e04f536966411598 Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
 Date: Mon, 23 Mar 2026 11:28:29 +0800
-Subject: [PATCH] smb/client: use if_changed for smb2_mapping_table.c
+Subject: [PATCH] smb/client: ensure smb2_mapping_table rebuild on cmd changes
 
 The current rule for smb2_mapping_table.c uses `$(call cmd,...)`, which
 fails to track command line modifications in the Makefile (e.g., modifying
