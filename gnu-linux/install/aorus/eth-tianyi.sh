@@ -1,1 +1,1 @@
-ssh chenxiaosong@10.42.20.206
+ssh chenxiaosong@172.21.20.206
