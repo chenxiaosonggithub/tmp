@@ -1,2 +1,2 @@
 mkdir ~/samba -p
-sudo mount -t cifs -o username=chenxiaosong,uid=$(id -u),gid=(id -g) //10.42.20.206/chenxiaosong ~/samba
+sudo mount -t cifs -o username=chenxiaosong,uid=$(id -u),gid=(id -g) //172.21.20.206/chenxiaosong ~/samba
