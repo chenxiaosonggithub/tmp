@@ -1,0 +1,174 @@
+From 8afd89b806ed3f299f907b52c40ae7460e89c021 Mon Sep 17 00:00:00 2001
+From: Youling Tang <tangyouling@kylinos.cn>
+Date: Thu, 26 Mar 2026 14:32:43 +0000
+Subject: [PATCH 3/3] smb/client: introduce KUnit test to check search result
+ of ntstatus_to_dos_map
+
+Check whether all elements can be correctly found in the array.
+
+Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/client/Makefile            |  1 +
+ fs/smb/client/smb1maperror.c      | 28 ++++++++++----
+ fs/smb/client/smb1maperror_test.c | 62 +++++++++++++++++++++++++++++++
+ fs/smb/client/smberr.h            |  5 +++
+ 4 files changed, 89 insertions(+), 7 deletions(-)
+ create mode 100644 fs/smb/client/smb1maperror_test.c
+
+diff --git a/fs/smb/client/Makefile b/fs/smb/client/Makefile
+index ef6cdc1b23e7..accf82f57ba9 100644
+--- a/fs/smb/client/Makefile
++++ b/fs/smb/client/Makefile
+@@ -74,6 +74,7 @@ $(obj)/smb2maperror.o: $(obj)/smb2_mapping_table.c
+ quiet_cmd_gen_smb2_mapping = GEN     $@
+       cmd_gen_smb2_mapping = perl $(src)/gen_smb2_mapping $< $@
+ 
++obj-$(CONFIG_SMB_KUNIT_TESTS) += smb1maperror_test.o
+ obj-$(CONFIG_SMB_KUNIT_TESTS) += smb2maperror_test.o
+ 
+ # Let Kbuild handle tracking and cleaning
+diff --git a/fs/smb/client/smb1maperror.c b/fs/smb/client/smb1maperror.c
+index bed20b0cc9b5..1790225d01dd 100644
+--- a/fs/smb/client/smb1maperror.c
++++ b/fs/smb/client/smb1maperror.c
+@@ -17,11 +17,6 @@
+ #include "nterr.h"
+ #include "cifs_debug.h"
+ 
+-struct smb_to_posix_error {
+-	__u16 smb_err;
+-	int posix_code;
+-};
+-
+ static __always_inline int smb1_posix_error_cmp(const void *_key, const void *_pivot)
+ {
+ 	__u16 key = *(__u16 *)_key;
+@@ -75,7 +70,7 @@ static const struct nt_err_code_struct ntstatus_to_dos_map[] = {
+ };
+ 
+ static const struct nt_err_code_struct *
+-ntstatus_to_dos(__u32 ntstatus)
++search_in_ntstatus_to_dos_map(__u32 ntstatus)
+ {
+ 
+ 	return __inline_bsearch(&ntstatus, ntstatus_to_dos_map,
+@@ -114,7 +109,7 @@ map_smb_to_linux_error(char *buf, bool logErr)
+ 		/* translate the newer STATUS codes to old style SMB errors
+ 		 * and then to POSIX errors */
+ 		__u32 err = le32_to_cpu(smb->Status.CifsError);
+-		const struct nt_err_code_struct *map = ntstatus_to_dos(err);
++		const struct nt_err_code_struct *map = search_in_ntstatus_to_dos_map(err);
+ 
+ 		if (map) {
+ 			if ((logErr && err != NT_STATUS_MORE_PROCESSING_REQUIRED) ||
+@@ -236,3 +231,22 @@ int __init smb1_init_maperror(void)
+ 
+ 	return rc;
+ }
++
++#if IS_ENABLED(CONFIG_SMB_KUNIT_TESTS)
++/* Previous prototype for eliminating the build warning. */
++const struct nt_err_code_struct *
++search_in_ntstatus_to_dos_map_test(__u32 ntstatus);
++
++const struct nt_err_code_struct *
++search_in_ntstatus_to_dos_map_test(__u32 ntstatus)
++{
++	return search_in_ntstatus_to_dos_map(ntstatus);
++}
++EXPORT_SYMBOL_GPL(search_in_ntstatus_to_dos_map_test);
++
++const struct nt_err_code_struct *ntstatus_to_dos_map_test = ntstatus_to_dos_map;
++EXPORT_SYMBOL_GPL(ntstatus_to_dos_map_test);
++
++unsigned int ntstatus_to_dos_num = ARRAY_SIZE(ntstatus_to_dos_map);
++EXPORT_SYMBOL_GPL(ntstatus_to_dos_num);
++#endif
+diff --git a/fs/smb/client/smb1maperror_test.c b/fs/smb/client/smb1maperror_test.c
+new file mode 100644
+index 000000000000..7d1d477a5f50
+--- /dev/null
++++ b/fs/smb/client/smb1maperror_test.c
+@@ -0,0 +1,62 @@
++
++// SPDX-License-Identifier: LGPL-2.1
++/*
++ *
++ *   KUnit tests of SMB1 maperror
++ *
++ *   Copyright (C) 2026 KylinSoft Co., Ltd. All rights reserved.
++ *   Author(s): Youling Tang <tangyouling@kylinos.cn>
++ *
++ */
++
++#include <kunit/test.h>
++#include "nterr.h"
++
++
++const struct nt_err_code_struct *
++search_in_ntstatus_to_dos_map_test(__u32 ntstatus);
++const struct nt_err_code_struct *ntstatus_to_dos_map_test;
++unsigned int ntstatus_to_dos_num;
++
++#define DEFINE_CHECK_SEARCH_FUNC(__struct_name, __field,		\
++				 __array, __num)			\
++static void __array ## _check_search(struct kunit *test)		\
++{									\
++	unsigned int i;							\
++	const struct __struct_name *expect, *result;			\
++									\
++	for (i = 0; i < __num; i++) {					\
++		expect = &__array[i];					\
++		result = search_in_ ## __array(expect->__field);	\
++		KUNIT_EXPECT_PTR_NE(test, NULL, result);		\
++		test_cmp_ ## __struct_name(test, expect, result);	\
++	}								\
++}
++
++static void test_cmp_nt_err_code_struct(struct kunit *test,
++					const struct nt_err_code_struct *expect,
++					const struct nt_err_code_struct *result)
++{
++	KUNIT_EXPECT_EQ(test, expect->dos_class, result->dos_class);
++	KUNIT_EXPECT_EQ(test, expect->dos_code, result->dos_code);
++	KUNIT_EXPECT_EQ(test, expect->ntstatus, result->ntstatus);
++	KUNIT_EXPECT_STREQ(test, expect->nt_errstr, result->nt_errstr);
++}
++
++/* ntstatus_to_dos_map_check_search */
++DEFINE_CHECK_SEARCH_FUNC(nt_err_code_struct, ntstatus, ntstatus_to_dos_map_test,
++			 ntstatus_to_dos_num);
++
++static struct kunit_case maperror_test_cases[] = {
++	KUNIT_CASE(ntstatus_to_dos_map_test_check_search),
++	{}
++};
++
++static struct kunit_suite maperror_suite = {
++	.name = "smb1_maperror",
++	.test_cases = maperror_test_cases,
++};
++
++kunit_test_suite(maperror_suite);
++
++MODULE_LICENSE("GPL");
+diff --git a/fs/smb/client/smberr.h b/fs/smb/client/smberr.h
+index 98074c64587d..02d065ff5b12 100644
+--- a/fs/smb/client/smberr.h
++++ b/fs/smb/client/smberr.h
+@@ -9,6 +9,11 @@
+  *
+  */
+ 
++struct smb_to_posix_error {
++	__u16 smb_err;
++	int posix_code;
++};
++
+ /* The request was successful. */
+ #define SUCCESS	0x00
+ /* Error is from the core DOS operating system set */
+-- 
+2.52.0
+
