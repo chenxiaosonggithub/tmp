@@ -1,10 +1,10 @@
-From 4681c69215155146aebd373039e2cd13d5442d8e Mon Sep 17 00:00:00 2001
+From a70e7cd62385ca325b394926096ce7c93f57c3c0 Mon Sep 17 00:00:00 2001
 From: Youling Tang <tangyouling@kylinos.cn>
 Date: Mon, 30 Mar 2026 03:53:37 +0000
-Subject: [PATCH 2/3] smb/client: check if mapping_table_ERRDOS and
+Subject: [PATCH] smb/client: check if mapping_table_ERRDOS and
  mapping_table_ERRSRV are sorted
 
-Although the array is sorted at build time, verify the ordering again
+Although the arrays are sorted at build time, verify the ordering again
 when cifs.ko is loaded to avoid potential regressions introduced by
 future script changes.
 
