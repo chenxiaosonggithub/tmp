@@ -1,6 +1,6 @@
-From 2d986f010b9e9f171f332a754ff841c32d77750e Mon Sep 17 00:00:00 2001
+From dba7fe6417f32360751d5ae56e7865a1ee4da49f Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
-Date: Tue, 31 Mar 2026 04:25:52 +0000
+Date: Tue, 31 Mar 2026 08:14:19 +0000
 Subject: [PATCH v2 00/12] smb: improve search speed of SMB1 maperror
 
 v1->v2:
@@ -16,11 +16,9 @@ When searching for the last element, the comparison counts are shown in the tabl
 |                    |Before  |After   |
 |                    |Patchset|Patchset|
 +--------------------+--------+--------+
-| ntstatus_to_dos_map|   525  |        |
-+--------------------+--------+    9   |
-|             nt_errs|   516  |        |
+| ntstatus_to_dos_map|   533  |    9    |
 +--------------------+--------+--------+
-|mapping_table_ERRDOS|    39  |    5   |
+|mapping_table_ERRDOS|    34  |    5   |
 +--------------------+--------+--------+
 |mapping_table_ERRSRV|    37  |    5   |
 +--------------------+--------+--------+
@@ -57,10 +55,10 @@ Youling Tang (4):
  fs/smb/client/nterr.c             |  704 -------------------
  fs/smb/client/nterr.h             | 1082 +++++++++++++++--------------
  fs/smb/client/smb1maperror.c      |  874 +++++------------------
- fs/smb/client/smb1maperror_test.c |   83 +++
+ fs/smb/client/smb1maperror_test.c |   82 +++
  fs/smb/client/smb1proto.h         |    9 +
  fs/smb/client/smberr.h            |  415 +++++++----
- 11 files changed, 1221 insertions(+), 2088 deletions(-)
+ 11 files changed, 1220 insertions(+), 2088 deletions(-)
  create mode 100644 fs/smb/client/gen_smb1_mapping
  delete mode 100644 fs/smb/client/nterr.c
  create mode 100644 fs/smb/client/smb1maperror_test.c
