@@ -1,4 +1,4 @@
-From c479926f157efccb78142428ab59c5468a4541fe Mon Sep 17 00:00:00 2001
+From 616b729340cbfc80f0324b343211f1768220e0a1 Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
 Date: Mon, 9 Mar 2026 15:41:16 +0800
 Subject: [PATCH v2 09/12] smb/client: autogenerate SMB1 DOS/SRV to POSIX error
@@ -60,10 +60,10 @@ index 220a97c8a488..d464033b1438 100644
  
  quiet_cmd_gen_smb1_mapping = GEN     $@
 diff --git a/fs/smb/client/gen_smb1_mapping b/fs/smb/client/gen_smb1_mapping
-index bfd3d4b8f509..e673dc2bfd2e 100644
+index a10b0c85ef07..39337018e6dd 100644
 --- a/fs/smb/client/gen_smb1_mapping
 +++ b/fs/smb/client/gen_smb1_mapping
-@@ -20,10 +20,12 @@ my $input_name  = (split m|/|, $in_file)[-1];
+@@ -21,10 +21,12 @@ my $input_name  = (split m|/|, $in_file)[-1];
  my $script_name = (split m|/|, $0)[-1];
  my @list     = ();
  my %seen     = ();
@@ -76,7 +76,7 @@ index bfd3d4b8f509..e673dc2bfd2e 100644
  	while (<$in>) {
  		my $re = qr{^\s*#define\s+(NT_STATUS_[A-Za-z0-9_]+)\s+(.+?)\s*} .
  			 qr{(?://\s*|/\*\s*)([A-Za-z0-9_]+)\s*,\s*([A-Za-z0-9_]+)};
-@@ -42,6 +44,18 @@ if ($in_file =~ /nterr\.h$/) {
+@@ -43,6 +45,18 @@ if ($in_file =~ /nterr\.h$/) {
  			push @list, { val => $val, name => $name, class => $class, code => $code };
  		}
  	}
@@ -95,7 +95,7 @@ index bfd3d4b8f509..e673dc2bfd2e 100644
  }
  close($in);
  
-@@ -72,5 +86,12 @@ if ($in_file =~ /nterr\.h$/) {
+@@ -73,5 +87,12 @@ if ($in_file =~ /nterr\.h$/) {
  
  		$full_names = "";
  	}
@@ -109,10 +109,10 @@ index bfd3d4b8f509..e673dc2bfd2e 100644
  }
  close($out);
 diff --git a/fs/smb/client/smb1maperror.c b/fs/smb/client/smb1maperror.c
-index 1b5347ec073b..765df0861d56 100644
+index 499cacfeba6d..ce3ab9d1c59a 100644
 --- a/fs/smb/client/smb1maperror.c
 +++ b/fs/smb/client/smb1maperror.c
-@@ -22,85 +22,20 @@ struct smb_to_posix_error {
+@@ -21,85 +21,20 @@ struct smb_to_posix_error {
  };
  
  static const struct smb_to_posix_error mapping_table_ERRDOS[] = {

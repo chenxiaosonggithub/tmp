@@ -1,4 +1,4 @@
-From f848d3e65ec911e63e819ffa5e923c2ed98cc892 Mon Sep 17 00:00:00 2001
+From b49ab20d416bd7459241287bb6e8cc3396e2d1aa Mon Sep 17 00:00:00 2001
 From: Youling Tang <tangyouling@kylinos.cn>
 Date: Thu, 26 Mar 2026 14:32:43 +0000
 Subject: [PATCH v2 07/12] smb/client: introduce KUnit test to check
@@ -10,15 +10,18 @@ Introduce CONFIG_SMB1_KUNIT_TESTS for smb1maperror_test.ko since
 smb1maperror.o is only built when CONFIG_CIFS_ALLOW_INSECURE_LEGACY
 is enabled.
 
+We are going to define 3 functions to check the search results, introduce
+the macro DEFINE_CHECK_SEARCH_FUNC() to reduce duplicate code.
+
 Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
 Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
  fs/smb/client/Kconfig             | 11 ++++++
  fs/smb/client/Makefile            |  1 +
  fs/smb/client/smb1maperror.c      | 19 ++++++++++
- fs/smb/client/smb1maperror_test.c | 60 +++++++++++++++++++++++++++++++
- fs/smb/client/smb1proto.h         |  4 +++
- 5 files changed, 95 insertions(+)
+ fs/smb/client/smb1maperror_test.c | 61 +++++++++++++++++++++++++++++++
+ fs/smb/client/smb1proto.h         |  4 ++
+ 5 files changed, 96 insertions(+)
  create mode 100644 fs/smb/client/smb1maperror_test.c
 
 diff --git a/fs/smb/client/Kconfig b/fs/smb/client/Kconfig
@@ -54,10 +57,10 @@ index 8560fe99ec2b..220a97c8a488 100644
  
  # Let Kbuild handle tracking and cleaning
 diff --git a/fs/smb/client/smb1maperror.c b/fs/smb/client/smb1maperror.c
-index 3e675a3c2b62..1b5347ec073b 100644
+index 0a945f9bf8de..499cacfeba6d 100644
 --- a/fs/smb/client/smb1maperror.c
 +++ b/fs/smb/client/smb1maperror.c
-@@ -289,3 +289,22 @@ int __init smb1_init_maperror(void)
+@@ -288,3 +288,22 @@ int __init smb1_init_maperror(void)
  
  	return rc;
  }
@@ -82,10 +85,10 @@ index 3e675a3c2b62..1b5347ec073b 100644
 +#endif
 diff --git a/fs/smb/client/smb1maperror_test.c b/fs/smb/client/smb1maperror_test.c
 new file mode 100644
-index 000000000000..bdc25c7fc391
+index 000000000000..f25008d149f5
 --- /dev/null
 +++ b/fs/smb/client/smb1maperror_test.c
-@@ -0,0 +1,60 @@
+@@ -0,0 +1,61 @@
 +// SPDX-License-Identifier: GPL-2.0-or-later
 +/*
 + *
@@ -93,6 +96,7 @@ index 000000000000..bdc25c7fc391
 + *
 + *   Copyright (C) 2026 KylinSoft Co., Ltd. All rights reserved.
 + *   Author(s): Youling Tang <tangyouling@kylinos.cn>
++ *              ChenXiaoSong <chenxiaosong@kylinos.cn>
 + *
 + */
 +

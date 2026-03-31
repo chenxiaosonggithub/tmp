@@ -1,4 +1,4 @@
-From abc94d37ea0714ef8663d79514d022d7ae41add7 Mon Sep 17 00:00:00 2001
+From 709fd11ac55cdc220aa8a2195f07157004166496 Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
 Date: Tue, 17 Feb 2026 23:40:33 +0800
 Subject: [PATCH v2 08/12] smb/client: annotate smberr.h with POSIX error codes

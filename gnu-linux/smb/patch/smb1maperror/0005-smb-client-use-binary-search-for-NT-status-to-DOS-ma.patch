@@ -1,4 +1,4 @@
-From 07f38b475098714104f6ec2a77e5e9101809dfa1 Mon Sep 17 00:00:00 2001
+From 8973255bb31335569baa37e3ef3a4f6e88b60a24 Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
 Date: Wed, 18 Feb 2026 00:34:30 +0800
 Subject: [PATCH v2 05/12] smb/client: use binary search for NT status to DOS
@@ -16,10 +16,10 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  1 file changed, 19 insertions(+), 13 deletions(-)
 
 diff --git a/fs/smb/client/smb1maperror.c b/fs/smb/client/smb1maperror.c
-index 0f0ffe0b6075..818d1a88f11c 100644
+index c906f233ac64..fb985d2fc0d9 100644
 --- a/fs/smb/client/smb1maperror.c
 +++ b/fs/smb/client/smb1maperror.c
-@@ -107,6 +107,19 @@ static const struct smb_to_posix_error mapping_table_ERRSRV[] = {
+@@ -106,6 +106,19 @@ static const struct smb_to_posix_error mapping_table_ERRSRV[] = {
  /*****************************************************************************
   *convert a NT status code to a dos class/code
   *****************************************************************************/
@@ -39,7 +39,7 @@ index 0f0ffe0b6075..818d1a88f11c 100644
  /* NT status -> dos error map */
  static const struct ntstatus_to_dos_err ntstatus_to_dos_map[] = {
  /*
-@@ -114,22 +127,15 @@ static const struct ntstatus_to_dos_err ntstatus_to_dos_map[] = {
+@@ -113,22 +126,15 @@ static const struct ntstatus_to_dos_err ntstatus_to_dos_map[] = {
   * sorted by NT status code (ascending).
   */
  #include "smb1_mapping_table.c"
@@ -67,7 +67,7 @@ index 0f0ffe0b6075..818d1a88f11c 100644
  }
  
  int
-@@ -151,7 +157,7 @@ map_smb_to_linux_error(char *buf, bool logErr)
+@@ -150,7 +156,7 @@ map_smb_to_linux_error(char *buf, bool logErr)
  		/* translate the newer STATUS codes to old style SMB errors
  		 * and then to POSIX errors */
  		__u32 err = le32_to_cpu(smb->Status.CifsError);

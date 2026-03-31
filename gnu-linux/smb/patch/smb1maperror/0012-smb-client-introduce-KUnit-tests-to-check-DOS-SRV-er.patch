@@ -1,4 +1,4 @@
-From dba7fe6417f32360751d5ae56e7865a1ee4da49f Mon Sep 17 00:00:00 2001
+From febe5bc664520fa38c18b452ef01af7bebde420c Mon Sep 17 00:00:00 2001
 From: Youling Tang <tangyouling@kylinos.cn>
 Date: Mon, 30 Mar 2026 17:38:24 +0000
 Subject: [PATCH v2 12/12] smb/client: introduce KUnit tests to check DOS/SRV
@@ -16,10 +16,10 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  4 files changed, 59 insertions(+), 5 deletions(-)
 
 diff --git a/fs/smb/client/smb1maperror.c b/fs/smb/client/smb1maperror.c
-index 5d4fb21c2b0b..d37bdc9135e4 100644
+index af4417b36b78..12ba9986a37d 100644
 --- a/fs/smb/client/smb1maperror.c
 +++ b/fs/smb/client/smb1maperror.c
-@@ -17,11 +17,6 @@
+@@ -16,11 +16,6 @@
  #include "nterr.h"
  #include "cifs_debug.h"
  
@@ -31,7 +31,7 @@ index 5d4fb21c2b0b..d37bdc9135e4 100644
  static __always_inline int smb1_posix_error_cmp(const void *_key, const void *_pivot)
  {
  	__u16 key = *(__u16 *)_key;
-@@ -261,4 +256,32 @@ EXPORT_SYMBOL_FOR_SMB_TEST(ntstatus_to_dos_map_test);
+@@ -260,4 +255,32 @@ EXPORT_SYMBOL_FOR_SMB_TEST(ntstatus_to_dos_map_test);
  
  unsigned int ntstatus_to_dos_num = ARRAY_SIZE(ntstatus_to_dos_map);
  EXPORT_SYMBOL_FOR_SMB_TEST(ntstatus_to_dos_num);
@@ -65,10 +65,10 @@ index 5d4fb21c2b0b..d37bdc9135e4 100644
 +EXPORT_SYMBOL_FOR_SMB_TEST(mapping_table_ERRSRV_num);
  #endif
 diff --git a/fs/smb/client/smb1maperror_test.c b/fs/smb/client/smb1maperror_test.c
-index bdc25c7fc391..92097b8b78d9 100644
+index f25008d149f5..d62c2b943399 100644
 --- a/fs/smb/client/smb1maperror_test.c
 +++ b/fs/smb/client/smb1maperror_test.c
-@@ -11,9 +11,14 @@
+@@ -12,9 +12,14 @@
  #include <kunit/test.h>
  #include "smb1proto.h"
  #include "nterr.h"
@@ -83,7 +83,7 @@ index bdc25c7fc391..92097b8b78d9 100644
  
  #define DEFINE_CHECK_SEARCH_FUNC(__struct_name, __field,		\
  				 __array, __num)			\
-@@ -41,12 +46,29 @@ test_cmp_ntstatus_to_dos_err(struct kunit *test,
+@@ -42,12 +47,29 @@ test_cmp_ntstatus_to_dos_err(struct kunit *test,
  	KUNIT_EXPECT_STREQ(test, expect->nt_errstr, result->nt_errstr);
  }
  

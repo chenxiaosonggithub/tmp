@@ -1,4 +1,4 @@
-From 4b550ddff690c7d55aa066e417d02e0d5d925e99 Mon Sep 17 00:00:00 2001
+From d8cc6fccf64eaaa5746c01d969ae38668eaf0acc Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
 Date: Wed, 18 Feb 2026 00:31:38 +0800
 Subject: [PATCH v2 10/12] smb/client: use binary search for SMB1 DOS/SRV error
@@ -21,10 +21,10 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  1 file changed, 37 insertions(+), 30 deletions(-)
 
 diff --git a/fs/smb/client/smb1maperror.c b/fs/smb/client/smb1maperror.c
-index 765df0861d56..f3a53c9617cc 100644
+index ce3ab9d1c59a..e4d6505307c9 100644
 --- a/fs/smb/client/smb1maperror.c
 +++ b/fs/smb/client/smb1maperror.c
-@@ -10,6 +10,7 @@
+@@ -9,6 +9,7 @@
   *   Copyright (C) Luke Kenneth Casson Leighton 1997-2001.
   */
  
@@ -32,7 +32,7 @@ index 765df0861d56..f3a53c9617cc 100644
  #include "cifsproto.h"
  #include "smb1proto.h"
  #include "smberr.h"
-@@ -21,13 +22,24 @@ struct smb_to_posix_error {
+@@ -20,13 +21,24 @@ struct smb_to_posix_error {
  	int posix_code;
  };
  
@@ -58,7 +58,7 @@ index 765df0861d56..f3a53c9617cc 100644
  };
  
  static const struct smb_to_posix_error mapping_table_ERRSRV[] = {
-@@ -36,7 +48,6 @@ static const struct smb_to_posix_error mapping_table_ERRSRV[] = {
+@@ -35,7 +47,6 @@ static const struct smb_to_posix_error mapping_table_ERRSRV[] = {
   * sorted by SRV error code (ascending).
   */
  #include "smberr_srv_map.c"
@@ -66,7 +66,7 @@ index 765df0861d56..f3a53c9617cc 100644
  };
  
  /*****************************************************************************
-@@ -73,14 +84,32 @@ search_ntstatus_to_dos_map(__u32 ntstatus)
+@@ -72,14 +83,32 @@ search_ntstatus_to_dos_map(__u32 ntstatus)
  				ntstatus_to_dos_cmp);
  }
  
@@ -100,7 +100,7 @@ index 765df0861d56..f3a53c9617cc 100644
  
  	/* BB if NT Status codes - map NT BB */
  
-@@ -113,38 +142,16 @@ map_smb_to_linux_error(char *buf, bool logErr)
+@@ -112,38 +141,16 @@ map_smb_to_linux_error(char *buf, bool logErr)
  
  	/* old style errors */
  

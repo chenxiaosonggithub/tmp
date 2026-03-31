@@ -1,4 +1,4 @@
-From 0e70a3959ea43b6f4e74118993fbbffd929a6b0c Mon Sep 17 00:00:00 2001
+From e51969564ab18cca3ef5c5b05d5b31eef302a767 Mon Sep 17 00:00:00 2001
 From: Youling Tang <tangyouling@kylinos.cn>
 Date: Tue, 24 Mar 2026 08:25:18 +0000
 Subject: [PATCH v2 06/12] smb/client: check if ntstatus_to_dos_map is sorted
@@ -6,6 +6,9 @@ Subject: [PATCH v2 06/12] smb/client: check if ntstatus_to_dos_map is sorted
 Although the array is sorted at build time, verify the ordering again
 when cifs.ko is loaded to avoid potential regressions introduced by
 future script changes.
+
+We are going to define 3 functions to check the sort results, introduce the
+macro DEFINE_CHECK_SORT_FUNC() to reduce duplicate code.
 
 Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
 Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
@@ -33,10 +36,10 @@ index f4bed8d4a072..0541706c36c5 100644
  	if (rc)
  		return rc;
 diff --git a/fs/smb/client/smb1maperror.c b/fs/smb/client/smb1maperror.c
-index 818d1a88f11c..3e675a3c2b62 100644
+index fb985d2fc0d9..0a945f9bf8de 100644
 --- a/fs/smb/client/smb1maperror.c
 +++ b/fs/smb/client/smb1maperror.c
-@@ -257,3 +257,35 @@ map_and_check_smb_error(struct TCP_Server_Info *server,
+@@ -256,3 +256,35 @@ map_and_check_smb_error(struct TCP_Server_Info *server,
  
  	return rc;
  }

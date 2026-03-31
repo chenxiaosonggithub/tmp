@@ -1,4 +1,4 @@
-From 35d18b4c546bda3a0aa8ef472235405cace8d456 Mon Sep 17 00:00:00 2001
+From 3f91e44d38c1cce5e7bc2ac6e65f0732a9d6c1bd Mon Sep 17 00:00:00 2001
 From: Youling Tang <tangyouling@kylinos.cn>
 Date: Mon, 30 Mar 2026 03:53:37 +0000
 Subject: [PATCH v2 11/12] smb/client: check if SMB1 DOS/SRV error mapping
@@ -15,10 +15,10 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  1 file changed, 12 insertions(+)
 
 diff --git a/fs/smb/client/smb1maperror.c b/fs/smb/client/smb1maperror.c
-index f3a53c9617cc..5d4fb21c2b0b 100644
+index e4d6505307c9..af4417b36b78 100644
 --- a/fs/smb/client/smb1maperror.c
 +++ b/fs/smb/client/smb1maperror.c
-@@ -220,6 +220,10 @@ static int __array ## _is_sorted(void)					\
+@@ -219,6 +219,10 @@ static int __array ## _is_sorted(void)					\
  
  /* ntstatus_to_dos_map_is_sorted */
  DEFINE_CHECK_SORT_FUNC(ntstatus_to_dos_map, ntstatus);
@@ -29,7 +29,7 @@ index f3a53c9617cc..5d4fb21c2b0b 100644
  
  int __init smb1_init_maperror(void)
  {
-@@ -229,6 +233,14 @@ int __init smb1_init_maperror(void)
+@@ -228,6 +232,14 @@ int __init smb1_init_maperror(void)
  	if (rc)
  		return rc;
  

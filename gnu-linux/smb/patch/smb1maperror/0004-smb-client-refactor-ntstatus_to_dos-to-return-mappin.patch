@@ -1,4 +1,4 @@
-From 9df685b349835c58325f85d50b52d73a4b12e7e3 Mon Sep 17 00:00:00 2001
+From db37387c1f7a575100312bad2d7b7b677ef76bc0 Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
 Date: Wed, 18 Feb 2026 00:30:55 +0800
 Subject: [PATCH v2 04/12] smb/client: refactor ntstatus_to_dos() to return
@@ -19,10 +19,10 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  1 file changed, 19 insertions(+), 32 deletions(-)
 
 diff --git a/fs/smb/client/smb1maperror.c b/fs/smb/client/smb1maperror.c
-index b61fae3b61ac..0f0ffe0b6075 100644
+index 53313b39d1de..c906f233ac64 100644
 --- a/fs/smb/client/smb1maperror.c
 +++ b/fs/smb/client/smb1maperror.c
-@@ -117,41 +117,19 @@ static const struct ntstatus_to_dos_err ntstatus_to_dos_map[] = {
+@@ -116,41 +116,19 @@ static const struct ntstatus_to_dos_err ntstatus_to_dos_map[] = {
  	{0, 0, 0, NULL}
  };
  
@@ -69,7 +69,7 @@ index b61fae3b61ac..0f0ffe0b6075 100644
  }
  
  int
-@@ -173,11 +151,20 @@ map_smb_to_linux_error(char *buf, bool logErr)
+@@ -172,11 +150,20 @@ map_smb_to_linux_error(char *buf, bool logErr)
  		/* translate the newer STATUS codes to old style SMB errors
  		 * and then to POSIX errors */
  		__u32 err = le32_to_cpu(smb->Status.CifsError);
