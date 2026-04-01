@@ -1,4 +1,4 @@
-From bb38956b8816f00ae90380108bfaac80613a37b5 Mon Sep 17 00:00:00 2001
+From f9452ec5b8be12ef431d08039071d3ee4b110bb6 Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
 Date: Mon, 9 Mar 2026 15:41:16 +0800
 Subject: [PATCH v2 09/12] smb/client: autogenerate SMB1 DOS/SRV to POSIX error

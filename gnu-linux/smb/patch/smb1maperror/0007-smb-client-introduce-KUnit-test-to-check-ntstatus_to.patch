@@ -1,4 +1,4 @@
-From 17fed28bda03ed01cc68aa8dbe8f09b2b009950d Mon Sep 17 00:00:00 2001
+From 3701a709523751199175d28af6ad67a293924a0f Mon Sep 17 00:00:00 2001
 From: Youling Tang <tangyouling@kylinos.cn>
 Date: Thu, 26 Mar 2026 14:32:43 +0000
 Subject: [PATCH v2 07/12] smb/client: introduce KUnit test to check
@@ -15,7 +15,6 @@ the macro DEFINE_CHECK_SEARCH_FUNC() to reduce duplicate code.
 
 Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
 Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
-Signed-off-by: Huiwen He <hehuiwen@kylinos.cn>
 ---
  fs/smb/client/Kconfig             | 11 ++++++
  fs/smb/client/Makefile            |  1 +

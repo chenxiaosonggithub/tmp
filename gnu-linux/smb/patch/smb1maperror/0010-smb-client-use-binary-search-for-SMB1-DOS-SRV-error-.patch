@@ -1,4 +1,4 @@
-From 801a2160a1b409737ffe105800fc2634351d13b4 Mon Sep 17 00:00:00 2001
+From 152e05eeab8b3a5b3d04dd3165ad56db2182b068 Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
 Date: Wed, 18 Feb 2026 00:31:38 +0800
 Subject: [PATCH v2 10/12] smb/client: use binary search for SMB1 DOS/SRV error
