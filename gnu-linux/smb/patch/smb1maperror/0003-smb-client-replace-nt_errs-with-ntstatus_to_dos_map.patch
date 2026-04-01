@@ -1,4 +1,4 @@
-From 3f9d74908831152d54108892c3d1eed3fd474706 Mon Sep 17 00:00:00 2001
+From 80d017e1da95c2365b3391909cd5282fd8d02f0a Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
 Date: Wed, 18 Feb 2026 00:30:14 +0800
 Subject: [PATCH v2 03/12] smb/client: replace nt_errs with ntstatus_to_dos_map
@@ -15,12 +15,11 @@ Remove nterr.c, as nt_errs[] was its only functional content.
 Signed-off-by: Huiwen He <hehuiwen@kylinos.cn>
 Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
- fs/smb/client/Makefile         |   2 +-
- fs/smb/client/gen_smb1_mapping |   5 +-
- fs/smb/client/nterr.c          | 704 ---------------------------------
- fs/smb/client/nterr.h          |  11 +-
- fs/smb/client/smb1maperror.c   |  14 +-
- 5 files changed, 15 insertions(+), 721 deletions(-)
+ fs/smb/client/Makefile       |   2 +-
+ fs/smb/client/nterr.c        | 704 -----------------------------------
+ fs/smb/client/nterr.h        |  11 +-
+ fs/smb/client/smb1maperror.c |  14 +-
+ 4 files changed, 12 insertions(+), 719 deletions(-)
  delete mode 100644 fs/smb/client/nterr.c
 
 diff --git a/fs/smb/client/Makefile b/fs/smb/client/Makefile
@@ -36,22 +35,6 @@ index 949232d2c687..8560fe99ec2b 100644
  	  readdir.o ioctl.o sess.o export.o unc.o winucase.o \
  	  smb2ops.o smb2maperror.o smb2transport.o \
  	  smb2misc.o smb2pdu.o smb2inode.o smb2file.o cifsacl.o fs_context.o \
-diff --git a/fs/smb/client/gen_smb1_mapping b/fs/smb/client/gen_smb1_mapping
-index bfd3d4b8f509..a10b0c85ef07 100644
---- a/fs/smb/client/gen_smb1_mapping
-+++ b/fs/smb/client/gen_smb1_mapping
-@@ -3,8 +3,9 @@
- #
- # Script to generate SMB1 error mapping tables.
- #
--# Copyright (C) 2026 KylinSoft Corporation. All Rights Reserved.
--# Written by Huiwen He (hehuiwen@kylinos.cn)
-+# Copyright (C) 2026 KylinSoft Co., Ltd. All rights reserved.
-+# Author(s): Huiwen He <hehuiwen@kylinos.cn>
-+#            ChenXiaoSong <chenxiaosong@kylinos.cn>
- #
- use strict;
- 
 diff --git a/fs/smb/client/nterr.c b/fs/smb/client/nterr.c
 deleted file mode 100644
 index 279566cac435..000000000000

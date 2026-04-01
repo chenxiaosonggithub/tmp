@@ -1,4 +1,4 @@
-From 3f91e44d38c1cce5e7bc2ac6e65f0732a9d6c1bd Mon Sep 17 00:00:00 2001
+From 91c303fced54e901be0e11c4ee888a43a3b398c6 Mon Sep 17 00:00:00 2001
 From: Youling Tang <tangyouling@kylinos.cn>
 Date: Mon, 30 Mar 2026 03:53:37 +0000
 Subject: [PATCH v2 11/12] smb/client: check if SMB1 DOS/SRV error mapping
@@ -10,12 +10,13 @@ future script changes.
 
 Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
 Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Signed-off-by: Huiwen He <hehuiwen@kylinos.cn>
 ---
  fs/smb/client/smb1maperror.c | 12 ++++++++++++
  1 file changed, 12 insertions(+)
 
 diff --git a/fs/smb/client/smb1maperror.c b/fs/smb/client/smb1maperror.c
-index e4d6505307c9..af4417b36b78 100644
+index 3074c60301ad..e8f559754178 100644
 --- a/fs/smb/client/smb1maperror.c
 +++ b/fs/smb/client/smb1maperror.c
 @@ -219,6 +219,10 @@ static int __array ## _is_sorted(void)					\

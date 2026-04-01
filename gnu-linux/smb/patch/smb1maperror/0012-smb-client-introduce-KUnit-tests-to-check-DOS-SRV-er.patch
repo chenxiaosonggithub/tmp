@@ -1,4 +1,4 @@
-From febe5bc664520fa38c18b452ef01af7bebde420c Mon Sep 17 00:00:00 2001
+From c496b27c41e7c2a3b3febe23c998d5365ffb4d59 Mon Sep 17 00:00:00 2001
 From: Youling Tang <tangyouling@kylinos.cn>
 Date: Mon, 30 Mar 2026 17:38:24 +0000
 Subject: [PATCH v2 12/12] smb/client: introduce KUnit tests to check DOS/SRV
@@ -8,6 +8,7 @@ Check whether all elements can be correctly found in the arrays.
 
 Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
 Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Signed-off-by: Huiwen He <hehuiwen@kylinos.cn>
 ---
  fs/smb/client/smb1maperror.c      | 33 ++++++++++++++++++++++++++-----
  fs/smb/client/smb1maperror_test.c | 22 +++++++++++++++++++++
@@ -16,7 +17,7 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  4 files changed, 59 insertions(+), 5 deletions(-)
 
 diff --git a/fs/smb/client/smb1maperror.c b/fs/smb/client/smb1maperror.c
-index af4417b36b78..12ba9986a37d 100644
+index e8f559754178..e80e01c1c7a0 100644
 --- a/fs/smb/client/smb1maperror.c
 +++ b/fs/smb/client/smb1maperror.c
 @@ -16,11 +16,6 @@
