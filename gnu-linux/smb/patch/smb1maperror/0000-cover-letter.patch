@@ -4,7 +4,7 @@ Date: Thu, 2 Apr 2026 13:32:54 +0000
 Subject: [PATCH v3 00/13] smb: improve search speed of SMB1 maperror
 
 v2->v3:
-  - All tests pass in v3, please see ChenXiaoSong's blog: https://chenxiaosong.com/en/smb1maperror-test.html
+  - All test cases passed for v3, please see ChenXiaoSong's blog: https://chenxiaosong.com/en/smb1maperror-test.html
   - Patch #01: Correct the SMB1 mapping  NT_STATUS_OBJECT_NAME_INVALID 
   - Patch #02 #10: gen_smb1_mapping: Enhance regex robustness to cover mixed-case prefixes (e.g., ErrNotALink), and match exact filenames to prevent mapping outputs to incorrect files.
   - Patch #06: Add `__init` to `DEFINE_CHECK_SORT_FUNC`
