@@ -1,7 +1,7 @@
-From 80d017e1da95c2365b3391909cd5282fd8d02f0a Mon Sep 17 00:00:00 2001
+From cd950d64f5ca11919850834174919e0a8f7a5bb6 Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
-Date: Wed, 18 Feb 2026 00:30:14 +0800
-Subject: [PATCH v2 03/12] smb/client: replace nt_errs with ntstatus_to_dos_map
+Date: Wed, 1 Apr 2026 07:29:03 +0000
+Subject: [PATCH v3 03/13] smb/client: replace nt_errs with ntstatus_to_dos_map
 
 The ntstatus_to_dos_map[] array now contains the NT error strings,
 making the nt_errs[] array redundant.
@@ -746,7 +746,7 @@ index 279566cac435..000000000000
 -	{NULL, 0}
 -};
 diff --git a/fs/smb/client/nterr.h b/fs/smb/client/nterr.h
-index e0da354b8229..c5b73e13f29c 100644
+index 39a0ade9337e..2f5e9a2e24a4 100644
 --- a/fs/smb/client/nterr.h
 +++ b/fs/smb/client/nterr.h
 @@ -15,13 +15,14 @@
@@ -810,5 +810,5 @@ index 7228ca5a2ac8..53313b39d1de 100644
  		}
  		idx++;
 -- 
-2.52.0
+2.53.0
 

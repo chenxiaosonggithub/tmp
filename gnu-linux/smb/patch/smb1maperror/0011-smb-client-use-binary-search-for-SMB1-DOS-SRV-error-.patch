@@ -1,15 +1,15 @@
-From 152e05eeab8b3a5b3d04dd3165ad56db2182b068 Mon Sep 17 00:00:00 2001
+From 276655b3359cb691a89f06a8db6a7388c06266d8 Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
-Date: Wed, 18 Feb 2026 00:31:38 +0800
-Subject: [PATCH v2 10/12] smb/client: use binary search for SMB1 DOS/SRV error
+Date: Wed, 1 Apr 2026 07:29:10 +0000
+Subject: [PATCH v3 11/13] smb/client: use binary search for SMB1 DOS/SRV error
  mapping
 
 Currently, map_smb_to_linux_error() uses linear searches for both
 mapping_table_ERRDOS[] and mapping_table_ERRSRV[].
 
-Refactor this by introducing a helper function smb1_map_to_posix() that
-implements binary search(as the tables are sorted). This improves lookup
-performance and reduces code duplication.
+Refactor this by introducing search_mapping_table_ERRDOS() and
+search_mapping_table_ERRSRV() that implements binary search(as the tables
+are sorted).This improves lookup performance and reduces code duplication.
 
 Also remove the sentinel entries from the mapping tables as they are no
 longer needed with ARRAY_SIZE().
@@ -21,7 +21,7 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  1 file changed, 37 insertions(+), 30 deletions(-)
 
 diff --git a/fs/smb/client/smb1maperror.c b/fs/smb/client/smb1maperror.c
-index bed579afc37b..3074c60301ad 100644
+index 294ac9646bff..28e1c84fa83b 100644
 --- a/fs/smb/client/smb1maperror.c
 +++ b/fs/smb/client/smb1maperror.c
 @@ -9,6 +9,7 @@
@@ -145,5 +145,5 @@ index bed579afc37b..3074c60301ad 100644
  
  	/* special cases for NT status codes which cannot be translated to DOS codes */
 -- 
-2.52.0
+2.53.0
 

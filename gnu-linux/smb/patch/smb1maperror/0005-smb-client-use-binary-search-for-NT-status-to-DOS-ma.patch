@@ -1,7 +1,7 @@
-From 7efa8983b0d984cd1026cbf852e6eed7c1f99489 Mon Sep 17 00:00:00 2001
+From 52fea7ab4d39b56592854d93550c15934c8c2e28 Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
-Date: Wed, 18 Feb 2026 00:34:30 +0800
-Subject: [PATCH v2 05/12] smb/client: use binary search for NT status to DOS
+Date: Wed, 1 Apr 2026 07:29:05 +0000
+Subject: [PATCH v3 05/13] smb/client: use binary search for NT status to DOS
  mapping
 
 The ntstatus_to_dos_map[] table is sorted now. Replace the linear search
@@ -77,5 +77,5 @@ index c906f233ac64..fb985d2fc0d9 100644
  		if (map) {
  			if ((logErr && err != NT_STATUS_MORE_PROCESSING_REQUIRED) ||
 -- 
-2.52.0
+2.53.0
 

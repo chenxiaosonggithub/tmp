@@ -1,7 +1,7 @@
-From 11db503bc10a7bb85a45f62c7449161bdbd4f930 Mon Sep 17 00:00:00 2001
+From e51ed9417f1990ba9f082a22202a106e7e85a580 Mon Sep 17 00:00:00 2001
 From: Youling Tang <tangyouling@kylinos.cn>
-Date: Tue, 24 Mar 2026 08:25:18 +0000
-Subject: [PATCH v2 06/12] smb/client: check if ntstatus_to_dos_map is sorted
+Date: Wed, 1 Apr 2026 07:29:06 +0000
+Subject: [PATCH v3 06/13] smb/client: check if ntstatus_to_dos_map is sorted
 
 Although the array is sorted at build time, verify the ordering again
 when cifs.ko is loaded to avoid potential regressions introduced by
@@ -36,7 +36,7 @@ index f4bed8d4a072..0541706c36c5 100644
  	if (rc)
  		return rc;
 diff --git a/fs/smb/client/smb1maperror.c b/fs/smb/client/smb1maperror.c
-index fb985d2fc0d9..0a945f9bf8de 100644
+index fb985d2fc0d9..66ceebbe535e 100644
 --- a/fs/smb/client/smb1maperror.c
 +++ b/fs/smb/client/smb1maperror.c
 @@ -256,3 +256,35 @@ map_and_check_smb_error(struct TCP_Server_Info *server,
@@ -45,7 +45,7 @@ index fb985d2fc0d9..0a945f9bf8de 100644
  }
 +
 +#define DEFINE_CHECK_SORT_FUNC(__array, __field)			\
-+static int __array ## _is_sorted(void)					\
++static int __init __array ## _is_sorted(void)				\
 +{									\
 +	unsigned int i;							\
 +									\
@@ -88,5 +88,5 @@ index 42569bbcf6fd..dd98d04e837a 100644
  			    struct mid_q_entry *mid, bool logErr);
  
 -- 
-2.52.0
+2.53.0
 

@@ -1,7 +1,7 @@
-From d6f14e8b68d90b0686ce0caaf5d963d22dc42236 Mon Sep 17 00:00:00 2001
+From 0f58ccb692a2141bfb1810c51f693731a19f7142 Mon Sep 17 00:00:00 2001
 From: Youling Tang <tangyouling@kylinos.cn>
-Date: Mon, 30 Mar 2026 17:38:24 +0000
-Subject: [PATCH v2 12/12] smb/client: introduce KUnit tests to check DOS/SRV
+Date: Wed, 1 Apr 2026 07:29:12 +0000
+Subject: [PATCH v3 13/13] smb/client: introduce KUnit tests to check DOS/SRV
  err mapping search
 
 Check whether all elements can be correctly found in the arrays.
@@ -16,7 +16,7 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  4 files changed, 59 insertions(+), 5 deletions(-)
 
 diff --git a/fs/smb/client/smb1maperror.c b/fs/smb/client/smb1maperror.c
-index e8f559754178..e80e01c1c7a0 100644
+index bca9b60ac836..74530088d17d 100644
 --- a/fs/smb/client/smb1maperror.c
 +++ b/fs/smb/client/smb1maperror.c
 @@ -16,11 +16,6 @@
@@ -65,7 +65,7 @@ index e8f559754178..e80e01c1c7a0 100644
 +EXPORT_SYMBOL_FOR_SMB_TEST(mapping_table_ERRSRV_num);
  #endif
 diff --git a/fs/smb/client/smb1maperror_test.c b/fs/smb/client/smb1maperror_test.c
-index f25008d149f5..d62c2b943399 100644
+index b38857dc388c..935142dfdcb0 100644
 --- a/fs/smb/client/smb1maperror_test.c
 +++ b/fs/smb/client/smb1maperror_test.c
 @@ -12,9 +12,14 @@
@@ -129,7 +129,7 @@ index 43b773e7964b..7d5da03111c1 100644
  
  /*
 diff --git a/fs/smb/client/smberr.h b/fs/smb/client/smberr.h
-index 98074c64587d..02d065ff5b12 100644
+index 4ec2c5ffae25..5c3415bf18d7 100644
 --- a/fs/smb/client/smberr.h
 +++ b/fs/smb/client/smberr.h
 @@ -9,6 +9,11 @@
@@ -145,5 +145,5 @@ index 98074c64587d..02d065ff5b12 100644
  #define SUCCESS	0x00
  /* Error is from the core DOS operating system set */
 -- 
-2.52.0
+2.53.0
 

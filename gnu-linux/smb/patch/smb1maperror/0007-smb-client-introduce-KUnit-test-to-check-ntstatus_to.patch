@@ -1,7 +1,7 @@
-From 3701a709523751199175d28af6ad67a293924a0f Mon Sep 17 00:00:00 2001
+From 49d5d7ec62ef70c4b314e876251d56a6332899f6 Mon Sep 17 00:00:00 2001
 From: Youling Tang <tangyouling@kylinos.cn>
-Date: Thu, 26 Mar 2026 14:32:43 +0000
-Subject: [PATCH v2 07/12] smb/client: introduce KUnit test to check
+Date: Wed, 1 Apr 2026 07:29:07 +0000
+Subject: [PATCH v3 07/13] smb/client: introduce KUnit test to check
  ntstatus_to_dos_map search
 
 Check whether all elements can be correctly found in the array.
@@ -57,7 +57,7 @@ index 8560fe99ec2b..220a97c8a488 100644
  
  # Let Kbuild handle tracking and cleaning
 diff --git a/fs/smb/client/smb1maperror.c b/fs/smb/client/smb1maperror.c
-index 0a945f9bf8de..499cacfeba6d 100644
+index 66ceebbe535e..419057f296a7 100644
 --- a/fs/smb/client/smb1maperror.c
 +++ b/fs/smb/client/smb1maperror.c
 @@ -288,3 +288,22 @@ int __init smb1_init_maperror(void)
@@ -85,7 +85,7 @@ index 0a945f9bf8de..499cacfeba6d 100644
 +#endif
 diff --git a/fs/smb/client/smb1maperror_test.c b/fs/smb/client/smb1maperror_test.c
 new file mode 100644
-index 000000000000..f25008d149f5
+index 000000000000..b38857dc388c
 --- /dev/null
 +++ b/fs/smb/client/smb1maperror_test.c
 @@ -0,0 +1,61 @@
@@ -117,7 +117,7 @@ index 000000000000..f25008d149f5
 +	for (i = 0; i < __num; i++) {					\
 +		expect = &__array ## _test[i];				\
 +		result = search_ ## __array ## _test(expect->__field);	\
-+		KUNIT_EXPECT_PTR_NE(test, NULL, result);		\
++		KUNIT_ASSERT_NOT_NULL(test, result);			\
 +		test_cmp_ ## __struct_name(test, expect, result);	\
 +	}								\
 +}
@@ -166,5 +166,5 @@ index dd98d04e837a..43b773e7964b 100644
  /*
   * smb1misc.c
 -- 
-2.52.0
+2.53.0
 

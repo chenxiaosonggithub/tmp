@@ -1,7 +1,7 @@
-From 78dcb9e0b268f18e24fc8fe1f5ea6cc55be9f981 Mon Sep 17 00:00:00 2001
+From 252af5ac70decb2f28d6bcf4df06c6cc5dc01d34 Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
-Date: Tue, 17 Feb 2026 22:38:00 +0800
-Subject: [PATCH v2 01/12] smb/client: annotate nterr.h with DOS error codes
+Date: Wed, 1 Apr 2026 07:29:01 +0000
+Subject: [PATCH v3 01/13] smb/client: annotate nterr.h with DOS error codes
 
 Add comments to NT_STATUS definitions in nterr.h indicating the
 corresponding DOS error class and code.
@@ -31,26 +31,32 @@ python script:
 	    the preceding line to ensure formatting consistency.
 	    """
 	    if not os.path.exists(file_path):
-		return
+	        return
 	    with open(file_path, "r") as f:
-		lines = f.readlines()
+	        lines = f.readlines()
 	    new_lines = []
 	    # Match #define statements with inline comments
 	    re_str = r'^(\s*#define\s+[A-Za-z0-9_]+\s+.*?)\s*(/\*.*?\*/|//.*)$'
 	    pattern = re.compile(re_str)
 	    for line in lines:
-		match = pattern.match(line.rstrip())
-		if match:
-		    define_part, comment_part = match.groups()
-		    indent = " " * (len(line) - len(line.lstrip()))
-		    # Move old comment to previous line
-		    new_lines.append(indent + comment_part + "\n")
-		    # Keep the define part
-		    new_lines.append(define_part.rstrip() + "\n")
-		else:
-		    new_lines.append(line)
+	        match = pattern.match(line.rstrip())
+	        if match:
+	            define_part, comment_part = match.groups()
+
+	            # Do not move if it's already an auto-generated mapping comment
+	            if re.search(r'//\s*[A-Z0-9_]+\s*,\s*[A-Za-z0-9_]+', comment_part):
+	                new_lines.append(line)
+	                continue
+
+	            indent = " " * (len(line) - len(line.lstrip()))
+	            # Move old comment to previous line
+	            new_lines.append(indent + comment_part + "\n")
+	            # Keep the define part
+	            new_lines.append(define_part.rstrip() + "\n")
+	        else:
+	            new_lines.append(line)
 	    with open(file_path, "w") as f:
-		f.writelines(new_lines)
+	        f.writelines(new_lines)
 
 	def annotate_nterr():
 	    """
@@ -59,51 +65,54 @@ python script:
 	    """
 	    mapping = {}
 	    if not os.path.exists(MAP_FILE) or not os.path.exists(NTERR_FILE):
-		return
+	        return
 
 	    # Extract mappings from the source mapping table
 	    with open(MAP_FILE, "r") as f:
-		content = f.read()
-		# Find entries like { 0x01, ERRgeneral, NT_STATUS_UNSUCCESSFUL }
-		map_re = (
-		    r'\{\s*([A-Z0-9_]+)\s*,\s*([A-Z-a-z0-9_]+)\s*,\s*'
-		    r'(NT_STATUS_[A-Za-z0-9_]+)'
-		)
-		matches = re.findall(map_re, content)
-		for m in matches:
-		    mapping[m[2]] = (m[0], m[1])
+	        content = f.read()
+
+	        # Strip comments from source to ensure robust parsing
+	        content = re.sub(r'/\*.*?\*/', '', content, flags=re.DOTALL)
+	        content = re.sub(r'//.*', '', content)
+
+	        # Match [Class], [Code], [NT_STATUS] triplets using regex
+	        map_re = r'([A-Z0-9_]+)\s*,\s*([A-Za-z0-9_]+)\s*,\s*(NT_STATUS_[A-Z0-9_]+)'
+
+	        matches = re.findall(map_re, content)
+	        for m in matches:
+	            mapping[m[2]] = (m[0], m[1])
 
 	    with open(NTERR_FILE, "r") as f:
-		lines = f.readlines()
+	        lines = f.readlines()
 
 	    new_lines = []
 	    for line in lines:
-		stripped = line.strip()
-		if stripped.startswith("#define NT_STATUS_"):
-		    # Remove any existing // comments before re-annotating
-		    base_line = re.sub(r'\s*//.*$', '', line.rstrip())
-		    parts = base_line.split()
-		    if len(parts) >= 2:
-			name = parts[1]
-			# Append comment, ensuring proper alignment
-			if name == "NT_STATUS_OK":
-			    line = f"{base_line}\t// SUCCESS, 0\n"
-			elif name in mapping:
-			    d_class, d_code = mapping[name]
-			    line = f"{base_line}\t// {d_class}, {d_code}\n"
-			else:
-			    line = f"{base_line}\t// ERRHRD, ERRgeneral\n"
-		new_lines.append(line)
+	        stripped = line.strip()
+	        if stripped.startswith("#define NT_STATUS_"):
+	            # Remove any existing // comments before re-annotating
+	            base_line = re.sub(r'\s*//.*$', '', line.rstrip())
+	            parts = base_line.split()
+	            if len(parts) >= 2:
+	                name = parts[1]
+	                # Append comment, ensuring proper alignment
+	                if name == "NT_STATUS_OK":
+	                    line = f"{base_line}\t// SUCCESS, 0\n"
+	                elif name in mapping:
+	                    d_class, d_code = mapping[name]
+	                    line = f"{base_line}\t// {d_class}, {d_code}\n"
+	                else:
+	                    line = f"{base_line}\t// ERRHRD, ERRgeneral\n"
+	        new_lines.append(line)
 
 	    with open(NTERR_FILE, "w") as f:
-		f.writelines(new_lines)
+	        f.writelines(new_lines)
 
 	if __name__ == "__main__":
 	    # Step 1: Clean existing inline comments and move them to separate lines
 	    move_comments(NTERR_FILE)
-	    # Step 2: Annotate with DOS codes, ensuring proper comment alignment
+	    # Step 2: Annotate with DOS codes, ensuring proper DOS codes comments
 	    annotate_nterr()
-	    print("Successfully processed nterr.h with comments aligned.")
+	    print("Successfully processed nterr.h with DOS codes comments.")
 
 Signed-off-by: Huiwen He <hehuiwen@kylinos.cn>
 Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
@@ -112,7 +121,7 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  1 file changed, 534 insertions(+), 533 deletions(-)
 
 diff --git a/fs/smb/client/nterr.h b/fs/smb/client/nterr.h
-index 9a4a450c6571..2045a66e55fd 100644
+index 9a4a450c6571..2141fa905e82 100644
 --- a/fs/smb/client/nterr.h
 +++ b/fs/smb/client/nterr.h
 @@ -32,538 +32,539 @@ extern const struct nt_err_code_struct nt_errs[];
@@ -716,7 +725,7 @@ index 9a4a450c6571..2045a66e55fd 100644
 +#define NT_STATUS_INVALID_PARAMETER_MIX (0xC0000000 | 0x0030)	// ERRDOS, 87
 +#define NT_STATUS_INVALID_QUOTA_LOWER (0xC0000000 | 0x0031)	// ERRHRD, ERRgeneral
 +#define NT_STATUS_DISK_CORRUPT_ERROR (0xC0000000 | 0x0032)	// ERRHRD, ERRgeneral
-+#define NT_STATUS_OBJECT_NAME_INVALID (0xC0000000 | 0x0033)	// ERRHRD, ERRgeneral
++#define NT_STATUS_OBJECT_NAME_INVALID (0xC0000000 | 0x0033)	// ERRDOS, ERRbadfile
 +#define NT_STATUS_OBJECT_NAME_NOT_FOUND (0xC0000000 | 0x0034)	// ERRDOS, ERRbadfile
 +#define NT_STATUS_OBJECT_NAME_COLLISION (0xC0000000 | 0x0035)	// ERRDOS, ERRalreadyexists
 +#define NT_STATUS_HANDLE_NOT_WAITABLE (0xC0000000 | 0x0036)	// ERRHRD, ERRgeneral
@@ -1189,5 +1198,5 @@ index 9a4a450c6571..2045a66e55fd 100644
  
  #endif				/* _NTERR_H */
 -- 
-2.52.0
+2.53.0
 

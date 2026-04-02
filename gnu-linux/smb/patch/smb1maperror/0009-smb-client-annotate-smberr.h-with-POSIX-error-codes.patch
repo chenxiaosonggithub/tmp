@@ -1,7 +1,7 @@
-From c017356501698033dd83c7a736b825596543da67 Mon Sep 17 00:00:00 2001
+From 26c5e69dd130c2ddf15a5e79534bb5f4179d01ed Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
-Date: Tue, 17 Feb 2026 23:40:33 +0800
-Subject: [PATCH v2 08/12] smb/client: annotate smberr.h with POSIX error codes
+Date: Wed, 1 Apr 2026 07:29:08 +0000
+Subject: [PATCH v3 09/13] smb/client: annotate smberr.h with POSIX error codes
 
 Annotate SMB1 error definitions in smberr.h with their corresponding
 POSIX error codes.
@@ -145,7 +145,7 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  1 file changed, 256 insertions(+), 142 deletions(-)
 
 diff --git a/fs/smb/client/smberr.h b/fs/smb/client/smberr.h
-index 6fb63f9e9a95..a848b6ad987a 100644
+index 5cdd958aaa35..d3633623473a 100644
 --- a/fs/smb/client/smberr.h
 +++ b/fs/smb/client/smberr.h
 @@ -9,11 +9,16 @@
@@ -360,6 +360,7 @@ index 6fb63f9e9a95..a848b6ad987a 100644
 -					   limit to be exceeded. */
 -#define ErrNotALink		0x201	/* A link operation was performed on a
 -					   pathname that was not a link. */
+-#define ERRnetlogonNotStarted	2455
 +#define ERRmoredata		234	// -EOVERFLOW
 +#define ERReasnotsupported	282	// -EOPNOTSUPP
 +/*
@@ -372,6 +373,7 @@ index 6fb63f9e9a95..a848b6ad987a 100644
 + * pathname that was not a link.
 + */
 +#define ErrNotALink		0x201	// -ENOLINK
++#define ERRnetlogonNotStarted	2455	// -ENOPROTOOPT
  
  /* Below errors are used internally (do not come over the wire) for passthrough
     from STATUS codes to POSIX only  */
@@ -446,7 +448,6 @@ index 6fb63f9e9a95..a848b6ad987a 100644
 -#define ERRbadclient		2240	/* can not logon from this client */
 -#define ERRbadLogonTime		2241	/* logon hours do not allow this */
 -#define ERRpasswordExpired	2242
--#define ERRnetlogonNotStarted	2455
 -#define ERRnosupport		0xFFFF
 +/*
 + * Non-specific error code. It is
@@ -566,8 +567,7 @@ index 6fb63f9e9a95..a848b6ad987a 100644
 +/* logon hours do not allow this */
 +#define ERRbadLogonTime		2241	// -EACCES
 +#define ERRpasswordExpired	2242	// -EKEYEXPIRED
-+#define ERRnetlogonNotStarted	2455	// -ENOPROTOOPT
 +#define ERRnosupport		0xFFFF	// -EINVAL
 -- 
-2.52.0
+2.53.0
 

@@ -1,7 +1,7 @@
-From 369136272449eb7c0b3701b0079933453ce0d06e Mon Sep 17 00:00:00 2001
+From 4928690f625acf51b3db6e1e426a20f8ffa5e582 Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
-Date: Wed, 18 Feb 2026 00:30:55 +0800
-Subject: [PATCH v2 04/12] smb/client: refactor ntstatus_to_dos() to return
+Date: Wed, 1 Apr 2026 07:29:04 +0000
+Subject: [PATCH v3 04/13] smb/client: refactor ntstatus_to_dos() to return
  mapping entry
 
 Refactor ntstatus_to_dos() to return a pointer to the mapping entry
@@ -96,5 +96,5 @@ index 53313b39d1de..c906f233ac64 100644
  		smberrclass = smb->Status.DosError.ErrorClass;
  		smberrcode = le16_to_cpu(smb->Status.DosError.Error);
 -- 
-2.52.0
+2.53.0
 

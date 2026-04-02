@@ -1,7 +1,7 @@
-From 43e43f362d526e5d473235d1f423afc94b9dcd51 Mon Sep 17 00:00:00 2001
+From 606e55ada82ddce8e306cfc995e40ea518808182 Mon Sep 17 00:00:00 2001
 From: Youling Tang <tangyouling@kylinos.cn>
-Date: Mon, 30 Mar 2026 03:53:37 +0000
-Subject: [PATCH v2 11/12] smb/client: check if SMB1 DOS/SRV error mapping
+Date: Wed, 1 Apr 2026 07:29:11 +0000
+Subject: [PATCH v3 12/13] smb/client: check if SMB1 DOS/SRV error mapping
  arrays are sorted
 
 Although the arrays are sorted at build time, verify the ordering again
@@ -15,10 +15,10 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  1 file changed, 12 insertions(+)
 
 diff --git a/fs/smb/client/smb1maperror.c b/fs/smb/client/smb1maperror.c
-index 3074c60301ad..e8f559754178 100644
+index 28e1c84fa83b..bca9b60ac836 100644
 --- a/fs/smb/client/smb1maperror.c
 +++ b/fs/smb/client/smb1maperror.c
-@@ -219,6 +219,10 @@ static int __array ## _is_sorted(void)					\
+@@ -219,6 +219,10 @@ static int __init __array ## _is_sorted(void)				\
  
  /* ntstatus_to_dos_map_is_sorted */
  DEFINE_CHECK_SORT_FUNC(ntstatus_to_dos_map, ntstatus);
@@ -45,5 +45,5 @@ index 3074c60301ad..e8f559754178 100644
  }
  
 -- 
-2.52.0
+2.53.0
 

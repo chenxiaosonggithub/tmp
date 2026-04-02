@@ -1,14 +1,17 @@
-From c496b27c41e7c2a3b3febe23c998d5365ffb4d59 Mon Sep 17 00:00:00 2001
+From 90f9c6243cefa3f0e6dc19ee2cb415d764e7e9a2 Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
-Date: Wed, 1 Apr 2026 07:03:01 +0000
-Subject: [PATCH v2 00/12] smb: improve search speed of SMB1 maperror
+Date: Thu, 2 Apr 2026 13:32:54 +0000
+Subject: [PATCH v3 00/13] smb: improve search speed of SMB1 maperror
 
-v1->v2:
-  - Sort arrays at build time
-  - Merge nt_errs to ntstatus_to_dos_map
-  - Check if arrays are sorted in smb1_init_maperror()
+v2->v3:
+  - All tests pass in v3, please see ChenXiaoSong's blog: https://chenxiaosong.com/en/smb1maperror-test.html
+  - Patch #01: Correct the SMB1 mapping  NT_STATUS_OBJECT_NAME_INVALID 
+  - Patch #02 #10: gen_smb1_mapping: Enhance regex robustness to cover mixed-case prefixes (e.g., ErrNotALink), and match exact filenames to prevent mapping outputs to incorrect files.
+  - Patch #06: Add `__init` to `DEFINE_CHECK_SORT_FUNC`
+  - Patch #07: Use `KUNIT_ASSERT_NOT_NULL`
+  - Add patch #08: Move ERRnetlogonNotStarted to DOS error class
 
-v1: https://lore.kernel.org/linux-cifs/20251208062100.3268777-1-chenxiaosong.chenxiaosong@linux.dev/
+v2: https://lore.kernel.org/linux-cifs/20260401072912.355072-1-huiwen.he@linux.dev/
 
 When searching for the last element, the comparison counts are shown in the table below:
 
@@ -16,7 +19,7 @@ When searching for the last element, the comparison counts are shown in the tabl
 |                    |Before  |After   |
 |                    |Patchset|Patchset|
 +--------------------+--------+--------+
-| ntstatus_to_dos_map|   533  |    9    |
+| ntstatus_to_dos_map|   533  |    9   |
 +--------------------+--------+--------+
 |mapping_table_ERRDOS|    34  |    5   |
 +--------------------+--------+--------+
@@ -31,12 +34,13 @@ The following patches from v1 have already been merged into the mainline:
   - b2b50fca34da smb/client: fix NT_STATUS_DEVICE_DOOR_OPEN value
   - a1237c203f17 smb/client: fix NT_STATUS_NO_DATA_DETECTED value
 
-Huiwen He (8):
+Huiwen He (9):
   smb/client: annotate nterr.h with DOS error codes
   smb/client: autogenerate SMB1 NT status to DOS error mapping
   smb/client: replace nt_errs with ntstatus_to_dos_map
   smb/client: refactor ntstatus_to_dos() to return mapping entry
   smb/client: use binary search for NT status to DOS mapping
+  smb/client: move ERRnetlogonNotStarted to DOS error class
   smb/client: annotate smberr.h with POSIX error codes
   smb/client: autogenerate SMB1 DOS/SRV to POSIX error mapping
   smb/client: use binary search for SMB1 DOS/SRV error mapping
@@ -51,18 +55,18 @@ Youling Tang (4):
  fs/smb/client/Kconfig             |   11 +
  fs/smb/client/Makefile            |   25 +-
  fs/smb/client/cifsfs.c            |    6 +
- fs/smb/client/gen_smb1_mapping    |  109 +++
+ fs/smb/client/gen_smb1_mapping    |  112 +++
  fs/smb/client/nterr.c             |  704 -------------------
  fs/smb/client/nterr.h             | 1082 +++++++++++++++--------------
  fs/smb/client/smb1maperror.c      |  873 +++++------------------
  fs/smb/client/smb1maperror_test.c |   83 +++
  fs/smb/client/smb1proto.h         |    9 +
  fs/smb/client/smberr.h            |  415 +++++++----
- 11 files changed, 1232 insertions(+), 2088 deletions(-)
+ 11 files changed, 1235 insertions(+), 2088 deletions(-)
  create mode 100644 fs/smb/client/gen_smb1_mapping
  delete mode 100644 fs/smb/client/nterr.c
  create mode 100644 fs/smb/client/smb1maperror_test.c
 
 -- 
-2.52.0
+2.53.0
 

@@ -1,0 +1,42 @@
+From 264dd841e7e0cca2f7518b67acc573a5c5732a32 Mon Sep 17 00:00:00 2001
+From: Huiwen He <hehuiwen@kylinos.cn>
+Date: Thu, 2 Apr 2026 17:26:38 +0800
+Subject: [PATCH v3 08/13] smb/client: move ERRnetlogonNotStarted to DOS error
+ class
+
+In smb1_mapping_table.c, ERRnetlogonNotStarted is included in the
+mapping_table_ERRDOS array. However, in the smberr.h header file,
+this macro was incorrectly placed under the ERRSRV (server)
+error class section.
+
+Move the macro definition to the ERRDOS section in smberr.h to maintain
+consistency between the error classification in the header file and its
+actual usage in the mapping tables.
+
+Signed-off-by: Huiwen He <hehuiwen@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/client/smberr.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/smb/client/smberr.h b/fs/smb/client/smberr.h
+index 6fb63f9e9a95..5cdd958aaa35 100644
+--- a/fs/smb/client/smberr.h
++++ b/fs/smb/client/smberr.h
+@@ -95,6 +95,7 @@
+ 					   limit to be exceeded. */
+ #define ErrNotALink		0x201	/* A link operation was performed on a
+ 					   pathname that was not a link. */
++#define ERRnetlogonNotStarted	2455
+ 
+ /* Below errors are used internally (do not come over the wire) for passthrough
+    from STATUS codes to POSIX only  */
+@@ -167,5 +168,4 @@
+ #define ERRbadclient		2240	/* can not logon from this client */
+ #define ERRbadLogonTime		2241	/* logon hours do not allow this */
+ #define ERRpasswordExpired	2242
+-#define ERRnetlogonNotStarted	2455
+ #define ERRnosupport		0xFFFF
+-- 
+2.53.0
+
