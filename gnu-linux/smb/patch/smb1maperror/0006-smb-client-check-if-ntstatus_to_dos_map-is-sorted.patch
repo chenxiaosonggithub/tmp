@@ -1,7 +1,7 @@
-From e51ed9417f1990ba9f082a22202a106e7e85a580 Mon Sep 17 00:00:00 2001
+From 45fcc17b8379c5fe2124a545d1f5e5052c6bf6af Mon Sep 17 00:00:00 2001
 From: Youling Tang <tangyouling@kylinos.cn>
-Date: Wed, 1 Apr 2026 07:29:06 +0000
-Subject: [PATCH v3 06/13] smb/client: check if ntstatus_to_dos_map is sorted
+Date: Thu, 2 Apr 2026 14:18:32 +0000
+Subject: [PATCH v4 06/13] smb/client: check if ntstatus_to_dos_map is sorted
 
 Although the array is sorted at build time, verify the ordering again
 when cifs.ko is loaded to avoid potential regressions introduced by

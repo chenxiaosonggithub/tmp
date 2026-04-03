@@ -1,10 +1,10 @@
-From 264dd841e7e0cca2f7518b67acc573a5c5732a32 Mon Sep 17 00:00:00 2001
+From 114c677c3d456c838d991878b1345fa409e281e2 Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
-Date: Thu, 2 Apr 2026 17:26:38 +0800
-Subject: [PATCH v3 08/13] smb/client: move ERRnetlogonNotStarted to DOS error
+Date: Thu, 2 Apr 2026 14:18:34 +0000
+Subject: [PATCH v4 08/13] smb/client: move ERRnetlogonNotStarted to DOS error
  class
 
-In smb1_mapping_table.c, ERRnetlogonNotStarted is included in the
+In smb1maperror.c, ERRnetlogonNotStarted is included in the
 mapping_table_ERRDOS array. However, in the smberr.h header file,
 this macro was incorrectly placed under the ERRSRV (server)
 error class section.

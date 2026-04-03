@@ -1,7 +1,7 @@
-From 49d5d7ec62ef70c4b314e876251d56a6332899f6 Mon Sep 17 00:00:00 2001
+From 14351d842809a750f844749faa5ca3171f3b3f43 Mon Sep 17 00:00:00 2001
 From: Youling Tang <tangyouling@kylinos.cn>
-Date: Wed, 1 Apr 2026 07:29:07 +0000
-Subject: [PATCH v3 07/13] smb/client: introduce KUnit test to check
+Date: Thu, 2 Apr 2026 14:18:33 +0000
+Subject: [PATCH v4 07/13] smb/client: introduce KUnit test to check
  ntstatus_to_dos_map search
 
 Check whether all elements can be correctly found in the array.
@@ -19,9 +19,9 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  fs/smb/client/Kconfig             | 11 ++++++
  fs/smb/client/Makefile            |  1 +
  fs/smb/client/smb1maperror.c      | 19 ++++++++++
- fs/smb/client/smb1maperror_test.c | 61 +++++++++++++++++++++++++++++++
- fs/smb/client/smb1proto.h         |  4 ++
- 5 files changed, 96 insertions(+)
+ fs/smb/client/smb1maperror_test.c | 58 +++++++++++++++++++++++++++++++
+ fs/smb/client/smb1proto.h         |  6 ++++
+ 5 files changed, 95 insertions(+)
  create mode 100644 fs/smb/client/smb1maperror_test.c
 
 diff --git a/fs/smb/client/Kconfig b/fs/smb/client/Kconfig
@@ -85,10 +85,10 @@ index 66ceebbe535e..419057f296a7 100644
 +#endif
 diff --git a/fs/smb/client/smb1maperror_test.c b/fs/smb/client/smb1maperror_test.c
 new file mode 100644
-index 000000000000..b38857dc388c
+index 000000000000..1a2d1b91dd13
 --- /dev/null
 +++ b/fs/smb/client/smb1maperror_test.c
-@@ -0,0 +1,61 @@
+@@ -0,0 +1,58 @@
 +// SPDX-License-Identifier: GPL-2.0-or-later
 +/*
 + *
@@ -103,9 +103,6 @@ index 000000000000..b38857dc388c
 +#include <kunit/test.h>
 +#include "smb1proto.h"
 +#include "nterr.h"
-+
-+extern const struct ntstatus_to_dos_err *ntstatus_to_dos_map_test;
-+extern unsigned int ntstatus_to_dos_num;
 +
 +#define DEFINE_CHECK_SEARCH_FUNC(__struct_name, __field,		\
 +				 __array, __num)			\
@@ -151,14 +148,16 @@ index 000000000000..b38857dc388c
 +
 +MODULE_LICENSE("GPL");
 diff --git a/fs/smb/client/smb1proto.h b/fs/smb/client/smb1proto.h
-index dd98d04e837a..43b773e7964b 100644
+index dd98d04e837a..5ec158df1c74 100644
 --- a/fs/smb/client/smb1proto.h
 +++ b/fs/smb/client/smb1proto.h
-@@ -237,6 +237,10 @@ int map_smb_to_linux_error(char *buf, bool logErr);
+@@ -237,6 +237,12 @@ int map_smb_to_linux_error(char *buf, bool logErr);
  int smb1_init_maperror(void);
  int map_and_check_smb_error(struct TCP_Server_Info *server,
  			    struct mid_q_entry *mid, bool logErr);
 +#if IS_ENABLED(CONFIG_SMB1_KUNIT_TESTS)
++extern const struct ntstatus_to_dos_err *ntstatus_to_dos_map_test;
++extern unsigned int ntstatus_to_dos_num;
 +const struct ntstatus_to_dos_err *
 +search_ntstatus_to_dos_map_test(__u32 ntstatus);
 +#endif

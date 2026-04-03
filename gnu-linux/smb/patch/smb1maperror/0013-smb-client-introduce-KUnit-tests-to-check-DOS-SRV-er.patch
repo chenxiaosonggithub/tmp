@@ -1,7 +1,7 @@
-From 0f58ccb692a2141bfb1810c51f693731a19f7142 Mon Sep 17 00:00:00 2001
+From f397568571c7475f5c014903c11fcc29464e708d Mon Sep 17 00:00:00 2001
 From: Youling Tang <tangyouling@kylinos.cn>
-Date: Wed, 1 Apr 2026 07:29:12 +0000
-Subject: [PATCH v3 13/13] smb/client: introduce KUnit tests to check DOS/SRV
+Date: Thu, 2 Apr 2026 14:18:39 +0000
+Subject: [PATCH v4 13/13] smb/client: introduce KUnit tests to check DOS/SRV
  err mapping search
 
 Check whether all elements can be correctly found in the arrays.
@@ -10,8 +10,8 @@ Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
 Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
  fs/smb/client/smb1maperror.c      | 33 ++++++++++++++++++++++++++-----
- fs/smb/client/smb1maperror_test.c | 22 +++++++++++++++++++++
- fs/smb/client/smb1proto.h         |  4 ++++
+ fs/smb/client/smb1maperror_test.c | 18 +++++++++++++++++
+ fs/smb/client/smb1proto.h         |  8 ++++++++
  fs/smb/client/smberr.h            |  5 +++++
  4 files changed, 59 insertions(+), 5 deletions(-)
 
@@ -65,25 +65,18 @@ index bca9b60ac836..74530088d17d 100644
 +EXPORT_SYMBOL_FOR_SMB_TEST(mapping_table_ERRSRV_num);
  #endif
 diff --git a/fs/smb/client/smb1maperror_test.c b/fs/smb/client/smb1maperror_test.c
-index b38857dc388c..935142dfdcb0 100644
+index 1a2d1b91dd13..820c0dd3bcce 100644
 --- a/fs/smb/client/smb1maperror_test.c
 +++ b/fs/smb/client/smb1maperror_test.c
-@@ -12,9 +12,14 @@
+@@ -12,6 +12,7 @@
  #include <kunit/test.h>
  #include "smb1proto.h"
  #include "nterr.h"
 +#include "smberr.h"
  
- extern const struct ntstatus_to_dos_err *ntstatus_to_dos_map_test;
- extern unsigned int ntstatus_to_dos_num;
-+extern const struct smb_to_posix_error *mapping_table_ERRDOS_test;
-+extern unsigned int mapping_table_ERRDOS_num;
-+extern const struct smb_to_posix_error *mapping_table_ERRSRV_test;
-+extern unsigned int mapping_table_ERRSRV_num;
- 
  #define DEFINE_CHECK_SEARCH_FUNC(__struct_name, __field,		\
  				 __array, __num)			\
-@@ -42,12 +47,29 @@ test_cmp_ntstatus_to_dos_err(struct kunit *test,
+@@ -39,12 +40,29 @@ test_cmp_ntstatus_to_dos_err(struct kunit *test,
  	KUNIT_EXPECT_STREQ(test, expect->nt_errstr, result->nt_errstr);
  }
  
@@ -114,15 +107,19 @@ index b38857dc388c..935142dfdcb0 100644
  };
  
 diff --git a/fs/smb/client/smb1proto.h b/fs/smb/client/smb1proto.h
-index 43b773e7964b..7d5da03111c1 100644
+index 5ec158df1c74..5f522d359952 100644
 --- a/fs/smb/client/smb1proto.h
 +++ b/fs/smb/client/smb1proto.h
-@@ -240,6 +240,10 @@ int map_and_check_smb_error(struct TCP_Server_Info *server,
- #if IS_ENABLED(CONFIG_SMB1_KUNIT_TESTS)
+@@ -242,6 +242,14 @@ extern const struct ntstatus_to_dos_err *ntstatus_to_dos_map_test;
+ extern unsigned int ntstatus_to_dos_num;
  const struct ntstatus_to_dos_err *
  search_ntstatus_to_dos_map_test(__u32 ntstatus);
++extern const struct smb_to_posix_error *mapping_table_ERRDOS_test;
++extern unsigned int mapping_table_ERRDOS_num;
 +const struct smb_to_posix_error *
 +search_mapping_table_ERRDOS_test(__u16 smb_err);
++extern const struct smb_to_posix_error *mapping_table_ERRSRV_test;
++extern unsigned int mapping_table_ERRSRV_num;
 +const struct smb_to_posix_error *
 +search_mapping_table_ERRSRV_test(__u16 smb_err);
  #endif

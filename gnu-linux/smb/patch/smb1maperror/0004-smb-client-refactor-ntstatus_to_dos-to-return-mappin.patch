@@ -1,7 +1,7 @@
-From 4928690f625acf51b3db6e1e426a20f8ffa5e582 Mon Sep 17 00:00:00 2001
+From b33f43042a9f7a8b6f37b52c3a454f6b1cfe204f Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
-Date: Wed, 1 Apr 2026 07:29:04 +0000
-Subject: [PATCH v3 04/13] smb/client: refactor ntstatus_to_dos() to return
+Date: Thu, 2 Apr 2026 14:18:30 +0000
+Subject: [PATCH v4 04/13] smb/client: refactor ntstatus_to_dos() to return
  mapping entry
 
 Refactor ntstatus_to_dos() to return a pointer to the mapping entry

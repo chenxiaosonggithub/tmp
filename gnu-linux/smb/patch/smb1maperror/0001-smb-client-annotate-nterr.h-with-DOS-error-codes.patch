@@ -1,7 +1,7 @@
-From 252af5ac70decb2f28d6bcf4df06c6cc5dc01d34 Mon Sep 17 00:00:00 2001
+From 2a99ee80f794526f7d428f187720907e1898836d Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
-Date: Wed, 1 Apr 2026 07:29:01 +0000
-Subject: [PATCH v3 01/13] smb/client: annotate nterr.h with DOS error codes
+Date: Thu, 2 Apr 2026 14:18:27 +0000
+Subject: [PATCH v4 01/13] smb/client: annotate nterr.h with DOS error codes
 
 Add comments to NT_STATUS definitions in nterr.h indicating the
 corresponding DOS error class and code.
@@ -121,7 +121,7 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  1 file changed, 534 insertions(+), 533 deletions(-)
 
 diff --git a/fs/smb/client/nterr.h b/fs/smb/client/nterr.h
-index 9a4a450c6571..2141fa905e82 100644
+index 9a4a450c6571..a253150051f3 100644
 --- a/fs/smb/client/nterr.h
 +++ b/fs/smb/client/nterr.h
 @@ -32,538 +32,539 @@ extern const struct nt_err_code_struct nt_errs[];
@@ -1040,7 +1040,7 @@ index 9a4a450c6571..2141fa905e82 100644
 +#define NT_STATUS_DISK_RESET_FAILED (0xC0000000 | 0x016b)	// ERRHRD, ERRgeneral
 +#define NT_STATUS_SHARED_IRQ_BUSY (0xC0000000 | 0x016c)	// ERRHRD, ERRgeneral
 +#define NT_STATUS_FT_ORPHANING (0xC0000000 | 0x016d)	// ERRHRD, ERRgeneral
-+#define NT_STATUS_BIOS_FAILED_TO_CONNECT_INTERRUPT (0xC0000000 | 0x016e)	// ERRHRD, ERRgeneral
++#define NT_STATUS_BIOS_FAILED_TO_CONNECT_INTERRUPT (0xC0000000 | 0x016e) // ERRHRD, ERRgeneral
 +#define NT_STATUS_PARTITION_FAILURE (0xC0000000 | 0x0172)	// ERRHRD, ERRgeneral
 +#define NT_STATUS_INVALID_BLOCK_LENGTH (0xC0000000 | 0x0173)	// ERRHRD, ERRgeneral
 +#define NT_STATUS_DEVICE_NOT_PARTITIONED (0xC0000000 | 0x0174)	// ERRHRD, ERRgeneral
@@ -1078,8 +1078,8 @@ index 9a4a450c6571..2141fa905e82 100644
 +#define NT_STATUS_NETWORK_CREDENTIAL_CONFLICT (0xC0000000 | 0x0195)	// ERRHRD, ERRgeneral
 +#define NT_STATUS_REMOTE_SESSION_LIMIT (0xC0000000 | 0x0196)	// ERRHRD, ERRgeneral
 +#define NT_STATUS_EVENTLOG_FILE_CHANGED (0xC0000000 | 0x0197)	// ERRHRD, ERRgeneral
-+#define NT_STATUS_NOLOGON_INTERDOMAIN_TRUST_ACCOUNT (0xC0000000 | 0x0198)	// ERRDOS, ERRnoaccess
-+#define NT_STATUS_NOLOGON_WORKSTATION_TRUST_ACCOUNT (0xC0000000 | 0x0199)	// ERRDOS, ERRnoaccess
++#define NT_STATUS_NOLOGON_INTERDOMAIN_TRUST_ACCOUNT (0xC0000000 | 0x0198) // ERRDOS, ERRnoaccess
++#define NT_STATUS_NOLOGON_WORKSTATION_TRUST_ACCOUNT (0xC0000000 | 0x0199) // ERRDOS, ERRnoaccess
 +#define NT_STATUS_NOLOGON_SERVER_TRUST_ACCOUNT (0xC0000000 | 0x019a)	// ERRDOS, ERRnoaccess
 +#define NT_STATUS_DOMAIN_TRUST_INCONSISTENT (0xC0000000 | 0x019b)	// ERRDOS, ERRnoaccess
 +#define NT_STATUS_FS_DRIVER_REQUIRED (0xC0000000 | 0x019c)	// ERRHRD, ERRgeneral
@@ -1117,7 +1117,7 @@ index 9a4a450c6571..2141fa905e82 100644
 +#define NT_STATUS_MAPPED_ALIGNMENT (0xC0000000 | 0x0220)	// ERRHRD, ERRgeneral
 +#define NT_STATUS_IMAGE_CHECKSUM_MISMATCH (0xC0000000 | 0x0221)	// ERRDOS, 193
 +#define NT_STATUS_LOST_WRITEBEHIND_DATA (0xC0000000 | 0x0222)	// ERRHRD, ERRgeneral
-+#define NT_STATUS_CLIENT_SERVER_PARAMETERS_INVALID (0xC0000000 | 0x0223)	// ERRHRD, ERRgeneral
++#define NT_STATUS_CLIENT_SERVER_PARAMETERS_INVALID (0xC0000000 | 0x0223) // ERRHRD, ERRgeneral
 +#define NT_STATUS_PASSWORD_MUST_CHANGE (0xC0000000 | 0x0224)	// ERRSRV, ERRpasswordExpired
 +#define NT_STATUS_NOT_FOUND (0xC0000000 | 0x0225)	// ERRHRD, ERRgeneral
 +#define NT_STATUS_NOT_TINY_STREAM (0xC0000000 | 0x0226)	// ERRHRD, ERRgeneral
@@ -1193,7 +1193,7 @@ index 9a4a450c6571..2141fa905e82 100644
 +#define NT_STATUS_NETWORK_SESSION_EXPIRED  (0xC0000000 | 0x035c)	// ERRHRD, ERRgeneral
 +/* scheduler */
 +#define NT_STATUS_NO_SUCH_JOB (0xC0000000 | 0xEDE)	// ERRHRD, ERRgeneral
-+#define NT_STATUS_NO_PREAUTH_INTEGRITY_HASH_OVERLAP (0xC0000000 | 0x5D0000)	// ERRHRD, ERRgeneral
++#define NT_STATUS_NO_PREAUTH_INTEGRITY_HASH_OVERLAP (0xC0000000 | 0x5D0000) // ERRHRD, ERRgeneral
 +#define NT_STATUS_OS2_INVALID_LEVEL 0x007c0001	// ERRDOS, ERRunknownlevel
  
  #endif				/* _NTERR_H */

@@ -1,7 +1,7 @@
-From 52fea7ab4d39b56592854d93550c15934c8c2e28 Mon Sep 17 00:00:00 2001
+From d187812e36f9324d442919364060e49a6701abef Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
-Date: Wed, 1 Apr 2026 07:29:05 +0000
-Subject: [PATCH v3 05/13] smb/client: use binary search for NT status to DOS
+Date: Thu, 2 Apr 2026 14:18:31 +0000
+Subject: [PATCH v4 05/13] smb/client: use binary search for NT status to DOS
  mapping
 
 The ntstatus_to_dos_map[] table is sorted now. Replace the linear search

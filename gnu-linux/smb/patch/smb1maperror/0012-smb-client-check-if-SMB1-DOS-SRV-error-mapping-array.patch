@@ -1,7 +1,7 @@
-From 606e55ada82ddce8e306cfc995e40ea518808182 Mon Sep 17 00:00:00 2001
+From b8bfea0a9415d8f70ffe3fcfa1b077b954d531ff Mon Sep 17 00:00:00 2001
 From: Youling Tang <tangyouling@kylinos.cn>
-Date: Wed, 1 Apr 2026 07:29:11 +0000
-Subject: [PATCH v3 12/13] smb/client: check if SMB1 DOS/SRV error mapping
+Date: Thu, 2 Apr 2026 14:18:38 +0000
+Subject: [PATCH v4 12/13] smb/client: check if SMB1 DOS/SRV error mapping
  arrays are sorted
 
 Although the arrays are sorted at build time, verify the ordering again

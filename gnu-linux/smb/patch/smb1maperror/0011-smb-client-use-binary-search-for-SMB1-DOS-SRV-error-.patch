@@ -1,7 +1,7 @@
-From 276655b3359cb691a89f06a8db6a7388c06266d8 Mon Sep 17 00:00:00 2001
+From 3a680eb3b068a7f7b1aaeb3be010dfee330ae6d7 Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
-Date: Wed, 1 Apr 2026 07:29:10 +0000
-Subject: [PATCH v3 11/13] smb/client: use binary search for SMB1 DOS/SRV error
+Date: Thu, 2 Apr 2026 14:18:37 +0000
+Subject: [PATCH v4 11/13] smb/client: use binary search for SMB1 DOS/SRV error
  mapping
 
 Currently, map_smb_to_linux_error() uses linear searches for both

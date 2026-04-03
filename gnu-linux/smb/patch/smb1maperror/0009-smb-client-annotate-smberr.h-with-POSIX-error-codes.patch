@@ -1,7 +1,7 @@
-From 26c5e69dd130c2ddf15a5e79534bb5f4179d01ed Mon Sep 17 00:00:00 2001
+From f435c30ad07386442cebb4812cf56f8930c0e03d Mon Sep 17 00:00:00 2001
 From: Huiwen He <hehuiwen@kylinos.cn>
-Date: Wed, 1 Apr 2026 07:29:08 +0000
-Subject: [PATCH v3 09/13] smb/client: annotate smberr.h with POSIX error codes
+Date: Thu, 2 Apr 2026 14:18:35 +0000
+Subject: [PATCH v4 09/13] smb/client: annotate smberr.h with POSIX error codes
 
 Annotate SMB1 error definitions in smberr.h with their corresponding
 POSIX error codes.
