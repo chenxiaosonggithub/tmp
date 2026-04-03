@@ -1,0 +1,18 @@
+From aeafe7b4b0b798eb4e8e9a16df2fc4c5fe188f1a Mon Sep 17 00:00:00 2001
+From: SunJianHao <24031212195@stu.xidian.edu.cn>
+Date: Fri, 3 Apr 2026 02:00:15 +0000
+Subject: [PATCH v2 0/1] smb/client: avoid null-ptr-deref when tests fail in test_cmp_map()
+
+v1->v2: Update the patch description
+
+v1: smb2: maperror: use KUNIT_ASSERT_NOT_NULL instead of KUNIT_EXPECT_PTR_NE with NULL: https://lore.kernel.org/linux-cifs/20260402173338.11806-1-24031212195@stu.xidian.edu.cn/
+
+SunJianHao (1):
+  smb/client: avoid null-ptr-deref when tests fail in test_cmp_map()
+
+ fs/smb/client/smb2maperror_test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+-- 
+2.53.0
+
