@@ -21,4 +21,11 @@
   - [20260407](https://atomgit.com/openeuler/kernel/pull/18809?ref=&did=55b07b8c457457fdb576359fcca123be0ae6428a#tid-167470748)
   - [20260407](https://atomgit.com/openeuler/kernel/pull/18809?ref=&did=969e327e3cc19af619f3959b6302614f5787cebf#tid-167470767)
   - [20260407](https://atomgit.com/openeuler/kernel/pull/18809?ref=&did=a824048cd1b17515b2d818e96c6aa18d610f1731#tid-167470806)
+  - [20260407](https://atomgit.com/openeuler/kernel/pull/18809?ref=&did=47c0ff1824d6e1e9e2bedaa526b1d8a717190335#tid-167470827)
+  - [20260407](https://atomgit.com/openeuler/kernel/pull/18809?ref=&did=743b96bfebfcb38de5ef21b5657f668a26b3a2b4#tid-167470852)
+  - [20260407](https://atomgit.com/openeuler/kernel/pull/18809?ref=&did=419ceb9aedbe9b53231711ac1c58bf4f1161195f#tid-167470870)
+  - [20260407](https://atomgit.com/openeuler/kernel/pull/18809?ref=&did=fb5c9ffe49f9ca551e828f202f883d7f7d3168ec#tid-167470885)
+  - [20260407](https://atomgit.com/openeuler/kernel/pull/18809?ref=&did=bfb6af18ae14eb5f1756922380200740b56c480f#tid-167470889)
+  - [20260407](https://atomgit.com/openeuler/kernel/pull/18809?ref=&did=b05710adb1afc7204bdf5bf916912e599e9305a2#tid-167470898)
+  - [20260407](https://atomgit.com/openeuler/kernel/pull/18809?ref=&did=890fc3623d03a5cf123ea3ababf394be385cf242#tid-167471021)
 
