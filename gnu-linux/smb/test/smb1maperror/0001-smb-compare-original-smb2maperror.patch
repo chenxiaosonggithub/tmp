@@ -1,12 +1,12 @@
-From c70d707c771cfd299c51c062fc5b4c195127ec3e Mon Sep 17 00:00:00 2001
+From aa034ead52a38e4dc7c18159b26d71cb945a33da Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Mon, 6 Apr 2026 06:56:14 +0000
 Subject: [PATCH] smb: compare original smb2maperror
 
 - sed -i -z 's/,\n\t"STATUS_/, "STATUS_/g' fs/smb/client/smb2maperror_original.c
-- STATUS_REPARSE_NOT_HANDLED -> STATUS_IO_REPARSE_TAG_NOT_HANDLED
-- remove STATUS_ABANDONED_WAIT_0
-- remove STATUS_FWP_TOO_MANY_CALLOUTS
+- sed -i "s/STATUS_REPARSE_NOT_HANDLED/STATUS_IO_REPARSE_TAG_NOT_HANDLED/g" fs/smb/client/smb2maperror_original.c
+- sed -i "/{STATUS_ABANDONED_WAIT_0,/d" fs/smb/client/smb2maperror_original.c
+- sed -i "/{STATUS_FWP_TOO_MANY_CALLOUTS,/d" fs/smb/client/smb2^Cperror_original.c
 
 Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
