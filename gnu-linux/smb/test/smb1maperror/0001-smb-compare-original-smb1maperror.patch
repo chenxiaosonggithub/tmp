@@ -1,4 +1,4 @@
-From 5ae28f299ead4c0923158a8ed26cf4340808ab6f Mon Sep 17 00:00:00 2001
+From 6d20107cd13fa4721843cbe6612d21e00383b7ce Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
 Date: Thu, 2 Apr 2026 06:27:30 +0000
 Subject: [PATCH] smb: compare original smb1maperror
@@ -654,7 +654,7 @@ index 000000000000..678c77e3f472
 +	0, 0, 0 }
 +};
 diff --git a/fs/smb/client/smb1maperror_test.c b/fs/smb/client/smb1maperror_test.c
-index d62c2b943399..3c6a8e8644dd 100644
+index 820c0dd3bcce..2697a5f5b1da 100644
 --- a/fs/smb/client/smb1maperror_test.c
 +++ b/fs/smb/client/smb1maperror_test.c
 @@ -13,6 +13,7 @@
@@ -663,9 +663,9 @@ index d62c2b943399..3c6a8e8644dd 100644
  #include "smberr.h"
 +#include "smb1maperror_original.c"
  
- extern const struct ntstatus_to_dos_err *ntstatus_to_dos_map_test;
- extern unsigned int ntstatus_to_dos_num;
-@@ -66,10 +67,54 @@ DEFINE_CHECK_SEARCH_FUNC(smb_to_posix_error, smb_err, mapping_table_ERRDOS,
+ #define DEFINE_CHECK_SEARCH_FUNC(__struct_name, __field,		\
+ 				 __array, __num)			\
+@@ -59,10 +60,54 @@ DEFINE_CHECK_SEARCH_FUNC(smb_to_posix_error, smb_err, mapping_table_ERRDOS,
  DEFINE_CHECK_SEARCH_FUNC(smb_to_posix_error, smb_err, mapping_table_ERRSRV,
  			 mapping_table_ERRSRV_num);
  
