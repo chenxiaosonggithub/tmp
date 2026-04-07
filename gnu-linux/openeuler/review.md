@@ -22,6 +22,10 @@
   - [20260407](https://atomgit.com/openeuler/kernel/pull/21577?ref=&did=57cdfd24209c984831ad17967654cd88d6cbc0ad#tid-167507599)
   - [20260407](https://atomgit.com/openeuler/kernel/pull/21577?ref=&did=a7d3b9d40d5fcb7cb475cf9c57fc70d09a396619#tid-167507650)
 - 6. [nfs/enfs: implement the PM_STATE_UNSTABLE state as described in Scenario 2. #21577](https://atomgit.com/openeuler/kernel/pull/21577)
+  - [20260407](https://atomgit.com/openeuler/kernel/pull/21575?ref=&did=dca4ccec3ac61801fde6c6e365b42afc78e7be2a#tid-167508453)
+  - [20260407](https://atomgit.com/openeuler/kernel/pull/21575?ref=&did=f2508993d16f0acd0c5bd02fad2f088460994d93#tid-167508539)
+  - [20260407](https://atomgit.com/openeuler/kernel/pull/21575?ref=&did=d3e835c2a669db5e3e61109ae60752d5d4d867a6#tid-167508666)
+  - [20260407](https://atomgit.com/openeuler/kernel/pull/21575?ref=&did=1ed90e5002e04468b49c602dca79db90ab05f5c6#tid-167508929)
 
 <!--
 - 5. [nfs/enfs: wrap some functions and patch formatting #19731](https://atomgit.com/openeuler/kernel/pull/19731) ([gitee](https://gitee.com/openeuler/kernel/pulls/19731))
