@@ -42,6 +42,11 @@
   - [20260407](https://atomgit.com/openeuler/kernel/pull/21598?ref=&did=525eadaad613a97ff482e0a6dfe0e9b0a6244b30#tid-167528363)
 - 9. [smb/client: fix buffer size for smb311_posix_qinfo #21605](https://atomgit.com/openeuler/kernel/pull/21605)
   - [20260407](https://atomgit.com/openeuler/kernel/pull/21605?ref=&did=13c39e350380a4c9601ae784a318db66e8949318#tid-167533460)
+- 10. [ksmbd: fix memory leaks and NULL deref #21612](ksmbd: fix memory leaks and NULL deref #21612)
+  - [20260407](https://atomgit.com/openeuler/kernel/pull/21612?ref=&did=a70e2f5fdeaaaf2ac8dbed62125cd2948dbacd4c#tid-167545616)
+  - [20260407](https://atomgit.com/openeuler/kernel/pull/21612?ref=&did=a563c4ce97d3dc00009916f853e20204cfd9ddc9#tid-167546027)
+  - [20260407](https://atomgit.com/openeuler/kernel/pull/21612?ref=&did=6697b033e3343591502e2273ada64ddbe6f314f3#tid-167547699)
+- 11. [smb: improve search speed of SMB2 maperror #21622](https://atomgit.com/openeuler/kernel/pull/21622)
 
 <!--
 - 5. [nfs/enfs: wrap some functions and patch formatting #19731](https://atomgit.com/openeuler/kernel/pull/19731) ([gitee](https://gitee.com/openeuler/kernel/pulls/19731))
