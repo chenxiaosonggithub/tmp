@@ -47,6 +47,9 @@
   - [20260407](https://atomgit.com/openeuler/kernel/pull/21612?ref=&did=a563c4ce97d3dc00009916f853e20204cfd9ddc9#tid-167546027)
   - [20260407](https://atomgit.com/openeuler/kernel/pull/21612?ref=&did=6697b033e3343591502e2273ada64ddbe6f314f3#tid-167547699)
 - 11. [smb: improve search speed of SMB2 maperror #21622](https://atomgit.com/openeuler/kernel/pull/21622)
+  - [20260407](https://atomgit.com/openeuler/kernel/pull/21622?ref=&did=028111b8b2f8a9bb1b6522c441ab9b4e9a7c3e44#tid-167555678)
+  - [20260407](https://atomgit.com/openeuler/kernel/pull/21622?ref=&did=4ef470f884e098fc5bd2dcf1e74073e8b5d809e3#tid-167559844)
+  - [20260407](https://atomgit.com/openeuler/kernel/pull/21622?ref=&did=509c52a377edfa7ca70ae52a921fffc64cb69f49#tid-167588695)
 
 <!--
 - 5. [nfs/enfs: wrap some functions and patch formatting #19731](https://atomgit.com/openeuler/kernel/pull/19731) ([gitee](https://gitee.com/openeuler/kernel/pulls/19731))
