@@ -1,7 +1,7 @@
 # Test Cases
 
 Applying the following patchset and the patch
-[0001-smb-compare-original-smb1maperror.patch](https://github.com/chenxiaosonggithub/tmp/blob/master/gnu-linux/smb/test/smb1maperror/0001-smb-compare-original-smb1maperror.patch)
+[0001-smb-compare-original-smb1maperror.patch](https://github.com/chenxiaosonggithub/tmp/blob/master/gnu-linux/smb/test/smbmaperror/0001-smb-compare-original-smb1maperror.patch)
 to the kernel code.
 
 # v3 patchset
