@@ -194,6 +194,7 @@ ubuntu_docker()
 	sudo apt install -y vim git build-essential qemu-system flex bison bc kmod pahole libelf-dev libssl-dev libncurses-dev zstd
 	apt install bash-completion -y # 为了解决docker 中git不会自动补全
 	sudo apt install -y nginx pandoc jq apache2-utils
+	sudo apt install -y qemu-user-static # 生成虚拟机镜像
 
 	setup_nginx
 
