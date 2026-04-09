@@ -159,6 +159,7 @@ fedora_docker()
 {
 	sudo dnf group install development-tools -y
 	sudo dnf -y install ncurses-devel clang llvm flex bison bc kmod pahole lld ccache openssl-devel openssl git-email
+	sudo dnf -y binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu
 	sudo dnf -y install bridge-utils iptables dnsmasq net-tools
 	sudo dnf -y install vim emacs global tmux wget ps ping
 	sudo dnf install @virtualization -y
