@@ -89,7 +89,7 @@ physical_common()
 docker_common()
 {
 	set_alias
-	cp /home/chenxiaosong/code/blog/course/kernel/src/build.sh /home/chenxiaosong/code/
+	ln -s /home/chenxiaosong/code/tmp/gnu-linux/install/build.sh /home/chenxiaosong/code/build.sh
 	echo "source /usr/share/bash-completion/completions/git" >> ~/.bashrc
 	cp /home/chenxiaosong/code/tmp/gnu-linux/install/emacs.d/ ~/.emacs.d -rf
 	echo 'PS1="${PS1//\\w\\$/\\W\\$}"' >> ~/.bashrc # shell界面路径名只显示最后一个路径名分量
@@ -111,11 +111,18 @@ EOF
 
 cfg_qemu()
 {
-	mkdir -p /home/chenxiaosong/qemu-kernel/bash-image/fedora
+	mkdir -p /home/chenxiaosong/qemu-kernel/base_image/fedora
 	mkdir -p /home/chenxiaosong/qemu-kernel/vm/1.fedora
 	mkdir -p /home/chenxiaosong/qemu-kernel/vm/2.fedora
-	cp /home/chenxiaosong/code/blog/course/kernel/src/x86_64/update-base.sh /home/chenxiaosong/qemu-kernel/bash-image/fedora
-	cp /home/chenxiaosong/code/blog/course/kernel/src/x86_64/create-qcow2.sh /home/chenxiaosong/qemu-kernel/bash-image/fedora
+	cp /home/chenxiaosong/code/blog/course/kernel/src/x86_64/update-base.sh /home/chenxiaosong/qemu-kernel/base_image/fedora
+	cp /home/chenxiaosong/code/blog/course/kernel/src/x86_64/create-qcow2.sh /home/chenxiaosong/qemu-kernel/base_image/fedora
+
+	mkdir -p /home/chenxiaosong/qemu-kernel/base_image/arm64-fedora
+	mkdir -p /home/chenxiaosong/qemu-kernel/vm/3.arm64-fedora
+	mkdir -p /home/chenxiaosong/qemu-kernel/vm/4.arm64-fedora
+	cp /home/chenxiaosong/code/blog/course/kernel/src/aarch64/update-base.sh /home/chenxiaosong/qemu-kernel/base_image/arm64-fedora
+	cp /home/chenxiaosong/code/blog/course/kernel/src/aarch64/create-qcow2.sh /home/chenxiaosong/qemu-kernel/base_image/arm64-fedora
+
 	cp /home/chenxiaosong/code/tmp/gnu-linux/kernel/etc-qemu-ifup /etc/qemu-ifup
 	sudo chmod 755 /etc/qemu-ifup
 }
@@ -162,7 +169,7 @@ fedora_docker()
 	sudo dnf -y binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu
 	sudo dnf -y install bridge-utils iptables dnsmasq net-tools
 	sudo dnf -y install vim emacs global tmux wget ps ping
-	sudo dnf install @virtualization -y
+	sudo dnf install @virtualization qemu-system-aarch64 -y
 	sudo dnf install -y nginx pandoc jq httpd-tools
 	sudo dnf install bash-completion -y
 
@@ -208,6 +215,9 @@ ubuntu_docker()
 
 fedora_vm()
 {
+	# [FAILED] Failed to mount boot-efi.mount - /boot/efi.
+	vim /etc/fstab # 删除或注释掉/boot/efi所在行
+
 	# fedora 启动的时候等待: A start job is running for /dev/zram0，解决办法: 删除 zram 的配置文件
 	mv /usr/lib/systemd/zram-generator.conf /usr/lib/systemd/zram-generator.conf.bak
 

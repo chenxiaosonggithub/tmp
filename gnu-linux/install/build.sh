@@ -1,14 +1,30 @@
 OTHER_OPT=""
 # OTHER_OPT="W=1 C=1 CHECK=/home/chenxiaosong/code/sparse/sparse"
 
-if [ $# -ne 4 ]; then
-	echo "用法: $0 <gcc/llvm> <lld/no-lld> <test/no-test> <all/menuconfig/modules/modules_install/bzImage>"
+if [ $# -ne 5 ]; then
+	echo "用法: $0 <x86_64/arm64> <gcc/llvm> <lld/no-lld> <test/x86_64/arm64> <all/menuconfig/modules/modules_install/Image>"
 	exit 1
 fi
-compiler=$1
-linker=$2
-dir=$3
-part=$4
+
+arch=$1
+shift; compiler=$1
+shift; linker=$1
+shift; dir=$1
+shift; part=$1
+
+ARCH_OPT=""
+case "$arch" in
+x86_64)
+	ARCH_OPT=""
+	;;
+arm64)
+	ARCH_OPT="ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-"
+	;;
+*)
+	echo "Invalid arch argument"
+	exit
+	;;
+esac
 
 COMPILER_OPT=""
 case "$compiler" in
@@ -43,8 +59,11 @@ case "$dir" in
 test)
 	BUILD_DIR="test-build"
 	;;
-no-test)
+x86_64)
 	BUILD_DIR="x86_64-build"
+	;;
+arm64)
+	BUILD_DIR="arm64-build"
 	;;
 *)
 	echo "Invalid build-dir argument"
@@ -54,6 +73,7 @@ esac
 
 show_args() {
 	echo
+	echo "ARCH_OPT: $ARCH_OPT"
 	echo "COMPILER_OPT: $COMPILER_OPT"
 	echo "LINKER_OPT: $LINKER_OPT"
 	echo "BUILD_DIR: $BUILD_DIR"
@@ -62,7 +82,7 @@ show_args() {
 	echo
 }
 
-make_cmd="make $OTHER_OPT $COMPILER_OPT $LINKER_OPT O=$BUILD_DIR -j`nproc`"
+make_cmd="make $ARCH_OPT $OTHER_OPT $COMPILER_OPT $LINKER_OPT O=$BUILD_DIR -j`nproc`"
 
 olddefconfig() {
 	$make_cmd olddefconfig
@@ -74,8 +94,15 @@ menuconfig() {
 	return $?
 }
 
-bzImage() {
-	$make_cmd bzImage
+Image() {
+	local image_cmd=bzImage
+	case "$arch" in
+	arm64)
+		image_cmd=Image
+		;;
+	esac
+
+	$make_cmd $image_cmd
 	return $?
 }
 
@@ -101,7 +128,7 @@ case "$part" in
 all)
 	time {
 		olddefconfig && \
-		bzImage && \
+		Image && \
 		modules && \
 		modules_install
 	}
@@ -123,9 +150,9 @@ modules_install)
 		modules_install
 	}
 	;;
-bzImage)
+Image)
 	time {
-		bzImage
+		Image
 	}
 	;;
 clean)
