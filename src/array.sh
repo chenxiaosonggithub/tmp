@@ -10,3 +10,7 @@ comm_tmp_array=(
 	1 1 tmp/gnu-linux/openeuler/review.md enfs-review.html "陈孝松review的enfs补丁"
 )
 
+for element in ${comm_tmp_array[@]}
+do
+        comm_array+=(${element})
+done
