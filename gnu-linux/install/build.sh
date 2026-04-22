@@ -2,7 +2,11 @@ OTHER_OPT=""
 # OTHER_OPT="W=1 C=1 CHECK=/home/chenxiaosong/code/sparse/sparse"
 
 if [ $# -ne 5 ]; then
-	echo "用法: $0 <x86_64/arm64> <gcc/llvm> <lld/no-lld> <test/x86_64/arm64> <all/menuconfig/modules/modules_install/Image>"
+	echo "参数1: cpu架构: <x86_64/arm64>"
+	echo "参数2: 编译器: <gcc/llvm>"
+	echo "参数3: 链接器: <lld/no-lld>"
+	echo "参数4: 编译结果文件夹: <test/x86_64/arm64>"
+	echo "参数5: <all/menuconfig/modules/modules_install/Image>"
 	exit 1
 fi
 
