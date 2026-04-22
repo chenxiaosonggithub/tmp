@@ -1,4 +1,4 @@
-From 63d1a75b6b89f311b24ec6eb5704975f2e002f13 Mon Sep 17 00:00:00 2001
+From 58ec85166d4f3945bf291619a8beb3b7e704aa67 Mon Sep 17 00:00:00 2001
 From: Youling Tang <tangyouling@kylinos.cn>
 Date: Wed, 22 Apr 2026 11:16:17 +0000
 Subject: [PATCH] smb/client: fix unaligned WSL uid/gid reads in wsl_to_fattr()
@@ -13,6 +13,7 @@ from ea_data, the value sits at an unaligned offset.
 Link: https://lore.kernel.org/linux-cifs/77013349-ff89-4593-985d-520d967d2638@chenxiaosong.com/
 Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
 Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
 ---
  fs/smb/client/reparse.c | 2 +-
  fs/smb/client/reparse.h | 4 ++--
@@ -33,7 +34,7 @@ index cd1e1eaee67a..10cdaea79c73 100644
  		if (!strncmp(name, SMB2_WSL_XATTR_UID, nlen))
  			fattr->cf_uid = wsl_make_kuid(cifs_sb, v);
 diff --git a/fs/smb/client/reparse.h b/fs/smb/client/reparse.h
-index 0164dc47bdfd..51963f4a447f 100644
+index 0164dc47bdfd..6b763c64b614 100644
 --- a/fs/smb/client/reparse.h
 +++ b/fs/smb/client/reparse.h
 @@ -31,7 +31,7 @@ static inline dev_t reparse_mkdev(void *ptr)
@@ -41,7 +42,7 @@ index 0164dc47bdfd..51963f4a447f 100644
  				   void *ptr)
  {
 -	u32 uid = le32_to_cpu(*(__le32 *)ptr);
-+	u32 uid = le32_to_cpu(get_unaligned_le32(*(__le32 *)ptr));
++	u32 uid = get_unaligned_le32(ptr);
  
  	if (cifs_sb_flags(cifs_sb) & CIFS_MOUNT_OVERR_UID)
  		return cifs_sb->ctx->linux_uid;
@@ -50,7 +51,7 @@ index 0164dc47bdfd..51963f4a447f 100644
  				   void *ptr)
  {
 -	u32 gid = le32_to_cpu(*(__le32 *)ptr);
-+	u32 gid = le32_to_cpu(get_unaligned_le32(*(__le32 *)ptr));
++	u32 gid = get_unaligned_le32(ptr);
  
  	if (cifs_sb_flags(cifs_sb) & CIFS_MOUNT_OVERR_GID)
  		return cifs_sb->ctx->linux_gid;
