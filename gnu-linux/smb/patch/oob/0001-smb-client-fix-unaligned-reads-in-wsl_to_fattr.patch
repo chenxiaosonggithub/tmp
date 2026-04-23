@@ -1,4 +1,4 @@
-From 486ba3304e3992eed7b34988c72bf3a21d355272 Mon Sep 17 00:00:00 2001
+From 3399dc306ce7e3f4da7bd7ef883111943ae37f31 Mon Sep 17 00:00:00 2001
 From: Youling Tang <tangyouling@kylinos.cn>
 Date: Wed, 22 Apr 2026 11:16:17 +0000
 Subject: [PATCH] smb/client: fix unaligned reads in wsl_to_fattr()
@@ -9,6 +9,9 @@ are present in the buffer, each MUST be aligned on a 4-byte boundary.
 When parsing WSL extended attributes, the code derives the value pointer
 at an offset of 7 (SMB2_WSL_XATTR_NAME_LEN + 1) from ea_data, the value
 sits at an unaligned offset.
+
+We should use get_unaligned_le32() or get_unaligned_le64() to get
+unaligned values.
 
 Link: https://lore.kernel.org/linux-cifs/77013349-ff89-4593-985d-520d967d2638@chenxiaosong.com/
 Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
