@@ -1,5 +1,5 @@
 From 6d270f5d7bdf149fd354925ab2afd8acce346f11 Mon Sep 17 00:00:00 2001
-From: Ye Zisen <todo@todo.com>
+From: Zisen Ye <zisenye@stu.xidian.edu.cn>
 Date: Sat, 2 May 2026 04:02:57 +0000
 Subject: [PATCH 2/2] smb/client: fix out-of-bounds read in symlink_data()
 
@@ -11,7 +11,7 @@ err->ErrorContextCount (at offset 66) or err->ByteCount later in
 symlink_data() will cause an out-of-bounds read.
 
 Link: https://lore.kernel.org/linux-cifs/297d8d9b-adf7-42fd-a1c2-5b1f230032bc@chenxiaosong.com/
-Signed-off-by: Ye Zisen <todo@todo.com>
+Signed-off-by: Zisen Ye <zisenye@stu.xidian.edu.cn>
 Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
  fs/smb/client/smb2misc.c | 3 ++-
