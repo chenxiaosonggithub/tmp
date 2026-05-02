@@ -1,0 +1,16 @@
+From 58c1a5823fc7487f5458d2ff33c650072f8900ac Mon Sep 17 00:00:00 2001
+From: Zisen Ye <zisenye@stu.xidian.edu.cn>
+Date: Sat, 2 May 2026 06:59:48 +0000
+Subject: [PATCH 0/2] smb/client: fix out-of-bounds read
+
+Zisen Ye (2):
+  smb/client: fix out-of-bounds read in smb2_compound_op()
+  smb/client: fix out-of-bounds read in symlink_data()
+
+ fs/smb/client/smb2inode.c | 3 +++
+ fs/smb/client/smb2misc.c  | 3 ++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+-- 
+2.53.0
+

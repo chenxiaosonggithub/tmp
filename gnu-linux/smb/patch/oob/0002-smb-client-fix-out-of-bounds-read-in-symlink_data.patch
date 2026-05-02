@@ -1,4 +1,4 @@
-From 6d270f5d7bdf149fd354925ab2afd8acce346f11 Mon Sep 17 00:00:00 2001
+From 58c1a5823fc7487f5458d2ff33c650072f8900ac Mon Sep 17 00:00:00 2001
 From: Zisen Ye <zisenye@stu.xidian.edu.cn>
 Date: Sat, 2 May 2026 04:02:57 +0000
 Subject: [PATCH 2/2] smb/client: fix out-of-bounds read in symlink_data()

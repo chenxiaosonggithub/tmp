@@ -1,4 +1,4 @@
-From 6b48cc91358d6237d61d50a70c3b8e93093ef0da Mon Sep 17 00:00:00 2001
+From 55272d77cbdf7e7c181e325ecc10abfeace96b4f Mon Sep 17 00:00:00 2001
 From: Zisen Ye <zisenye@stu.xidian.edu.cn>
 Date: Sat, 2 May 2026 03:38:31 +0000
 Subject: [PATCH 1/2] smb/client: fix out-of-bounds read in smb2_compound_op()
