@@ -1,0 +1,36 @@
+From 6d270f5d7bdf149fd354925ab2afd8acce346f11 Mon Sep 17 00:00:00 2001
+From: Ye Zisen <todo@todo.com>
+Date: Sat, 2 May 2026 04:02:57 +0000
+Subject: [PATCH 2/2] smb/client: fix out-of-bounds read in symlink_data()
+
+Since smb2_check_message() returns success without length validation for
+the symlink error response, in symlink_data() it is possible for
+iov->iov_len to be smaller than sizeof(struct smb2_err_rsp). If the buffer
+only contains the base SMB2 header (64 bytes), accessing
+err->ErrorContextCount (at offset 66) or err->ByteCount later in
+symlink_data() will cause an out-of-bounds read.
+
+Link: https://lore.kernel.org/linux-cifs/297d8d9b-adf7-42fd-a1c2-5b1f230032bc@chenxiaosong.com/
+Signed-off-by: Ye Zisen <todo@todo.com>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/client/smb2misc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/smb/client/smb2misc.c b/fs/smb/client/smb2misc.c
+index 973fce3c959c..2a7355ce1a07 100644
+--- a/fs/smb/client/smb2misc.c
++++ b/fs/smb/client/smb2misc.c
+@@ -241,7 +241,8 @@ smb2_check_message(char *buf, unsigned int pdu_len, unsigned int len,
+ 	if (len != calc_len) {
+ 		/* create failed on symlink */
+ 		if (command == SMB2_CREATE_HE &&
+-		    shdr->Status == STATUS_STOPPED_ON_SYMLINK)
++		    shdr->Status == STATUS_STOPPED_ON_SYMLINK &&
++		    len > calc_len)
+ 			return 0;
+ 		/* Windows 7 server returns 24 bytes more */
+ 		if (calc_len + 24 == len && command == SMB2_OPLOCK_BREAK_HE)
+-- 
+2.53.0
+

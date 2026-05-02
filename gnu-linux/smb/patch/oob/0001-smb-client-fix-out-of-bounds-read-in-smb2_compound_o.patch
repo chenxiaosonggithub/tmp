@@ -1,0 +1,40 @@
+From 6b48cc91358d6237d61d50a70c3b8e93093ef0da Mon Sep 17 00:00:00 2001
+From: Ye Zisen <todo@todo.com>
+Date: Sat, 2 May 2026 03:38:31 +0000
+Subject: [PATCH 1/2] smb/client: fix out-of-bounds read in smb2_compound_op()
+
+If a server sends a truncated response but a large OutputBufferLength, and
+terminates the EA list early, check_wsl_eas() returns success without
+validating that the entire OutputBufferLength fits within iov_len.
+
+Then smb2_compound_op() does:
+    memcpy(idata->wsl.eas, data[0], size[0]);
+
+Where size[0] is OutputBufferLength. If iov_len is smaller than size[0],
+memcpy can read beyond the end of the rsp_iov allocation and leak adjacent
+kernel heap memory.
+
+Link: https://lore.kernel.org/linux-cifs/d998240c-aca9-420d-9dbd-f5ba24af19e0@chenxiaosong.com/
+Signed-off-by: Ye Zisen <todo@todo.com>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/client/smb2inode.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/fs/smb/client/smb2inode.c b/fs/smb/client/smb2inode.c
+index 286912616c73..a192d70cd29e 100644
+--- a/fs/smb/client/smb2inode.c
++++ b/fs/smb/client/smb2inode.c
+@@ -121,6 +121,9 @@ static int check_wsl_eas(struct kvec *rsp_iov)
+ 	ea = (void *)((u8 *)rsp_iov->iov_base +
+ 		      le16_to_cpu(rsp->OutputBufferOffset));
+ 	end = (u8 *)rsp_iov->iov_base + rsp_iov->iov_len;
++	if (ea + outlen > end)
++		return -EINVAL;
++
+ 	for (;;) {
+ 		if ((u8 *)ea > end - sizeof(*ea))
+ 			return -EINVAL;
+-- 
+2.53.0
+
