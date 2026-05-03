@@ -1,4 +1,4 @@
-From bb27dcf66bf759e8e86e6d07cc997256ee3b1df4 Mon Sep 17 00:00:00 2001
+From ce21d655cc6432af1c4450c145a80019cea970db Mon Sep 17 00:00:00 2001
 From: Zisen Ye <zisenye@stu.xidian.edu.cn>
 Date: Sat, 2 May 2026 03:38:31 +0000
 Subject: [PATCH v3 1/1] smb/client: fix out-of-bounds read in
@@ -17,7 +17,7 @@ kernel heap memory.
 
 Link: https://lore.kernel.org/linux-cifs/d998240c-aca9-420d-9dbd-f5ba24af19e0@chenxiaosong.com/
 Fixes: ea41367b2a60 ("smb: client: introduce SMB2_OP_QUERY_WSL_EA")
-Cc: Stable@vger.kernel.org
+Cc: stable@vger.kernel.org
 Signed-off-by: Zisen Ye <zisenye@stu.xidian.edu.cn>
 Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
