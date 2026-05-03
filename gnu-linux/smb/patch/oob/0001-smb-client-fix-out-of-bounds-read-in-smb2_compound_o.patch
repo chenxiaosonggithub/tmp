@@ -1,7 +1,7 @@
-From 2214f31db117d2db4a32a58116ca1e666c89d4eb Mon Sep 17 00:00:00 2001
+From bb27dcf66bf759e8e86e6d07cc997256ee3b1df4 Mon Sep 17 00:00:00 2001
 From: Zisen Ye <zisenye@stu.xidian.edu.cn>
 Date: Sat, 2 May 2026 03:38:31 +0000
-Subject: [PATCH v2 1/2] smb/client: fix out-of-bounds read in
+Subject: [PATCH v3 1/1] smb/client: fix out-of-bounds read in
  smb2_compound_op()
 
 If a server sends a truncated response but a large OutputBufferLength, and
@@ -25,14 +25,14 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  1 file changed, 3 insertions(+)
 
 diff --git a/fs/smb/client/smb2inode.c b/fs/smb/client/smb2inode.c
-index 286912616c73..a192d70cd29e 100644
+index 286912616c73..28e01d02be03 100644
 --- a/fs/smb/client/smb2inode.c
 +++ b/fs/smb/client/smb2inode.c
 @@ -121,6 +121,9 @@ static int check_wsl_eas(struct kvec *rsp_iov)
  	ea = (void *)((u8 *)rsp_iov->iov_base +
  		      le16_to_cpu(rsp->OutputBufferOffset));
  	end = (u8 *)rsp_iov->iov_base + rsp_iov->iov_len;
-+	if (ea + outlen > end)
++	if ((u8 *)ea + outlen > end)
 +		return -EINVAL;
 +
  	for (;;) {
