@@ -7,7 +7,7 @@ v2->v3: fix build warning.
 
 v2: https://lore.kernel.org/linux-cifs/20260502095435.2969835-1-zisenye@stu.xidian.edu.cn/
 
-The following patches from v4 have already been merged into cifs-2.6.git for-next:
+The following patches from v2 have already been merged into cifs-2.6.git for-next:
   - smb/client: fix out-of-bounds read in symlink_data()
 
 Zisen Ye (1):
