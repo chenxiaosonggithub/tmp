@@ -1,7 +1,7 @@
-From ce21d655cc6432af1c4450c145a80019cea970db Mon Sep 17 00:00:00 2001
+From fd2dcea2a48d1635432fe902b1ea16fee20ec5a4 Mon Sep 17 00:00:00 2001
 From: Zisen Ye <zisenye@stu.xidian.edu.cn>
 Date: Sat, 2 May 2026 03:38:31 +0000
-Subject: [PATCH v3 1/1] smb/client: fix out-of-bounds read in
+Subject: [PATCH v4 1/1] smb/client: fix out-of-bounds read in
  smb2_compound_op()
 
 If a server sends a truncated response but a large OutputBufferLength, and
@@ -21,23 +21,45 @@ Cc: stable@vger.kernel.org
 Signed-off-by: Zisen Ye <zisenye@stu.xidian.edu.cn>
 Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
- fs/smb/client/smb2inode.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/smb/client/smb2inode.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
 diff --git a/fs/smb/client/smb2inode.c b/fs/smb/client/smb2inode.c
-index 286912616c73..28e01d02be03 100644
+index 286912616c73..6c9c229b91f6 100644
 --- a/fs/smb/client/smb2inode.c
 +++ b/fs/smb/client/smb2inode.c
-@@ -121,6 +121,9 @@ static int check_wsl_eas(struct kvec *rsp_iov)
+@@ -111,7 +111,7 @@ static int check_wsl_eas(struct kvec *rsp_iov)
+ 	u32 outlen, next;
+ 	u16 vlen;
+ 	u8 nlen;
+-	u8 *end;
++	u8 *ea_end, *iov_end;
+ 
+ 	outlen = le32_to_cpu(rsp->OutputBufferLength);
+ 	if (outlen < SMB2_WSL_MIN_QUERY_EA_RESP_SIZE ||
+@@ -120,15 +120,19 @@ static int check_wsl_eas(struct kvec *rsp_iov)
+ 
  	ea = (void *)((u8 *)rsp_iov->iov_base +
  		      le16_to_cpu(rsp->OutputBufferOffset));
- 	end = (u8 *)rsp_iov->iov_base + rsp_iov->iov_len;
-+	if ((u8 *)ea + outlen > end)
+-	end = (u8 *)rsp_iov->iov_base + rsp_iov->iov_len;
++	ea_end = (u8 *)ea + outlen;
++	iov_end = (u8 *)rsp_iov->iov_base + rsp_iov->iov_len;
++	if (ea_end > iov_end)
 +		return -EINVAL;
 +
  	for (;;) {
- 		if ((u8 *)ea > end - sizeof(*ea))
+-		if ((u8 *)ea > end - sizeof(*ea))
++		if ((u8 *)ea > ea_end - sizeof(*ea))
  			return -EINVAL;
+ 
+ 		nlen = ea->ea_name_length;
+ 		vlen = le16_to_cpu(ea->ea_value_length);
+ 		if (nlen != SMB2_WSL_XATTR_NAME_LEN ||
+-		    (u8 *)ea->ea_data + nlen + 1 + vlen > end)
++		    (u8 *)ea->ea_data + nlen + 1 + vlen > ea_end)
+ 			return -EINVAL;
+ 
+ 		switch (vlen) {
 -- 
-2.53.0
+2.54.0
 

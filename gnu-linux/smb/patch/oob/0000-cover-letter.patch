@@ -1,11 +1,11 @@
-From bb27dcf66bf759e8e86e6d07cc997256ee3b1df4 Mon Sep 17 00:00:00 2001
+From fd2dcea2a48d1635432fe902b1ea16fee20ec5a4 Mon Sep 17 00:00:00 2001
 From: Zisen Ye <zisenye@stu.xidian.edu.cn>
-Date: Sun, 3 May 2026 10:26:13 +0000
-Subject: [PATCH v3 0/1] smb/client: fix out-of-bounds read
+Date: Wed, 6 May 2026 03:19:46 +0000
+Subject: [PATCH v4 0/1] smb/client: fix out-of-bounds read
 
-v2->v3: fix build warning.
+v3->v4: in the loop, validate the EA list entries against the constrained OutputBufferLength.
 
-v2: https://lore.kernel.org/linux-cifs/20260502095435.2969835-1-zisenye@stu.xidian.edu.cn/
+v3: https://lore.kernel.org/linux-cifs/20260503134333.3260640-1-zisenye@stu.xidian.edu.cn/
 
 The following patches from v2 have already been merged into cifs-2.6.git for-next:
   - smb/client: fix out-of-bounds read in symlink_data()
@@ -13,9 +13,9 @@ The following patches from v2 have already been merged into cifs-2.6.git for-nex
 Zisen Ye (1):
   smb/client: fix out-of-bounds read in smb2_compound_op()
 
- fs/smb/client/smb2inode.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/smb/client/smb2inode.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
 -- 
-2.53.0
+2.54.0
 
