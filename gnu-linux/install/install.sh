@@ -173,6 +173,12 @@ fedora_docker()
 	sudo dnf install -y nginx pandoc jq httpd-tools
 	sudo dnf install bash-completion -y
 
+	# 安装编译samba的软件
+	cd /home/chenxiaosong/code/
+	git clone https://git.samba.org/samba.git
+	cd samba/bootstrap/generated-dists/fedora43/
+	./bootstrap.sh # 时间会比较久
+
 	setup_nginx
 
 	if [ ! -d "/home/chenxiaosong/code/global-6.6.14" ]; then
