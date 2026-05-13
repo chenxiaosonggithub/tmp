@@ -1,0 +1,53 @@
+From 886094638c32c6f95b8f8600e4054b11996eb6ed Mon Sep 17 00:00:00 2001
+From: Ye Bin <yebin10@huawei.com>
+Date: Wed, 13 May 2026 04:04:50 +0000
+Subject: [PATCH] smb/client: fix infinite loop and oob read in symlink_data()
+
+On 32-bit architectures, the infinite loop is as follows:
+
+  p->ErrorContextData == 0xfffffff8
+  len = 0xfffffff8
+  p = p->ErrorContextData + 0xfffffff8 == p
+
+On 32-bit architectures, the oob read is as follows:
+
+  p->ErrorContextData == 0xfffffff0
+  len = 0xfffffff0
+  p = p->ErrorContextData + 0xfffffff0 == (u8 *)p - 8
+
+Fixes: 76894f3e2f71 ("cifs: improve symlink handling for smb2+")
+Cc: stable@vger.kernel.org
+Signed-off-by: Ye Bin <yebin10@huawei.com>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/client/smb2file.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/fs/smb/client/smb2file.c b/fs/smb/client/smb2file.c
+index b292aa94a593..9d6f342b3f82 100644
+--- a/fs/smb/client/smb2file.c
++++ b/fs/smb/client/smb2file.c
+@@ -31,7 +31,7 @@ static struct smb2_symlink_err_rsp *symlink_data(const struct kvec *iov)
+ 	u32 len;
+ 
+ 	if (err->ErrorContextCount) {
+-		struct smb2_error_context_rsp *p;
++		struct smb2_error_context_rsp *p, *next;
+ 
+ 		len = (u32)err->ErrorContextCount * (offsetof(struct smb2_error_context_rsp,
+ 							      ErrorContextData) +
+@@ -49,7 +49,10 @@ static struct smb2_symlink_err_rsp *symlink_data(const struct kvec *iov)
+ 				 __func__, le32_to_cpu(p->ErrorId));
+ 
+ 			len = ALIGN(le32_to_cpu(p->ErrorDataLength), 8);
+-			p = (struct smb2_error_context_rsp *)(p->ErrorContextData + len);
++			next = (struct smb2_error_context_rsp *)(p->ErrorContextData + len);
++			if (next <= p)
++				return ERR_PTR(-EINVAL);
++			p = next;
+ 		}
+ 	} else if (le32_to_cpu(err->ByteCount) >= sizeof(*sym) &&
+ 		   iov->iov_len >= SMB2_SYMLINK_STRUCT_SIZE) {
+-- 
+2.54.0
+
