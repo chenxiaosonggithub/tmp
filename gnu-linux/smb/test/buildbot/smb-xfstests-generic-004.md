@@ -82,7 +82,7 @@ systemctl restart ksmbd
 mkdir -p /tmp/test
 mount -t cifs -o username=root,password=1 //192.168.53.210/test /tmp/test
 gcc test.c
-./a.out # failed
+./a.out # report error: No such file or directory
 ```
 
 The test succeeds when Samba is used as the server:
@@ -97,7 +97,7 @@ systemctl start smb.service # fedora
 mkdir -p /tmp/test
 mount -t cifs -o username=root,password=1 //192.168.53.210/test /tmp/test
 gcc test.c
-./a.out # successful
+./a.out # File opened successfully with O_TMPFILE, fd=3
 ```
 
 # shell reproducer
