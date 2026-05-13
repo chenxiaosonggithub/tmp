@@ -1,4 +1,4 @@
-From 71a14179bd6b8a94de74a1231353c64664c8b70d Mon Sep 17 00:00:00 2001
+From 0214f86a54cf044d84548793913d5495994ca93d Mon Sep 17 00:00:00 2001
 From: Ye Bin <yebin10@huawei.com>
 Date: Wed, 13 May 2026 04:04:50 +0000
 Subject: [PATCH] smb/client: fix infinite loop and oob read in symlink_data()
@@ -6,12 +6,14 @@ Subject: [PATCH] smb/client: fix infinite loop and oob read in symlink_data()
 On 32-bit architectures, the infinite loop is as follows:
 
   len = p->ErrorDataLength == 0xfffffff8
-  p = p->ErrorContextData + len == p
+  next = p->ErrorContextData + len
+  next == p
 
 On 32-bit architectures, the oob read is as follows:
 
   len = p->ErrorDataLength == 0xfffffff0
-  p = p->ErrorContextData + len == (u8 *)p - 8
+  next = p->ErrorContextData + len
+  next == (u8 *)p - 8
 
 Fixes: 76894f3e2f71 ("cifs: improve symlink handling for smb2+")
 Cc: stable@vger.kernel.org
