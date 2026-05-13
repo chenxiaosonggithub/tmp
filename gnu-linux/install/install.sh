@@ -44,6 +44,8 @@ tip_perm()
 set_alias()
 {
 	alias gitlog='git log --oneline --date=short --format="%cd %ad %h %s %an <%ae>"'
+	alias tatt="tmux att -t"
+	alias tnew="tmux new -t"
 }
 
 add_swap()
