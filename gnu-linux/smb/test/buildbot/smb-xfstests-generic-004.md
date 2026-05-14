@@ -82,6 +82,7 @@ systemctl restart ksmbd
 mkdir -p /tmp/test
 mount -t cifs -o username=root,password=1 //192.168.53.210/test /tmp/test
 gcc test.c
+echo 3 > /proc/sys/vm/drop_caches
 ./a.out # report error: No such file or directory
 ```
 
@@ -97,6 +98,7 @@ systemctl start smb.service # fedora
 mkdir -p /tmp/test
 mount -t cifs -o username=root,password=1 //192.168.53.210/test /tmp/test
 gcc test.c
+echo 3 > /proc/sys/vm/drop_caches
 ./a.out # File opened successfully with O_TMPFILE, fd=3
 ```
 
@@ -141,6 +143,19 @@ umount /tmp/test
 ```
 
 <!--
+# code analysis {#code}
+
+```c
+      cifs_tmpfile
+        __cifs_do_create
+          cifs_open_create_options
+
+smb2_open
+  if (ksmbd_inode_pending_delete(fp)) // true
+  rc = -EBUSY
+  rsp->hdr.Status = STATUS_DELETE_PENDING
+```
+
 umount /tmp/test
 rm /tmp/test/tst-tmpfile-flink
 bash /root/ksmbd-svr-setup.sh
