@@ -116,14 +116,14 @@ cfg_qemu()
 	mkdir -p /home/chenxiaosong/qemu-kernel/base_image/fedora
 	mkdir -p /home/chenxiaosong/qemu-kernel/vm/1.fedora
 	mkdir -p /home/chenxiaosong/qemu-kernel/vm/2.fedora
-	cp /home/chenxiaosong/code/blog/course/kernel/src/x86_64/update-base.sh /home/chenxiaosong/qemu-kernel/base_image/fedora
-	cp /home/chenxiaosong/code/blog/course/kernel/src/x86_64/create-qcow2.sh /home/chenxiaosong/qemu-kernel/base_image/fedora
+	ln -s /home/chenxiaosong/code/blog/course/kernel/src/x86_64/update-base.sh /home/chenxiaosong/qemu-kernel/base_image/fedora/update-base.sh
+	ln -s /home/chenxiaosong/code/blog/course/kernel/src/x86_64/create-qcow2.sh /home/chenxiaosong/qemu-kernel/base_image/fedora/create-qcow2.sh
 
 	mkdir -p /home/chenxiaosong/qemu-kernel/base_image/arm64-fedora
 	mkdir -p /home/chenxiaosong/qemu-kernel/vm/3.arm64-fedora
 	mkdir -p /home/chenxiaosong/qemu-kernel/vm/4.arm64-fedora
-	cp /home/chenxiaosong/code/blog/course/kernel/src/aarch64/update-base.sh /home/chenxiaosong/qemu-kernel/base_image/arm64-fedora
-	cp /home/chenxiaosong/code/blog/course/kernel/src/aarch64/create-qcow2.sh /home/chenxiaosong/qemu-kernel/base_image/arm64-fedora
+	ln -s /home/chenxiaosong/code/blog/course/kernel/src/aarch64/update-base.sh /home/chenxiaosong/qemu-kernel/base_image/arm64-fedora/update-base.sh
+	ln -s /home/chenxiaosong/code/blog/course/kernel/src/aarch64/create-qcow2.sh /home/chenxiaosong/qemu-kernel/base_image/arm64-fedora/create-qcow2.sh
 
 	cp /home/chenxiaosong/code/tmp/gnu-linux/kernel/etc-qemu-ifup /etc/qemu-ifup
 	sudo chmod 755 /etc/qemu-ifup
@@ -232,27 +232,43 @@ fedora_vm()
 
 	sudo dnf install -y git samba cifs-utils
 	sudo dnf group install development-tools -y
+
+	mkdir -p /home/chenxiaosong/code
+	cd /home/chenxiaosong/code
+	git clone https://gitee.com/chenxiaosonggitee/blog.git
+	cd /home/chenxiaosong/code/blog/course/gnu-linux/src/config-file
+	bash copy-to-home.sh
+	cd /home/chenxiaosong/code/blog/course/kernel/src/script
+	command cp parse-cmdline.sh ~
+
 	sudo yum install -y acl attr automake bc dbench dump e2fsprogs fio gawk gcc \
 		gdbm-devel git indent kernel-devel libacl-devel libaio-devel \
 		libcap-devel libtool liburing-devel libuuid-devel lvm2 make psmisc \
 		python3 quota sed sqlite udftools  xfsprogs
 	sudo yum -y install btrfs-progs exfatprogs f2fs-tools ocfs2-tools xfsdump xfsprogs-devel
-
-	mkdir -p /home/chenxiaosong/code
-	cd /home/chenxiaosong/code
-	git clone https://gitee.com/chenxiaosonggitee/blog.git
 	cd /home/chenxiaosong/code
 	git clone https://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git
-	cd /home/chenxiaosong/code/blog/course/gnu-linux/src/config-file
-	bash copy-to-home.sh
-	cd /home/chenxiaosong/code/blog/course/kernel/src/script
-	command cp parse-cmdline.sh ~
+	cd xfstests-dev
+	make -j`nproc`
 
 	# samba
 	command cp /home/chenxiaosong/code/blog/course/smb/src/test/smb.conf /etc/samba/
 	command cp /home/chenxiaosong/code/blog/course/smb/src/samba-svr-setup.sh ~
 	bash ~/samba-svr-setup.sh
 	printf "1\n1\n" | pdbedit -a -u root # -a: 新增，这里的用户名必须是系统用户名（在/etc/passwd中有）
+
+	# samba源码
+	git clone https://gitlab.com/samba-team/devel/samba.git
+	samba/bootstrap/generated-dists/fedora43/
+	./bootstrap.sh # 安装依赖软件，时间可能比较久
+	cd ../../../
+	./configure --with-systemd --with-libunwind
+	make -j`nproc`
+	make install -j`nproc`
+	# 只编译安装 smbd
+	# make -j`nproc` bin/smbd && rm -rf /usr/local/samba/sbin/smbd; cp bin/smbd /usr/local/samba/sbin/smbd
+	cp /usr/lib/systemd/system/smb.service /usr/lib/systemd/system/smb.service.bak
+	cp ./bin/default/packaging/systemd/smb.service /usr/lib/systemd/system/smb.service
 
 	# ksmbd
 	dnf install -y git gcc pkgconf autoconf automake libtool make meson ninja-build gawk libnl3-devel glib2-devel
