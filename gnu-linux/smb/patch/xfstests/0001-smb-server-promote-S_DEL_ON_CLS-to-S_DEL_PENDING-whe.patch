@@ -1,4 +1,4 @@
-From ebb40f118159d70ae37ee1101c60482d8fa44a5b Mon Sep 17 00:00:00 2001
+From 4bbdb0f99d9323465d9519bb1a81001ed70037ea Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Mon, 18 May 2026 08:14:06 +0000
 Subject: [PATCH] smb/server: promote S_DEL_ON_CLS to S_DEL_PENDING when close
@@ -6,10 +6,10 @@ Subject: [PATCH] smb/server: promote S_DEL_ON_CLS to S_DEL_PENDING when close
 Reproducer:
 
   1. server: systemctl start ksmbd
-  2. client: mount -t cifs -o username=root,password=xxx //${server_ip}/test /mnt
+  2. client: mount -t cifs //${server_ip}/export /mnt
   3. client: C program: openat(AT_FDCWD, "/mnt", O_RDWR | O_TMPFILE, 0600)
 
-Do not treat `FILE_DELETE_ON_CLOSE_LE` as delete pending while handles
+Do not treat `FILE_DELETE_ON_CLOSE_LE` as delete pending while files
 remain open.
 
 This patch fixes xfstests generic/004.
