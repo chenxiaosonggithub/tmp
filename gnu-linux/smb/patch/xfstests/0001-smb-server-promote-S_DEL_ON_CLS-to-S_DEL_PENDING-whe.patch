@@ -1,35 +1,13 @@
-From c60fc9f62dacc43f3c4e19bd2e14051ed5c0867f Mon Sep 17 00:00:00 2001
+From 9d9573970defaa345e0387e7d471775eb5945427 Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Mon, 18 May 2026 08:14:06 +0000
 Subject: [PATCH] smb/server: promote S_DEL_ON_CLS to S_DEL_PENDING when close
 
-`test.c`:
-
-```
-
-int main(void)
-{
-        int fd;
-
-        fd = openat(AT_FDCWD, "/mnt", O_RDWR | O_TMPFILE, 0600);
-        if (fd < 0) {
-                perror("openat");
-                return 1;
-        }
-
-        printf("File opened successfully with O_TMPFILE, fd=%d\n", fd);
-
-        close(fd);
-        return 0;
-}
-```
-
 Reproducer:
 
   1. server: systemctl start ksmbd
-  2. client: mount -t cifs -o username=root,password=1 //${server_ip}/test /mnt
-  3. client: gcc test.c
-  4. client: ./a.out
+  2. client: mount -t cifs -o username=root,password=xxx //${server_ip}/test /mnt
+  3. client: C program: openat(AT_FDCWD, "/mnt", O_RDWR | O_TMPFILE, 0600)
 
 Do not treat `FILE_DELETE_ON_CLOSE_LE` as delete pending while handles
 remain open.
@@ -37,6 +15,8 @@ remain open.
 This patch fixes xfstests generic/004.
 
 Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Co-developed-by: Huiwen He <hehuiwen@kylinos.cn>
+Signed-off-by: Huiwen He <hehuiwen@kylinos.cn>
 ---
  fs/smb/server/vfs_cache.c | 15 +++++++++++----
  1 file changed, 11 insertions(+), 4 deletions(-)
