@@ -1,4 +1,4 @@
-From 9d9573970defaa345e0387e7d471775eb5945427 Mon Sep 17 00:00:00 2001
+From ebb40f118159d70ae37ee1101c60482d8fa44a5b Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Mon, 18 May 2026 08:14:06 +0000
 Subject: [PATCH] smb/server: promote S_DEL_ON_CLS to S_DEL_PENDING when close
@@ -14,9 +14,9 @@ remain open.
 
 This patch fixes xfstests generic/004.
 
-Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Co-developed-by: Huiwen He <hehuiwen@kylinos.cn>
 Signed-off-by: Huiwen He <hehuiwen@kylinos.cn>
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
  fs/smb/server/vfs_cache.c | 15 +++++++++++----
  1 file changed, 11 insertions(+), 4 deletions(-)
