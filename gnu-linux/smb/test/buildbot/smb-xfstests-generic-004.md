@@ -143,19 +143,69 @@ umount /tmp/test
 ```
 
 <!--
-# code analysis {#code}
+# ksmbd code analysis {#ksmbd-code}
 
 ```c
-      cifs_tmpfile
-        __cifs_do_create
-          cifs_open_create_options
+cifs_tmpfile
+  __cifs_do_create
+    cifs_open_create_options
 
 smb2_open
   if (ksmbd_inode_pending_delete(fp)) // true
   rc = -EBUSY
   rsp->hdr.Status = STATUS_DELETE_PENDING
+
+// bash smbtorture.sh 192.168.53.209 ksmbd
+handle_ksmbd_work
+  smb2_set_info
+    set_file_disposition_info
+      ksmbd_set_inode_pending_delete
+        ci->m_flags |= S_DEL_PENDING
+
+smb2_open
+  if (req->CreateOptions & FILE_DELETE_ON_CLOSE_LE)
+  ksmbd_fd_set_delete_on_close
 ```
 
+# samba code analysis {#samba-code}
+
+```c
+smbd_smb2_request_dispatch
+  smbd_smb2_request_process_create
+    smbd_smb2_create_send
+      smb_vfs_call_create_file
+        vfswrap_create_file
+          create_file_default
+            create_file_unixpath
+              open_file_ntcreate
+                share_mode_entry_prepare_lock_add
+                  _share_mode_entry_prepare_lock
+                    g_lock_lock
+                      dbwrap_do_locked
+                        dbwrap_watched_do_locked
+                          dbwrap_do_locked
+                            db_tdb_do_locked
+                              dbwrap_watched_do_locked_fn
+                                g_lock_lock_simple_fn
+                                  g_lock_lock_cb_run_and_store
+                                    share_mode_entry_prepare_lock_fn
+                                      open_ntcreate_lock_add_entry
+                                        check_and_store_share_mode
+                                          has_delete_on_close
+                  if (create_options & FILE_DELETE_ON_CLOSE) {
+                  fsp->fsp_flags.initial_delete_on_close = true;
+
+smb_set_file_disposition_info
+  set_delete_on_close
+    share_mode_do_locked_vfs_denied
+      _share_mode_do_locked_vfs_denied
+        share_mode_do_locked_vfs_denied_fn
+          set_delete_on_close_locked // state->fn
+```
+
+# test steps
+
+```sh
 umount /tmp/test
 rm /tmp/test/tst-tmpfile-flink
 bash /root/ksmbd-svr-setup.sh
@@ -178,5 +228,6 @@ bash /root/ksmbd-svr-setup.sh
 rm /tmp/test/tst-tmpfile-flink
 bash /root/samba-svr-setup.sh
 ./check generic/004
+```
 -->
 
