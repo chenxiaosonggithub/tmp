@@ -1,0 +1,90 @@
+From c60fc9f62dacc43f3c4e19bd2e14051ed5c0867f Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Mon, 18 May 2026 08:14:06 +0000
+Subject: [PATCH] smb/server: promote S_DEL_ON_CLS to S_DEL_PENDING when close
+
+`test.c`:
+
+```
+
+int main(void)
+{
+        int fd;
+
+        fd = openat(AT_FDCWD, "/mnt", O_RDWR | O_TMPFILE, 0600);
+        if (fd < 0) {
+                perror("openat");
+                return 1;
+        }
+
+        printf("File opened successfully with O_TMPFILE, fd=%d\n", fd);
+
+        close(fd);
+        return 0;
+}
+```
+
+Reproducer:
+
+  1. server: systemctl start ksmbd
+  2. client: mount -t cifs -o username=root,password=1 //${server_ip}/test /mnt
+  3. client: gcc test.c
+  4. client: ./a.out
+
+Do not treat `FILE_DELETE_ON_CLOSE_LE` as delete pending while handles
+remain open.
+
+This patch fixes xfstests generic/004.
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/vfs_cache.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/fs/smb/server/vfs_cache.c b/fs/smb/server/vfs_cache.c
+index 913164c958b1..38ed647b141f 100644
+--- a/fs/smb/server/vfs_cache.c
++++ b/fs/smb/server/vfs_cache.c
+@@ -211,7 +211,7 @@ int ksmbd_query_inode_status(struct dentry *dentry)
+ 		return ret;
+ 
+ 	down_read(&ci->m_lock);
+-	if (ci->m_flags & (S_DEL_PENDING | S_DEL_ON_CLS))
++	if (ci->m_flags & S_DEL_PENDING)
+ 		ret = KSMBD_INODE_STATUS_PENDING_DELETE;
+ 	else
+ 		ret = KSMBD_INODE_STATUS_OK;
+@@ -227,7 +227,7 @@ bool ksmbd_inode_pending_delete(struct ksmbd_file *fp)
+ 	int ret;
+ 
+ 	down_read(&ci->m_lock);
+-	ret = (ci->m_flags & (S_DEL_PENDING | S_DEL_ON_CLS));
++	ret = (ci->m_flags & S_DEL_PENDING);
+ 	up_read(&ci->m_lock);
+ 
+ 	return ret;
+@@ -395,12 +395,19 @@ static void __ksmbd_inode_close(struct ksmbd_file *fp)
+ 		}
+ 	}
+ 
++	down_write(&ci->m_lock);
++	if (ci->m_flags & S_DEL_ON_CLS) {
++		ci->m_flags &= ~S_DEL_ON_CLS;
++		ci->m_flags |= S_DEL_PENDING;
++	}
++	up_write(&ci->m_lock);
++
+ 	if (atomic_dec_and_test(&ci->m_count)) {
+ 		bool do_unlink = false;
+ 
+ 		down_write(&ci->m_lock);
+-		if (ci->m_flags & (S_DEL_ON_CLS | S_DEL_PENDING)) {
+-			ci->m_flags &= ~(S_DEL_ON_CLS | S_DEL_PENDING);
++		if (ci->m_flags & S_DEL_PENDING) {
++			ci->m_flags &= ~S_DEL_PENDING;
+ 			do_unlink = true;
+ 		}
+ 		up_write(&ci->m_lock);
+-- 
+2.54.0
+
