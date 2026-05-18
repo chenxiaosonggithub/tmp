@@ -1,4 +1,4 @@
-From 4bbdb0f99d9323465d9519bb1a81001ed70037ea Mon Sep 17 00:00:00 2001
+From 315bb7d3f20c986ee20ad07c66c99aa26e0f6687 Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Mon, 18 May 2026 08:14:06 +0000
 Subject: [PATCH] smb/server: promote S_DEL_ON_CLS to S_DEL_PENDING when close
@@ -18,11 +18,11 @@ Co-developed-by: Huiwen He <hehuiwen@kylinos.cn>
 Signed-off-by: Huiwen He <hehuiwen@kylinos.cn>
 Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
- fs/smb/server/vfs_cache.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ fs/smb/server/vfs_cache.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
 diff --git a/fs/smb/server/vfs_cache.c b/fs/smb/server/vfs_cache.c
-index 913164c958b1..38ed647b141f 100644
+index 913164c958b1..5a232d94f567 100644
 --- a/fs/smb/server/vfs_cache.c
 +++ b/fs/smb/server/vfs_cache.c
 @@ -211,7 +211,7 @@ int ksmbd_query_inode_status(struct dentry *dentry)
@@ -43,11 +43,12 @@ index 913164c958b1..38ed647b141f 100644
  	up_read(&ci->m_lock);
  
  	return ret;
-@@ -395,12 +395,19 @@ static void __ksmbd_inode_close(struct ksmbd_file *fp)
+@@ -395,12 +395,20 @@ static void __ksmbd_inode_close(struct ksmbd_file *fp)
  		}
  	}
  
 +	down_write(&ci->m_lock);
++	/* Promote S_DEL_ON_CLS to S_DEL_PENDING when close */
 +	if (ci->m_flags & S_DEL_ON_CLS) {
 +		ci->m_flags &= ~S_DEL_ON_CLS;
 +		ci->m_flags |= S_DEL_PENDING;
