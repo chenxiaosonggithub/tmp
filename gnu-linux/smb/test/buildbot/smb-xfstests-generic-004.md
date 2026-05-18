@@ -1,43 +1,10 @@
+# Issue description
+
+When using ksmbd as the server, xfstests generic/004 test case fails.
+
 # Environment
 
 [Please refer to "How to Test SMB"](https://chenxiaosong.com/en/smb-test.html).
-
-## Samba Environment
-
-`smb.conf` is configured as follows:
-```sh
-[test]
-    comment = content server share1
-    path = /tmp/s_test
-    public = yes
-    read only = no
-    writeable = yes
-```
-
-## KSMBD Environment
-
-`ksmbd.conf` is configured as follows:
-```sh
-[test]
-        comment = content server share1
-        path = /tmp/s_test
-        writeable = yes
-```
-
-## Xfstests Environment
-
-`local.config` is configured as follows:
-```sh
-smb_server_ip=192.168.53.210
-smb_username=root
-smb_password=1
-smb_mount_options="-o username=${smb_username},password=${smb_password}"
-export FSTYP=cifs
-export TEST_FS_MOUNT_OPTS="${smb_mount_options}"
-export TEST_DEV=//${smb_server_ip}/test
-export TEST_DIR=/tmp/test
-export MOUNT_OPTIONS="${smb_mount_options}"
-```
 
 # C reproducer
 
@@ -140,6 +107,44 @@ umount /tmp/test
 
 # or run xfstests test case on the client
 ./check generic/004 # successful
+```
+
+# Solution
+
+[`smb/server: promote S_DEL_ON_CLS to S_DEL_PENDING when close`](https://github.com/chenxiaosonggithub/tmp/blob/master/gnu-linux/smb/patch/xfstests/0001-smb-server-promote-S_DEL_ON_CLS-to-S_DEL_PENDING-whe.patch)
+
+## Test Results
+
+### xfstests
+
+```sh
+./check generic/004
+
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 gnu 7.1.0-rc3+ #43 SMP PREEMPT_DYNAMIC Mon May 18 04:12:31 UTC 2026
+MKFS_OPTIONS  -- //192.168.53.209/test2
+MOUNT_OPTIONS -- -o username=root,password=1 //192.168.53.209/test2 /tmp/test2
+
+generic/004  0s ...  1s
+Ran: generic/004
+Passed all 1 tests
+```
+
+### smbtorture
+
+```sh
+smbtorture //192.168.53.209/test3/ -Uroot%1 smb2.oplock.doc
+
+smbtorture 4.25.0pre1-GIT-dcd9bedc4b9
+Using seed 1779096561
+time: 2026-05-18 09:29:21.074101
+test: doc
+time: 2026-05-18 09:29:21.074517
+open a file with a batch oplock
+Set delete on close
+2nd open should not break and get DELETE_PENDING
+time: 2026-05-18 09:29:21.110553
+success: doc
 ```
 
 <!--
