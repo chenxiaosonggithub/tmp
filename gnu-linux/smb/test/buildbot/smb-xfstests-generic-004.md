@@ -143,19 +143,39 @@ umount /tmp/test
 ```
 
 <!--
-# code analysis {#code}
+# ksmbd code analysis {#ksmbd-code}
 
 ```c
-      cifs_tmpfile
-        __cifs_do_create
-          cifs_open_create_options
+cifs_tmpfile
+  __cifs_do_create
+    cifs_open_create_options
 
 smb2_open
   if (ksmbd_inode_pending_delete(fp)) // true
   rc = -EBUSY
   rsp->hdr.Status = STATUS_DELETE_PENDING
+
+// bash smbtorture.sh 192.168.53.209 ksmbd
+handle_ksmbd_work
+  smb2_set_info
+    set_file_disposition_info
+      ksmbd_set_inode_pending_delete
+        ci->m_flags |= S_DEL_PENDING
+
+smb2_open
+  if (req->CreateOptions & FILE_DELETE_ON_CLOSE_LE)
+  ksmbd_fd_set_delete_on_close
 ```
 
+# samba code analysis {#samba-code}
+
+```c
+
+```
+
+# test steps
+
+```sh
 umount /tmp/test
 rm /tmp/test/tst-tmpfile-flink
 bash /root/ksmbd-svr-setup.sh
@@ -178,5 +198,6 @@ bash /root/ksmbd-svr-setup.sh
 rm /tmp/test/tst-tmpfile-flink
 bash /root/samba-svr-setup.sh
 ./check generic/004
+```
 -->
 
