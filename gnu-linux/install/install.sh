@@ -252,7 +252,7 @@ fedora_vm()
 	make -j`nproc`
 
 	# samba
-	command cp /home/chenxiaosong/code/blog/course/smb/src/test/smb.conf /etc/samba/
+	command cp /home/chenxiaosong/code/tmp/gnu-linux/smb/test/src/smb.conf /etc/samba/
 	command cp /home/chenxiaosong/code/blog/course/smb/src/samba-svr-setup.sh ~
 	bash ~/samba-svr-setup.sh
 	printf "1\n1\n" | pdbedit -a -u root # -a: 新增，这里的用户名必须是系统用户名（在/etc/passwd中有）
@@ -278,7 +278,7 @@ fedora_vm()
 	./configure --with-rundir=/run # --prefix=/usr/local/sbin --sysconfdir=/usr/local/etc
 	make -j`nproc`
 	sudo make install -j`nproc`
-	cp /home/chenxiaosong/code/blog/course/smb/src/test/ksmbd.conf /usr/local/etc/ksmbd/
+	cp /home/chenxiaosong/code/tmp/gnu-linux/smb/test/src/ksmbd.conf /usr/local/etc/ksmbd/
 	printf "1\n1\n" | sudo ksmbd.adduser --add root # 这里的用户名必须是系统用户名（在/etc/passwd中有）
 	command cp /home/chenxiaosong/code/blog/course/smb/src/ksmbd-svr-setup.sh ~
 }
