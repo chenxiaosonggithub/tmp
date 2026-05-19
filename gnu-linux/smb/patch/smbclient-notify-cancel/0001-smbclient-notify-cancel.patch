@@ -1,0 +1,109 @@
+From faf62bf2c7c5b33dfb3ee956caf18882da388fd6 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
+Date: Tue, 19 May 2026 07:40:26 +0000
+Subject: [PATCH] smbclient: notify cancel
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
+---
+ source3/client/client.c | 60 ++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 57 insertions(+), 3 deletions(-)
+
+diff --git a/source3/client/client.c b/source3/client/client.c
+index 1d3656aab34..0c1ab697e76 100644
+--- a/source3/client/client.c
++++ b/source3/client/client.c
+@@ -45,6 +45,7 @@
+ #include "lib/cmdline/cmdline.h"
+ #include "libcli/smb/reparse.h"
+ #include "lib/param/param.h"
++#include "lib/util/tevent_ntstatus.h"
+ 
+ #ifndef REGISTER
+ #define REGISTER 0
+@@ -4653,12 +4654,41 @@ static int cmd_newer(TALLOC_CTX *mem_ctx)
+  Watch directory changes
+ ****************************************************************************/
+ 
++struct cmd_notify_state {
++	struct tevent_req *notify_req;
++	bool cancelled;
++};
++
++static void
++notify_sig_int_handler(
++	struct tevent_context *ev,
++	struct tevent_signal *se,
++	int signum,
++	int count,
++	void *siginfo,
++	void *private_data)
++{
++	struct cmd_notify_state *state = (struct cmd_notify_state *)private_data;
++
++	if (state->notify_req)
++		state->cancelled = tevent_req_cancel(state->notify_req);
++
++	printf("cancel notify %s\n", state->cancelled ? "succeeded" : "failed");
++}
++
+ static int cmd_notify(TALLOC_CTX *mem_ctx)
+ {
+ 	TALLOC_CTX *frame = talloc_stackframe();
+ 	char *name, *buf;
+ 	NTSTATUS status;
+ 	uint16_t fnum;
++	struct tevent_req *req;
++	struct tevent_context *ev = NULL;
++	struct tevent_signal *se = NULL;
++	struct cmd_notify_state sig_state = {
++		.notify_req = NULL,
++		.cancelled = false,
++	};
+ 
+ 	name = talloc_strdup(talloc_tos(), client_get_cur_dir());
+ 	if (name == NULL) {
+@@ -4684,14 +4714,38 @@ static int cmd_notify(TALLOC_CTX *mem_ctx)
+ 		goto fail;
+ 	}
+ 
++	ev = samba_tevent_context_init(frame);
++	if (!ev)
++		goto fail;
++
++	se = tevent_add_signal(ev, frame, SIGINT, 0, notify_sig_int_handler, &sig_state);
++	if (se == NULL)
++		goto fail;
++
+ 	while (1) {
+ 		uint32_t i;
+ 		uint32_t num_changes = 0;
+ 		struct notify_change *changes = NULL;
+ 
+-		status = cli_notify(cli, fnum, 1000, FILE_NOTIFY_CHANGE_ALL,
+-				    true,
+-				    talloc_tos(), &num_changes, &changes);
++		req = cli_notify_send(frame, ev, cli, fnum, 1000, FILE_NOTIFY_CHANGE_ALL, true);
++		if (!req)
++			goto fail;
++		sig_state.notify_req = req;
++
++		if (!tevent_req_poll_ntstatus(req, ev, &status)) {
++			TALLOC_FREE(req);
++			goto fail;
++		}
++
++		status = cli_notify_recv(req, talloc_tos(), &num_changes, &changes);
++		TALLOC_FREE(req);
++
++		printf("status:%s\n", get_nt_error_c_code(talloc_tos(), status));
++		if (sig_state.cancelled) {
++			printf("notify cancelled\n");
++			goto fail;
++		}
++
+ 		if (NT_STATUS_EQUAL(status, NT_STATUS_NOTIFY_ENUM_DIR)) {
+ 			printf("NOTIFY_ENUM_DIR\n");
+ 			status = NT_STATUS_OK;
+-- 
+2.54.0
+
