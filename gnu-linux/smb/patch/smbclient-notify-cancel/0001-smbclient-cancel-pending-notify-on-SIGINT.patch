@@ -1,7 +1,7 @@
 From 87270571e2284a63716051b257336bc01e118713 Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Tue, 19 May 2026 08:51:58 +0000
-Subject: [PATCH] smbclient: cancel pending notify on SIGINT
+Subject: [PATCH samba] smbclient: cancel pending notify on SIGINT
 
 When client stops querying a directory for change notifications, it should
 send a cancel request to the server.
