@@ -1,6 +1,6 @@
 # Issue description
 
-When using ksmbd as the server, xfstests generic/004 test case fails.
+[When using ksmbd as the server, xfstests generic/004 test case fails](https://lore.kernel.org/linux-cifs/CAH2r5mvP9s_KMc2G-_AsP__G0S5JCmrigOT-7U_ZNu1pLf+Q2g@mail.gmail.com/).
 
 # Environment
 
@@ -111,12 +111,11 @@ umount /tmp/test
 
 # Solution
 
-[`smb/server: promote S_DEL_ON_CLS to S_DEL_PENDING when close`](https://github.com/chenxiaosonggithub/tmp/blob/master/gnu-linux/smb/patch/xfstests/0001-smb-server-promote-S_DEL_ON_CLS-to-S_DEL_PENDING-whe.patch)
+[`[PATCH] smb/server: promote S_DEL_ON_CLS to S_DEL_PENDING when close`](https://lore.kernel.org/linux-cifs/20260518152322.265844-1-chenxiaosong@chenxiaosong.com/)
 
-## Test Results
+## Test Results of xfstests
 
-### xfstests
-
+Run `generic/004` test case:
 ```sh
 ./check generic/004
 
@@ -130,8 +129,9 @@ Ran: generic/004
 Passed all 1 tests
 ```
 
-### smbtorture
+## Test Results of smbtorture
 
+Run `smb2.oplock.doc` test case:
 ```sh
 smbtorture //192.168.53.209/test3/ -Uroot%1 smb2.oplock.doc
 
