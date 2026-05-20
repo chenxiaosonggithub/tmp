@@ -1,4 +1,4 @@
-From 87270571e2284a63716051b257336bc01e118713 Mon Sep 17 00:00:00 2001
+From e1249bfa51848de67cd8c2298df35f379c3249f2 Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Tue, 19 May 2026 08:51:58 +0000
 Subject: [PATCH samba] smbclient: cancel pending notify on SIGINT
@@ -8,11 +8,11 @@ send a cancel request to the server.
 
 Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
- source3/client/client.c | 57 ++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 54 insertions(+), 3 deletions(-)
+ source3/client/client.c | 53 ++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 50 insertions(+), 3 deletions(-)
 
 diff --git a/source3/client/client.c b/source3/client/client.c
-index 1d3656aab34..7fa850a6dd9 100644
+index 1d3656aab34..b474e0608cb 100644
 --- a/source3/client/client.c
 +++ b/source3/client/client.c
 @@ -45,6 +45,7 @@
@@ -23,7 +23,7 @@ index 1d3656aab34..7fa850a6dd9 100644
  
  #ifndef REGISTER
  #define REGISTER 0
-@@ -4653,12 +4654,40 @@ static int cmd_newer(TALLOC_CTX *mem_ctx)
+@@ -4653,12 +4654,39 @@ static int cmd_newer(TALLOC_CTX *mem_ctx)
   Watch directory changes
  ****************************************************************************/
  
@@ -43,9 +43,8 @@ index 1d3656aab34..7fa850a6dd9 100644
 +{
 +	struct notify_state *state = (struct notify_state *)private_data;
 +
-+	if (state->notify_req) {
++	if (state->notify_req)
 +		state->cancelled = tevent_req_cancel(state->notify_req);
-+	}
 +}
 +
  static int cmd_notify(TALLOC_CTX *mem_ctx)
@@ -64,7 +63,7 @@ index 1d3656aab34..7fa850a6dd9 100644
  
  	name = talloc_strdup(talloc_tos(), client_get_cur_dir());
  	if (name == NULL) {
-@@ -4684,14 +4713,36 @@ static int cmd_notify(TALLOC_CTX *mem_ctx)
+@@ -4684,14 +4712,33 @@ static int cmd_notify(TALLOC_CTX *mem_ctx)
  		goto fail;
  	}
  
@@ -84,23 +83,20 @@ index 1d3656aab34..7fa850a6dd9 100644
 -		status = cli_notify(cli, fnum, 1000, FILE_NOTIFY_CHANGE_ALL,
 -				    true,
 -				    talloc_tos(), &num_changes, &changes);
-+		req = cli_notify_send(frame, ev, cli, fnum, 1000, FILE_NOTIFY_CHANGE_ALL, true);
-+		if (!req) {
-+			goto fail;
-+		}
-+		sig_state.notify_req = req;
-+
-+		if (!tevent_req_poll_ntstatus(req, ev, &status)) {
-+			goto fail;
-+		}
-+
-+		status = cli_notify_recv(req, talloc_tos(), &num_changes, &changes);
-+
 +		if (sig_state.cancelled) {
 +			printf("notify cancelled\n");
 +			goto fail;
 +		}
 +
++		req = cli_notify_send(frame, ev, cli, fnum, 1000, FILE_NOTIFY_CHANGE_ALL, true);
++		if (!req)
++			goto fail;
++		sig_state.notify_req = req;
++
++		if (!tevent_req_poll_ntstatus(req, ev, &status))
++			goto fail;
++
++		status = cli_notify_recv(req, talloc_tos(), &num_changes, &changes);
  		if (NT_STATUS_EQUAL(status, NT_STATUS_NOTIFY_ENUM_DIR)) {
  			printf("NOTIFY_ENUM_DIR\n");
  			status = NT_STATUS_OK;
