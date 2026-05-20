@@ -5,7 +5,7 @@ Subject: [PATCH samba v2 0/1] smbclient: cancel pending notify on SIGINT
 
 I also created a merge request on GitLab: https://gitlab.com/samba-team/samba/-/merge_requests/4530
 
-v1->v2: `sig_state.cancelled` should be checked before `cli_notify_send()`, because `changes` needs to be freed.
+v1->v2: `sig_state.cancelled` is checked before `cli_notify_send()`, because `changes` needs to be freed.
 
 v1: https://lore.kernel.org/linux-cifs/20260519095113.289692-1-chenxiaosong@chenxiaosong.com/
 
