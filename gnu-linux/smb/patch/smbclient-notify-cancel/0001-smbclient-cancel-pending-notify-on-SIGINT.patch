@@ -1,11 +1,17 @@
-From e1249bfa51848de67cd8c2298df35f379c3249f2 Mon Sep 17 00:00:00 2001
+From 74ae171df459e3268afdf0e29a1862dbde3f5955 Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Tue, 19 May 2026 08:51:58 +0000
-Subject: [PATCH samba] smbclient: cancel pending notify on SIGINT
+Subject: [PATCH samba v2 1/1] smbclient: cancel pending notify on SIGINT
 
-When client stops querying a directory for change notifications, it should
-send a cancel request to the server.
+When client stops querying a directory for change notifications,
+it should send a cancel request to the server.
 
+After cancel notify succeeds, `status` returned by both
+`tevent_req_poll_ntstatus()` and `cli_notify_recv()` is
+`NT_STATUS_OK` rather than `NT_STATUS_CANCELLED`, so we
+can only check `sig_state.cancelled`.
+
+Suggested-by: Stefan Metzmacher <metze@samba.org>
 Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
  source3/client/client.c | 53 ++++++++++++++++++++++++++++++++++++++---
