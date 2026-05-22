@@ -230,6 +230,7 @@ fedora_vm()
 	# fedora 启动的时候等待: A start job is running for /dev/zram0，解决办法: 删除 zram 的配置文件
 	mv /usr/lib/systemd/zram-generator.conf /usr/lib/systemd/zram-generator.conf.bak
 
+	dnf install -y xterm-resize
 	sudo dnf install -y git samba cifs-utils
 	sudo dnf group install development-tools -y
 
@@ -239,7 +240,7 @@ fedora_vm()
 	cd /home/chenxiaosong/code/blog/course/gnu-linux/src/config-file
 	bash copy-to-home.sh
 	cd /home/chenxiaosong/code/blog/course/kernel/src/script
-	command cp parse-cmdline.sh ~
+	# command cp parse-cmdline.sh ~
 
 	sudo yum install -y acl attr automake bc dbench dump e2fsprogs fio gawk gcc \
 		gdbm-devel git indent kernel-devel libacl-devel libaio-devel \
