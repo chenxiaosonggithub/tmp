@@ -1,19 +1,19 @@
-From 74ae171df459e3268afdf0e29a1862dbde3f5955 Mon Sep 17 00:00:00 2001
+From f87e33ea205c4ad4ae06e7b6d93e6342348b0e64 Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
-Date: Wed, 20 May 2026 15:10:17 +0000
-Subject: [PATCH samba v2 0/1] smbclient: cancel pending notify on SIGINT
+Date: Sun, 24 May 2026 06:15:53 +0000
+Subject: [PATCH samba v3 0/1] smbclient: cancel pending notify on SIGINT
 
 I also created a merge request on GitLab: https://gitlab.com/samba-team/samba/-/merge_requests/4530
 
-v1->v2: `sig_state.cancelled` is checked before `cli_notify_send()`, because `changes` needs to be freed.
+v2->v3: close file before `notify` exit 
 
-v1: https://lore.kernel.org/linux-cifs/20260519095113.289692-1-chenxiaosong@chenxiaosong.com/
+v2: https://lore.kernel.org/linux-cifs/20260520153607.347960-1-chenxiaosong@chenxiaosong.com/
 
 ChenXiaoSong (1):
   smbclient: cancel pending notify on SIGINT
 
- source3/client/client.c | 53 ++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 50 insertions(+), 3 deletions(-)
+ source3/client/client.c | 60 ++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 56 insertions(+), 4 deletions(-)
 
 -- 
 2.54.0

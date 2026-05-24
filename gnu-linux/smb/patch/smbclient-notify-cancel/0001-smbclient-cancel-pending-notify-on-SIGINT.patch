@@ -1,7 +1,7 @@
-From 74ae171df459e3268afdf0e29a1862dbde3f5955 Mon Sep 17 00:00:00 2001
+From f87e33ea205c4ad4ae06e7b6d93e6342348b0e64 Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Tue, 19 May 2026 08:51:58 +0000
-Subject: [PATCH samba v2 1/1] smbclient: cancel pending notify on SIGINT
+Subject: [PATCH samba v3 1/1] smbclient: cancel pending notify on SIGINT
 
 When client stops querying a directory for change notifications,
 it should send a cancel request to the server.
@@ -14,11 +14,11 @@ can only check `sig_state.cancelled`.
 Suggested-by: Stefan Metzmacher <metze@samba.org>
 Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
- source3/client/client.c | 53 ++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 50 insertions(+), 3 deletions(-)
+ source3/client/client.c | 60 ++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 56 insertions(+), 4 deletions(-)
 
 diff --git a/source3/client/client.c b/source3/client/client.c
-index 1d3656aab34..b474e0608cb 100644
+index 1d3656aab34..36f8b8d04c4 100644
 --- a/source3/client/client.c
 +++ b/source3/client/client.c
 @@ -45,6 +45,7 @@
@@ -75,11 +75,11 @@ index 1d3656aab34..b474e0608cb 100644
  
 +	ev = samba_tevent_context_init(frame);
 +	if (!ev)
-+		goto fail;
++		goto close;
 +
 +	se = tevent_add_signal(ev, frame, SIGINT, 0, notify_sig_int_handler, &sig_state);
 +	if (!se)
-+		goto fail;
++		goto close;
 +
  	while (1) {
  		uint32_t i;
@@ -91,21 +91,42 @@ index 1d3656aab34..b474e0608cb 100644
 -				    talloc_tos(), &num_changes, &changes);
 +		if (sig_state.cancelled) {
 +			printf("notify cancelled\n");
-+			goto fail;
++			goto close;
 +		}
 +
 +		req = cli_notify_send(frame, ev, cli, fnum, 1000, FILE_NOTIFY_CHANGE_ALL, true);
 +		if (!req)
-+			goto fail;
++			goto close;
 +		sig_state.notify_req = req;
 +
 +		if (!tevent_req_poll_ntstatus(req, ev, &status))
-+			goto fail;
++			goto close;
 +
 +		status = cli_notify_recv(req, talloc_tos(), &num_changes, &changes);
  		if (NT_STATUS_EQUAL(status, NT_STATUS_NOTIFY_ENUM_DIR)) {
  			printf("NOTIFY_ENUM_DIR\n");
  			status = NT_STATUS_OK;
+@@ -4699,7 +4746,7 @@ static int cmd_notify(TALLOC_CTX *mem_ctx)
+ 		if (!NT_STATUS_IS_OK(status)) {
+ 			d_printf("notify returned %s\n",
+ 				 nt_errstr(status));
+-			goto fail;
++			goto close;
+ 		}
+ 		for (i=0; i<num_changes; i++) {
+ 			printf("%4.4x %s\n", changes[i].action,
+@@ -4707,6 +4754,11 @@ static int cmd_notify(TALLOC_CTX *mem_ctx)
+ 		}
+ 		TALLOC_FREE(changes);
+ 	}
++close:
++	status = cli_close(cli, fnum);
++	if (!NT_STATUS_IS_OK(status)) {
++		d_printf("close returned %s\n", nt_errstr(status));
++	}
+ usage:
+ 	d_printf("notify <dir name>\n");
+ fail:
 -- 
 2.54.0
 
