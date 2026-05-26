@@ -434,6 +434,9 @@ windows_physical()
 	# MobaXterm（免安装）: https://mobaxterm.mobatek.net/download-home-edition.html
 	# vscode（免安装）: https://code.visualstudio.com/Download
 	# wireshark（免安装）: https://www.wireshark.org/#download
+	# 远程桌面工具: https://chenxiaosong.com/course/gnu-linux/ssh-reverse.html#remote-desktop
+	cd /home/chenxiaosong/code/blog/course/gnu-linux/src/config-file
+	bash copy-to-home.sh
 }
 
 # 请根据发行版和机器查看以下函数
