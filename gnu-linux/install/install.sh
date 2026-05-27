@@ -432,6 +432,9 @@ windows_physical()
 	# autohotkey更改键位(安装): https://chenxiaosong.com/src/keyboard/keyboard.html#win
 	# 设置 > 蓝牙和其他设备 > 键盘 > 关闭"使用Print Screen键捕获屏幕"
 	# MobaXterm（免安装）: https://mobaxterm.mobatek.net/download-home-edition.html
+	#     Settings > Configuration > General > Terminal home directory: 选择PortableGit
+	#     Settings > Keyboard shutcuts: 更改Execute a macro
+	#     Sessions > New session > Shell > Windows PowerShell > Advanced Shell settings: C:\Users\chenx\Desktop\chenxiaosong\PortableGit\bin\bash.exe
 	# vscode（免安装）: https://code.visualstudio.com/Download
 	# wireshark（免安装）: https://www.wireshark.org/#download
 	# 远程桌面工具: https://chenxiaosong.com/course/gnu-linux/ssh-reverse.html#remote-desktop
