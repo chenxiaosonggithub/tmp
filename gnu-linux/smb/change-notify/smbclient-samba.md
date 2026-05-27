@@ -3,6 +3,9 @@ smbclient //192.168.53.210/test -U root%1
 smb: \> notify /
 # rm file
 0002 file
+# rm file1 file2
+0002 file1
+0002 file2
 # touch file1
 # echo something > file1
 0001 file1
