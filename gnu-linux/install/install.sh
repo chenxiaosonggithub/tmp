@@ -431,6 +431,7 @@ windows_physical()
 	# git（免安装）: https://git-scm.com/install/windows
 	#     双击 C:\Users\chenx\Desktop\chenxiaosong\PortableGit\bin\bash.exe，可固定到任务栏
 	#     PowerShell顶部右键 > Settings > Startup > New instance behavior > Attach to the most recently used window
+	#     PowerShell顶部右键 > Settings > Actions: 设置快捷键
 	# autohotkey更改键位(安装): https://chenxiaosong.com/src/keyboard/keyboard.html#win
 	# 设置 > 蓝牙和其他设备 > 键盘 > 关闭"使用Print Screen键捕获屏幕"
 	# MobaXterm（免安装）: https://mobaxterm.mobatek.net/download-home-edition.html
