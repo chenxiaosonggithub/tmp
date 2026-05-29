@@ -27,3 +27,8 @@ smb: \> notify /
 echo 15 > /proc/sys/kernel/hung_task_timeout_secs
 ./scripts/faddr2line x86_64-build/fs/smb/server/ksmbd.ko smb2_setup_notify+0x3a4/0x4f0
 ```
+
+```sh
+ssh -R 172.21.20.210:445:192.168.53.210:445 root@172.21.20.210 
+```
+
