@@ -1,18 +1,18 @@
-From b50b2b632a7200b5999cdb6f25ac0d8677ad98d2 Mon Sep 17 00:00:00 2001
+From cf2cdfd8182945e44140fb00229d8fe51d13e42c Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Fri, 29 May 2026 02:47:10 +0000
-Subject: [PATCH 5/5] smb/server: add fsnotify
+Subject: [PATCH 5/5] smb/server: fsnotify watch
 
 Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
- fs/smb/server/notify.c | 273 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 271 insertions(+), 2 deletions(-)
+ fs/smb/server/notify.c | 284 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 282 insertions(+), 2 deletions(-)
 
 diff --git a/fs/smb/server/notify.c b/fs/smb/server/notify.c
-index a2a2bdf2b36c..569864c2a8ba 100644
+index a2a2bdf2b36c..3e7f011f5dcd 100644
 --- a/fs/smb/server/notify.c
 +++ b/fs/smb/server/notify.c
-@@ -17,10 +17,186 @@
+@@ -17,10 +17,196 @@
  #include "unicode.h"
  #include "../common/smb2status.h"
  
@@ -67,6 +67,16 @@ index a2a2bdf2b36c..569864c2a8ba 100644
 +
 +	wake_up(&ctx->waitq);
 +	return 0;
++}
++
++static void ksmbd_notify_free_events(struct ksmbd_notify_ctx *ctx)
++{
++	struct ksmbd_notify_event *evt, *tmp;
++
++	list_for_each_entry_safe(evt, tmp, &ctx->events, list) {
++		list_del(&evt->list);
++		kfree(evt);
++	}
 +}
 +
 +static u32 ksmbd_notify_mask_to_action(u32 event_mask, u32 filter, u32 mask)
@@ -199,7 +209,7 @@ index a2a2bdf2b36c..569864c2a8ba 100644
  static void smb2_cancel_notify(void **argv)
  {
  	struct ksmbd_notify_ctx *ctx = argv[0];
-@@ -28,6 +204,72 @@ static void smb2_cancel_notify(void **argv)
+@@ -28,6 +214,72 @@ static void smb2_cancel_notify(void **argv)
  	wake_up(&ctx->waitq);
  }
  
@@ -272,7 +282,7 @@ index a2a2bdf2b36c..569864c2a8ba 100644
  int smb2_setup_notify(struct ksmbd_work *work,
  		      struct smb2_change_notify_req *req,
  		      struct smb2_change_notify_rsp *rsp,
-@@ -42,10 +284,22 @@ int smb2_setup_notify(struct ksmbd_work *work,
+@@ -42,10 +294,22 @@ int smb2_setup_notify(struct ksmbd_work *work,
  	ctx = kzalloc(sizeof(*ctx), KSMBD_DEFAULT_GFP);
  	if (!ctx) {
  		rsp->hdr.Status = STATUS_INSUFFICIENT_RESOURCES;
@@ -296,7 +306,7 @@ index a2a2bdf2b36c..569864c2a8ba 100644
  
  	argv = kmalloc(sizeof(void *), KSMBD_DEFAULT_GFP);
  	if (!argv) {
-@@ -64,17 +318,32 @@ int smb2_setup_notify(struct ksmbd_work *work,
+@@ -64,17 +328,33 @@ int smb2_setup_notify(struct ksmbd_work *work,
  
  	smb2_send_interim_resp(work, STATUS_PENDING);
  
@@ -327,6 +337,7 @@ index a2a2bdf2b36c..569864c2a8ba 100644
  out:
 +	if (ctx && ctx->watching)
 +		ksmbd_notify_unwatch(ctx);
++	ksmbd_notify_free_events(ctx);
  	kfree(ctx);
  	kfree(argv);
  	return rc;
