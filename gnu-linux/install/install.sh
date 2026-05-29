@@ -429,6 +429,11 @@ windows_physical()
 	# 安装windows: https://chenxiaosong.com/src/windows/windows.html
 	# ThinkPad X390驱动（好像不安装也可以）: https://newthink.lenovo.com.cn/driveList.html?selname=ThinkPad%20X390
 	# git（免安装）: https://git-scm.com/install/windows
+	#     双击 C:\Users\chenx\Desktop\chenxiaosong\PortableGit\bin\bash.exe，可固定到任务栏
+	#     PowerShell顶部右键 > Settings > Startup > New instance behavior > Attach to the most recently used window
+	#     PowerShell顶部右键 > Settings > Actions: 设置快捷键
+	#     PowerShell配置文件位置: C:\Users\chenx\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState
+	#     复制PowerShell配置文件: /home/chenxiaosong/code/tmp/gnu-linux/install/win/settings.json
 	# autohotkey更改键位(安装): https://chenxiaosong.com/src/keyboard/keyboard.html#win
 	# 设置 > 蓝牙和其他设备 > 键盘 > 关闭"使用Print Screen键捕获屏幕"
 	# MobaXterm（免安装）: https://mobaxterm.mobatek.net/download-home-edition.html
@@ -436,6 +441,7 @@ windows_physical()
 	#     Settings > Keyboard shutcuts: 更改Execute a macro
 	#     Sessions > New session > Shell > Windows PowerShell > Advanced Shell settings: C:\Users\chenx\Desktop\chenxiaosong\PortableGit\bin\bash.exe
 	# vscode（免安装）: https://code.visualstudio.com/Download
+	#     Manage > Settings > User > Text Editor > Files > Auto Save > onFocusChange
 	# wireshark（免安装）: https://www.wireshark.org/#download
 	# 远程桌面工具: https://chenxiaosong.com/course/gnu-linux/ssh-reverse.html#remote-desktop
 	cd /home/chenxiaosong/code/blog/course/gnu-linux/src/config-file

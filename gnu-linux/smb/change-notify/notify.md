@@ -23,3 +23,7 @@ smb: \> notify /
 0001 file2
 ```
 
+```sh
+echo 15 > /proc/sys/kernel/hung_task_timeout_secs
+./scripts/faddr2line x86_64-build/fs/smb/server/ksmbd.ko smb2_setup_notify+0x3a4/0x4f0
+```
