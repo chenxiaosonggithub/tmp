@@ -175,6 +175,9 @@ fedora_docker()
 	sudo dnf install -y nginx pandoc jq httpd-tools
 	sudo dnf install bash-completion -y
 
+	# 远程时启动qemu虚拟机用的脚本
+	ln -s /home/chenxiaosong/code/tmp/gnu-linux/install/aorus/tmux-start-qemu.sh /home/chenxiaosong/tmux-start-qemu.sh
+
 	# 安装编译samba的软件
 	cd /home/chenxiaosong/code/
 	git clone https://git.samba.org/samba.git
