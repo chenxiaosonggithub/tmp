@@ -1,0 +1,257 @@
+From 346a2336aaca2d3722e1359e516a739d0d425d1c Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Thu, 28 May 2026 13:42:43 +0000
+Subject: [PATCH 2/3] smb/server: notify pending and cancel
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/Makefile  |  2 +-
+ fs/smb/server/glob.h    |  3 +-
+ fs/smb/server/notify.c  | 81 +++++++++++++++++++++++++++++++++++++++++
+ fs/smb/server/notify.h  | 21 +++++++++++
+ fs/smb/server/smb2pdu.c | 58 ++++++++++++++++++++++++++---
+ 5 files changed, 157 insertions(+), 8 deletions(-)
+ create mode 100644 fs/smb/server/notify.c
+ create mode 100644 fs/smb/server/notify.h
+
+diff --git a/fs/smb/server/Makefile b/fs/smb/server/Makefile
+index 6407ba6b9340..27fa46e1698b 100644
+--- a/fs/smb/server/Makefile
++++ b/fs/smb/server/Makefile
+@@ -10,7 +10,7 @@ ksmbd-y :=	unicode.o auth.o vfs.o vfs_cache.o server.o ndr.o \
+ 		mgmt/tree_connect.o mgmt/user_session.o smb_common.o \
+ 		transport_tcp.o transport_ipc.o smbacl.o smb2pdu.o \
+ 		smb2ops.o smb2misc.o ksmbd_spnego_negtokeninit.asn1.o \
+-		ksmbd_spnego_negtokentarg.asn1.o asn1.o
++		ksmbd_spnego_negtokentarg.asn1.o asn1.o notify.o
+ 
+ $(obj)/asn1.o: $(obj)/ksmbd_spnego_negtokeninit.asn1.h $(obj)/ksmbd_spnego_negtokentarg.asn1.h
+ 
+diff --git a/fs/smb/server/glob.h b/fs/smb/server/glob.h
+index 344b069cfbbd..87cbc88275fe 100644
+--- a/fs/smb/server/glob.h
++++ b/fs/smb/server/glob.h
+@@ -22,10 +22,11 @@ extern int ksmbd_debug_types;
+ #define KSMBD_DEBUG_IPC         BIT(4)
+ #define KSMBD_DEBUG_CONN        BIT(5)
+ #define KSMBD_DEBUG_RDMA        BIT(6)
++#define KSMBD_DEBUG_NOTIFY      BIT(7)
+ #define KSMBD_DEBUG_ALL         (KSMBD_DEBUG_SMB | KSMBD_DEBUG_AUTH |	\
+ 				KSMBD_DEBUG_VFS | KSMBD_DEBUG_OPLOCK |	\
+ 				KSMBD_DEBUG_IPC | KSMBD_DEBUG_CONN |	\
+-				KSMBD_DEBUG_RDMA)
++				KSMBD_DEBUG_RDMA | KSMBD_DEBUG_NOTIFY)
+ 
+ #ifdef pr_fmt
+ #undef pr_fmt
+diff --git a/fs/smb/server/notify.c b/fs/smb/server/notify.c
+new file mode 100644
+index 000000000000..6d2c93c35b10
+--- /dev/null
++++ b/fs/smb/server/notify.c
+@@ -0,0 +1,81 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ *
++ *   SMB2 CHANGE_NOTIFY
++ *
++ *   Copyright (C) 2026 KylinSoft Co., Ltd. All rights reserved.
++ *   Author(s): ChenXiaoSong <chenxiaosong@kylinos.cn>
++ *
++ */
++
++#include <linux/fsnotify_backend.h>
++#include "smb_common.h"
++#include "ksmbd_work.h"
++#include "notify.h"
++#include "smb2pdu.h"
++#include "connection.h"
++#include "unicode.h"
++#include "../common/smb2status.h"
++
++struct ksmbd_notify_ctx {
++	wait_queue_head_t waitq;
++};
++
++static void smb2_cancel_notify(void **argv)
++{
++	struct ksmbd_notify_ctx *ctx = argv[0];
++
++	wake_up(&ctx->waitq);
++}
++
++int smb2_setup_notify(struct ksmbd_work *work,
++		      struct smb2_change_notify_req *req,
++		      struct smb2_change_notify_rsp *rsp,
++		      struct inode *dir)
++{
++	struct ksmbd_notify_ctx *ctx = NULL;
++	void **argv = NULL;
++	int rc = 0;
++
++	ksmbd_debug(NOTIFY, "notify filter: 0x%x\n", le32_to_cpu(req->CompletionFilter));
++
++	ctx = kzalloc(sizeof(*ctx), KSMBD_DEFAULT_GFP);
++	if (!ctx) {
++		rsp->hdr.Status = STATUS_INSUFFICIENT_RESOURCES;
++		return -ENOMEM;
++	}
++
++	init_waitqueue_head(&ctx->waitq);
++
++	argv = kmalloc(sizeof(void *), KSMBD_DEFAULT_GFP);
++	if (!argv) {
++		rsp->hdr.Status = STATUS_INSUFFICIENT_RESOURCES;
++		rc = -ENOMEM;
++		goto out;
++	}
++	argv[0] = ctx;
++
++	rc = setup_async_work(work, smb2_cancel_notify, argv);
++	if (rc) {
++		rsp->hdr.Status = STATUS_INSUFFICIENT_RESOURCES;
++		goto out;
++	}
++	argv = NULL;
++
++	smb2_send_interim_resp(work, STATUS_PENDING);
++
++	wait_event(ctx->waitq, work->state != KSMBD_WORK_ACTIVE);
++
++	if (work->state == KSMBD_WORK_CANCELLED) {
++		rsp->hdr.Status = STATUS_CANCELLED;
++		smb2_send_interim_resp(work, STATUS_CANCELLED);
++		work->send_no_response = 1;
++		rc = -ECANCELED;
++	}
++
++	release_async_work(work);
++out:
++	kfree(ctx);
++	kfree(argv);
++	return rc;
++}
+diff --git a/fs/smb/server/notify.h b/fs/smb/server/notify.h
+new file mode 100644
+index 000000000000..0c12abfe4c3d
+--- /dev/null
++++ b/fs/smb/server/notify.h
+@@ -0,0 +1,21 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ *
++ *   SMB2 CHANGE_NOTIFY header
++ *
++ *   Copyright (C) 2026 KylinSoft Co., Ltd. All rights reserved.
++ *   Author(s): ChenXiaoSong <chenxiaosong@kylinos.cn>
++ *
++ */
++
++#ifndef __SMB_SERVER_NOTIFY_H__
++#define __SMB_SERVER_NOTIFY_H__
++
++struct inode;
++
++int smb2_setup_notify(struct ksmbd_work *work,
++		      struct smb2_change_notify_req *req,
++		      struct smb2_change_notify_rsp *rsp,
++		      struct inode *dir);
++
++#endif /* __SMB_SERVER_NOTIFY_H__ */
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index 5128a693aca6..edf23072cb75 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -41,6 +41,7 @@
+ #include "ndr.h"
+ #include "stats.h"
+ #include "transport_tcp.h"
++#include "notify.h"
+ 
+ static void __wbuf(struct ksmbd_work *work, void **req, void **rsp)
+ {
+@@ -542,7 +543,8 @@ int smb2_allocate_rsp_buf(struct ksmbd_work *work)
+ 	size_t sz = small_sz;
+ 	int cmd = le16_to_cpu(hdr->Command);
+ 
+-	if (cmd == SMB2_IOCTL_HE || cmd == SMB2_QUERY_DIRECTORY_HE)
++	if (cmd == SMB2_IOCTL_HE || cmd == SMB2_QUERY_DIRECTORY_HE ||
++	    cmd == SMB2_CHANGE_NOTIFY_HE)
+ 		sz = large_sz;
+ 
+ 	if (cmd == SMB2_QUERY_INFO_HE) {
+@@ -8921,8 +8923,11 @@ int smb2_oplock_break(struct ksmbd_work *work)
+  */
+ int smb2_notify(struct ksmbd_work *work)
+ {
++	int rc = 0;
+ 	struct smb2_change_notify_req *req;
+ 	struct smb2_change_notify_rsp *rsp;
++	struct ksmbd_file *dir_fp = NULL;
++	struct inode *dir_inode;
+ 
+ 	ksmbd_debug(SMB, "Received smb2 notify\n");
+ 
+@@ -8930,13 +8935,54 @@ int smb2_notify(struct ksmbd_work *work)
+ 
+ 	if (work->next_smb2_rcv_hdr_off && req->hdr.NextCommand) {
+ 		rsp->hdr.Status = STATUS_INTERNAL_ERROR;
+-		smb2_set_err_rsp(work);
+-		return -EIO;
++		rc = -EIO;
++		goto out;
+ 	}
+ 
+-	smb2_set_err_rsp(work);
+-	rsp->hdr.Status = STATUS_NOT_IMPLEMENTED;
+-	return -EOPNOTSUPP;
++	if (le16_to_cpu(req->StructureSize) != 32) {
++		pr_err("Invalid structure size for change notify\n");
++		rsp->hdr.Status = STATUS_INVALID_PARAMETER;
++		rc = -EINVAL;
++		goto out;
++	}
++
++	dir_fp = ksmbd_lookup_fd_slow(work, req->VolatileFileId,
++				      req->PersistentFileId);
++	if (!dir_fp) {
++		pr_err("Invalid file handle for change notify\n");
++		rsp->hdr.Status = STATUS_INVALID_HANDLE;
++		rc = -EBADF;
++		goto out;
++	}
++
++	dir_inode = file_inode(dir_fp->filp);
++	if (!S_ISDIR(dir_inode->i_mode)) {
++		pr_err("Change notify only works on directories\n");
++		rsp->hdr.Status = STATUS_INVALID_PARAMETER;
++		rc = -EINVAL;
++		goto out;
++	}
++
++	rc = smb2_setup_notify(work, req, rsp, dir_inode);
++	if (work->send_no_response)
++		goto out;
++
++	if (rc) {
++		pr_err("Failed to setup notify:%d, Status:%x\n",
++		       rc, le32_to_cpu(rsp->hdr.Status));
++		if (!rsp->hdr.Status)
++			rsp->hdr.Status = STATUS_INTERNAL_ERROR;
++		goto out;
++	}
++
++out:
++	if (rc)
++		smb2_set_err_rsp(work);
++
++	if (dir_fp)
++		ksmbd_fd_put(work, dir_fp);
++
++	return rc;
+ }
+ 
+ /**
+-- 
+2.54.0
+

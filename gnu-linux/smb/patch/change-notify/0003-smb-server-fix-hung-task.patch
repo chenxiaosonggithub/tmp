@@ -1,0 +1,26 @@
+From 23d0808c4c970f57348044bbcf798f4eb0ea04d1 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 29 May 2026 00:13:08 +0000
+Subject: [PATCH 3/3] smb/server: fix hung task
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/notify.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/smb/server/notify.c b/fs/smb/server/notify.c
+index 6d2c93c35b10..a2a2bdf2b36c 100644
+--- a/fs/smb/server/notify.c
++++ b/fs/smb/server/notify.c
+@@ -64,7 +64,7 @@ int smb2_setup_notify(struct ksmbd_work *work,
+ 
+ 	smb2_send_interim_resp(work, STATUS_PENDING);
+ 
+-	wait_event(ctx->waitq, work->state != KSMBD_WORK_ACTIVE);
++	wait_event_interruptible(ctx->waitq, work->state != KSMBD_WORK_ACTIVE);
+ 
+ 	if (work->state == KSMBD_WORK_CANCELLED) {
+ 		rsp->hdr.Status = STATUS_CANCELLED;
+-- 
+2.54.0
+
