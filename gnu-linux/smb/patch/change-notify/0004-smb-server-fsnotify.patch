@@ -1,18 +1,18 @@
-From cf2cdfd8182945e44140fb00229d8fe51d13e42c Mon Sep 17 00:00:00 2001
+From da56fdd8c92f2fe453d89c0593071f74b4bcee0c Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Fri, 29 May 2026 02:47:10 +0000
-Subject: [PATCH 5/5] smb/server: fsnotify watch
+Subject: [PATCH 4/4] smb/server: fsnotify
 
 Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
- fs/smb/server/notify.c | 284 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 282 insertions(+), 2 deletions(-)
+ fs/smb/server/notify.c | 282 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 280 insertions(+), 2 deletions(-)
 
 diff --git a/fs/smb/server/notify.c b/fs/smb/server/notify.c
-index a2a2bdf2b36c..3e7f011f5dcd 100644
+index a2a2bdf2b36c..3fdb764f8e42 100644
 --- a/fs/smb/server/notify.c
 +++ b/fs/smb/server/notify.c
-@@ -17,10 +17,196 @@
+@@ -17,10 +17,193 @@
  #include "unicode.h"
  #include "../common/smb2status.h"
  
@@ -174,10 +174,7 @@ index a2a2bdf2b36c..3e7f011f5dcd 100644
 +	mark->fsn_mark.mask = ksmbd_notify_filter_to_mask(ctx->completion_filter);
 +	ctx->inode_mark = mark;
 +
-+	fsnotify_group_lock(group);
-+	rc = fsnotify_add_inode_mark_locked(&mark->fsn_mark, dir, 0);
-+	fsnotify_group_unlock(group);
-+
++	rc = fsnotify_add_inode_mark(&mark->fsn_mark, dir, 0);
 +	fsnotify_put_mark(&mark->fsn_mark);
 +	if (rc)
 +		goto out;
@@ -209,7 +206,7 @@ index a2a2bdf2b36c..3e7f011f5dcd 100644
  static void smb2_cancel_notify(void **argv)
  {
  	struct ksmbd_notify_ctx *ctx = argv[0];
-@@ -28,6 +214,72 @@ static void smb2_cancel_notify(void **argv)
+@@ -28,6 +211,72 @@ static void smb2_cancel_notify(void **argv)
  	wake_up(&ctx->waitq);
  }
  
@@ -282,7 +279,7 @@ index a2a2bdf2b36c..3e7f011f5dcd 100644
  int smb2_setup_notify(struct ksmbd_work *work,
  		      struct smb2_change_notify_req *req,
  		      struct smb2_change_notify_rsp *rsp,
-@@ -42,10 +294,22 @@ int smb2_setup_notify(struct ksmbd_work *work,
+@@ -42,10 +291,22 @@ int smb2_setup_notify(struct ksmbd_work *work,
  	ctx = kzalloc(sizeof(*ctx), KSMBD_DEFAULT_GFP);
  	if (!ctx) {
  		rsp->hdr.Status = STATUS_INSUFFICIENT_RESOURCES;
@@ -306,14 +303,13 @@ index a2a2bdf2b36c..3e7f011f5dcd 100644
  
  	argv = kmalloc(sizeof(void *), KSMBD_DEFAULT_GFP);
  	if (!argv) {
-@@ -64,17 +328,33 @@ int smb2_setup_notify(struct ksmbd_work *work,
+@@ -64,17 +325,34 @@ int smb2_setup_notify(struct ksmbd_work *work,
  
  	smb2_send_interim_resp(work, STATUS_PENDING);
  
 -	wait_event_interruptible(ctx->waitq, work->state != KSMBD_WORK_ACTIVE);
 +	wait_event_interruptible(ctx->waitq, ctx->events_ready ||
 +					     work->state != KSMBD_WORK_ACTIVE);
-+	ksmbd_notify_unwatch(ctx);
  
  	if (work->state == KSMBD_WORK_CANCELLED) {
  		rsp->hdr.Status = STATUS_CANCELLED;
@@ -321,6 +317,8 @@ index a2a2bdf2b36c..3e7f011f5dcd 100644
  		work->send_no_response = 1;
  		rc = -ECANCELED;
 +	} else if (ctx->events_ready) {
++		/* Sleep waiting for other events to arrive. */
++		msleep(1000);
 +		rc = smb2_build_notify_response(work, rsp, ctx);
 +		if (rc) {
 +			if (rc == -ENOSPC)
