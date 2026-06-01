@@ -1,15 +1,15 @@
-From da56fdd8c92f2fe453d89c0593071f74b4bcee0c Mon Sep 17 00:00:00 2001
+From 8d04a4510fff508d0184389edbdd69af6cb7426a Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Fri, 29 May 2026 02:47:10 +0000
-Subject: [PATCH 4/4] smb/server: fsnotify
+Subject: [PATCH 4/6] smb/server: fsnotify
 
 Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
- fs/smb/server/notify.c | 282 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 280 insertions(+), 2 deletions(-)
+ fs/smb/server/notify.c | 283 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 281 insertions(+), 2 deletions(-)
 
 diff --git a/fs/smb/server/notify.c b/fs/smb/server/notify.c
-index a2a2bdf2b36c..3fdb764f8e42 100644
+index a2a2bdf2b36c..c7eabc5d6a71 100644
 --- a/fs/smb/server/notify.c
 +++ b/fs/smb/server/notify.c
 @@ -17,10 +17,193 @@
@@ -303,7 +303,7 @@ index a2a2bdf2b36c..3fdb764f8e42 100644
  
  	argv = kmalloc(sizeof(void *), KSMBD_DEFAULT_GFP);
  	if (!argv) {
-@@ -64,17 +325,34 @@ int smb2_setup_notify(struct ksmbd_work *work,
+@@ -64,17 +325,35 @@ int smb2_setup_notify(struct ksmbd_work *work,
  
  	smb2_send_interim_resp(work, STATUS_PENDING);
  
@@ -319,6 +319,7 @@ index a2a2bdf2b36c..3fdb764f8e42 100644
 +	} else if (ctx->events_ready) {
 +		/* Sleep waiting for other events to arrive. */
 +		msleep(1000);
++
 +		rc = smb2_build_notify_response(work, rsp, ctx);
 +		if (rc) {
 +			if (rc == -ENOSPC)

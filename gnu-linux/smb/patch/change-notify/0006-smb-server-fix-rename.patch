@@ -1,0 +1,63 @@
+From b419a025bea23106801f044a1b2adfd22323c3ac Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Mon, 1 Jun 2026 14:58:01 +0800
+Subject: [PATCH 6/6] smb/server: fix rename
+
+mv file1 file2
+0004 file1
+0005 file2
+0003 file2
+0002 file1
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/notify.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/fs/smb/server/notify.c b/fs/smb/server/notify.c
+index 2bd2fcb0a135..5884a8683858 100644
+--- a/fs/smb/server/notify.c
++++ b/fs/smb/server/notify.c
+@@ -216,7 +216,8 @@ static int ksmbd_notify_handle_local_rename(struct ksmbd_notify_ctx *ctx,
+ 	struct ksmbd_notify_moved_from *from = ctx->moved_from;
+ 	struct qstr from_name;
+ 
+-	cancel_delayed_work(&ctx->moved_from_work);
++	if (!from)
++		return 0;
+ 
+ 	from_name = QSTR_LEN(from->name, from->namelen);
+ 
+@@ -239,8 +240,10 @@ static int ksmbd_notify_handle_local_rename(struct ksmbd_notify_ctx *ctx,
+ 		ksmbd_notify_queue_event_under_lock(ctx, FILE_ACTION_MODIFIED,
+ 						    file_name);
+ 
+-	kfree(from);
+-	ctx->moved_from = NULL;
++	/*
++	 * Like Samba notify_inotify.c: keep moved_from and its timer.
++	 * moved_from_timeout will emit FILE_ACTION_REMOVED after 100ms.
++	 */
+ 	return 0;
+ }
+ 
+@@ -521,9 +524,16 @@ int smb2_setup_notify(struct ksmbd_work *work,
+ 		work->send_no_response = 1;
+ 		rc = -ECANCELED;
+ 	} else if (ctx->events_ready) {
++		unsigned long flags;
++
+ 		/* Sleep waiting for other events to arrive. */
+ 		msleep(1000);
+ 
++		cancel_delayed_work_sync(&ctx->moved_from_work);
++		spin_lock_irqsave(&ctx->lock, flags);
++		ksmbd_notify_trigger_orphaned_moved_from(ctx);
++		spin_unlock_irqrestore(&ctx->lock, flags);
++
+ 		rc = smb2_build_notify_response(work, rsp, ctx);
+ 		if (rc) {
+ 			if (rc == -ENOSPC)
+-- 
+2.54.0
+

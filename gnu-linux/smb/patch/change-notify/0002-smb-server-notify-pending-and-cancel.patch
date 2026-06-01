@@ -1,7 +1,7 @@
 From 346a2336aaca2d3722e1359e516a739d0d425d1c Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Thu, 28 May 2026 13:42:43 +0000
-Subject: [PATCH 2/4] smb/server: notify pending and cancel
+Subject: [PATCH 2/6] smb/server: notify pending and cancel
 
 Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
