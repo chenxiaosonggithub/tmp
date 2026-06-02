@@ -75,9 +75,16 @@ physical_common()
 	echo "source /usr/share/bash-completion/completions/git" >> ~/.bashrc
 	source ~/.bashrc
 
-	# 执行以下脚本复制脚本:"
-	cp /home/chenxiaosong/code/tmp/gnu-linux/install/tianyi/* ~ # 10.42.20.206
-	cp /home/chenxiaosong/code/tmp/gnu-linux/install/aorus/* ~ # 10.42.20.210
+	# 执行以下命令复制脚本:
+	# 172.21.20.206
+	ln -s /home/chenxiaosong/code/tmp/gnu-linux/install/tianyi/eth-aorus.sh ~/eth-aorus.sh
+	ln -s /home/chenxiaosong/code/tmp/gnu-linux/install/tianyi/wake-aorus-eth.sh ~/wake-aorus-eth.sh
+	# 172.21.20.210
+	ln -s /home/chenxiaosong/code/tmp/gnu-linux/install/aorus/eth-tianyi.sh ~/eth-tianyi.sh
+	ln -s /home/chenxiaosong/code/tmp/gnu-linux/install/aorus/start-vm.sh ~/start-vm.sh
+	ln -s /home/chenxiaosong/code/tmp/gnu-linux/install/aorus/suspend.sh ~/suspend.sh
+	ln -s /home/chenxiaosong/code/tmp/gnu-linux/install/aorus/tmux-start-qemu.sh ~/tmux-start-qemu.sh
+
 	cp /home/chenxiaosong/code/tmp/gnu-linux/install/chown-blog.sh ~
 
 	sudo cp /home/chenxiaosong/code/tmp/gnu-linux/install/smb.conf /etc/samba/
