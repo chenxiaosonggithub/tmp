@@ -4,7 +4,7 @@ docker_tmux() {
 	# 退出tmux立刻回到原来的环境
 	$ssh_cmd " \
 	docker exec -it workspace-fedora bash -c ' \
-	export LC_ALL=C.UTF-8; \
+	export LC_ALL=en_US.UTF-8; \
 	if tmux has-session -t $1 2>/dev/null; then \
 		tmux att -t $1; \
 	else \
