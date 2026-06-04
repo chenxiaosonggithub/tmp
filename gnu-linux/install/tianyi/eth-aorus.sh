@@ -11,8 +11,8 @@ docker_tmux() {
 		tmux new -t $1; \
 	fi \
 	'"
-	# 退出tmux不会立刻回到原来的环境
-	# $ssh_cmd "docker exec -it workspace-fedora bash -c 'export LC_ALL=C.UTF-8; tmux att -t $1; exec bash'; exec bash -l"
+	# 加上下面的，退出tmux不会立刻回到原来的环境
+	# exec bash'; exec bash -l"
 }
 
 if [ $# -ge 1 ]; then
