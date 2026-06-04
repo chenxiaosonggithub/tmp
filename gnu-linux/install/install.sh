@@ -418,8 +418,9 @@ kylinos_physical()
 	git clone https://gitee.com/chenxiaosonggitee/blog.git
 	git clone https://gitee.com/chenxiaosonggitee/tmp.git
 	git clone https://gitee.com/chenxiaosonggitee/private-blog.git
-	cp ~/code/private-blog/src/ssh/ ~ -rf
-	cp ~/code/blog/course/gnu-linux/src/cpolar/ ~/ssh -rf
+	mkdir -p /home/chenxiaosong/ssh
+	ln -s /home/chenxiaosong/code/private-blog/src/ssh-oray/ /home/chenxiaosong/ssh/oray
+	ln -s /home/chenxiaosong/code/blog/course/gnu-linux/src/cpolar/* /home/chenxiaosong/ssh/cpolar
 	cp /home/chenxiaosong/code/tmp/gnu-linux/install/kylin/thunderbird.sh ~ -rf
 	sudo cp /home/chenxiaosong/code/tmp/gnu-linux/install/kylin/touchpad-* /usr/share/applications/ # 然后设置快捷键打开和关闭触摸板
 
