@@ -71,7 +71,18 @@ physical_common()
 	set_alias
 	cp_config_file
 	clone_all_repos
+
+	sudo mv /usr/sbin/reboot /usr/sbin/reboot.real
+	sudo mv /usr/sbin/poweroff /usr/sbin/poweroff.real
+	sudo mv /usr/sbin/shutdown /usr/sbin/shutdown.real
+	sudo cp /home/chenxiaosong/code/tmp/gnu-linux/install/systemctl/poweroff /usr/sbin/poweroff
+	sudo sed 's/poweroff/reboot/g' /usr/sbin/poweroff | sudo tee /usr/sbin/reboot
+	sudo sed 's/poweroff/shutdown/g' /usr/sbin/poweroff | sudo tee /usr/sbin/shutdown
+	sudo chmod 700 /usr/sbin/poweroff
+	sudo chmod 700 /usr/sbin/reboot
+	sudo chmod 700 /usr/sbin/shutdown
 	sudo chmod 700 /bin/systemctl
+
 	echo "source /usr/share/bash-completion/completions/git" >> ~/.bashrc
 	source ~/.bashrc
 
