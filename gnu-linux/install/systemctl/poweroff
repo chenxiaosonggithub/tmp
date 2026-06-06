@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ "$1" != "-y" ]; then
+	echo "Usage: poweroff -y"
+	exit 1
+fi
+
+exec /usr/sbin/poweroff.real
