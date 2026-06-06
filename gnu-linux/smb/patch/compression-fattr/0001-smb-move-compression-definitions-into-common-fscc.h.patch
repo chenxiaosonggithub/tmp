@@ -1,9 +1,10 @@
-From 714d09b1222d23605ad8f209af99607b18405462 Mon Sep 17 00:00:00 2001
+From 1b720360fc60f67cb4d46f46fcb0582c96769495 Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Sat, 6 Jun 2026 05:00:10 +0000
 Subject: [PATCH 1/5] smb: move compression definitions into common/fscc.h
 
-These definitions are specified in MS-FSCC, so move them into fscc.h.
+These definitions will also be used by ksmbd, move them into
+common header file.
 
 Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---

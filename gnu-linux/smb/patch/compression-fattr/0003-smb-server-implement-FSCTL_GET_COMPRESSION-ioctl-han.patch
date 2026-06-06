@@ -1,4 +1,4 @@
-From 10720b2a84c9f2a9d4189643b9580826799b2f46 Mon Sep 17 00:00:00 2001
+From 7beaf208b4eb192cfcf1e4bb6ca430131c4b9548 Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Sat, 6 Jun 2026 07:32:32 +0000
 Subject: [PATCH 3/5] smb/server: implement FSCTL_GET_COMPRESSION ioctl handler

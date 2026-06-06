@@ -1,4 +1,4 @@
-From 58dee5ebaafd8b937bb77d0c4cb5abf65f931b5d Mon Sep 17 00:00:00 2001
+From 136185ec57eb4d95b064e1dcf659297d7949e9ea Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Fri, 5 Jun 2026 13:48:50 +0000
 Subject: [PATCH 2/5] smb/server: get compression file attribute on open
