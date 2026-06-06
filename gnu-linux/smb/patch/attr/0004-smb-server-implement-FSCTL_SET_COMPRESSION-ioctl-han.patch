@@ -1,0 +1,153 @@
+From 8a6fee869473d4a6e3f03273eabde03c992fabe5 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Sat, 6 Jun 2026 08:10:46 +0000
+Subject: [PATCH 4/5] smb/server: implement FSCTL_SET_COMPRESSION ioctl handler
+
+Example:
+  1. client: smbinfo setcompression no /mnt/file
+  2. client: smbinfo getcompression /mnt/file
+             Compression: 0 (NONE)
+  3. client: smbinfo setcompression default /mnt/file
+  4. client: smbinfo getcompression /mnt/file
+             Compression: 1 (UNKNOWN)
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/smb2pdu.c | 28 ++++++++++++++++
+ fs/smb/server/vfs.c     | 73 +++++++++++++++++++++++++++++++++++++++++
+ fs/smb/server/vfs.h     |  1 +
+ 3 files changed, 102 insertions(+)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index aeede3f11e06..8c40631ce64a 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -8366,6 +8366,34 @@ int smb2_ioctl(struct ksmbd_work *work)
+ 		rsp->VolatileFileId = req->VolatileFileId;
+ 		break;
+ 	}
++	case FSCTL_SET_COMPRESSION: {
++		struct compress_ioctl *cmpr_req;
++		struct ksmbd_file *fp;
++
++		if (in_buf_len < sizeof(struct compress_ioctl)) {
++			ret = -EINVAL;
++			goto out;
++		}
++
++		if (!test_tree_conn_flag(work->tcon, KSMBD_TREE_CONN_FLAG_WRITABLE)) {
++			ksmbd_debug(SMB, "User does not have write permission\n");
++			ret = -EACCES;
++			goto out;
++		}
++
++		cmpr_req = (struct compress_ioctl *)buffer;
++		fp = ksmbd_lookup_fd_fast(work, id);
++		if (!fp) {
++			ret = -ENOENT;
++			goto out;
++		}
++
++		ret = ksmbd_vfs_set_compression(work, fp, le16_to_cpu(cmpr_req->CompressionState));
++		ksmbd_fd_put(work, fp);
++		if (ret)
++			goto out;
++		break;
++	}
+ 	case FSCTL_CREATE_OR_GET_OBJECT_ID:
+ 	{
+ 		struct file_object_buf_type1_ioctl_rsp *obj_buf;
+diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
+index ca82b1ce35f0..53d1e2eff20f 100644
+--- a/fs/smb/server/vfs.c
++++ b/fs/smb/server/vfs.c
+@@ -1927,3 +1927,76 @@ int ksmbd_vfs_get_compression(struct ksmbd_file *fp, u16 *fmt)
+ out:
+ 	return rc;
+ }
++
++int ksmbd_vfs_set_compression(struct ksmbd_work *work, struct ksmbd_file *fp, u16 fmt)
++{
++	struct file_kattr fa;
++	struct dentry *dentry = fp->filp->f_path.dentry;
++	struct mnt_idmap *idmap = file_mnt_idmap(fp->filp);
++	u32 flags;
++	__le32 old_fattr;
++	int rc;
++
++	if (!(fp->daccess & FILE_WRITE_DATA_LE)) {
++		rc = -EACCES;
++		goto out;
++	}
++
++	rc = vfs_fileattr_get(dentry, &fa);
++	if (rc)
++		goto out;
++
++	flags = fa.flags;
++	if (fmt == COMPRESSION_FORMAT_NONE) {
++		flags &= ~FS_COMPR_FL;
++	} else if (fmt == COMPRESSION_FORMAT_DEFAULT ||
++		   fmt == COMPRESSION_FORMAT_LZNT1) {
++		flags |= FS_COMPR_FL;
++	} else {
++		rc = -EINVAL;
++		goto out;
++	}
++
++	if (flags != fa.flags) {
++		fileattr_fill_flags(&fa, flags);
++		rc = mnt_want_write_file(fp->filp);
++		if (rc)
++			goto out;
++
++		rc = vfs_fileattr_set(idmap, dentry, &fa);
++		mnt_drop_write_file(fp->filp);
++		if (rc)
++			goto out;
++	}
++
++	old_fattr = fp->f_ci->m_fattr;
++	if (fmt == COMPRESSION_FORMAT_NONE)
++		fp->f_ci->m_fattr &= ~FILE_ATTRIBUTE_COMPRESSED_LE;
++	else
++		fp->f_ci->m_fattr |= FILE_ATTRIBUTE_COMPRESSED_LE;
++
++	if (fp->f_ci->m_fattr != old_fattr &&
++	    test_share_config_flag(work->tcon->share_conf,
++				   KSMBD_SHARE_FLAG_STORE_DOS_ATTRS)) {
++		struct xattr_dos_attrib da;
++
++		rc = ksmbd_vfs_get_dos_attrib_xattr(idmap, dentry, &da);
++		if (rc <= 0) {
++			rc = 0;
++			goto out;
++		}
++
++		da.attr = le32_to_cpu(fp->f_ci->m_fattr);
++		rc = ksmbd_vfs_set_dos_attrib_xattr(idmap,
++						    &fp->filp->f_path,
++						    &da, true);
++		if (rc) {
++			rc = 0;
++			fp->f_ci->m_fattr = old_fattr;
++			goto out;
++		}
++	}
++
++out:
++	return rc;
++}
+diff --git a/fs/smb/server/vfs.h b/fs/smb/server/vfs.h
+index f6121207dbda..7b3d2f4fd985 100644
+--- a/fs/smb/server/vfs.h
++++ b/fs/smb/server/vfs.h
+@@ -170,4 +170,5 @@ int ksmbd_vfs_inherit_posix_acl(struct mnt_idmap *idmap,
+ 				struct inode *parent_inode);
+ void ksmbd_vfs_update_compressed_fattr(struct dentry *dentry, __le32 *fattr);
+ int ksmbd_vfs_get_compression(struct ksmbd_file *fp, u16 *fmt);
++int ksmbd_vfs_set_compression(struct ksmbd_work *work, struct ksmbd_file *fp, u16 fmt);
+ #endif /* __KSMBD_VFS_H__ */
+-- 
+2.54.0
+

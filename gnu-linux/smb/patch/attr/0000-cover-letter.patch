@@ -1,0 +1,27 @@
+From a7ef101719c5cc3d3302b027d22dbe0f391f50fd Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Sat, 6 Jun 2026 08:42:58 +0000
+Subject: [PATCH 0/5] smb/server: implement compression fattr handler
+
+ChenXiaoSong (5):
+  smb: move compression definitions into common/fscc.h
+  smb/server: get compression file attribute on open
+  smb/server: implement FSCTL_GET_COMPRESSION ioctl handler
+  smb/server: implement FSCTL_SET_COMPRESSION ioctl handler
+  smb: remove duplicate server/smbfsctl.h
+
+ fs/smb/client/smb1pdu.h  |   5 --
+ fs/smb/client/smb2pdu.h  |   4 --
+ fs/smb/common/fscc.h     |  18 +++++++
+ fs/smb/common/smbfsctl.h |  10 +++-
+ fs/smb/server/smb2pdu.c  |  73 +++++++++++++++++++++++---
+ fs/smb/server/smb2pdu.h  |   3 --
+ fs/smb/server/smbfsctl.h |  91 --------------------------------
+ fs/smb/server/vfs.c      | 110 +++++++++++++++++++++++++++++++++++++++
+ fs/smb/server/vfs.h      |   3 ++
+ 9 files changed, 205 insertions(+), 112 deletions(-)
+ delete mode 100644 fs/smb/server/smbfsctl.h
+
+-- 
+2.54.0
+
