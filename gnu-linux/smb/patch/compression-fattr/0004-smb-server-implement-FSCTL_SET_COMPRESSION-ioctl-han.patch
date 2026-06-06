@@ -1,4 +1,4 @@
-From 8a6fee869473d4a6e3f03273eabde03c992fabe5 Mon Sep 17 00:00:00 2001
+From 560618a16b633d2d6bfddb98d3179ddda9765b22 Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Sat, 6 Jun 2026 08:10:46 +0000
 Subject: [PATCH 4/5] smb/server: implement FSCTL_SET_COMPRESSION ioctl handler
@@ -58,10 +58,10 @@ index aeede3f11e06..8c40631ce64a 100644
  	{
  		struct file_object_buf_type1_ioctl_rsp *obj_buf;
 diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
-index ca82b1ce35f0..53d1e2eff20f 100644
+index fc29df32330b..a11bce9fccf2 100644
 --- a/fs/smb/server/vfs.c
 +++ b/fs/smb/server/vfs.c
-@@ -1927,3 +1927,76 @@ int ksmbd_vfs_get_compression(struct ksmbd_file *fp, u16 *fmt)
+@@ -1933,3 +1933,76 @@ int ksmbd_vfs_get_compression(struct ksmbd_file *fp, u16 *fmt)
  out:
  	return rc;
  }

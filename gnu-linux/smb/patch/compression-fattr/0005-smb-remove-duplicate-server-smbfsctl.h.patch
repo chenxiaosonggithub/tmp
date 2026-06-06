@@ -1,4 +1,4 @@
-From a7ef101719c5cc3d3302b027d22dbe0f391f50fd Mon Sep 17 00:00:00 2001
+From 220f97b9e1bbacc68db73e82655f4d20c748eced Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Fri, 5 Jun 2026 16:53:19 +0000
 Subject: [PATCH 5/5] smb: remove duplicate server/smbfsctl.h
@@ -7,7 +7,7 @@ Rename the following places:
 
   - FSCTL_COPYCHUNK -> FSCTL_SRV_COPYCHUNK
   - FSCTL_COPYCHUNK_WRITE -> FSCTL_SRV_COPYCHUNK_WRITE
-  - FSCTL_REQUEST_RESUME_KEY -> FSCTL_REQUEST_RESUME_KEY
+  - FSCTL_REQUEST_RESUME_KEY -> FSCTL_SRV_REQUEST_RESUME_KEY
 
 server/smbfsctl.h contains the following additional definitions compared to
 common/smbfsctl.h:
