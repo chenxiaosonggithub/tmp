@@ -1,7 +1,7 @@
-From 3c2b4029d836b24dbec4c4c33bb7142623aa8831 Mon Sep 17 00:00:00 2001
+From de2c07446ab878856d3e38a07105184a6273656d Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Fri, 5 Jun 2026 16:53:19 +0000
-Subject: [PATCH 5/5] smb: remove duplicate server/smbfsctl.h
+Subject: [PATCH v2 5/5] smb: remove duplicate server/smbfsctl.h
 
 Rename the following places:
 

@@ -1,7 +1,16 @@
-From 220f97b9e1bbacc68db73e82655f4d20c748eced Mon Sep 17 00:00:00 2001
+From f4123fbb114c96b5c294d5c69e25bbb09320d49c Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
-Date: Sat, 6 Jun 2026 09:11:54 +0000
-Subject: [PATCH 0/5] smb/server: implement compression fattr handler
+Date: Sat, 6 Jun 2026 15:47:46 +0000
+Subject: [PATCH v2 0/5] smb/server: implement compression fattr handler
+
+v1->v2:
+  - Patch #02: remove unneeded `return`
+  - Patch #03: return LZNT1 if the is compressed
+  - Patch #04:
+    - Don't roll back `fp->f_ci->m_fattr` when `ksmbd_vfs_set_dos_attrib_xattr()` fails
+    - Remove unneeded `goto`
+
+v1: https://lore.kernel.org/linux-cifs/20260606092601.299698-1-chenxiaosong@chenxiaosong.com/
 
 ChenXiaoSong (5):
   smb: move compression definitions into common/fscc.h
@@ -12,14 +21,14 @@ ChenXiaoSong (5):
 
  fs/smb/client/smb1pdu.h  |   5 --
  fs/smb/client/smb2pdu.h  |   4 --
- fs/smb/common/fscc.h     |  18 ++++++
+ fs/smb/common/fscc.h     |  18 +++++++
  fs/smb/common/smbfsctl.h |  10 +++-
- fs/smb/server/smb2pdu.c  |  73 +++++++++++++++++++++---
- fs/smb/server/smb2pdu.h  |   3 -
- fs/smb/server/smbfsctl.h |  91 ------------------------------
- fs/smb/server/vfs.c      | 116 +++++++++++++++++++++++++++++++++++++++
- fs/smb/server/vfs.h      |   3 +
- 9 files changed, 211 insertions(+), 112 deletions(-)
+ fs/smb/server/smb2pdu.c  |  73 ++++++++++++++++++++++---
+ fs/smb/server/smb2pdu.h  |   3 --
+ fs/smb/server/smbfsctl.h |  91 --------------------------------
+ fs/smb/server/vfs.c      | 111 +++++++++++++++++++++++++++++++++++++++
+ fs/smb/server/vfs.h      |   3 ++
+ 9 files changed, 206 insertions(+), 112 deletions(-)
  delete mode 100644 fs/smb/server/smbfsctl.h
 
 -- 

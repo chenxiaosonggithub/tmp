@@ -1,22 +1,27 @@
-From 6ad9a065a5076b8ad9110e2a11bc5ef5a8fbdd79 Mon Sep 17 00:00:00 2001
+From 0716460f4ef08fe2b3373b101648cecc2022d1eb Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Sat, 6 Jun 2026 08:10:46 +0000
-Subject: [PATCH 4/5] smb/server: implement FSCTL_SET_COMPRESSION ioctl handler
+Subject: [PATCH v2 4/5] smb/server: implement FSCTL_SET_COMPRESSION ioctl
+ handler
 
 Example:
+
   1. client: smbinfo setcompression no /mnt/file
   2. client: smbinfo getcompression /mnt/file
              Compression: 0 (NONE)
-  3. client: smbinfo setcompression default /mnt/file
+  3. client: smbinfo setcompression lznt1 /mnt/file
   4. client: smbinfo getcompression /mnt/file
-             Compression: 1 (UNKNOWN)
+             Compression: 2 (LZNT1)
+  5. client: smbinfo setcompression default /mnt/file
+  6. client: smbinfo getcompression /mnt/file
+             Compression: 2 (LZNT1)
 
 Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
- fs/smb/server/smb2pdu.c | 28 ++++++++++++++++
- fs/smb/server/vfs.c     | 73 +++++++++++++++++++++++++++++++++++++++++
+ fs/smb/server/smb2pdu.c | 28 +++++++++++++++++
+ fs/smb/server/vfs.c     | 70 +++++++++++++++++++++++++++++++++++++++++
  fs/smb/server/vfs.h     |  1 +
- 3 files changed, 102 insertions(+)
+ 3 files changed, 99 insertions(+)
 
 diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
 index aeede3f11e06..8c40631ce64a 100644
@@ -58,10 +63,10 @@ index aeede3f11e06..8c40631ce64a 100644
  	{
  		struct file_object_buf_type1_ioctl_rsp *obj_buf;
 diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
-index fc29df32330b..a11bce9fccf2 100644
+index e7f09b3f758c..4355a0c743bd 100644
 --- a/fs/smb/server/vfs.c
 +++ b/fs/smb/server/vfs.c
-@@ -1933,3 +1933,76 @@ int ksmbd_vfs_get_compression(struct ksmbd_file *fp, u16 *fmt)
+@@ -1931,3 +1931,73 @@ int ksmbd_vfs_get_compression(struct ksmbd_file *fp, u16 *fmt)
  out:
  	return rc;
  }
@@ -128,11 +133,8 @@ index fc29df32330b..a11bce9fccf2 100644
 +		rc = ksmbd_vfs_set_dos_attrib_xattr(idmap,
 +						    &fp->filp->f_path,
 +						    &da, true);
-+		if (rc) {
++		if (rc)
 +			rc = 0;
-+			fp->f_ci->m_fattr = old_fattr;
-+			goto out;
-+		}
 +	}
 +
 +out:

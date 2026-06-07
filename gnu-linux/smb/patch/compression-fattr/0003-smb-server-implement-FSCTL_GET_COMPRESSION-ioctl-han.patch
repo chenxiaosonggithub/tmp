@@ -1,13 +1,14 @@
-From 7beaf208b4eb192cfcf1e4bb6ca430131c4b9548 Mon Sep 17 00:00:00 2001
+From 409540d225b0e639ef19c7ead63e8b54179588af Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Sat, 6 Jun 2026 07:32:32 +0000
-Subject: [PATCH 3/5] smb/server: implement FSCTL_GET_COMPRESSION ioctl handler
+Subject: [PATCH v2 3/5] smb/server: implement FSCTL_GET_COMPRESSION ioctl
+ handler
 
 Example:
 
   1. server: chattr +c /export/file
   2. client: smbinfo getcompression /mnt/file
-             Compression: 1 (UNKNOWN)
+             Compression: 2 (LZNT1)
 
 Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
@@ -56,10 +57,10 @@ index 707ad8d17b62..aeede3f11e06 100644
  	{
  		struct file_object_buf_type1_ioctl_rsp *obj_buf;
 diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
-index 08490a7fb396..fc29df32330b 100644
+index dd00cceb8ded..e7f09b3f758c 100644
 --- a/fs/smb/server/vfs.c
 +++ b/fs/smb/server/vfs.c
-@@ -1910,3 +1910,26 @@ void ksmbd_vfs_update_compressed_fattr(struct dentry *dentry, __le32 *fattr)
+@@ -1908,3 +1908,26 @@ void ksmbd_vfs_update_compressed_fattr(struct dentry *dentry, __le32 *fattr)
  	else
  		*fattr &= ~FILE_ATTRIBUTE_COMPRESSED_LE;
  }
@@ -79,7 +80,7 @@ index 08490a7fb396..fc29df32330b 100644
 +		goto out;
 +
 +	if (fa.flags & FS_COMPR_FL)
-+		*fmt = COMPRESSION_FORMAT_DEFAULT;
++		*fmt = COMPRESSION_FORMAT_LZNT1;
 +	else
 +		*fmt = COMPRESSION_FORMAT_NONE;
 +
