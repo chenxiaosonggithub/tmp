@@ -1,0 +1,51 @@
+From e7eb232f331771b5eb1b53567d19c15b37cf22b7 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Mon, 8 Jun 2026 12:32:14 +0000
+Subject: [PATCH v3 7/7] smb/server: fix incorrect file size in
+ get_file_compression_info()
+
+Before this patch, we got the wrong file size:
+
+  - client: touch /mnt/file
+  - client: smbinfo setcompression default /mnt/file
+  - client: dd if=/dev/zero of=/mnt/file bs=1 count=1000
+  - client: smbinfo filecompressioninfo /mnt/file
+            Compressed File Size: 4096
+            Compression Format: 2 (LZNT1)
+
+After this patch, we get the correct file size:
+
+  - client: smbinfo filecompressioninfo /mnt/file
+            Compressed File Size: 1000
+            Compression Format: 2 (LZNT1)
+
+Note that the actual compressed file size must be got by other methods.
+For Btrfs, use the following command to get actual compressed file size:
+
+  - server: compsize /export/file
+            Processed 1 file, 0 regular extents (0 refs), 1 inline.
+            Type       Perc     Disk Usage   Uncompressed Referenced
+            TOTAL        4%       47B        1000B        1000B
+            zlib         4%       47B        1000B        1000B
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/smb2pdu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index 7150e77ff113..5781695d1094 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -5291,7 +5291,7 @@ static int get_file_compression_info(struct smb2_query_info_rsp *rsp,
+ 		return ret;
+ 
+ 	file_info = (struct smb2_file_comp_info *)rsp->Buffer;
+-	file_info->CompressedFileSize = cpu_to_le64(stat.blocks << 9);
++	file_info->CompressedFileSize = cpu_to_le64(stat.size);
+ 	file_info->CompressionFormat = cpu_to_le16(fmt);
+ 	file_info->CompressionUnitShift = 0;
+ 	file_info->ChunkShift = 0;
+-- 
+2.54.0
+

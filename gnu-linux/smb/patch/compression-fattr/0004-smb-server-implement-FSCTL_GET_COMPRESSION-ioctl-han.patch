@@ -1,7 +1,7 @@
-From 409540d225b0e639ef19c7ead63e8b54179588af Mon Sep 17 00:00:00 2001
+From a0a713c003b3786fc821e4687295ca079d908d2d Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Sat, 6 Jun 2026 07:32:32 +0000
-Subject: [PATCH v2 3/5] smb/server: implement FSCTL_GET_COMPRESSION ioctl
+Subject: [PATCH v3 4/7] smb/server: implement FSCTL_GET_COMPRESSION ioctl
  handler
 
 Example:
@@ -12,16 +12,30 @@ Example:
 
 Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
- fs/smb/server/smb2pdu.c | 28 ++++++++++++++++++++++++++++
- fs/smb/server/vfs.c     | 23 +++++++++++++++++++++++
- fs/smb/server/vfs.h     |  1 +
- 3 files changed, 52 insertions(+)
+ fs/smb/common/smbfsctl.h |  2 +-
+ fs/smb/server/smb2pdu.c  | 28 ++++++++++++++++++++++++++++
+ fs/smb/server/vfs.c      | 23 +++++++++++++++++++++++
+ fs/smb/server/vfs.h      |  1 +
+ 4 files changed, 53 insertions(+), 1 deletion(-)
 
+diff --git a/fs/smb/common/smbfsctl.h b/fs/smb/common/smbfsctl.h
+index 74e78bcb4618..9debdd709d1c 100644
+--- a/fs/smb/common/smbfsctl.h
++++ b/fs/smb/common/smbfsctl.h
+@@ -61,7 +61,7 @@
+ #define FSCTL_LOCK_VOLUME            0x00090018
+ #define FSCTL_UNLOCK_VOLUME          0x0009001C
+ #define FSCTL_IS_PATHNAME_VALID      0x0009002C /* BB add struct */
+-#define FSCTL_GET_COMPRESSION        0x0009003C /* BB add struct */
++#define FSCTL_GET_COMPRESSION        0x0009003C
+ #define FSCTL_SET_COMPRESSION        0x0009C040 /* BB add struct */
+ #define FSCTL_QUERY_FAT_BPB          0x00090058 /* BB add struct */
+ /* Verify the next FSCTL number, we had it as 0x00090090 before */
 diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index 707ad8d17b62..aeede3f11e06 100644
+index 30c67f1c5109..7cc63678e2e0 100644
 --- a/fs/smb/server/smb2pdu.c
 +++ b/fs/smb/server/smb2pdu.c
-@@ -8338,6 +8338,34 @@ int smb2_ioctl(struct ksmbd_work *work)
+@@ -8336,6 +8336,34 @@ int smb2_ioctl(struct ksmbd_work *work)
  		ret = -EOPNOTSUPP;
  		rsp->hdr.Status = STATUS_FS_DRIVER_REQUIRED;
  		goto out2;
@@ -57,7 +71,7 @@ index 707ad8d17b62..aeede3f11e06 100644
  	{
  		struct file_object_buf_type1_ioctl_rsp *obj_buf;
 diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
-index dd00cceb8ded..e7f09b3f758c 100644
+index 6dee609e9749..b8c3ba43452a 100644
 --- a/fs/smb/server/vfs.c
 +++ b/fs/smb/server/vfs.c
 @@ -1908,3 +1908,26 @@ void ksmbd_vfs_update_compressed_fattr(struct dentry *dentry, __le32 *fattr)

@@ -1,7 +1,7 @@
-From 4019c094e431d0f9992c39f16a033d2788acb84d Mon Sep 17 00:00:00 2001
+From 5ea677e837c6252df743e49754a69a95912b6900 Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Fri, 5 Jun 2026 13:48:50 +0000
-Subject: [PATCH v2 2/5] smb/server: get compression file attribute on open
+Subject: [PATCH v3 3/7] smb/server: get compression file attribute on open
 
 Example:
 
@@ -17,7 +17,7 @@ Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  3 files changed, 23 insertions(+), 1 deletion(-)
 
 diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index 3eb3b1711acb..707ad8d17b62 100644
+index 8bf418e2da1c..30c67f1c5109 100644
 --- a/fs/smb/server/smb2pdu.c
 +++ b/fs/smb/server/smb2pdu.c
 @@ -3603,7 +3603,10 @@ int smb2_open(struct ksmbd_work *work)
@@ -33,7 +33,7 @@ index 3eb3b1711acb..707ad8d17b62 100644
  
  	memcpy(fp->client_guid, conn->ClientGUID, SMB2_CLIENT_GUID_SIZE);
 diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
-index d08973b288e5..dd00cceb8ded 100644
+index e020e59d1d5d..6dee609e9749 100644
 --- a/fs/smb/server/vfs.c
 +++ b/fs/smb/server/vfs.c
 @@ -21,6 +21,7 @@

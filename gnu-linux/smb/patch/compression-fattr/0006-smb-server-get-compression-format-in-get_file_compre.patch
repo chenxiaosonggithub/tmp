@@ -1,0 +1,54 @@
+From 1e35a67b8b1e23f86780ca81a66ef16c1bb1c007 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Mon, 8 Jun 2026 10:05:39 +0000
+Subject: [PATCH v3 6/7] smb/server: get compression format in
+ get_file_compression_info()
+
+I have added `filecompressioninfo` subcommand to `smbinfo`
+in cifs-utils.git.
+
+Example:
+
+  1. client: smbinfo setcompression lznt1 /mnt/file
+  2. client: smbinfo filecompressioninfo /mnt/file
+             Compressed File Size: 104857600
+             Compression Format: 2 (LZNT1)
+             Compression Unit Shift: 0
+             Chunk Shift: 0
+             Cluster Shift: 0
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/smb2pdu.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index 2b67c5926c67..7150e77ff113 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -5278,6 +5278,7 @@ static int get_file_compression_info(struct smb2_query_info_rsp *rsp,
+ {
+ 	struct smb2_file_comp_info *file_info;
+ 	struct kstat stat;
++	u16 fmt;
+ 	int ret;
+ 
+ 	ret = vfs_getattr(&fp->filp->f_path, &stat, STATX_BASIC_STATS,
+@@ -5285,9 +5286,13 @@ static int get_file_compression_info(struct smb2_query_info_rsp *rsp,
+ 	if (ret)
+ 		return ret;
+ 
++	ret = ksmbd_vfs_get_compression(fp, &fmt);
++	if (ret)
++		return ret;
++
+ 	file_info = (struct smb2_file_comp_info *)rsp->Buffer;
+ 	file_info->CompressedFileSize = cpu_to_le64(stat.blocks << 9);
+-	file_info->CompressionFormat = COMPRESSION_FORMAT_NONE;
++	file_info->CompressionFormat = cpu_to_le16(fmt);
+ 	file_info->CompressionUnitShift = 0;
+ 	file_info->ChunkShift = 0;
+ 	file_info->ClusterShift = 0;
+-- 
+2.54.0
+

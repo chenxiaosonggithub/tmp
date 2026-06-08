@@ -1,34 +1,32 @@
-From f4123fbb114c96b5c294d5c69e25bbb09320d49c Mon Sep 17 00:00:00 2001
+From e7eb232f331771b5eb1b53567d19c15b37cf22b7 Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
-Date: Sat, 6 Jun 2026 15:47:46 +0000
-Subject: [PATCH v2 0/5] smb/server: implement compression fattr handler
+Date: Mon, 8 Jun 2026 13:52:31 +0000
+Subject: [PATCH v3 0/7] smb/server: implement compression fattr handler
 
-v1->v2:
-  - Patch #02: remove unneeded `return`
-  - Patch #03: return LZNT1 if the is compressed
-  - Patch #04:
-    - Don't roll back `fp->f_ci->m_fattr` when `ksmbd_vfs_set_dos_attrib_xattr()` fails
-    - Remove unneeded `goto`
+v2->v3:
+  - Add patch #06 #07: get correct compression format and file size in get_file_compression_info()
 
-v1: https://lore.kernel.org/linux-cifs/20260606092601.299698-1-chenxiaosong@chenxiaosong.com/
+v2: https://lore.kernel.org/linux-cifs/20260607022705.317863-1-chenxiaosong@chenxiaosong.com/
 
-ChenXiaoSong (5):
+ChenXiaoSong (7):
+  smb: remove duplicate server/smbfsctl.h
   smb: move compression definitions into common/fscc.h
   smb/server: get compression file attribute on open
   smb/server: implement FSCTL_GET_COMPRESSION ioctl handler
   smb/server: implement FSCTL_SET_COMPRESSION ioctl handler
-  smb: remove duplicate server/smbfsctl.h
+  smb/server: get compression format in get_file_compression_info()
+  smb/server: fix incorrect file size in get_file_compression_info()
 
  fs/smb/client/smb1pdu.h  |   5 --
  fs/smb/client/smb2pdu.h  |   4 --
  fs/smb/common/fscc.h     |  18 +++++++
  fs/smb/common/smbfsctl.h |  10 +++-
- fs/smb/server/smb2pdu.c  |  73 ++++++++++++++++++++++---
+ fs/smb/server/smb2pdu.c  |  82 +++++++++++++++++++++++++----
  fs/smb/server/smb2pdu.h  |   3 --
  fs/smb/server/smbfsctl.h |  91 --------------------------------
  fs/smb/server/vfs.c      | 111 +++++++++++++++++++++++++++++++++++++++
  fs/smb/server/vfs.h      |   3 ++
- 9 files changed, 206 insertions(+), 112 deletions(-)
+ 9 files changed, 213 insertions(+), 114 deletions(-)
  delete mode 100644 fs/smb/server/smbfsctl.h
 
 -- 

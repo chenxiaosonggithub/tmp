@@ -1,7 +1,7 @@
-From de2c07446ab878856d3e38a07105184a6273656d Mon Sep 17 00:00:00 2001
+From dd77f6439829007d2c160b4d8b1e1d77132d7ca0 Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Fri, 5 Jun 2026 16:53:19 +0000
-Subject: [PATCH v2 5/5] smb: remove duplicate server/smbfsctl.h
+Subject: [PATCH v3 1/7] smb: remove duplicate server/smbfsctl.h
 
 Rename the following places:
 
@@ -20,27 +20,16 @@ common/smbfsctl.h:
 
 Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
- fs/smb/common/smbfsctl.h | 10 ++++-
+ fs/smb/common/smbfsctl.h |  6 +++
  fs/smb/server/smb2pdu.c  | 12 +++---
  fs/smb/server/smbfsctl.h | 91 ----------------------------------------
- 3 files changed, 14 insertions(+), 99 deletions(-)
+ 3 files changed, 12 insertions(+), 97 deletions(-)
  delete mode 100644 fs/smb/server/smbfsctl.h
 
 diff --git a/fs/smb/common/smbfsctl.h b/fs/smb/common/smbfsctl.h
-index 3253a18ecb5c..d1fcb46a7cde 100644
+index 3253a18ecb5c..74e78bcb4618 100644
 --- a/fs/smb/common/smbfsctl.h
 +++ b/fs/smb/common/smbfsctl.h
-@@ -61,8 +61,8 @@
- #define FSCTL_LOCK_VOLUME            0x00090018
- #define FSCTL_UNLOCK_VOLUME          0x0009001C
- #define FSCTL_IS_PATHNAME_VALID      0x0009002C /* BB add struct */
--#define FSCTL_GET_COMPRESSION        0x0009003C /* BB add struct */
--#define FSCTL_SET_COMPRESSION        0x0009C040 /* BB add struct */
-+#define FSCTL_GET_COMPRESSION        0x0009003C
-+#define FSCTL_SET_COMPRESSION        0x0009C040
- #define FSCTL_QUERY_FAT_BPB          0x00090058 /* BB add struct */
- /* Verify the next FSCTL number, we had it as 0x00090090 before */
- #define FSCTL_FILESYSTEM_GET_STATS   0x00090060 /* BB add struct */
 @@ -159,6 +159,12 @@
  #define IO_REPARSE_TAG_LX_CHR	     0x80000025
  #define IO_REPARSE_TAG_LX_BLK	     0x80000026
@@ -55,7 +44,7 @@ index 3253a18ecb5c..d1fcb46a7cde 100644
  #define IS_REPARSE_TAG_NAME_SURROGATE(tag) (!!((tag) & 0x20000000))
  
 diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index 8c40631ce64a..140b3a878673 100644
+index a97fc9b7e44c..8bf418e2da1c 100644
 --- a/fs/smb/server/smb2pdu.c
 +++ b/fs/smb/server/smb2pdu.c
 @@ -16,7 +16,7 @@
@@ -67,7 +56,7 @@ index 8c40631ce64a..140b3a878673 100644
  #include "oplock.h"
  #include "smbacl.h"
  
-@@ -7919,9 +7919,9 @@ static int fsctl_copychunk(struct ksmbd_work *work,
+@@ -7914,9 +7914,9 @@ static int fsctl_copychunk(struct ksmbd_work *work,
  
  	/*
  	 * FILE_READ_DATA should only be included in
@@ -79,7 +68,7 @@ index 8c40631ce64a..140b3a878673 100644
  	    !(dst_fp->daccess & (FILE_READ_DATA_LE | FILE_GENERIC_READ_LE))) {
  		rsp->hdr.Status = STATUS_ACCESS_DENIED;
  		goto out;
-@@ -8451,7 +8451,7 @@ int smb2_ioctl(struct ksmbd_work *work)
+@@ -8390,7 +8390,7 @@ int smb2_ioctl(struct ksmbd_work *work)
  			goto out;
  		nbytes = ret;
  		break;
@@ -88,7 +77,7 @@ index 8c40631ce64a..140b3a878673 100644
  		if (out_buf_len < sizeof(struct resume_key_ioctl_rsp)) {
  			ret = -EINVAL;
  			goto out;
-@@ -8465,8 +8465,8 @@ int smb2_ioctl(struct ksmbd_work *work)
+@@ -8404,8 +8404,8 @@ int smb2_ioctl(struct ksmbd_work *work)
  		rsp->VolatileFileId = req->VolatileFileId;
  		nbytes = sizeof(struct resume_key_ioctl_rsp);
  		break;
