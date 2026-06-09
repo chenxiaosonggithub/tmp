@@ -1,4 +1,4 @@
-From f87e33ea205c4ad4ae06e7b6d93e6342348b0e64 Mon Sep 17 00:00:00 2001
+From de60e56a2bb106b9fdcc393fe976e30d6343f0ad Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Tue, 19 May 2026 08:51:58 +0000
 Subject: [PATCH samba v3 1/1] smbclient: cancel pending notify on SIGINT
@@ -14,11 +14,11 @@ can only check `sig_state.cancelled`.
 Suggested-by: Stefan Metzmacher <metze@samba.org>
 Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
- source3/client/client.c | 60 ++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 56 insertions(+), 4 deletions(-)
+ source3/client/client.c | 64 ++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 57 insertions(+), 7 deletions(-)
 
 diff --git a/source3/client/client.c b/source3/client/client.c
-index 1d3656aab34..36f8b8d04c4 100644
+index 1d3656aab34..37693b8f401 100644
 --- a/source3/client/client.c
 +++ b/source3/client/client.c
 @@ -45,6 +45,7 @@
@@ -29,7 +29,7 @@ index 1d3656aab34..36f8b8d04c4 100644
  
  #ifndef REGISTER
  #define REGISTER 0
-@@ -4653,12 +4654,39 @@ static int cmd_newer(TALLOC_CTX *mem_ctx)
+@@ -4653,19 +4654,46 @@ static int cmd_newer(TALLOC_CTX *mem_ctx)
   Watch directory changes
  ****************************************************************************/
  
@@ -68,6 +68,14 @@ index 1d3656aab34..36f8b8d04c4 100644
 +	};
  
  	name = talloc_strdup(talloc_tos(), client_get_cur_dir());
+ 	if (name == NULL) {
+ 		goto fail;
+ 	}
+ 	if (!next_token_talloc(talloc_tos(), &cmd_ptr, &buf, NULL)) {
+-		goto usage;
++		goto fail;
+ 	}
+ 	name = talloc_asprintf_append(name, "%s", buf);
  	if (name == NULL) {
 @@ -4684,14 +4712,33 @@ static int cmd_notify(TALLOC_CTX *mem_ctx)
  		goto fail;
@@ -115,18 +123,20 @@ index 1d3656aab34..36f8b8d04c4 100644
  		}
  		for (i=0; i<num_changes; i++) {
  			printf("%4.4x %s\n", changes[i].action,
-@@ -4707,6 +4754,11 @@ static int cmd_notify(TALLOC_CTX *mem_ctx)
+@@ -4707,8 +4754,11 @@ static int cmd_notify(TALLOC_CTX *mem_ctx)
  		}
  		TALLOC_FREE(changes);
  	}
+-usage:
+-	d_printf("notify <dir name>\n");
 +close:
 +	status = cli_close(cli, fnum);
 +	if (!NT_STATUS_IS_OK(status)) {
 +		d_printf("close returned %s\n", nt_errstr(status));
 +	}
- usage:
- 	d_printf("notify <dir name>\n");
  fail:
+ 	TALLOC_FREE(frame);
+ 	return 1;
 -- 
 2.54.0
 
