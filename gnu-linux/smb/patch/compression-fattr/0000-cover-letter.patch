@@ -1,33 +1,25 @@
-From e7eb232f331771b5eb1b53567d19c15b37cf22b7 Mon Sep 17 00:00:00 2001
+From 4b7c3e74cda26d7cb9772e5c6e1070e72eb37fab Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
-Date: Mon, 8 Jun 2026 13:52:31 +0000
-Subject: [PATCH v3 0/7] smb/server: implement compression fattr handler
+Date: Tue, 9 Jun 2026 06:02:58 +0000
+Subject: [PATCH v4 0/1] smb/server: implement compression fattr handler
 
-v2->v3:
-  - Add patch #06 #07: get correct compression format and file size in get_file_compression_info()
+v3->v4: use min(stat.size, stat.blocks << 9) as the compressed file size.
 
-v2: https://lore.kernel.org/linux-cifs/20260607022705.317863-1-chenxiaosong@chenxiaosong.com/
+v3: https://lore.kernel.org/linux-cifs/20260608140128.387844-1-chenxiaosong@chenxiaosong.com/
 
-ChenXiaoSong (7):
-  smb: remove duplicate server/smbfsctl.h
-  smb: move compression definitions into common/fscc.h
-  smb/server: get compression file attribute on open
-  smb/server: implement FSCTL_GET_COMPRESSION ioctl handler
-  smb/server: implement FSCTL_SET_COMPRESSION ioctl handler
-  smb/server: get compression format in get_file_compression_info()
+The following patches from v3 have already been merged into ksmbd.git ksmbd-for-next-next:
+  - smb/server: get compression format in get_file_compression_info()
+  - smb/server: implement FSCTL_SET_COMPRESSION ioctl handler
+  - smb/server: implement FSCTL_GET_COMPRESSION ioctl handler
+  - smb/server: get compression file attribute on open
+  - smb: move compression definitions into common/fscc.h
+  - smb: remove duplicate server/smbfsctl.h
+
+ChenXiaoSong (1):
   smb/server: fix incorrect file size in get_file_compression_info()
 
- fs/smb/client/smb1pdu.h  |   5 --
- fs/smb/client/smb2pdu.h  |   4 --
- fs/smb/common/fscc.h     |  18 +++++++
- fs/smb/common/smbfsctl.h |  10 +++-
- fs/smb/server/smb2pdu.c  |  82 +++++++++++++++++++++++++----
- fs/smb/server/smb2pdu.h  |   3 --
- fs/smb/server/smbfsctl.h |  91 --------------------------------
- fs/smb/server/vfs.c      | 111 +++++++++++++++++++++++++++++++++++++++
- fs/smb/server/vfs.h      |   3 ++
- 9 files changed, 213 insertions(+), 114 deletions(-)
- delete mode 100644 fs/smb/server/smbfsctl.h
+ fs/smb/server/smb2pdu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 -- 
 2.54.0
