@@ -170,6 +170,8 @@ test_all()
 	do_test generic/599
 }
 
+init_client_dir
+
 case "${server_type}" in
 "samba")
 	start_samba

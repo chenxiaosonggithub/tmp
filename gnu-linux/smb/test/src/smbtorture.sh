@@ -314,6 +314,8 @@ test_all()
 	do_test smb2.durable-v2-open.reopen2-lease-v2
 }
 
+init_client_dir
+
 case "${server_type}" in
 "samba")
 	start_samba

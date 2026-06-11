@@ -4,26 +4,29 @@ smb_password=1
 script_path="$(realpath "${BASH_SOURCE[0]}")"
 script_dir="$(dirname "${script_path}")"
 
-init_mnt_dir()
+init_client_dir()
 {
+	sudo umount /tmp/test
+	sudo umount /tmp/test2
+	sudo umount /tmp/test3
 	sudo mkdir -p /tmp/test
 	sudo mkdir -p /tmp/test2
 	sudo mkdir -p /tmp/test3
+}
 
-	sudo mkdir -m 777 -p /tmp/s_test
-	sudo mkdir -m 777 -p /tmp/s_test2
-	sudo mkdir -m 777 -p /tmp/s_test3
-
+init_server_dir()
+{
 	sudo systemctl stop ksmbd
 	sudo systemctl stop smb
 	sudo systemctl stop smbd
 
-	sudo umount /tmp/test
-	sudo umount /tmp/test2
-	sudo umount /tmp/test3
 	sudo umount /tmp/s_test
 	sudo umount /tmp/s_test2
 	sudo umount /tmp/s_test3
+
+	sudo mkdir -m 777 -p /tmp/s_test
+	sudo mkdir -m 777 -p /tmp/s_test2
+	sudo mkdir -m 777 -p /tmp/s_test3
 
 	sudo mkfs.ext4 -F /dev/sda
 	sudo mkfs.ext4 -F /dev/sdb
@@ -35,7 +38,7 @@ init_mnt_dir()
 
 start_ksmbd()
 {
-	init_mnt_dir
+	init_server_dir
 
 	# sudo ksmbd.mountd -n -C ./smb.conf -P ./ksmbdpwd.db &
 	cp ${script_dir}/ksmbd.conf /usr/local/etc/ksmbd/ksmbd.conf
@@ -46,7 +49,7 @@ start_ksmbd()
 
 start_samba()
 {
-	init_mnt_dir
+	init_server_dir
 
 	cp ${script_dir}/smb.conf /etc/samba/smb.conf # dnf或apt安装的samba
 	cp ${script_dir}/smb.conf /usr/local/samba/etc/smb.conf # 源码安装的samba
