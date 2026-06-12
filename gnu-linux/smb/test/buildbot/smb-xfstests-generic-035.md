@@ -11,23 +11,31 @@
 ```sh
 TEST_DIR=/mnt
 here=`pwd`
-rename_dir=$TEST_DIR/rename
-mkdir -p $rename_dir
-
 echo "overwriting regular file:"
-file1=$rename_dir/file1
-file2=$rename_dir/file2
+file1=$TEST_DIR/file1
+file2=$TEST_DIR/file2
 touch $file1
 touch $file2
-$here/src/t_rename_overwrite $file1 $file2
+gcc -o t_rename_overwrite t_rename_overwrite.c # https://github.com/kdave/xfstests/blob/master/src/t_rename_overwrite.c
+$here/t_rename_overwrite $file1 $file2
 rm $file2
-
-rmdir $rename_dir
 ```
 
 # samba code analysis {#samba-code}
 
 ```c
+smbd_smb2_request_process_setinfo
+  smbd_smb2_setinfo_send
+    smbd_smb2_setinfo_lease_break_check
+      smbd_smb2_setinfo_rename_dst_check
+        tevent_req_set_callback(..., smbd_smb2_setinfo_rename_dst_delay_done, ...)
+        has_other_open = has_other_nonposix_opens()
+        tevent_req_nterror(req, NT_STATUS_ACCESS_DENIED)
+
+smbd_smb2_setinfo_rename_dst_delay_done
+  has_other_open = has_other_nonposix_opens
+  tevent_req_nterror(req, NT_STATUS_ACCESS_DENIED)
+
 rename_internals_fsp
   rename_open_files
 ```
