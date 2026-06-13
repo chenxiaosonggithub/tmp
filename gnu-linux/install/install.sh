@@ -381,6 +381,7 @@ EOF
 
 	# cpolar安装: https://chenxiaosong.com/course/gnu-linux/ssh-reverse.html#cpolar
 	# 花生壳安装: https://chenxiaosong.com/course/gnu-linux/ssh-reverse.html#oray
+	# 向日葵和todesk: https://chenxiaosong.com/course/gnu-linux/ssh-reverse.html#remote-desktop
 
 	tip_perm
 	install_code_server
