@@ -83,19 +83,29 @@ show_args() {
 	echo "BUILD_DIR: $BUILD_DIR"
 	echo "OTHER_OPT: $OTHER_OPT"
 	echo "build part: $part"
-	echo
 }
 
 make_cmd="make $ARCH_OPT $OTHER_OPT $COMPILER_OPT $LINKER_OPT O=$BUILD_DIR -j`nproc`"
 
+print_result() {
+	if [ "$1" -ne 0 ]; then
+		echo
+		echo -e '\033[1;31m' "!!!!!!!!!!!!!!!!!!!!!!!!${FUNCNAME[1]} fail!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" '\033[0m'
+	fi
+}
+
 olddefconfig() {
 	$make_cmd olddefconfig
-	return $?
+	result=$?
+	print_result $result
+	return $result
 }
 
 menuconfig() {
 	$make_cmd menuconfig
-	return $?
+	result=$?
+	print_result $result
+	return $result
 }
 
 Image() {
@@ -107,22 +117,30 @@ Image() {
 	esac
 
 	$make_cmd $image_cmd
-	return $?
+	result=$?
+	print_result $result
+	return $result
 }
 
 modules() {
 	$make_cmd modules
-	return $?
+	result=$?
+	print_result $result
+	return $result
 }
 
 modules_install() {
 	$make_cmd modules_install INSTALL_MOD_PATH=mod
-	return $?
+	result=$?
+	print_result $result
+	return $result
 }
 
 clean() {
 	$make_cmd clean
-	return $?
+	result=$?
+	print_result $result
+	return $result
 }
 
 show_args
