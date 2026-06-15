@@ -189,8 +189,8 @@ case "${server_type}" in
 esac
 
 echo "smb_server_ip=${smb_server_ip}" > ${xfstests_path}/local.config
-echo "smb_username=${smb_username}" >> ${xfstests_path}/local.config
-echo "smb_password=${smb_password}" >> ${xfstests_path}/local.config
+echo "smb_server_username=${smb_server_username}" >> ${xfstests_path}/local.config
+echo "smb_server_password=${smb_server_password}" >> ${xfstests_path}/local.config
 cat ${script_dir}/xfstests-local.config >> ${xfstests_path}/local.config
 
 if [ -n "$test_item" ]; then

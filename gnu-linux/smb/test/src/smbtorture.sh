@@ -21,7 +21,7 @@ do_test()
 	local test_item=$1
 	local date_time=`date +"%F %T"`
 	echo "starting run smbtorture $test_item at $date_time" >> ${result_log_file}  2>&1
-	smbtorture //${smb_server_ip}/test3/ -U${smb_username}%${smb_password} ${test_item} >> ${result_log_file}  2>&1
+	smbtorture //${smb_server_ip}/test3/ -U${smb_server_username}%${smb_server_password} ${test_item} >> ${result_log_file}  2>&1
 	result=$?
 	if [[ ${result} == 0 ]]; then
 		echo "${test_item} success" >> ${result_file}
