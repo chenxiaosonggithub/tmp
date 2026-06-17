@@ -1,7 +1,10 @@
-From 0ec9cc5150ea7b3a5e84afc26e28e3e45917dbb7 Mon Sep 17 00:00:00 2001
+From 174d8bc431482d79080ce72e80fa4821b83878ce Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Tue, 2 Jun 2026 08:16:33 +0000
 Subject: [PATCH 03/23] smb/server: fix debug log endianness in smb2_cancel()
+
+Convert to CPU byte order to avoid incorrect debug log
+on big-endian architectures.
 
 Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
