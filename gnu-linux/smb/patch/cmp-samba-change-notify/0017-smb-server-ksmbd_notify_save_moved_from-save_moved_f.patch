@@ -1,0 +1,71 @@
+From 95906b891c5903cdf10180d95fbfbc4fa9770693 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Tue, 16 Jun 2026 13:59:11 +0000
+Subject: [PATCH 17/23] smb/server: ksmbd_notify_save_moved_from -->
+ save_moved_from
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/notify.c | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+
+diff --git a/fs/smb/server/notify.c b/fs/smb/server/notify.c
+index 8c2a5fd484e7..08fad9729263 100644
+--- a/fs/smb/server/notify.c
++++ b/fs/smb/server/notify.c
+@@ -124,6 +124,30 @@ static bool ksmbd_notify_filter_match(u32 filter, u32 mask, u32 mark_mask)
+ 	return ((filter & FILE_NOTIFY_CHANGE_FILE_NAME) != 0);
+ }
+ 
++static void ksmbd_notify_save_moved_from(struct ksmbd_notify_ctx *ctx, u32 mask,
++					 u32 cookie, const struct qstr *file_name)
++{
++	struct ksmbd_notify_moved_from *from;
++
++	cancel_delayed_work(&ctx->moved_from_work);
++
++	if (ctx->moved_from)
++		ksmbd_notify_trigger_orphaned_moved_from(ctx);
++
++	from = kmalloc(struct_size(from, name, file_name->len + 1), GFP_KERNEL);
++	if (!from)
++		return;
++
++	from->mask = mask;
++	from->cookie = cookie;
++	from->namelen = file_name->len;
++	memcpy(from->name, file_name->name, file_name->len);
++	from->name[file_name->len] = '\0';
++	ctx->moved_from = from;
++
++	schedule_delayed_work(&ctx->moved_from_work, msecs_to_jiffies(100));
++}
++
+ static int ksmbd_notify_handle_event(struct fsnotify_group *group, u32 mask,
+ 				     const void *data, int data_type,
+ 				     struct inode *dir,
+@@ -150,6 +174,13 @@ static int ksmbd_notify_handle_event(struct fsnotify_group *group, u32 mask,
+ 
+ 	spin_lock_irqsave(&ctx->lock, flags);
+ 
++	if (event_mask & FS_MOVED_FROM) {
++		if (file_name && file_name->len)
++			ksmbd_notify_save_moved_from(ctx, mask, cookie,
++						     file_name);
++		goto out_unlock;
++	}
++
+ 	if (event_mask & FS_MOVED_TO) {
+ 		action = FILE_ACTION_ADDED;
+ 	} else if (event_mask & FS_CREATE) {
+@@ -349,6 +380,7 @@ int smb2_setup_notify(struct ksmbd_work *work,
+ 	init_waitqueue_head(&ctx->waitq);
+ 	spin_lock_init(&ctx->lock);
+ 	INIT_LIST_HEAD(&ctx->events);
++	INIT_DELAYED_WORK(&ctx->moved_from_work, ksmbd_notify_moved_from_timeout);
+ 	ctx->work = work;
+ 	ctx->completion_filter = le32_to_cpu(req->CompletionFilter);
+ 	ctx->output_buffer_length = le32_to_cpu(req->OutputBufferLength);
+-- 
+2.54.0
+

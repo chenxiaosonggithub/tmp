@@ -1,0 +1,30 @@
+From 174d8bc431482d79080ce72e80fa4821b83878ce Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Tue, 2 Jun 2026 08:16:33 +0000
+Subject: [PATCH 03/23] smb/server: fix debug log endianness in smb2_cancel()
+
+Convert to CPU byte order to avoid incorrect debug log
+on big-endian architectures.
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/smb2pdu.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index 852236043bc6..13c5b0c6e65c 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -7435,7 +7435,8 @@ int smb2_cancel(struct ksmbd_work *work)
+ 		hdr = ksmbd_resp_buf_next(work);
+ 
+ 	ksmbd_debug(SMB, "smb2 cancel called on mid %llu, async flags 0x%x\n",
+-		    hdr->MessageId, hdr->Flags);
++		    le64_to_cpu(hdr->MessageId),
++		    le32_to_cpu(hdr->Flags));
+ 
+ 	if (hdr->Flags & SMB2_FLAGS_ASYNC_COMMAND) {
+ 		command_list = &conn->async_requests;
+-- 
+2.54.0
+

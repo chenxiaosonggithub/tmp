@@ -1,29 +1,29 @@
-From 346a2336aaca2d3722e1359e516a739d0d425d1c Mon Sep 17 00:00:00 2001
+From d47ca8908de991c8a237c8cda0787ec5f22cc4a3 Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Thu, 28 May 2026 13:42:43 +0000
-Subject: [PATCH 2/6] smb/server: notify pending and cancel
+Subject: [PATCH 04/23] smb/server: notify pending and cancel
 
 Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
  fs/smb/server/Makefile  |  2 +-
  fs/smb/server/glob.h    |  3 +-
- fs/smb/server/notify.c  | 81 +++++++++++++++++++++++++++++++++++++++++
+ fs/smb/server/notify.c  | 82 +++++++++++++++++++++++++++++++++++++++++
  fs/smb/server/notify.h  | 21 +++++++++++
  fs/smb/server/smb2pdu.c | 58 ++++++++++++++++++++++++++---
- 5 files changed, 157 insertions(+), 8 deletions(-)
+ 5 files changed, 158 insertions(+), 8 deletions(-)
  create mode 100644 fs/smb/server/notify.c
  create mode 100644 fs/smb/server/notify.h
 
 diff --git a/fs/smb/server/Makefile b/fs/smb/server/Makefile
-index 6407ba6b9340..27fa46e1698b 100644
+index a3e9306055e8..0b9d862a6714 100644
 --- a/fs/smb/server/Makefile
 +++ b/fs/smb/server/Makefile
 @@ -10,7 +10,7 @@ ksmbd-y :=	unicode.o auth.o vfs.o vfs_cache.o server.o ndr.o \
  		mgmt/tree_connect.o mgmt/user_session.o smb_common.o \
  		transport_tcp.o transport_ipc.o smbacl.o smb2pdu.o \
  		smb2ops.o smb2misc.o ksmbd_spnego_negtokeninit.asn1.o \
--		ksmbd_spnego_negtokentarg.asn1.o asn1.o
-+		ksmbd_spnego_negtokentarg.asn1.o asn1.o notify.o
+-		ksmbd_spnego_negtokentarg.asn1.o asn1.o compress.o
++		ksmbd_spnego_negtokentarg.asn1.o asn1.o compress.o notify.o
  
  $(obj)/asn1.o: $(obj)/ksmbd_spnego_negtokeninit.asn1.h $(obj)/ksmbd_spnego_negtokentarg.asn1.h
  
@@ -46,10 +46,10 @@ index 344b069cfbbd..87cbc88275fe 100644
  #undef pr_fmt
 diff --git a/fs/smb/server/notify.c b/fs/smb/server/notify.c
 new file mode 100644
-index 000000000000..6d2c93c35b10
+index 000000000000..6c0f2d428045
 --- /dev/null
 +++ b/fs/smb/server/notify.c
-@@ -0,0 +1,81 @@
+@@ -0,0 +1,82 @@
 +// SPDX-License-Identifier: GPL-2.0-or-later
 +/*
 + *
@@ -94,7 +94,8 @@ index 000000000000..6d2c93c35b10
 +	ctx = kzalloc(sizeof(*ctx), KSMBD_DEFAULT_GFP);
 +	if (!ctx) {
 +		rsp->hdr.Status = STATUS_INSUFFICIENT_RESOURCES;
-+		return -ENOMEM;
++		rc = -ENOMEM;
++		goto out;
 +	}
 +
 +	init_waitqueue_head(&ctx->waitq);
@@ -159,18 +160,18 @@ index 000000000000..0c12abfe4c3d
 +
 +#endif /* __SMB_SERVER_NOTIFY_H__ */
 diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index 5128a693aca6..edf23072cb75 100644
+index 13c5b0c6e65c..d060a14745a5 100644
 --- a/fs/smb/server/smb2pdu.c
 +++ b/fs/smb/server/smb2pdu.c
-@@ -41,6 +41,7 @@
- #include "ndr.h"
+@@ -42,6 +42,7 @@
  #include "stats.h"
  #include "transport_tcp.h"
+ #include "compress.h"
 +#include "notify.h"
  
  static void __wbuf(struct ksmbd_work *work, void **req, void **rsp)
  {
-@@ -542,7 +543,8 @@ int smb2_allocate_rsp_buf(struct ksmbd_work *work)
+@@ -543,7 +544,8 @@ int smb2_allocate_rsp_buf(struct ksmbd_work *work)
  	size_t sz = small_sz;
  	int cmd = le16_to_cpu(hdr->Command);
  
@@ -180,7 +181,7 @@ index 5128a693aca6..edf23072cb75 100644
  		sz = large_sz;
  
  	if (cmd == SMB2_QUERY_INFO_HE) {
-@@ -8921,8 +8923,11 @@ int smb2_oplock_break(struct ksmbd_work *work)
+@@ -9155,8 +9157,11 @@ int smb2_oplock_break(struct ksmbd_work *work)
   */
  int smb2_notify(struct ksmbd_work *work)
  {
@@ -192,7 +193,7 @@ index 5128a693aca6..edf23072cb75 100644
  
  	ksmbd_debug(SMB, "Received smb2 notify\n");
  
-@@ -8930,13 +8935,54 @@ int smb2_notify(struct ksmbd_work *work)
+@@ -9164,13 +9169,54 @@ int smb2_notify(struct ksmbd_work *work)
  
  	if (work->next_smb2_rcv_hdr_off && req->hdr.NextCommand) {
  		rsp->hdr.Status = STATUS_INTERNAL_ERROR;

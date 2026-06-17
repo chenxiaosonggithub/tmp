@@ -1,0 +1,48 @@
+From cdae65c5fcaded5b1e5e18c6539466b007472b0d Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Tue, 16 Jun 2026 11:51:30 +0000
+Subject: [PATCH 07/23] smb/server: add some notify struct
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/notify.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/fs/smb/server/notify.c b/fs/smb/server/notify.c
+index 0dd32f63a627..8396895d88f6 100644
+--- a/fs/smb/server/notify.c
++++ b/fs/smb/server/notify.c
+@@ -17,9 +17,30 @@
+ #include "unicode.h"
+ #include "../common/smb2status.h"
+ 
++struct ksmbd_notify_event {
++	struct list_head list;
++	u32 action;
++	u32 namelen;
++	char name[];
++};
++
++struct ksmbd_notify_mark {
++	struct fsnotify_mark fsn_mark;
++};
++
+ struct ksmbd_notify_ctx {
+ 	wait_queue_head_t waitq;
++	spinlock_t lock;
++	struct list_head events;
+ 	struct ksmbd_work *work;
++	struct fsnotify_group *group;
++	struct ksmbd_notify_mark *inode_mark;
++	struct ksmbd_notify_moved_from *moved_from;
++	struct delayed_work moved_from_work;
++	u32 completion_filter;
++	u32 output_buffer_length;
++	bool events_ready;
++	bool watching;
+ };
+ 
+ static void smb2_cancel_notify(void **argv)
+-- 
+2.54.0
+

@@ -1,0 +1,51 @@
+From bc8098deadb1c2e56815316390239c6b85d51d87 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Wed, 17 Jun 2026 01:47:42 +0000
+Subject: [PATCH 21/23] smb/server: notify rename events
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/notify.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/fs/smb/server/notify.c b/fs/smb/server/notify.c
+index 185cff32df7f..6269d808088c 100644
+--- a/fs/smb/server/notify.c
++++ b/fs/smb/server/notify.c
+@@ -341,9 +341,16 @@ static void ksmbd_notify_unwatch(struct ksmbd_notify_ctx *ctx)
+ {
+ 	struct fsnotify_group *group = ctx->group;
+ 	struct ksmbd_notify_mark *imark = ctx->inode_mark;
++	unsigned long flags;
+ 
+ 	ctx->watching = false;
+ 
++	cancel_delayed_work_sync(&ctx->moved_from_work);
++
++	spin_lock_irqsave(&ctx->lock, flags);
++	ksmbd_notify_trigger_orphaned_moved_from(ctx);
++	spin_unlock_irqrestore(&ctx->lock, flags);
++
+ 	if (!group)
+ 		return;
+ 
+@@ -493,9 +500,16 @@ int smb2_setup_notify(struct ksmbd_work *work,
+ 		work->send_no_response = 1;
+ 		rc = -ECANCELED;
+ 	} else if (ctx->events_ready) {
++		unsigned long flags;
++
+ 		/* Sleep waiting for other events to arrive. */
+ 		msleep(1000);
+ 
++		cancel_delayed_work_sync(&ctx->moved_from_work);
++		spin_lock_irqsave(&ctx->lock, flags);
++		ksmbd_notify_trigger_orphaned_moved_from(ctx);
++		spin_unlock_irqrestore(&ctx->lock, flags);
++
+ 		rc = smb2_build_notify_response(work, rsp, ctx);
+ 		if (rc) {
+ 			rsp->hdr.Status = STATUS_INSUFFICIENT_RESOURCES;
+-- 
+2.54.0
+
