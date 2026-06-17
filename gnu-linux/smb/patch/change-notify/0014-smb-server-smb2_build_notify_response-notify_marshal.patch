@@ -1,0 +1,101 @@
+From 53fa202260c75279309e03a8382ab1c1b04850a8 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Tue, 16 Jun 2026 12:36:16 +0000
+Subject: [PATCH 14/23] smb/server: smb2_build_notify_response -->
+ notify_marshall_changes
+
+TODO:
+  change_notify_reply
+    notify_marshall_changes
+      data_blob_append
+        data_blob_realloc
+          blob->length = length
+    smbd_smb2_notify_reply(..., blob.length) // reply_fn
+      if (len == 0)
+      state->status = NT_STATUS_NOTIFY_ENUM_DIR
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/notify.c | 66 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 66 insertions(+)
+
+diff --git a/fs/smb/server/notify.c b/fs/smb/server/notify.c
+index bdd64fcc9c55..7e8dc0ccf8bb 100644
+--- a/fs/smb/server/notify.c
++++ b/fs/smb/server/notify.c
+@@ -203,6 +203,72 @@ static void smb2_cancel_notify(void **argv)
+ 	wake_up(&ctx->waitq);
+ }
+ 
++static int smb2_build_notify_response(struct ksmbd_work *work,
++				      struct smb2_change_notify_rsp *rsp,
++				      struct ksmbd_notify_ctx *ctx)
++{
++	struct ksmbd_conn *conn = work->conn;
++	struct file_notify_information *info = NULL;
++	struct file_notify_information *prev_info = NULL;
++	struct ksmbd_notify_event *evt, *tmp;
++	u32 out_len = 0;
++	u32 max_len = ctx->output_buffer_length;
++	u8 *buf = rsp->Buffer;
++	int rc;
++
++	if (list_empty(&ctx->events))
++		return -ENOENT;
++
++	list_for_each_entry_safe(evt, tmp, &ctx->events, list) {
++		size_t name_utf16_len;
++		u32 entry_len;
++		int conv_len;
++
++		conv_len = smbConvertToUTF16(
++			(__le16 *)(buf + out_len +
++				   offsetof(struct file_notify_information,
++					    FileName)),
++			evt->name, evt->namelen + 1, conn->local_nls, 0);
++		if (conv_len < 0)
++			return conv_len;
++
++		name_utf16_len = (u32)conv_len * 2;
++		entry_len = offsetof(struct file_notify_information, FileName) +
++			    name_utf16_len;
++		entry_len = ALIGN(entry_len, 4);
++
++		if (out_len + entry_len > max_len)
++			break;
++
++		if (prev_info)
++			prev_info->NextEntryOffset = cpu_to_le32(
++				(u32)((u8 *)(buf + out_len) - (u8 *)prev_info));
++
++		info = (struct file_notify_information *)(buf + out_len);
++		info->NextEntryOffset = 0;
++		info->Action = cpu_to_le32(evt->action);
++		info->FileNameLength = cpu_to_le32(name_utf16_len);
++
++		prev_info = info;
++		out_len += entry_len;
++		list_del(&evt->list);
++		kfree(evt);
++	}
++
++	if (!out_len)
++		return -ENOSPC;
++
++	rsp->StructureSize = cpu_to_le16(9);
++	rsp->OutputBufferOffset = cpu_to_le16(
++			offsetof(struct smb2_change_notify_rsp, Buffer));
++	rsp->OutputBufferLength = cpu_to_le32(out_len);
++
++	rc = ksmbd_iov_pin_rsp(work, rsp,
++			       offsetof(struct smb2_change_notify_rsp, Buffer) +
++			       out_len);
++	return rc;
++}
++
+ int smb2_setup_notify(struct ksmbd_work *work,
+ 		      struct smb2_change_notify_req *req,
+ 		      struct smb2_change_notify_rsp *rsp,
+-- 
+2.54.0
+

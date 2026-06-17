@@ -1,0 +1,46 @@
+From db601b6482ef22c4d4961eb7acd80882fb05f027 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Tue, 16 Jun 2026 12:11:06 +0000
+Subject: [PATCH 10/23] smb/server: ksmbd_notify_filter_match --> filter_match
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/notify.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/fs/smb/server/notify.c b/fs/smb/server/notify.c
+index 37db23772a1a..020179f92ef9 100644
+--- a/fs/smb/server/notify.c
++++ b/fs/smb/server/notify.c
+@@ -59,6 +59,28 @@ static const struct {
+ 	{ FILE_NOTIFY_CHANGE_SECURITY, FS_ATTRIB },
+ };
+ 
++static bool ksmbd_notify_filter_match(u32 filter, u32 mask, u32 mark_mask)
++{
++	if ((mask & mark_mask) == 0)
++		return false;
++
++	if (mask & FS_ISDIR)
++		return ((filter & FILE_NOTIFY_CHANGE_DIR_NAME) != 0);
++
++	if ((mask & FS_ATTRIB) &&
++	    (filter & (FILE_NOTIFY_CHANGE_ATTRIBUTES |
++		       FILE_NOTIFY_CHANGE_LAST_WRITE |
++		       FILE_NOTIFY_CHANGE_LAST_ACCESS |
++		       FILE_NOTIFY_CHANGE_EA |
++		       FILE_NOTIFY_CHANGE_SECURITY)))
++		return true;
++
++	if ((mask & FS_MODIFY) && (filter & FILE_NOTIFY_CHANGE_ATTRIBUTES))
++		return true;
++
++	return ((filter & FILE_NOTIFY_CHANGE_FILE_NAME) != 0);
++}
++
+ static u32 ksmbd_notify_filter_to_mask(u32 filter)
+ {
+ 	size_t i;
+-- 
+2.54.0
+

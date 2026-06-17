@@ -1,0 +1,75 @@
+From f03bb38afc263bd7d77659fbe30d9b933920139f Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Wed, 17 Jun 2026 01:43:24 +0000
+Subject: [PATCH 20/23] smb/server: ksmbd_notify_handle_local_rename -->
+ handle_local_rename
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/notify.c | 43 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+
+diff --git a/fs/smb/server/notify.c b/fs/smb/server/notify.c
+index 7ee3caf62ab4..185cff32df7f 100644
+--- a/fs/smb/server/notify.c
++++ b/fs/smb/server/notify.c
+@@ -179,6 +179,44 @@ static void ksmbd_notify_save_moved_from(struct ksmbd_notify_ctx *ctx, u32 mask,
+ 	schedule_delayed_work(&ctx->moved_from_work, msecs_to_jiffies(100));
+ }
+ 
++static int ksmbd_notify_handle_local_rename(struct ksmbd_notify_ctx *ctx,
++					    u32 mask,
++					    const struct qstr *file_name)
++{
++	struct ksmbd_notify_moved_from *from = ctx->moved_from;
++	struct qstr from_name;
++
++	if (!from)
++		return 0;
++
++	from_name = QSTR_LEN(from->name, from->namelen);
++
++	if (ksmbd_notify_filter_match(ctx->completion_filter, from->mask,
++				      ctx->inode_mark->fsn_mark.mask))
++		ksmbd_notify_queue_event_under_lock(ctx,
++						    FILE_ACTION_RENAMED_OLD_NAME,
++						    &from_name);
++
++	if (ksmbd_notify_filter_match(ctx->completion_filter, mask,
++				      ctx->inode_mark->fsn_mark.mask))
++		ksmbd_notify_queue_event_under_lock(ctx,
++						    FILE_ACTION_RENAMED_NEW_NAME,
++						    file_name);
++
++	if (!(mask & FS_ISDIR) &&
++	    (ctx->completion_filter & FILE_NOTIFY_CHANGE_CREATION) &&
++	    ksmbd_notify_filter_match(ctx->completion_filter, FS_ATTRIB,
++				      ctx->inode_mark->fsn_mark.mask))
++		ksmbd_notify_queue_event_under_lock(ctx, FILE_ACTION_MODIFIED,
++						    file_name);
++
++	/*
++	 * Like Samba notify_inotify.c: keep moved_from and its timer.
++	 * moved_from_timeout will emit FILE_ACTION_REMOVED after 100ms.
++	 */
++	return 0;
++}
++
+ static int ksmbd_notify_handle_event(struct fsnotify_group *group, u32 mask,
+ 				     const void *data, int data_type,
+ 				     struct inode *dir,
+@@ -213,6 +251,11 @@ static int ksmbd_notify_handle_event(struct fsnotify_group *group, u32 mask,
+ 	}
+ 
+ 	if (event_mask & FS_MOVED_TO) {
++		if (ctx->moved_from && ctx->moved_from->cookie == cookie) {
++			ret = ksmbd_notify_handle_local_rename(ctx, mask,
++							       file_name);
++			goto out_unlock;
++		}
+ 		action = FILE_ACTION_ADDED;
+ 	} else if (event_mask & FS_CREATE) {
+ 		action = FILE_ACTION_ADDED;
+-- 
+2.54.0
+

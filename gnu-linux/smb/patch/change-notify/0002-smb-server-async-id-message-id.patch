@@ -1,0 +1,59 @@
+From ca3228c328f00c58c16f4fe6b1ef8edc4850394a Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Tue, 2 Jun 2026 08:00:00 +0000
+Subject: [PATCH 02/23] smb/server: async id == message id
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/ksmbd_work.c |  2 --
+ fs/smb/server/smb2pdu.c    | 12 +++---------
+ 2 files changed, 3 insertions(+), 11 deletions(-)
+
+diff --git a/fs/smb/server/ksmbd_work.c b/fs/smb/server/ksmbd_work.c
+index a5ab6799a65c..6699c1841bd4 100644
+--- a/fs/smb/server/ksmbd_work.c
++++ b/fs/smb/server/ksmbd_work.c
+@@ -57,8 +57,6 @@ void ksmbd_free_work_struct(struct ksmbd_work *work)
+ 	kvfree(work->request_buf);
+ 	kfree(work->iov);
+ 
+-	if (work->async_id)
+-		ksmbd_release_id(&work->conn->async_ida, work->async_id);
+ 	kmem_cache_free(work_cache, work);
+ }
+ 
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index c230292d5007..852236043bc6 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -668,13 +668,10 @@ smb2_get_name(const char *src, const int maxlen, struct nls_table *local_nls)
+ int setup_async_work(struct ksmbd_work *work, void (*fn)(void **), void **arg)
+ {
+ 	struct ksmbd_conn *conn = work->conn;
++	struct smb2_hdr *hdr = smb_get_msg(work->request_buf);
+ 	int id;
+ 
+-	id = ksmbd_acquire_async_msg_id(&conn->async_ida);
+-	if (id < 0) {
+-		pr_err("Failed to alloc async message id\n");
+-		return id;
+-	}
++	id = le64_to_cpu(hdr->MessageId); // 和samba一样，调试用
+ 	work->asynchronous = true;
+ 	work->async_id = id;
+ 
+@@ -706,10 +703,7 @@ void release_async_work(struct ksmbd_work *work)
+ 	work->cancel_fn = NULL;
+ 	kfree(work->cancel_argv);
+ 	work->cancel_argv = NULL;
+-	if (work->async_id) {
+-		ksmbd_release_id(&conn->async_ida, work->async_id);
+-		work->async_id = 0;
+-	}
++	work->async_id = 0;
+ }
+ 
+ void smb2_send_interim_resp(struct ksmbd_work *work, __le32 status)
+-- 
+2.54.0
+

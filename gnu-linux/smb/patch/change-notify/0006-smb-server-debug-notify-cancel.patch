@@ -1,0 +1,101 @@
+From 6b7ef32da832667a9bb6ff1b797ec31e3dd8f014 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Tue, 2 Jun 2026 08:38:03 +0000
+Subject: [PATCH 06/23] smb/server: debug notify cancel
+
+Windows11 File Explorer test steps:
+  - 1. Enter top share directory
+  - 2. Enter subdirectory `dir`
+  - 3. Enter top share directory again
+
+ ksmbd: notify req, mid 8, completion filter 0x2
+ ksmbd: set notify async id 8
+ ksmbd: notify req, mid 11, completion filter 0x15
+ ksmbd: set notify async id 11
+ ksmbd: notify req, mid 18, completion filter 0x2
+ ksmbd: set notify async id 18
+ ksmbd: notify req, mid 20, completion filter 0x15
+ ksmbd: set notify async id 20
+ ksmbd: cancel notify, async id 8
+ ksmbd: cancel notify, async id 11
+ ksmbd: notify req, mid 35, completion filter 0x2
+ ksmbd: set notify async id 35
+ ksmbd: notify req, mid 42, completion filter 0x15
+ ksmbd: set notify async id 42
+ ksmbd: cancel notify, async id 18
+
+ INFO: task ksmbd:::ffff:19:765 blocked for more than 1228 seconds.
+       Not tainted 7.1.0-rc6+ #56
+ "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+ task:ksmbd:::ffff:19 state:D stack:0     pid:765   tgid:765   ppid:2      task_flags:0x200040 flags:0x00080000
+ Call Trace:
+  <TASK>
+  __schedule+0x93b/0xd50
+  schedule+0x67/0xd0
+  ksmbd_conn_handler_loop+0x334/0x450 [ksmbd]
+  kthread+0x104/0x130
+  ret_from_fork+0xb0/0x220
+  ret_from_fork_asm+0x1a/0x30
+  </TASK>
+
+./scripts/faddr2line x86_64-build/fs/smb/server/ksmbd.ko ksmbd_conn_handler_loop+0x334/0x450
+ksmbd_conn_handler_loop+0x334/0x450:
+ksmbd_conn_handler_loop at fs/smb/server/connection.c:557
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/notify.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/fs/smb/server/notify.c b/fs/smb/server/notify.c
+index 6ccc700201cb..0dd32f63a627 100644
+--- a/fs/smb/server/notify.c
++++ b/fs/smb/server/notify.c
+@@ -19,12 +19,15 @@
+ 
+ struct ksmbd_notify_ctx {
+ 	wait_queue_head_t waitq;
++	struct ksmbd_work *work;
+ };
+ 
+ static void smb2_cancel_notify(void **argv)
+ {
+ 	struct ksmbd_notify_ctx *ctx = argv[0];
+ 
++	ksmbd_debug(NOTIFY, "cancel notify, async id %d\n",
++		    ctx->work->async_id);
+ 	wake_up(&ctx->waitq);
+ }
+ 
+@@ -36,8 +39,11 @@ int smb2_setup_notify(struct ksmbd_work *work,
+ 	struct ksmbd_notify_ctx *ctx = NULL;
+ 	void **argv = NULL;
+ 	int rc = 0;
++	struct smb2_hdr *hdr = smb_get_msg(work->request_buf);
+ 
+-	ksmbd_debug(NOTIFY, "notify filter: 0x%x\n", le32_to_cpu(req->CompletionFilter));
++	ksmbd_debug(NOTIFY, "notify req, mid %llu, completion filter 0x%x\n",
++		    le64_to_cpu(hdr->MessageId),
++		    le32_to_cpu(req->CompletionFilter));
+ 
+ 	ctx = kzalloc(sizeof(*ctx), KSMBD_DEFAULT_GFP);
+ 	if (!ctx) {
+@@ -47,6 +53,7 @@ int smb2_setup_notify(struct ksmbd_work *work,
+ 	}
+ 
+ 	init_waitqueue_head(&ctx->waitq);
++	ctx->work = work;
+ 
+ 	argv = kmalloc(sizeof(void *), KSMBD_DEFAULT_GFP);
+ 	if (!argv) {
+@@ -61,6 +68,7 @@ int smb2_setup_notify(struct ksmbd_work *work,
+ 		rsp->hdr.Status = STATUS_INSUFFICIENT_RESOURCES;
+ 		goto out;
+ 	}
++	ksmbd_debug(NOTIFY, "set notify async id %d\n", work->async_id);
+ 	argv = NULL;
+ 
+ 	smb2_send_interim_resp(work, STATUS_PENDING);
+-- 
+2.54.0
+

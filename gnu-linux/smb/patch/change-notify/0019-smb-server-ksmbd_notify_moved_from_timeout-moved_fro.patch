@@ -1,0 +1,46 @@
+From c539b2789f13603d7caa1e45139548c44bc718b8 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Wed, 17 Jun 2026 01:26:32 +0000
+Subject: [PATCH 19/23] smb/server: ksmbd_notify_moved_from_timeout -->
+ moved_from_timeout
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/notify.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/fs/smb/server/notify.c b/fs/smb/server/notify.c
+index 7b5a044a6b3d..7ee3caf62ab4 100644
+--- a/fs/smb/server/notify.c
++++ b/fs/smb/server/notify.c
+@@ -142,6 +142,19 @@ static void ksmbd_notify_trigger_orphaned_moved_from(struct ksmbd_notify_ctx *ct
+ 	ctx->moved_from = NULL;
+ }
+ 
++static void ksmbd_notify_moved_from_timeout(struct work_struct *work)
++{
++	struct ksmbd_notify_ctx *ctx = container_of(work, struct ksmbd_notify_ctx,
++						    moved_from_work.work);
++	unsigned long flags;
++
++	spin_lock_irqsave(&ctx->lock, flags);
++	ksmbd_notify_trigger_orphaned_moved_from(ctx);
++	spin_unlock_irqrestore(&ctx->lock, flags);
++
++	wake_up(&ctx->waitq);
++}
++
+ static void ksmbd_notify_save_moved_from(struct ksmbd_notify_ctx *ctx, u32 mask,
+ 					 u32 cookie, const struct qstr *file_name)
+ {
+@@ -214,6 +227,7 @@ static int ksmbd_notify_handle_event(struct fsnotify_group *group, u32 mask,
+ 		ret = ksmbd_notify_queue_event_under_lock(ctx, action,
+ 							  file_name);
+ 
++out_unlock:
+ 	spin_unlock_irqrestore(&ctx->lock, flags);
+ 	return ret;
+ }
+-- 
+2.54.0
+

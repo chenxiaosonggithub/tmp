@@ -1,0 +1,131 @@
+From 08f29b222235f6bf2f61328b68a748214a3bd21d Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Tue, 16 Jun 2026 13:23:40 +0000
+Subject: [PATCH 15/23] smb/server: notify simple events
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/notify.c | 75 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 74 insertions(+), 1 deletion(-)
+
+diff --git a/fs/smb/server/notify.c b/fs/smb/server/notify.c
+index 7e8dc0ccf8bb..5435c10b8d4e 100644
+--- a/fs/smb/server/notify.c
++++ b/fs/smb/server/notify.c
+@@ -59,6 +59,42 @@ static const struct {
+ 	{ FILE_NOTIFY_CHANGE_SECURITY, FS_ATTRIB },
+ };
+ 
++static int ksmbd_notify_queue_event_under_lock(struct ksmbd_notify_ctx *ctx,
++					       u32 action,
++					       const struct qstr *file_name)
++{
++	struct ksmbd_notify_event *evt;
++
++	if (!file_name || !file_name->len)
++		return 0;
++
++	evt = kmalloc(struct_size(evt, name, file_name->len + 1), GFP_KERNEL);
++	if (!evt)
++		return -ENOMEM;
++
++	ksmbd_debug(NOTIFY, "action:%d, namelen:%d, name:%s\n",
++		    action, file_name->len, file_name->name);
++	evt->action = action;
++	evt->namelen = file_name->len;
++	memcpy(evt->name, file_name->name, file_name->len);
++	evt->name[file_name->len] = '\0';
++
++	list_add_tail(&evt->list, &ctx->events);
++	ctx->events_ready = true;
++	wake_up(&ctx->waitq);
++	return 0;
++}
++
++static void ksmbd_notify_free_events(struct ksmbd_notify_ctx *ctx)
++{
++	struct ksmbd_notify_event *evt, *tmp;
++
++	list_for_each_entry_safe(evt, tmp, &ctx->events, list) {
++		list_del(&evt->list);
++		kfree(evt);
++	}
++}
++
+ static bool ksmbd_notify_filter_match(u32 filter, u32 mask, u32 mark_mask)
+ {
+ 	if ((mask & mark_mask) == 0)
+@@ -126,6 +162,19 @@ static int ksmbd_notify_handle_event(struct fsnotify_group *group, u32 mask,
+ 	return ret;
+ }
+ 
++static void ksmbd_notify_free_mark(struct fsnotify_mark *fsn_mark)
++{
++	struct ksmbd_notify_mark *imark;
++
++	imark = container_of(fsn_mark, struct ksmbd_notify_mark, fsn_mark);
++	kfree(imark);
++}
++
++static const struct fsnotify_ops ksmbd_notify_fsnotify_ops = {
++	.handle_event = ksmbd_notify_handle_event,
++	.free_mark = ksmbd_notify_free_mark,
++};
++
+ static u32 ksmbd_notify_filter_to_mask(u32 filter)
+ {
+ 	size_t i;
+@@ -291,7 +340,17 @@ int smb2_setup_notify(struct ksmbd_work *work,
+ 	}
+ 
+ 	init_waitqueue_head(&ctx->waitq);
++	spin_lock_init(&ctx->lock);
++	INIT_LIST_HEAD(&ctx->events);
+ 	ctx->work = work;
++	ctx->completion_filter = le32_to_cpu(req->CompletionFilter);
++	ctx->output_buffer_length = le32_to_cpu(req->OutputBufferLength);
++
++	rc = ksmbd_notify_watch(ctx, dir);
++	if (rc) {
++		rsp->hdr.Status = STATUS_INSUFFICIENT_RESOURCES;
++		goto out;
++	}
+ 
+ 	argv = kmalloc(sizeof(void *), KSMBD_DEFAULT_GFP);
+ 	if (!argv) {
+@@ -311,17 +370,31 @@ int smb2_setup_notify(struct ksmbd_work *work,
+ 
+ 	smb2_send_interim_resp(work, STATUS_PENDING);
+ 
+-	wait_event_interruptible(ctx->waitq, work->state != KSMBD_WORK_ACTIVE);
++	wait_event_interruptible(ctx->waitq, ctx->events_ready ||
++					     work->state != KSMBD_WORK_ACTIVE);
+ 
+ 	if (work->state == KSMBD_WORK_CANCELLED) {
+ 		rsp->hdr.Status = STATUS_CANCELLED;
+ 		smb2_send_interim_resp(work, STATUS_CANCELLED);
+ 		work->send_no_response = 1;
+ 		rc = -ECANCELED;
++	} else if (ctx->events_ready) {
++		/* Sleep waiting for other events to arrive. */
++		msleep(1000);
++
++		rc = smb2_build_notify_response(work, rsp, ctx);
++		if (rc) {
++			rsp->hdr.Status = STATUS_INSUFFICIENT_RESOURCES;
++		} else {
++			rsp->hdr.Status = STATUS_SUCCESS;
++		}
+ 	}
+ 
+ 	release_async_work(work);
+ out:
++	if (ctx && ctx->watching)
++		ksmbd_notify_unwatch(ctx);
++	ksmbd_notify_free_events(ctx);
+ 	kfree(ctx);
+ 	kfree(argv);
+ 	return rc;
+-- 
+2.54.0
+
