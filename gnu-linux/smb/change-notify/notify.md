@@ -46,5 +46,9 @@ ksmbd_notify_unwatch --> watch_destructor
 smb2_build_notify_response --> notify_marshall_changes
 struct ksmbd_notify_moved_from --> struct inotify_watch_context
 ksmbd_notify_save_moved_from --> save_moved_from
+ksmbd_notify_trigger_orphaned_moved_from --> trigger_orphaned_moved_from
+ksmbd_notify_moved_from_timeout --> moved_from_timeout
+ksmbd_notify_handle_local_rename --> handle_local_rename
+STATUS_NOTIFY_ENUM_DIR --> NT_STATUS_NOTIFY_ENUM_DIR
 ```
 
