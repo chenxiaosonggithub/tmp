@@ -1,18 +1,18 @@
-From 37c9400d0f91d1b24778b916b280f0a7a632d2dc Mon Sep 17 00:00:00 2001
+From e7248caa20cfd03bb89ef8a4147c63e43bf187f6 Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Thu, 18 Jun 2026 10:44:01 +0800
 Subject: [PATCH] smb/client: smb3_notify_lazy_open
 
 Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
- fs/smb/client/smb2ops.c | 143 +++++++++++++++++++++++++++++-----------
- 1 file changed, 104 insertions(+), 39 deletions(-)
+ fs/smb/client/smb2ops.c | 144 +++++++++++++++++++++++++++++-----------
+ 1 file changed, 106 insertions(+), 38 deletions(-)
 
 diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-index a8f8feeeccb5..07eff40630c4 100644
+index a8f8feeeccb5..e778661d19bf 100644
 --- a/fs/smb/client/smb2ops.c
 +++ b/fs/smb/client/smb2ops.c
-@@ -2367,72 +2367,140 @@ smb3_enum_snapshots(const unsigned int xid, struct cifs_tcon *tcon,
+@@ -2367,72 +2367,143 @@ smb3_enum_snapshots(const unsigned int xid, struct cifs_tcon *tcon,
  
  
  static int
@@ -32,34 +32,37 @@ index a8f8feeeccb5..07eff40630c4 100644
 -	const unsigned char *path;
 -	char *returned_ioctl_info = NULL;
 -	void *page = alloc_dentry_path();
--	__le16 *utf16_path = NULL;
-+	struct tcon_link *tlink;
++	struct tcon_link *tlink = NULL;
 +	struct cifs_open_parms oparms;
 +	struct cifs_fid fid = {};
 +	const char *path;
-+	void *page;
-+	__le16 *utf16_path;
++	void *page = NULL;
+ 	__le16 *utf16_path = NULL;
  	u8 oplock = SMB2_OPLOCK_LEVEL_NONE;
 -	int rc = 0;
 -	__u32 ret_len = 0;
 +	int rc;
-+
+ 
+-	path = build_path_from_dentry(dentry, page);
 +	spin_lock(&inode->i_lock);
 +	existing = pfile->private_data;
 +	if (existing && !existing->invalidHandle) {
 +		spin_unlock(&inode->i_lock);
-+		return 0;
++		rc = 0;
++		goto out;
 +	}
 +	if (existing && existing->invalidHandle) {
 +		spin_unlock(&inode->i_lock);
-+		return -EBADF;
++		rc = -EBADF;
++		goto out;
 +	}
 +	spin_unlock(&inode->i_lock);
- 
--	path = build_path_from_dentry(dentry, page);
++
 +	tlink = cifs_sb_tlink(cifs_sb);
-+	if (IS_ERR(tlink))
-+		return PTR_ERR(tlink);
++	if (IS_ERR(tlink)) {
++		rc = PTR_ERR(tlink);
++		goto out;
++	}
 +	tcon = tlink_tcon(tlink);
 +
 +	page = alloc_dentry_path();
@@ -67,7 +70,7 @@ index a8f8feeeccb5..07eff40630c4 100644
  	if (IS_ERR(path)) {
  		rc = PTR_ERR(path);
 -		goto notify_exit;
-+		goto out_tlink;
++		goto out;
  	}
  
  	utf16_path = cifs_convert_path_to_utf16(path, cifs_sb);
@@ -75,7 +78,7 @@ index a8f8feeeccb5..07eff40630c4 100644
 +	if (!utf16_path) {
  		rc = -ENOMEM;
 -		goto notify_exit;
-+		goto out_page;
++		goto out;
  	}
  
 -	if (return_changes) {
@@ -92,7 +95,7 @@ index a8f8feeeccb5..07eff40630c4 100644
 +	cfile = kzalloc_obj(struct cifsFileInfo);
 +	if (!cfile) {
 +		rc = -ENOMEM;
-+		goto out_utf16;
++		goto out;
  	}
 +	spin_lock_init(&cfile->file_info_lock);
 +	cfile->tlink = cifs_get_tlink(tlink);
@@ -115,12 +118,13 @@ index a8f8feeeccb5..07eff40630c4 100644
 +	if (rc) {
 +		cifs_put_tlink(cfile->tlink);
 +		kfree(cfile);
-+		goto out_utf16;
++		goto out;
 +	}
 +
 +	cfile->fid = fid;
 +	cfile->invalidHandle = false;
-+
+ 
+-	rc = SMB2_change_notify(xid, tcon, fid.persistent_fid, fid.volatile_fid,
 +	spin_lock(&inode->i_lock);
 +	existing = pfile->private_data;
 +	if (existing) {
@@ -129,19 +133,18 @@ index a8f8feeeccb5..07eff40630c4 100644
 +		cifs_put_tlink(cfile->tlink);
 +		kfree(cfile);
 +		if (!existing->invalidHandle)
-+			return 0;
-+		return -EBADF;
++			rc = 0;
++		else
++			rc = -EBADF;
++		goto out;
 +	}
 +	pfile->private_data = cfile;
 +	spin_unlock(&inode->i_lock);
-+
 +	rc = 0;
 +
-+out_utf16:
++out:
 +	kfree(utf16_path);
-+out_page:
 +	free_dentry_path(page);
-+out_tlink:
 +	cifs_put_tlink(tlink);
 +	return rc;
 +}
@@ -157,8 +160,7 @@ index a8f8feeeccb5..07eff40630c4 100644
 +	char *returned_ioctl_info = NULL;
 +	int rc = 0;
 +	__u32 ret_len = 0;
- 
--	rc = SMB2_change_notify(xid, tcon, fid.persistent_fid, fid.volatile_fid,
++
 +	if (!cfile || cfile->invalidHandle) {
 +		rc = smb3_notify_lazy_open(xid, pfile);
 +		if (rc)
@@ -189,7 +191,7 @@ index a8f8feeeccb5..07eff40630c4 100644
  	if (return_changes && (ret_len > 0) && (notify.data_len > 0)) {
  		if (ret_len > notify.data_len)
  			ret_len = notify.data_len;
-@@ -2443,9 +2511,6 @@ smb3_notify(const unsigned int xid, struct file *pfile,
+@@ -2443,9 +2514,6 @@ smb3_notify(const unsigned int xid, struct file *pfile,
  			rc = -EFAULT;
  	}
  	kfree(returned_ioctl_info);
