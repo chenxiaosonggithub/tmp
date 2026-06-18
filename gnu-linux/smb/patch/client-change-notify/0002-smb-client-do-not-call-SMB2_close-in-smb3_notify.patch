@@ -1,7 +1,7 @@
-From 72c12c480cfaeaee6e93f646c861c73abd34e2a6 Mon Sep 17 00:00:00 2001
+From a01c20a97a0c80e7f6b3ff60852603b63139053c Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Thu, 18 Jun 2026 12:46:01 +0000
-Subject: [PATCH 2/2] smb/client: do not call SMB2_close() in smb3_notify()
+Subject: [PATCH RFC 2/2] smb/client: do not call SMB2_close() in smb3_notify()
 
 Before this patch, when an operation on the server triggered multiple
 actions, the client received only one action notification.
@@ -32,14 +32,14 @@ Example:
 
 Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
- fs/smb/client/smb2ops.c | 103 ++++++++++++++++++++++++++++++----------
- 1 file changed, 78 insertions(+), 25 deletions(-)
+ fs/smb/client/smb2ops.c | 83 ++++++++++++++++++++++++++++-------------
+ 1 file changed, 58 insertions(+), 25 deletions(-)
 
 diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-index b50d3b8a9252..2128182f3adc 100644
+index b50d3b8a9252..7b156bc806fe 100644
 --- a/fs/smb/client/smb2ops.c
 +++ b/fs/smb/client/smb2ops.c
-@@ -2365,47 +2365,104 @@ smb3_enum_snapshots(const unsigned int xid, struct cifs_tcon *tcon,
+@@ -2365,47 +2365,84 @@ smb3_enum_snapshots(const unsigned int xid, struct cifs_tcon *tcon,
  }
  
  static int
@@ -63,19 +63,15 @@ index b50d3b8a9252..2128182f3adc 100644
  	int rc;
  
 -	path = build_path_from_dentry(dentry, page);
-+	spin_lock(&inode->i_lock);
 +	existing_cfile = pfile->private_data;
 +	if (existing_cfile && !existing_cfile->invalidHandle) {
-+		spin_unlock(&inode->i_lock);
 +		rc = 0;
 +		goto out;
 +	}
 +	if (existing_cfile && existing_cfile->invalidHandle) {
-+		spin_unlock(&inode->i_lock);
 +		rc = -EBADF;
 +		goto out;
 +	}
-+	spin_unlock(&inode->i_lock);
 +
 +	tlink = cifs_sb_tlink(cifs_sb);
 +	if (IS_ERR(tlink)) {
@@ -129,23 +125,7 @@ index b50d3b8a9252..2128182f3adc 100644
 +
 +	cfile->fid = fid;
 +	cfile->invalidHandle = false;
-+
-+	spin_lock(&inode->i_lock);
-+	existing_cfile = pfile->private_data;
-+	if (existing_cfile) {
-+		spin_unlock(&inode->i_lock);
-+		SMB2_close(xid, tcon, fid.persistent_fid, fid.volatile_fid);
-+		cifs_put_tlink(cfile->tlink);
-+		kfree(cfile);
-+		if (!existing_cfile->invalidHandle)
-+			rc = 0;
-+		else
-+			rc = -EBADF;
-+		goto out;
-+	}
 +	pfile->private_data = cfile;
-+	spin_unlock(&inode->i_lock);
-+	rc = 0;
  
  out:
 +	kfree(utf16_path);
@@ -154,7 +134,7 @@ index b50d3b8a9252..2128182f3adc 100644
  	return rc;
  }
  
-@@ -2415,17 +2472,12 @@ smb3_notify(const unsigned int xid, struct file *pfile,
+@@ -2415,17 +2452,12 @@ smb3_notify(const unsigned int xid, struct file *pfile,
  {
  	struct smb3_notify_info notify;
  	struct smb3_notify_info __user *pnotify_buf;
@@ -173,7 +153,7 @@ index b50d3b8a9252..2128182f3adc 100644
  
  	if (return_changes) {
  		if (copy_from_user(&notify, ioc_buf, sizeof(struct smb3_notify_info))) {
-@@ -2440,18 +2492,21 @@ smb3_notify(const unsigned int xid, struct file *pfile,
+@@ -2440,18 +2472,21 @@ smb3_notify(const unsigned int xid, struct file *pfile,
  		notify.data_len = 0;
  	}
  
@@ -202,7 +182,7 @@ index b50d3b8a9252..2128182f3adc 100644
  	if (return_changes && (ret_len > 0) && (notify.data_len > 0)) {
  		if (ret_len > notify.data_len)
  			ret_len = notify.data_len;
-@@ -2463,8 +2518,6 @@ smb3_notify(const unsigned int xid, struct file *pfile,
+@@ -2463,8 +2498,6 @@ smb3_notify(const unsigned int xid, struct file *pfile,
  	}
  	kfree(returned_ioctl_info);
  notify_exit:
