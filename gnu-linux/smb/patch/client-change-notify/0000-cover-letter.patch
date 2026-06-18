@@ -1,7 +1,7 @@
 From a01c20a97a0c80e7f6b3ff60852603b63139053c Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Thu, 18 Jun 2026 16:38:11 +0000
-Subject: [PATCH RFC 0/2] smb/client: improve change notify support
+Subject: [RFC PATCH 0/2] smb/client: improve change notify support
 
 I still need to do more debugging on this patchset, for example to check
 whether there is any race between `ioctl(CIFS_IOC_NOTIFY_INFO)` and

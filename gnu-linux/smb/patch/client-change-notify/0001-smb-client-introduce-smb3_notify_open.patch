@@ -1,7 +1,7 @@
 From f5549fb0ddc5c15c08508ff8f13ffbd6b48caa13 Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Thu, 18 Jun 2026 10:49:35 +0000
-Subject: [PATCH RFC 1/2] smb/client: introduce smb3_notify_open()
+Subject: [RFC PATCH 1/2] smb/client: introduce smb3_notify_open()
 
 Introduce this helper function to reduce the diff in the next patch and
 make the actual changes easier to review. No functional changes.

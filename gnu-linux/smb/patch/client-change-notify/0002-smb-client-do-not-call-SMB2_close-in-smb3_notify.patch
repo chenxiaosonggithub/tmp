@@ -1,7 +1,7 @@
 From 2b736a8ee0d560b901f12f87344eb592238e278b Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Thu, 18 Jun 2026 12:46:01 +0000
-Subject: [PATCH RFC 2/2] smb/client: do not call SMB2_close() in smb3_notify()
+Subject: [RFC PATCH 2/2] smb/client: do not call SMB2_close() in smb3_notify()
 
 Before this patch, when an operation on the server triggered multiple
 actions, the client received only one action notification.
