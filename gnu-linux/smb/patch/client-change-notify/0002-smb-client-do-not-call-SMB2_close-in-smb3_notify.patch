@@ -1,4 +1,4 @@
-From a01c20a97a0c80e7f6b3ff60852603b63139053c Mon Sep 17 00:00:00 2001
+From 2b736a8ee0d560b901f12f87344eb592238e278b Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Thu, 18 Jun 2026 12:46:01 +0000
 Subject: [PATCH RFC 2/2] smb/client: do not call SMB2_close() in smb3_notify()
@@ -13,7 +13,7 @@ triggers `SMB2_open()`, `cifsFileInfo` is stored in `file->private_data`,
 
 Example:
 
-  ./smbinfo notify /mnt
+  smbinfo notify /mnt
 
   # server: touch /export/file1
   Notifications received, returned data_len is 24
