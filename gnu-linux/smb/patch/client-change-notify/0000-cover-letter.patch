@@ -1,0 +1,44 @@
+From a01c20a97a0c80e7f6b3ff60852603b63139053c Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Thu, 18 Jun 2026 16:38:11 +0000
+Subject: [RFC PATCH 0/2] smb/client: improve change notify support
+
+I still need to do more debugging on this patchset, for example to check
+whether there is any race between `ioctl(CIFS_IOC_NOTIFY_INFO)` and
+`readdir()`. Maybe I can send this patchset to the mailing list first
+to get more suggestions from others.
+
+Before this patchset, when an operation on the server triggered multiple
+actions, the client received only one action notification.
+
+After this patchset, the client can receive all action notifications.
+
+Example:
+
+  smbinfo notify /mnt
+  
+  # server: touch /export/file1
+  Notifications received, returned data_len is 24
+  Action: 0x00000001, FileName: file1
+  Notifications received, returned data_len is 24
+  Action: 0x00000003, FileName: file1
+  
+  # server: mv /export/file1 /export/file2
+  Notifications received, returned data_len is 48
+  Action: 0x00000004, FileName: file1
+  Action: 0x00000005, FileName: file2
+  Notifications received, returned data_len is 24
+  Action: 0x00000003, FileName: file2
+  Notifications received, returned data_len is 24
+  Action: 0x00000002, FileName: file1
+
+ChenXiaoSong (2):
+  smb/client: introduce smb3_notify_open()
+  smb/client: do not call SMB2_close() in smb3_notify()
+
+ fs/smb/client/smb2ops.c | 120 ++++++++++++++++++++++++++++------------
+ 1 file changed, 86 insertions(+), 34 deletions(-)
+
+-- 
+2.54.0
+
