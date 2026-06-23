@@ -450,7 +450,7 @@ kylinos_physical()
 windows_physical()
 {
 	# 安装windows: https://chenxiaosong.com/src/windows/windows.html
-	# ThinkPad X390驱动（好像不安装也可以）: https://newthink.lenovo.com.cn/driveList.html?selname=ThinkPad%20X390
+	# ThinkPad X390驱动 20Q0（好像不安装也可以）: https://newthink.lenovo.com.cn/driveList.html?selname=ThinkPad%20X390
 	# git（免安装）: https://git-scm.com/install/windows
 	#     双击 C:\Users\chenx\Desktop\chenxiaosong\PortableGit\bin\bash.exe，可固定到任务栏
 	#     PowerShell顶部右键 > Settings > Startup > New instance behavior > Attach to the most recently used window
