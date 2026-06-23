@@ -1,0 +1,43 @@
+From 2b8793dad39bb262a5368f3bd31339d11ae779e8 Mon Sep 17 00:00:00 2001
+From: Qiang Liu <liuqiang@kylinos.cn>
+Date: Tue, 23 Jun 2026 10:12:38 +0800
+Subject: [PATCH 3/3] ksmbd: fix n.data memory leak in
+ ksmbd_vfs_set_dos_attrib_xattr
+
+Free ndr buffer data when ndr_encode_dos_attr() returns error
+to avoid memory leak.
+
+Signed-off-by: Qiang Liu <liuqiang@kylinos.cn>
+---
+ fs/smb/server/vfs.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
+index 6528412eac2d..c7e72048ba7c 100644
+--- a/fs/smb/server/vfs.c
++++ b/fs/smb/server/vfs.c
+@@ -1574,15 +1574,18 @@ int ksmbd_vfs_set_dos_attrib_xattr(struct mnt_idmap *idmap,
+ 	int err;
+ 
+ 	err = ndr_encode_dos_attr(&n, da);
+-	if (err)
+-		return err;
++	if (err) {
++		kfree(n.data);
++		goto out;
++	}
+ 
+ 	err = ksmbd_vfs_setxattr(idmap, path, XATTR_NAME_DOS_ATTRIBUTE,
+ 				 (void *)n.data, n.offset, 0, get_write);
+ 	if (err)
+ 		ksmbd_debug(SMB, "failed to store dos attribute in xattr\n");
+-	kfree(n.data);
+ 
++out:
++	kfree(n.data);
+ 	return err;
+ }
+ 
+-- 
+2.54.0
+
