@@ -80,6 +80,8 @@ netfs_unbuffered_write
 
 # Reproducer
 
+Enable `9P_FS=y or 9P_FS=m`.
+
 QEMU should be started with the following `virtfs` option
 ([you can refer to the script I used](https://github.com/chenxiaosonggithub/blog/blob/master/course/kernel/src/x86_64/update-base.sh)):
 ```sh
@@ -96,7 +98,7 @@ gcc test.c
 
 # Tracing log
 
-[Click here to get the tracing log]().
+[Click here to see the tracing log](https://github.com/chenxiaosonggithub/tmp/blob/master/gnu-linux/netfs/netfs-uaf-in-netfs_unbuffered_write/trace.txt).
 
 [You can also get the tracing log using the steps below](https://lore.kernel.org/netfs/2912807.1782231053@warthog.procyon.org.uk/):
 ```sh
