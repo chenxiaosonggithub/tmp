@@ -80,5 +80,33 @@ netfs_unbuffered_write
 
 # Reproducer
 
-[`test.c`](https://syzkaller.appspot.com/text?tag=ReproC&x=171b697e580000)([you can also get it from my GitHub]())
+QEMU should be started with the following `virtfs` option
+([you can refer to the script I used](https://github.com/chenxiaosonggithub/blog/blob/master/course/kernel/src/x86_64/update-base.sh)):
+```sh
+-virtfs ...,mount_tag=syz,...
+```
+
+[`test.c`](https://syzkaller.appspot.com/text?tag=ReproC&x=171b697e580000)
+([you can also get it from my GitHub](https://github.com/chenxiaosonggithub/tmp/blob/master/gnu-linux/netfs/netfs-uaf-in-netfs_unbuffered_write/test.c)).
+
+```sh
+gcc test.c
+./a.out
+```
+
+# Tracing log
+
+[Click here to get the tracing log]().
+
+[You can also get the tracing log using the steps below](https://lore.kernel.org/netfs/2912807.1782231053@warthog.procyon.org.uk/):
+```sh
+echo 1 > /sys/kernel/tracing/events/netfs/netfs_read/enable
+echo 1 > /sys/kernel/tracing/events/netfs/netfs_write/enable
+echo 1 > /sys/kernel/tracing/events/netfs/netfs_rreq/enable
+echo 1 > /sys/kernel/tracing/events/netfs/netfs_sreq/enable
+echo 1 > /sys/kernel/tracing/events/netfs/netfs_failure/enable
+echo 1 > /sys/kernel/tracing/events/error_report/enable
+
+cat /sys/kernel/debug/tracing/trace
+```
 
