@@ -69,6 +69,7 @@ start_samba()
 	# cp ${script_dir}/smb.conf /etc/samba/smb.conf # dnf或apt安装的samba
 	$sshpass_cmd scp ${script_dir}/smb.conf ${smb_server_username}@${smb_server_ip}:/usr/local/samba/etc/smb.conf # 源码安装的samba
 	$sshpass_cmd ssh -t ${smb_server_username}@${smb_server_ip} " \
+	$(declare -f init_server_dir); init_server_dir; \
 	pdbedit -x -u root; \
 	printf \"1\n1\n\" | pdbedit -a -u root; \
 	systemctl daemon-reload; \

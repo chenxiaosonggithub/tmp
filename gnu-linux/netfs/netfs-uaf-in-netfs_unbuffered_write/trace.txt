@@ -1,0 +1,141 @@
+# tracer: nop
+#
+# entries-in-buffer/entries-written: 129/129   #P:16
+#
+#                                _-----=> irqs-off/BH-disabled
+#                               / _----=> need-resched
+#                              | / _---=> hardirq/softirq
+#                              || / _--=> preempt-depth
+#                              ||| / _-=> migrate-disable
+#                              |||| /     delay
+#           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
+#              | |         |   |||||     |         |
+           a.out-717     [001] .....    21.285947: netfs_write: R=00000001 UNB-WRITE c=00000000 i=ace78f by=0-ffffffffffffffff
+           a.out-717     [001] .....    21.286012: netfs_sreq: R=00000001[1] UPLD PREP  f=000 s=0 0/0 s=0 e=0
+           a.out-717     [001] .....    21.286013: netfs_sreq: R=00000001[1] UPLD SUBMT f=100 s=0 0/20000 s=0 e=0
+           a.out-717     [001] .....    21.288986: netfs_sreq: R=00000001[1] UPLD TERM  f=110 s=0 20000/20000 s=224 e=0
+           a.out-717     [001] .....    21.288987: netfs_rreq: R=00000001 UW WAKE-Q  f=1801
+           a.out-717     [001] .....    21.288988: netfs_rreq: R=00000001 UW DONE-QUIESCE f=1801
+           a.out-717     [001] .....    21.288988: netfs_sreq: R=00000001[1] UPLD FREE  f=010 s=0 20000/20000 s=224 e=0
+           a.out-717     [001] .....    21.288989: netfs_sreq: R=00000001[2] UPLD PREP  f=000 s=20000 0/0 s=224 e=0
+           a.out-717     [001] .....    21.288990: netfs_sreq: R=00000001[2] UPLD SUBMT f=100 s=20000 0/20000 s=224 e=0
+           a.out-717     [001] .....    21.291676: netfs_sreq: R=00000001[2] UPLD TERM  f=110 s=20000 20000/20000 s=192 e=0
+           a.out-717     [001] .....    21.291676: netfs_rreq: R=00000001 UW WAKE-Q  f=1801
+           a.out-717     [001] .....    21.291677: netfs_rreq: R=00000001 UW DONE-QUIESCE f=1801
+           a.out-717     [001] .....    21.291677: netfs_sreq: R=00000001[2] UPLD FREE  f=010 s=20000 20000/20000 s=192 e=0
+           a.out-717     [001] .....    21.291678: netfs_sreq: R=00000001[3] UPLD PREP  f=000 s=40000 0/0 s=192 e=0
+           a.out-717     [001] .....    21.291678: netfs_sreq: R=00000001[3] UPLD SUBMT f=100 s=40000 0/20000 s=192 e=0
+           a.out-717     [001] .....    21.294460: netfs_sreq: R=00000001[3] UPLD TERM  f=110 s=40000 20000/20000 s=160 e=0
+           a.out-717     [001] .....    21.294460: netfs_rreq: R=00000001 UW WAKE-Q  f=1801
+           a.out-717     [001] .....    21.294461: netfs_rreq: R=00000001 UW DONE-QUIESCE f=1801
+           a.out-717     [001] .....    21.294461: netfs_sreq: R=00000001[3] UPLD FREE  f=010 s=40000 20000/20000 s=160 e=0
+           a.out-717     [001] .....    21.294462: netfs_sreq: R=00000001[4] UPLD PREP  f=000 s=60000 0/0 s=160 e=0
+           a.out-717     [001] .....    21.294463: netfs_sreq: R=00000001[4] UPLD SUBMT f=100 s=60000 0/20000 s=160 e=0
+           a.out-717     [001] .....    21.297238: netfs_sreq: R=00000001[4] UPLD TERM  f=110 s=60000 20000/20000 s=128 e=0
+           a.out-717     [001] .....    21.297239: netfs_rreq: R=00000001 UW WAKE-Q  f=1801
+           a.out-717     [001] .....    21.297239: netfs_rreq: R=00000001 UW DONE-QUIESCE f=1801
+           a.out-717     [001] .....    21.297240: netfs_sreq: R=00000001[4] UPLD FREE  f=010 s=60000 20000/20000 s=128 e=0
+           a.out-717     [001] .....    21.297241: netfs_sreq: R=00000001[5] UPLD PREP  f=000 s=80000 0/0 s=128 e=0
+           a.out-717     [001] .....    21.297241: netfs_sreq: R=00000001[5] UPLD SUBMT f=100 s=80000 0/20000 s=128 e=0
+           a.out-717     [001] .....    21.300002: netfs_sreq: R=00000001[5] UPLD TERM  f=110 s=80000 20000/20000 s=96 e=0
+           a.out-717     [001] .....    21.300003: netfs_rreq: R=00000001 UW WAKE-Q  f=1801
+           a.out-717     [001] .....    21.300003: netfs_rreq: R=00000001 UW DONE-QUIESCE f=1801
+           a.out-717     [001] .....    21.300003: netfs_sreq: R=00000001[5] UPLD FREE  f=010 s=80000 20000/20000 s=96 e=0
+           a.out-717     [001] .....    21.300004: netfs_sreq: R=00000001[6] UPLD PREP  f=000 s=a0000 0/0 s=96 e=0
+           a.out-717     [001] .....    21.300005: netfs_sreq: R=00000001[6] UPLD SUBMT f=100 s=a0000 0/20000 s=96 e=0
+           a.out-717     [001] .....    21.302581: netfs_sreq: R=00000001[6] UPLD TERM  f=110 s=a0000 20000/20000 s=64 e=0
+           a.out-717     [001] .....    21.302582: netfs_rreq: R=00000001 UW WAKE-Q  f=1801
+           a.out-717     [001] .....    21.302582: netfs_rreq: R=00000001 UW DONE-QUIESCE f=1801
+           a.out-717     [001] .....    21.302583: netfs_sreq: R=00000001[6] UPLD FREE  f=010 s=a0000 20000/20000 s=64 e=0
+           a.out-717     [001] .....    21.302584: netfs_sreq: R=00000001[7] UPLD PREP  f=000 s=c0000 0/0 s=64 e=0
+           a.out-717     [001] .....    21.302584: netfs_sreq: R=00000001[7] UPLD SUBMT f=100 s=c0000 0/20000 s=64 e=0
+           a.out-717     [001] .....    21.305206: netfs_sreq: R=00000001[7] UPLD TERM  f=110 s=c0000 20000/20000 s=32 e=0
+           a.out-717     [001] .....    21.305207: netfs_rreq: R=00000001 UW WAKE-Q  f=1801
+           a.out-717     [001] .....    21.305207: netfs_rreq: R=00000001 UW DONE-QUIESCE f=1801
+           a.out-717     [001] .....    21.305207: netfs_sreq: R=00000001[7] UPLD FREE  f=010 s=c0000 20000/20000 s=32 e=0
+           a.out-717     [001] .....    21.305208: netfs_sreq: R=00000001[8] UPLD PREP  f=000 s=e0000 0/0 s=32 e=0
+           a.out-717     [001] .....    21.305209: netfs_sreq: R=00000001[8] UPLD SUBMT f=100 s=e0000 0/20000 s=32 e=0
+           a.out-717     [001] .....    21.307987: netfs_sreq: R=00000001[8] UPLD TERM  f=110 s=e0000 20000/20000 s=0 e=0
+           a.out-717     [001] .....    21.307988: netfs_rreq: R=00000001 UW WAKE-Q  f=1801
+           a.out-717     [001] .....    21.307988: netfs_rreq: R=00000001 UW DONE-QUIESCE f=1801
+           a.out-717     [001] .....    21.307989: netfs_sreq: R=00000001[8] UPLD FREE  f=010 s=e0000 20000/20000 s=0 e=0
+           a.out-717     [001] .....    21.307990: netfs_sreq: R=00000001[9] UPLD PREP  f=000 s=100000 0/0 s=0 e=0
+           a.out-717     [001] .....    21.307991: netfs_sreq: R=00000001[9] UPLD SUBMT f=100 s=100000 0/20000 s=0 e=0
+           a.out-717     [001] .....    21.310611: netfs_sreq: R=00000001[9] UPLD TERM  f=110 s=100000 20000/20000 s=224 e=0
+           a.out-717     [001] .....    21.310611: netfs_rreq: R=00000001 UW WAKE-Q  f=1801
+           a.out-717     [001] .....    21.310611: netfs_rreq: R=00000001 UW DONE-QUIESCE f=1801
+           a.out-717     [001] .....    21.310612: netfs_sreq: R=00000001[9] UPLD FREE  f=010 s=100000 20000/20000 s=224 e=0
+           a.out-717     [001] .....    21.310613: netfs_sreq: R=00000001[a] UPLD PREP  f=000 s=120000 0/0 s=224 e=0
+           a.out-717     [001] .....    21.310613: netfs_sreq: R=00000001[a] UPLD SUBMT f=100 s=120000 0/20000 s=224 e=0
+           a.out-717     [001] .....    21.313179: netfs_sreq: R=00000001[a] UPLD TERM  f=110 s=120000 20000/20000 s=192 e=0
+           a.out-717     [001] .....    21.313180: netfs_rreq: R=00000001 UW WAKE-Q  f=1801
+           a.out-717     [001] .....    21.313180: netfs_rreq: R=00000001 UW DONE-QUIESCE f=1801
+           a.out-717     [001] .....    21.313180: netfs_sreq: R=00000001[a] UPLD FREE  f=010 s=120000 20000/20000 s=192 e=0
+           a.out-717     [001] .....    21.313181: netfs_sreq: R=00000001[b] UPLD PREP  f=000 s=140000 0/0 s=192 e=0
+           a.out-717     [001] .....    21.313182: netfs_sreq: R=00000001[b] UPLD SUBMT f=100 s=140000 0/20000 s=192 e=0
+           a.out-717     [001] .....    21.315730: netfs_sreq: R=00000001[b] UPLD TERM  f=110 s=140000 20000/20000 s=160 e=0
+           a.out-717     [001] .....    21.315731: netfs_rreq: R=00000001 UW WAKE-Q  f=1801
+           a.out-717     [001] .....    21.315731: netfs_rreq: R=00000001 UW DONE-QUIESCE f=1801
+           a.out-717     [001] .....    21.315732: netfs_sreq: R=00000001[b] UPLD FREE  f=010 s=140000 20000/20000 s=160 e=0
+           a.out-717     [001] .....    21.315733: netfs_sreq: R=00000001[c] UPLD PREP  f=000 s=160000 0/0 s=160 e=0
+           a.out-717     [001] .....    21.315733: netfs_sreq: R=00000001[c] UPLD SUBMT f=100 s=160000 0/20000 s=160 e=0
+           a.out-717     [001] .....    21.318446: netfs_sreq: R=00000001[c] UPLD TERM  f=110 s=160000 20000/20000 s=128 e=0
+           a.out-717     [001] .....    21.318447: netfs_rreq: R=00000001 UW WAKE-Q  f=1801
+           a.out-717     [001] .....    21.318447: netfs_rreq: R=00000001 UW DONE-QUIESCE f=1801
+           a.out-717     [001] .....    21.318447: netfs_sreq: R=00000001[c] UPLD FREE  f=010 s=160000 20000/20000 s=128 e=0
+           a.out-717     [001] .....    21.318448: netfs_sreq: R=00000001[d] UPLD PREP  f=000 s=180000 0/0 s=128 e=0
+           a.out-717     [001] .....    21.318449: netfs_sreq: R=00000001[d] UPLD SUBMT f=100 s=180000 0/20000 s=128 e=0
+           a.out-717     [001] .....    21.321055: netfs_sreq: R=00000001[d] UPLD TERM  f=110 s=180000 20000/20000 s=96 e=0
+           a.out-717     [001] .....    21.321056: netfs_rreq: R=00000001 UW WAKE-Q  f=1801
+           a.out-717     [001] .....    21.321056: netfs_rreq: R=00000001 UW DONE-QUIESCE f=1801
+           a.out-717     [001] .....    21.321056: netfs_sreq: R=00000001[d] UPLD FREE  f=010 s=180000 20000/20000 s=96 e=0
+           a.out-717     [001] .....    21.321058: netfs_sreq: R=00000001[e] UPLD PREP  f=000 s=1a0000 0/0 s=96 e=0
+           a.out-717     [001] .....    21.321058: netfs_sreq: R=00000001[e] UPLD SUBMT f=100 s=1a0000 0/20000 s=96 e=0
+           a.out-717     [001] .....    21.323730: netfs_sreq: R=00000001[e] UPLD TERM  f=110 s=1a0000 20000/20000 s=64 e=0
+           a.out-717     [001] .....    21.323730: netfs_rreq: R=00000001 UW WAKE-Q  f=1801
+           a.out-717     [001] .....    21.323730: netfs_rreq: R=00000001 UW DONE-QUIESCE f=1801
+           a.out-717     [001] .....    21.323731: netfs_sreq: R=00000001[e] UPLD FREE  f=010 s=1a0000 20000/20000 s=64 e=0
+           a.out-717     [001] .....    21.323732: netfs_sreq: R=00000001[f] UPLD PREP  f=000 s=1c0000 0/0 s=64 e=0
+           a.out-717     [001] .....    21.323732: netfs_sreq: R=00000001[f] UPLD SUBMT f=100 s=1c0000 0/20000 s=64 e=0
+           a.out-717     [001] .....    21.326390: netfs_sreq: R=00000001[f] UPLD TERM  f=110 s=1c0000 20000/20000 s=32 e=0
+           a.out-717     [001] .....    21.326391: netfs_rreq: R=00000001 UW WAKE-Q  f=1801
+           a.out-717     [001] .....    21.326391: netfs_rreq: R=00000001 UW DONE-QUIESCE f=1801
+           a.out-717     [001] .....    21.326391: netfs_sreq: R=00000001[f] UPLD FREE  f=010 s=1c0000 20000/20000 s=32 e=0
+           a.out-717     [001] .....    21.326393: netfs_sreq: R=00000001[10] UPLD PREP  f=000 s=1e0000 0/0 s=32 e=0
+           a.out-717     [001] .....    21.326393: netfs_sreq: R=00000001[10] UPLD SUBMT f=100 s=1e0000 0/20000 s=32 e=0
+           a.out-717     [001] .....    21.328994: netfs_sreq: R=00000001[10] UPLD TERM  f=110 s=1e0000 20000/20000 s=0 e=0
+           a.out-717     [001] .....    21.328994: netfs_rreq: R=00000001 UW WAKE-Q  f=1801
+           a.out-717     [001] .....    21.328995: netfs_rreq: R=00000001 UW DONE-QUIESCE f=1801
+           a.out-717     [001] .....    21.328996: netfs_sreq: R=00000001[10] UPLD FREE  f=010 s=1e0000 20000/20000 s=0 e=0
+           a.out-717     [001] .....    21.328997: netfs_sreq: R=00000001[11] UPLD PREP  f=000 s=200000 0/0 s=0 e=0
+           a.out-717     [001] .....    21.328997: netfs_sreq: R=00000001[11] UPLD SUBMT f=100 s=200000 0/20000 s=0 e=0
+           a.out-717     [001] .....    21.331488: netfs_sreq: R=00000001[11] UPLD TERM  f=110 s=200000 20000/20000 s=224 e=0
+           a.out-717     [001] .....    21.331488: netfs_rreq: R=00000001 UW WAKE-Q  f=1801
+           a.out-717     [001] .....    21.331488: netfs_rreq: R=00000001 UW DONE-QUIESCE f=1801
+           a.out-717     [001] .....    21.331489: netfs_sreq: R=00000001[11] UPLD FREE  f=010 s=200000 20000/20000 s=224 e=0
+           a.out-717     [001] .....    21.331490: netfs_sreq: R=00000001[12] UPLD PREP  f=000 s=220000 0/0 s=224 e=0
+           a.out-717     [001] .....    21.331490: netfs_sreq: R=00000001[12] UPLD SUBMT f=100 s=220000 0/20000 s=224 e=0
+           a.out-717     [001] .....    21.334569: netfs_sreq: R=00000001[12] UPLD TERM  f=110 s=220000 20000/20000 s=192 e=0
+           a.out-717     [001] .....    21.334569: netfs_rreq: R=00000001 UW WAKE-Q  f=1801
+           a.out-717     [001] .....    21.334569: netfs_rreq: R=00000001 UW DONE-QUIESCE f=1801
+           a.out-717     [001] .....    21.334570: netfs_sreq: R=00000001[12] UPLD FREE  f=010 s=220000 20000/20000 s=192 e=0
+           a.out-717     [001] .....    21.334570: netfs_sreq: R=00000001[13] UPLD PREP  f=000 s=240000 0/0 s=192 e=0
+           a.out-717     [001] .....    21.334571: netfs_sreq: R=00000001[13] UPLD SUBMT f=100 s=240000 0/20000 s=192 e=0
+           a.out-717     [001] .....    21.337063: netfs_sreq: R=00000001[13] UPLD TERM  f=310 s=240000 1fac0/20000 s=160 e=0
+           a.out-717     [001] .....    21.337063: netfs_rreq: R=00000001 UW WAKE-Q  f=1801
+           a.out-717     [001] .....    21.337064: netfs_rreq: R=00000001 UW DONE-QUIESCE f=1801
+           a.out-717     [001] .....    21.337064: netfs_sreq: R=00000001[13] UPLD RETRY f=210 s=240000 1fac0/20000 s=160 e=-11
+           a.out-717     [001] .....    21.337071: netfs_sreq: R=00000001[13] UPLD SUBMT f=100 s=240000 0/dbfac0 s=192 e=0
+           a.out-717     [001] .....    21.337071: netfs_failure: R=00000001[13] UPLD f=500 s=240000 0/dbfac0 write e=-5
+           a.out-717     [001] .....    21.337071: netfs_rreq: R=00000001 UW PAUSE   f=1801
+           a.out-717     [001] .....    21.337072: netfs_sreq: R=00000001[13] UPLD TERM  f=500 s=240000 0/dbfac0 s=192 e=-5
+           a.out-717     [001] .....    21.337072: netfs_rreq: R=00000001 UW WAKE-Q  f=1805
+           a.out-717     [001] .....    21.337072: netfs_failure: R=00000001[13] UPLD f=400 s=240000 0/dbfac0 write e=-5
+           a.out-717     [001] .....    21.337072: netfs_rreq: R=00000001 UW PAUSE   f=1805
+           a.out-717     [001] .....    21.337072: netfs_sreq: R=00000001[13] UPLD TERM  f=400 s=240000 0/dbfac0 s=192 e=-5
+           a.out-717     [001] .....    21.337072: netfs_rreq: R=00000001 UW WAKE-Q  f=1805
+           a.out-717     [001] .....    21.337072: netfs_sreq: R=00000001[13] UPLD FREE  f=400 s=240000 0/dbfac0 s=192 e=-5
+           a.out-717     [001] .....    21.337073: netfs_rreq: R=00000001 UW WR-DONE f=1805
+           a.out-717     [001] .....    21.337073: netfs_rreq: R=00000001 UW WAKE-IP f=1804
+           a.out-717     [001] ...2.    21.394300: error_report_end: [warning] ffffffff81b750db
+   kworker/u65:2-116     [004] .....    21.394378: netfs_rreq: R=00000001 UW FREE    f=1804
