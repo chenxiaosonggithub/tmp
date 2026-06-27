@@ -13,7 +13,7 @@ do_tmux() {
 			usage
 			;;
 		esac
-	else if [ $# -eq 1 ]; then
+	elif [ $# -eq 1 ]; then
 		docker_tmux $1
 	else
 		usage
@@ -51,7 +51,7 @@ phys_tmux() {
 }
 
 if [ $# -ge 1 ]; then
-	do_tmux $1
+	do_tmux $@
 else
 	$ssh_cmd
 fi
