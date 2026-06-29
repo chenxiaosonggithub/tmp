@@ -106,10 +106,13 @@ openat
           vfs_open
             do_dentry_open
               cifs_open
-                smb2_open_file // server->ops->open
-                  SMB2_open
-                    SMB2_open_init
-                cifs_nt_open
+                struct cifs_open_info_data data = {}
+                cifs_nt_open(..., &data)
+                  smb2_open_file // server->ops->open
+                    struct cifs_open_info_data *data = buf;
+                    SMB2_open(..., smb2_data, ...)
+                      SMB2_open_init
+                    memcpy(&data->fi, smb2_data, sizeof(data->fi));
                   cifs_get_inode_info
                     cifs_get_fattr
                       cifs_open_info_to_fattr
