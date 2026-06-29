@@ -16,7 +16,7 @@ file1=$TEST_DIR/file1
 file2=$TEST_DIR/file2
 touch $file1
 touch $file2
-gcc -o t_rename_overwrite t_rename_overwrite.c # https://github.com/kdave/xfstests/blob/master/src/t_rename_overwrite.c
+gcc -o t_rename_overwrite t_rename_overwrite.c # https://github.com/chenxiaosonggithub/tmp/blob/master/gnu-linux/smb/test/buildbot/t_rename_overwrite.c
 $here/t_rename_overwrite $file1 $file2
 rm $file2
 ```
@@ -69,6 +69,72 @@ touch /mnt/file1
 ln /mnt/file1 /mnt/file2
 ln /mnt/file1 /mnt/file3
 ln /mnt/file1 /mnt/file4
-stat /mnt/file*
+
+echo 3 > /proc/sys/vm/drop_caches
+stat /mnt/file4
+
+gcc fstat.c # https://github.com/chenxiaosonggithub/tmp/blob/master/gnu-linux/smb/test/buildbot/fstat.c
+./a.out /mnt/file4
+```
+
+# fstat
+
+```sh
+openat(AT_FDCWD, "/mnt/file4", O_RDONLY) = 3
+fstat(3, {..., st_nlink=1, ...}) = 0
+```
+
+```c
+openat
+  do_sys_openat2
+    do_file_open
+      path_openat
+        open_last_lookups
+          lookup_open
+            atomic_open
+              cifs_atomic_open // dir->i_op->atomic_open
+                cifs_lookup
+                  cifs_get_inode_info
+                    cifs_get_fattr
+                      smb2_query_path_info // server->ops->query_path_info
+                        smb2_compound_op
+                          SMB2_open_init
+                          case SMB2_OP_QUERY_INFO
+                          SMB2_query_info_init(FILE_ALL_INFORMATION,)
+                      cifs_open_info_to_fattr
+        do_open
+          vfs_open
+            do_dentry_open
+              cifs_open
+                smb2_open_file // server->ops->open
+                  SMB2_open
+                    SMB2_open_init
+                cifs_nt_open
+                  cifs_get_inode_info
+                    cifs_get_fattr
+                      cifs_open_info_to_fattr
+```
+
+# stat
+
+```sh
+statx(AT_FDCWD, "/mnt/file4", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_ALL, {..., stx_nlink=4, ...}) = 0
+```
+
+```c
+statx
+  vfs_statx
+    filename_lookup
+      path_lookupat
+        lookup_slow
+          __lookup_slow
+            cifs_lookup
+              cifs_get_inode_info
+                cifs_get_fattr
+                  smb2_query_path_info
+                    smb2_compound_op
+                      SMB2_open_init
+                      case SMB2_OP_QUERY_INFO
+                      SMB2_query_info_init(FILE_ALL_INFORMATION,)
 ```
 
