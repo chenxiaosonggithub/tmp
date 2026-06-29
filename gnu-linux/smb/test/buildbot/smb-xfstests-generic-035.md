@@ -52,3 +52,23 @@ smb2_set_info
         ksmbd_vfs_rename
 ```
 
+# 刚创建的hardlink打开失败
+
+```sh
+cd /mnt; rm * -rf; echo hello > file; ln file hardlink; sleep 0.9; cat hardlink
+# cat: hardlink: Invalid argument
+
+cd /mnt; rm * -rf; echo hello > file; ln file hardlink; sleep 2; cat hardlink # 读取成功
+```
+
+# nlink错误
+
+```sh
+rm /mnt/*
+touch /mnt/file1
+ln /mnt/file1 /mnt/file2
+ln /mnt/file1 /mnt/file3
+ln /mnt/file1 /mnt/file4
+stat /mnt/file*
+```
+
