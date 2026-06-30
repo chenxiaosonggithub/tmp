@@ -77,7 +77,7 @@ gcc fstat.c # https://github.com/chenxiaosonggithub/tmp/blob/master/gnu-linux/sm
 ./a.out /mnt/file4
 ```
 
-# fstat
+## fstat
 
 ```sh
 openat(AT_FDCWD, "/mnt/file4", O_RDONLY) = 3
@@ -102,6 +102,11 @@ openat
                           case SMB2_OP_QUERY_INFO
                           SMB2_query_info_init(FILE_ALL_INFORMATION,)
                       cifs_open_info_to_fattr
+                    update_inode_info
+                      cifs_iget
+                        cifs_fattr_to_inode
+                          cifs_nlink_fattr_to_inode
+                            set_nlink(inode, fattr->cf_nlink);
         do_open
           vfs_open
             do_dentry_open
@@ -116,9 +121,19 @@ openat
                   cifs_get_inode_info
                     cifs_get_fattr
                       cifs_open_info_to_fattr
+                    update_inode_info
+                      cifs_fattr_to_inode
+                        cifs_nlink_fattr_to_inode
+                          set_nlink(inode, fattr->cf_nlink);
+
+newfstat
+  vfs_getattr_nosec
+    cifs_getattr
+      generic_fillattr
+        stat->nlink = inode->i_nlink
 ```
 
-# stat
+## stat
 
 ```sh
 statx(AT_FDCWD, "/mnt/file4", AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_ALL, {..., stx_nlink=4, ...}) = 0
