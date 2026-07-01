@@ -31,6 +31,12 @@ Example:
   Notifications received, returned data_len is 24
   Action: 0x00000002, FileName: file1
 
+Then press `Ctrl+C` to exit `smbinfo notify` command.
+The following packets can be captured using tcpdump:
+
+  - client: Cancel Request
+  - server: Notify Response, Error: STATUS_CANCELLED
+
 ChenXiaoSong (9):
   smb/client: factor out cifs_new_dir_fileinfo()
   smb/client: close cached notify handles on closedir
