@@ -1,17 +1,16 @@
-From a01c20a97a0c80e7f6b3ff60852603b63139053c Mon Sep 17 00:00:00 2001
+From cd5b09324640ab59f0afac1ac2e616768269b3a1 Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
-Date: Thu, 18 Jun 2026 16:38:11 +0000
-Subject: [RFC PATCH 0/2] smb/client: improve change notify support
+Date: Wed, 1 Jul 2026 08:00:03 +0000
+Subject: [PATCH 0/9] smb/client: improve change notify support
 
-I still need to do more debugging on this patchset, for example to check
-whether there is any race between `ioctl(CIFS_IOC_NOTIFY_INFO)` and
-`readdir()`. Maybe I can send this patchset to the mailing list first
-to get more suggestions from others.
+This patchset improves support for SMB client's notify feature,
+including the following two improvements:
 
-Before this patchset, when an operation on the server triggered multiple
-actions, the client received only one action notification.
-
-After this patchset, the client can receive all action notifications.
+  1. Support for notify cancellation.
+  2. Support for receiving all action notifications from the server.
+     2.1. Before this patchset, when an operation on the server triggered
+          multiple actions, the client received only one action notification.
+     2.2. After this patchset, the client can receive all action notifications.
 
 Example:
 
@@ -32,12 +31,27 @@ Example:
   Notifications received, returned data_len is 24
   Action: 0x00000002, FileName: file1
 
-ChenXiaoSong (2):
-  smb/client: introduce smb3_notify_open()
-  smb/client: do not call SMB2_close() in smb3_notify()
+ChenXiaoSong (9):
+  smb/client: factor out cifs_new_dir_fileinfo()
+  smb/client: close cached notify handles on closedir
+  smb/client: prepare notify ioctl per-open state
+  smb/client: cache SMB3 change notify handles
+  smb/client: retry change notify after invalid cached handle
+  smb/client: add helpers for sending cancel requests
+  smb/client: remember async ids from SMB2 pending responses
+  smb/client: send SMB2 cancel requests
+  smb/client: make SMB2 change notify interruptible
 
- fs/smb/client/smb2ops.c | 120 ++++++++++++++++++++++++++++------------
- 1 file changed, 86 insertions(+), 34 deletions(-)
+ fs/smb/client/cifsglob.h      |   6 ++
+ fs/smb/client/cifsproto.h     |   4 +
+ fs/smb/client/file.c          |  54 +++++++++++++
+ fs/smb/client/readdir.c       |  14 ++--
+ fs/smb/client/smb2ops.c       | 148 ++++++++++++++++++++++++++--------
+ fs/smb/client/smb2pdu.c       |   1 +
+ fs/smb/client/smb2proto.h     |   3 +
+ fs/smb/client/smb2transport.c | 105 ++++++++++++++++++++++++
+ fs/smb/client/transport.c     |  49 ++++++++---
+ 9 files changed, 332 insertions(+), 52 deletions(-)
 
 -- 
 2.54.0

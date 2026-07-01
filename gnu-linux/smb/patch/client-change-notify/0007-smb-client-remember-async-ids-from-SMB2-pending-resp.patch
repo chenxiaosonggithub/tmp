@@ -1,0 +1,71 @@
+From db210adf5ff53086d6b6bde2f9155c4770ad7251 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Wed, 1 Jul 2026 09:52:00 +0800
+Subject: [PATCH 7/9] smb/client: remember async ids from SMB2 pending
+ responses
+
+SMB2 servers may turn a request into an asynchronous command by replying
+with STATUS_PENDING and SMB2_FLAGS_ASYNC_COMMAND. A later SMB2_CANCEL must
+target the async id from that pending response rather than only the
+original message id fields.
+
+Store that async id in the mid entry when processing STATUS_PENDING so
+the cancel path can build the correct header.
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/client/cifsglob.h |  2 ++
+ fs/smb/client/smb2ops.c  | 12 ++++++++++++
+ 2 files changed, 14 insertions(+)
+
+diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
+index 1250518997fb..ea1c5eb2356a 100644
+--- a/fs/smb/client/cifsglob.h
++++ b/fs/smb/client/cifsglob.h
+@@ -1713,6 +1713,7 @@ struct mid_q_entry {
+ 	struct list_head qhead;	/* mids waiting on reply from this server */
+ 	refcount_t refcount;
+ 	__u64 mid;		/* multiplex id */
++	__u64 async_id;		/* async id if server returned STATUS_PENDING */
+ 	__u16 credits;		/* number of credits consumed by this mid */
+ 	__u16 credits_received;	/* number of credits from the response */
+ 	__u32 pid;		/* process id */
+@@ -1742,6 +1743,7 @@ struct mid_q_entry {
+ 	bool multiRsp:1;	/* multiple trans2 responses for one request  */
+ 	bool multiEnd:1;	/* both received */
+ 	bool decrypted:1;	/* decrypted entry */
++	bool async_cmd:1;	/* server returned an async id for this request */
+ };
+ 
+ struct close_cancelled_open {
+diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
+index 9c2455b5fb03..40f1ae0e9735 100644
+--- a/fs/smb/client/smb2ops.c
++++ b/fs/smb/client/smb2ops.c
+@@ -2684,11 +2684,23 @@ static bool
+ smb2_is_status_pending(char *buf, struct TCP_Server_Info *server)
+ {
+ 	struct smb2_hdr *shdr = (struct smb2_hdr *)buf;
++	struct mid_q_entry *mid;
+ 	int scredits, in_flight;
+ 
+ 	if (shdr->Status != STATUS_PENDING)
+ 		return false;
+ 
++	if (shdr->Flags & SMB2_FLAGS_ASYNC_COMMAND) {
++		mid = __smb2_find_mid(server, buf, false);
++		if (mid) {
++			spin_lock(&mid->mid_lock);
++			mid->async_cmd = true;
++			mid->async_id = le64_to_cpu(shdr->Id.AsyncId);
++			spin_unlock(&mid->mid_lock);
++			release_mid(server, mid);
++		}
++	}
++
+ 	if (shdr->CreditRequest) {
+ 		spin_lock(&server->req_lock);
+ 		server->credits += le16_to_cpu(shdr->CreditRequest);
+-- 
+2.54.0
+

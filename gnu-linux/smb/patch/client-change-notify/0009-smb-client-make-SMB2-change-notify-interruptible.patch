@@ -1,0 +1,32 @@
+From cd5b09324640ab59f0afac1ac2e616768269b3a1 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Wed, 1 Jul 2026 09:54:28 +0800
+Subject: [PATCH 9/9] smb/client: make SMB2 change notify interruptible
+
+SMB2 change notify can block indefinitely while waiting for directory
+changes. Mark the request as interruptible so userspace can stop the wait
+with a normal signal.
+
+The interrupted wait now uses the SMB2 cancel callback added earlier in
+the series to notify the server about the abandoned request.
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/client/smb2pdu.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
+index d058584b8f05..56caf8cbdb0b 100644
+--- a/fs/smb/client/smb2pdu.c
++++ b/fs/smb/client/smb2pdu.c
+@@ -4127,6 +4127,7 @@ SMB2_change_notify(const unsigned int xid, struct cifs_tcon *tcon,
+ 
+ 	if (smb3_encryption_required(tcon))
+ 		flags |= CIFS_TRANSFORM_REQ;
++	flags |= CIFS_INTERRUPTIBLE_WAIT;
+ 
+ 	memset(&rqst, 0, sizeof(struct smb_rqst));
+ 	memset(&iov, 0, sizeof(iov));
+-- 
+2.54.0
+

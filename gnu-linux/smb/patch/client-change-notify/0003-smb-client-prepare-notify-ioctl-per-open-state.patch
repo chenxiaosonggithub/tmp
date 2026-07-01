@@ -1,0 +1,56 @@
+From 7bed5755fff2614e563bfd83d2c77a2bba86ea73 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Tue, 30 Jun 2026 22:24:04 +0800
+Subject: [PATCH 3/9] smb/client: prepare notify ioctl per-open state
+
+This patch was split out to make it easier to review.
+
+Ensure smb3_notify() has directory private data before requests.
+This gives later changes a per-open state container while preserving
+the existing per-notify SMB2_open/SMB2_close behavior.
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/client/smb2ops.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
+index 06e9322a762a..349126deb22e 100644
+--- a/fs/smb/client/smb2ops.c
++++ b/fs/smb/client/smb2ops.c
+@@ -2376,9 +2376,11 @@ smb3_notify(const unsigned int xid, struct file *pfile,
+ 	struct dentry *dentry = pfile->f_path.dentry;
+ 	struct inode *inode = file_inode(pfile);
+ 	struct cifs_sb_info *cifs_sb = CIFS_SB(inode->i_sb);
++	struct cifsFileInfo *cfile;
+ 	struct cifs_open_parms oparms;
+ 	struct cifs_fid fid;
+ 	struct cifs_tcon *tcon;
++	struct tcon_link *tlink;
+ 	const unsigned char *path;
+ 	char *returned_ioctl_info = NULL;
+ 	void *page = alloc_dentry_path();
+@@ -2412,6 +2414,20 @@ smb3_notify(const unsigned int xid, struct file *pfile,
+ 		notify.data_len = 0;
+ 	}
+ 
++	if (!pfile->private_data) {
++		tlink = cifs_sb_tlink(cifs_sb);
++		if (IS_ERR(tlink)) {
++			rc = PTR_ERR(tlink);
++			goto notify_exit;
++		}
++		cfile = cifs_new_dir_fileinfo(pfile, tlink);
++		cifs_put_tlink(tlink);
++		if (!cfile) {
++			rc = -ENOMEM;
++			goto notify_exit;
++		}
++	}
++
+ 	tcon = cifs_sb_master_tcon(cifs_sb);
+ 	oparms = (struct cifs_open_parms) {
+ 		.tcon = tcon,
+-- 
+2.54.0
+
