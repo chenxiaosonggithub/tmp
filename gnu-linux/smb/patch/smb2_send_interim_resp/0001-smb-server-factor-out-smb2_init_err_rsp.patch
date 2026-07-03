@@ -1,0 +1,66 @@
+From a3c915bc91943140850b2d5e8520f46163384c18 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Thu, 2 Jul 2026 17:13:47 +0800
+Subject: [PATCH 1/2] smb/server: factor out smb2_init_err_rsp()
+
+Factor out SMB2 error response body initialization into a helper.
+Use a named length for the SMB2 error response.
+
+This prepares the async interim response path to build an error response
+without calling smb2_set_err_rsp(), which also pins the response iov.
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/smb2pdu.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index 540b4affa9fb..43d0dacc7907 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -58,6 +58,9 @@ static void __wbuf(struct ksmbd_work *work, void **req, void **rsp)
+ 
+ #define WORK_BUFFERS(w, rq, rs)	__wbuf((w), (void **)&(rq), (void **)&(rs))
+ 
++#define SMB2_ERROR_RSP_LEN	(__SMB2_HEADER_STRUCTURE_SIZE + \
++				 SMB2_ERROR_STRUCTURE_SIZE2)
++
+ #define SMB2_CREATE_FILE_ATTRIBUTE_MASK \
+ 	(FILE_ATTRIBUTE_MASK & ~(FILE_ATTRIBUTE_INTEGRITY_STREAM | \
+ 				 FILE_ATTRIBUTE_NO_SCRUB_DATA))
+@@ -195,6 +198,15 @@ int smb2_get_ksmbd_tcon(struct ksmbd_work *work)
+ 	return 1;
+ }
+ 
++static void smb2_init_err_rsp(struct smb2_err_rsp *err_rsp)
++{
++	err_rsp->StructureSize = SMB2_ERROR_STRUCTURE_SIZE2_LE;
++	err_rsp->ErrorContextCount = 0;
++	err_rsp->Reserved = 0;
++	err_rsp->ByteCount = 0;
++	err_rsp->ErrorData[0] = 0;
++}
++
+ /**
+  * smb2_set_err_rsp() - set error response code on smb response
+  * @work:	smb work containing response buffer
+@@ -211,14 +223,9 @@ void smb2_set_err_rsp(struct ksmbd_work *work)
+ 	if (err_rsp->hdr.Status != STATUS_STOPPED_ON_SYMLINK) {
+ 		int err;
+ 
+-		err_rsp->StructureSize = SMB2_ERROR_STRUCTURE_SIZE2_LE;
+-		err_rsp->ErrorContextCount = 0;
+-		err_rsp->Reserved = 0;
+-		err_rsp->ByteCount = 0;
+-		err_rsp->ErrorData[0] = 0;
++		smb2_init_err_rsp(err_rsp);
+ 		err = ksmbd_iov_pin_rsp(work, (void *)err_rsp,
+-					__SMB2_HEADER_STRUCTURE_SIZE +
+-						SMB2_ERROR_STRUCTURE_SIZE2);
++					SMB2_ERROR_RSP_LEN);
+ 		if (err)
+ 			work->send_no_response = 1;
+ 	}
+-- 
+2.54.0
+

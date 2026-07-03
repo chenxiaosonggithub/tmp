@@ -1,0 +1,33 @@
+From 982e7550f8210695219c759d37f840466cec29f9 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Thu, 2 Jul 2026 11:01:36 +0000
+Subject: [PATCH 0/2] smb/server: improve async interim response handling for compound requests
+
+I am currently implementing the ksmbd change notify feature (I will send it out soon),
+and I have encountered the following issue.
+
+Before this patchset, no CREATE response:
+
+  Windows client request:
+    CREATE dir
+    CHANGE_NOTIFY, fid = compound fid
+
+  Server response:
+    CHANGE_NOTIFY STATUS_PENDING, AsyncId = N
+
+After this patchset:
+
+  Server response:
+    CREATE dir SUCCESS, fid = X
+    CHANGE_NOTIFY STATUS_PENDING, AsyncId = N
+
+ChenXiaoSong (2):
+  smb/server: factor out smb2_init_err_rsp()
+  smb/server: preserve compound prefix for async interim responses
+
+ fs/smb/server/smb2pdu.c | 59 +++++++++++++++++++++++++++++++++--------
+ 1 file changed, 48 insertions(+), 11 deletions(-)
+
+-- 
+2.54.0
+

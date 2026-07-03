@@ -1,0 +1,91 @@
+From 982e7550f8210695219c759d37f840466cec29f9 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Thu, 2 Jul 2026 17:13:47 +0800
+Subject: [PATCH 2/2] smb/server: preserve compound prefix for async interim
+ responses
+
+Windows clients can issue a related compound request such as CREATE
+followed by CHANGE_NOTIFY. ksmbd defers CHANGE_NOTIFY and sends
+STATUS_PENDING through the async interim response path. That path only
+built a response for the current command, so responses generated for
+earlier commands in the compound chain were dropped.
+
+This means the client never receives the CREATE response that contains
+the file id used by the pending notify request. Windows Explorer can
+then stall when navigating away from the directory until the connection
+is torn down and the pending notify requests are cleaned up.
+
+When sending STATUS_PENDING for an async command, copy the completed
+compound response prefix before appending the async interim error
+response. Final async completions such as STATUS_CANCELLED and
+STATUS_NOTIFY_CLEANUP remain standalone async responses.
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/smb2pdu.c | 38 ++++++++++++++++++++++++++++++++++----
+ 1 file changed, 34 insertions(+), 4 deletions(-)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index 43d0dacc7907..0a3997502732 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -847,7 +847,11 @@ void release_async_work(struct ksmbd_work *work)
+ void smb2_send_interim_resp(struct ksmbd_work *work, __le32 status)
+ {
+ 	struct smb2_hdr *rsp_hdr;
++	struct smb2_err_rsp *err_rsp;
+ 	struct ksmbd_work *in_work = ksmbd_alloc_work_struct();
++	char *rsp_buf;
++	unsigned int compound_len = 0;
++	unsigned int msg_len;
+ 
+ 	if (!in_work)
+ 		return;
+@@ -859,14 +863,40 @@ void smb2_send_interim_resp(struct ksmbd_work *work, __le32 status)
+ 	}
+ 
+ 	in_work->conn = work->conn;
+-	memcpy(smb_get_msg(in_work->response_buf), ksmbd_resp_buf_next(work),
+-	       __SMB2_HEADER_STRUCTURE_SIZE);
++	rsp_buf = smb_get_msg(in_work->response_buf);
++
++	/*
++	 * STATUS_PENDING can complete the last command in a compound chain.
++	 * Preserve the completed prefix before appending the async interim
++	 * response so the client can consume every response in the chain.
++	 */
++	if (status == STATUS_PENDING)
++		compound_len = work->next_smb2_rsp_hdr_off;
++
++	msg_len = compound_len + SMB2_ERROR_RSP_LEN;
++	if (msg_len > MAX_CIFS_SMALL_BUFFER_SIZE) {
++		pr_err("compound interim response too large: %u\n", msg_len);
++		ksmbd_free_work_struct(in_work);
++		return;
++	}
++
++	if (compound_len) {
++		memcpy(rsp_buf, smb_get_msg(work->response_buf),
++		       compound_len);
++	}
++
++	rsp_hdr = (struct smb2_hdr *)(rsp_buf + compound_len);
++	memcpy(rsp_hdr, ksmbd_resp_buf_next(work), __SMB2_HEADER_STRUCTURE_SIZE);
+ 
+-	rsp_hdr = smb_get_msg(in_work->response_buf);
+ 	rsp_hdr->Flags |= SMB2_FLAGS_ASYNC_COMMAND;
+ 	rsp_hdr->Id.AsyncId = cpu_to_le64(work->async_id);
+-	smb2_set_err_rsp(in_work);
+ 	rsp_hdr->Status = status;
++	err_rsp = (struct smb2_err_rsp *)rsp_hdr;
++	smb2_init_err_rsp(err_rsp);
++	if (ksmbd_iov_pin_rsp(in_work, rsp_buf, msg_len)) {
++		ksmbd_free_work_struct(in_work);
++		return;
++	}
+ 
+ 	ksmbd_conn_write(in_work);
+ 	ksmbd_free_work_struct(in_work);
+-- 
+2.54.0
+
