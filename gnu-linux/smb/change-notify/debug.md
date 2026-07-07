@@ -22,7 +22,32 @@ failure: read_read [
 用例源码在 /home/chenxiaosong/forAI/samba/source4/torture/smb2/compound.c的test_compound_async_read_read函数
 ```
 
-# samba compound测试失败
+```
+参考/home/chenxiaosong/forAI/samba/source3/smbd/smb2_server.c中的smbd_smb2_request_pending_queue函数，把smb2_send_interim_resp函数改成一样的处理
+smbd_smb2_request_pending_queue
+  if (req->current_idx > 1) // compound 前面已经有完成的响应
+  smb2_send_async_interim_response // 发出前缀
+    nreq->out.vector_count -= SMBD_SMB2_NUM_IOV_PER_REQ; // 丢掉最后一个 async 请求的响应槽
+    SIVAL(outhdr, SMB2_HDR_NEXT_COMMAND, 0); // 把前一个 response 的 NextCommand 改成 0
+  req->current_idx = 1; memmove // 把原请求的 in/out vectors 前缀移除
+  smbd_smb2_request_pending_timer
+```
+
+```
+最后一个补丁的修改，用/home/chenxiaosong/forAI/samba/source4/torture/smb2/compound.c的test_compound_async_read_read函数测试，抓包数据如下，没有Write Response, Error: STATUS_PENDING
+18      0.003544        192.168.53.209  192.168.53.210  SMB2    428     Write Request Len:64 Off:0, File: compound_async_write_write; Write Request Len:64 Off:64
+19      0.004174        192.168.53.210  192.168.53.209  SMB2    156     Write Response, File: compound_async_write_write
+20      0.004189        192.168.53.210  192.168.53.209  SMB2    233     Write Response
+
+最后一个补丁的修改，/home/chenxiaosong/forAI/smb-kernel/smb2.compound_async.write_write-ksmbd-success.pcap抓包数据中的
+20      0.013339        192.168.53.210  192.168.53.209  SMB2    233     Write Response
+把两个包放一起了
+SMB2 (Server Message Block Protocol version 2), STATUS_PENDING, Write Response, MessageId 7
+SMB2 (Server Message Block Protocol version 2), Write Response, MessageId 7
+我想让STATUS_PENDING数据包独立出来，要怎么改
+```
+
+# samba compound测试失败（已解决）
 
 ```
 test: compound-padding
