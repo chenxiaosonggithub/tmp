@@ -1,0 +1,42 @@
+From 786b3f912a66dc39a77fbb218c88a0fdf5145fc6 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Wed, 8 Jul 2026 02:41:23 +0000
+Subject: [PATCH v2 0/3] smb/server: improve async interim response handling for compound requests
+
+v1->v2: send compound prefix before async pending response,
+        then send STATUS_PENDING as a standalone response.
+
+v1: https://lore.kernel.org/linux-cifs/20260702110522.911411-1-chenxiaosong@chenxiaosong.com/
+
+I am currently implementing the ksmbd change notify feature, and I have
+encountered the following issue.
+
+Before this patchset, no CREATE response:
+
+  Windows client compound request:
+    CREATE dir; CHANGE_NOTIFY, fid = compound fid
+
+  Server response:
+    CHANGE_NOTIFY STATUS_PENDING, AsyncId = N
+
+After this patchset:
+
+  Server response:
+    CREATE dir SUCCESS, fid = X
+    CHANGE_NOTIFY STATUS_PENDING, AsyncId = N
+
+ChenXiaoSong (3):
+  smb/server: send compound prefix before async pending response
+  smb/server: introduce struct ksmbd_transport_write
+  smb/server: use MSG_EOR for async interim response
+
+ fs/smb/server/connection.c     | 31 +++++++++++++++++-----
+ fs/smb/server/connection.h     | 15 ++++++++---
+ fs/smb/server/smb2pdu.c        | 47 +++++++++++++++++++++++++++++++++-
+ fs/smb/server/transport_rdma.c |  9 ++++---
+ fs/smb/server/transport_tcp.c  | 13 +++++-----
+ 5 files changed, 95 insertions(+), 20 deletions(-)
+
+-- 
+2.54.0
+
