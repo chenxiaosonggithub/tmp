@@ -66,3 +66,15 @@ failure: read_read [
 ]
 ```
 
+# fstat() nlink错误
+
+```
+SMB2_open函数的参数struct smb2_file_all_info *buf换成struct cifs_open_info_data *buf，struct cifs_open_info_data中增加u32 cf_flags，然后在cifs_open_info_to_fattr函数中赋值给fattr->cf_flags |= data->cf_flags
+
+smb3_query_mf_symlink函数中struct cifs_open_info_data data要不要为柔性数组再分配 PATH_MAX * 2 大小
+
+最后一个补丁，我想拆成3个补丁。
+第一个补丁把smb3_query_mf_symlink函数struct smb2_file_all_info *pfile_info从堆分配换成栈分配。
+第二个补丁SMB2_open函数的参数struct smb2_file_all_info *buf换成struct cifs_open_info_data *buf。
+第三个补丁在struct cifs_open_info_data中增加u32 cf_flags，然后在cifs_open_info_to_fattr函数中赋值给fattr->cf_flags |= data->cf_flags，在SMB2_open中赋值buf->cf_flags |= CIFS_FATTR_UNKNOWN_NLINK
+```
