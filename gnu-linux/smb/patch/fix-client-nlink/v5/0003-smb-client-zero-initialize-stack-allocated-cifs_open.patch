@@ -1,0 +1,58 @@
+From 78621275e551d05f8fa8830e207a511ed535104d Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Thu, 9 Jul 2026 08:49:06 +0800
+Subject: [PATCH v5 3/4] smb/client: zero-initialize stack-allocated
+ cifs_open_info_data
+
+Stack-allocated cifs_open_info_data may contain random data.
+This can make some fields have wrong value if they are not set later.
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/client/link.c    | 2 +-
+ fs/smb/client/smb1ops.c | 2 +-
+ fs/smb/client/smb2ops.c | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/smb/client/link.c b/fs/smb/client/link.c
+index b60dc407815d..8d5d6aca742a 100644
+--- a/fs/smb/client/link.c
++++ b/fs/smb/client/link.c
+@@ -234,7 +234,7 @@ cifs_query_mf_symlink(unsigned int xid, struct cifs_tcon *tcon,
+ 	struct cifs_open_parms oparms;
+ 	struct cifs_io_parms io_parms = {0};
+ 	int buf_type = CIFS_NO_BUFFER;
+-	struct cifs_open_info_data query_data;
++	struct cifs_open_info_data query_data = {};
+ 
+ 	oparms = (struct cifs_open_parms) {
+ 		.tcon = tcon,
+diff --git a/fs/smb/client/smb1ops.c b/fs/smb/client/smb1ops.c
+index d34b3d99f6ed..f72879af12c9 100644
+--- a/fs/smb/client/smb1ops.c
++++ b/fs/smb/client/smb1ops.c
+@@ -949,7 +949,7 @@ smb_set_file_info(struct inode *inode, const char *full_path,
+ 	struct cifs_open_parms oparms;
+ 	struct cifsFileInfo *open_file;
+ 	FILE_BASIC_INFO new_buf;
+-	struct cifs_open_info_data query_data;
++	struct cifs_open_info_data query_data = {};
+ 	__le64 write_time = buf->LastWriteTime;
+ 	struct cifsInodeInfo *cinode = CIFS_I(inode);
+ 	struct cifs_sb_info *cifs_sb = CIFS_SB(inode->i_sb);
+diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
+index 1f5dc1d9897f..b6aadea6b780 100644
+--- a/fs/smb/client/smb2ops.c
++++ b/fs/smb/client/smb2ops.c
+@@ -5317,7 +5317,7 @@ int __cifs_sfu_make_node(unsigned int xid, struct inode *inode,
+ {
+ 	struct TCP_Server_Info *server = tcon->ses->server;
+ 	struct cifs_open_parms oparms;
+-	struct cifs_open_info_data idata;
++	struct cifs_open_info_data idata = {};
+ 	struct cifs_io_parms io_parms = {};
+ 	struct cifs_sb_info *cifs_sb = CIFS_SB(inode->i_sb);
+ 	struct cifs_fid fid;
+-- 
+2.54.0
+

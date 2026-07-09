@@ -1,0 +1,106 @@
+From c7af409009c802ef9d0fc705935be66cc24e72eb Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Wed, 8 Jul 2026 23:24:59 +0800
+Subject: [PATCH v5 4/4] smb/client: fix incorrect nlink returned by fstat()
+
+Reproducer:
+
+  1. mount -t cifs //${server_ip}/export /mnt
+  2. touch /mnt/file1; ln /mnt/file1 /mnt/file2; ln /mnt/file1 /mnt/file3
+  3. C program: int fd = open("/mnt/file1", O_RDONLY);
+  4. C program: struct stat stbuf; fstat(fd, &stbuf);
+                stbuf.st_nlink is always 1, should be 3
+
+Setting `unknown_nlink` to true in `SMB2_open()` triggers the
+`CIFS_FATTR_UNKNOWN_NLINK` flag in `cifs_open_info_to_fattr()`,
+which safely preserves the existing i_nlink in
+`cifs_nlink_fattr_to_inode()`.
+
+See the detailed procedure below:
+
+  path_openat
+    open_last_lookups
+      lookup_open
+        atomic_open
+          cifs_atomic_open // dir->i_op->atomic_open
+            cifs_lookup
+              cifs_get_inode_info
+                cifs_get_fattr
+                  smb2_query_path_info // server->ops->query_path_info
+                    smb2_compound_op
+                      SMB2_open_init
+                      case SMB2_OP_QUERY_INFO
+                      SMB2_query_info_init(FILE_ALL_INFORMATION,)
+                  cifs_open_info_to_fattr
+                    fattr->cf_nlink = le32_to_cpu(info->NumberOfLinks)
+                update_inode_info
+                  cifs_iget
+                    cifs_fattr_to_inode
+                      cifs_nlink_fattr_to_inode
+                        set_nlink(inode, fattr->cf_nlink)
+    do_open
+      vfs_open
+        do_dentry_open
+          cifs_open
+            cifs_nt_open
+              smb2_open_file // server->ops->open
+                SMB2_open
+                  buf->unknown_nlink = true
+              cifs_get_inode_info
+                cifs_get_fattr
+                  cifs_open_info_to_fattr
+                    if (data->unknown_nlink) // true
+                    fattr->cf_flags |= CIFS_FATTR_UNKNOWN_NLINK
+                update_inode_info
+                  cifs_fattr_to_inode
+                    cifs_nlink_fattr_to_inode
+                      if (fattr->cf_flags & CIFS_FATTR_UNKNOWN_NLINK) // true
+                      return // do not modify nlink
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/client/cifsglob.h | 1 +
+ fs/smb/client/inode.c    | 2 ++
+ fs/smb/client/smb2pdu.c  | 1 +
+ 3 files changed, 4 insertions(+)
+
+diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
+index ea1c5eb2356a..0454f69630ae 100644
+--- a/fs/smb/client/cifsglob.h
++++ b/fs/smb/client/cifsglob.h
+@@ -250,6 +250,7 @@ struct cifs_open_info_data {
+ 	bool adjust_tz;
+ 	bool reparse_point;
+ 	bool contains_posix_file_info;
++	bool unknown_nlink;
+ 	struct {
+ 		/* ioctl response buffer */
+ 		struct {
+diff --git a/fs/smb/client/inode.c b/fs/smb/client/inode.c
+index 1dbcfd163ff0..4711886d7b4b 100644
+--- a/fs/smb/client/inode.c
++++ b/fs/smb/client/inode.c
+@@ -909,6 +909,8 @@ static void cifs_open_info_to_fattr(struct cifs_fattr *fattr,
+ 	struct cifs_tcon *tcon = cifs_sb_master_tcon(cifs_sb);
+ 
+ 	memset(fattr, 0, sizeof(*fattr));
++	if (data->unknown_nlink)
++		fattr->cf_flags |= CIFS_FATTR_UNKNOWN_NLINK;
+ 	fattr->cf_cifsattrs = le32_to_cpu(info->Attributes);
+ 	if (info->DeletePending)
+ 		fattr->cf_flags |= CIFS_FATTR_DELETE_PENDING;
+diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
+index 5707d76a8647..d4d4c510412c 100644
+--- a/fs/smb/client/smb2pdu.c
++++ b/fs/smb/client/smb2pdu.c
+@@ -3380,6 +3380,7 @@ SMB2_open(const unsigned int xid, struct cifs_open_parms *oparms, __le16 *path,
+ 		file_info->EndOfFile = rsp->EndofFile;
+ 		file_info->Attributes = rsp->FileAttributes;
+ 		file_info->NumberOfLinks = cpu_to_le32(1);
++		buf->unknown_nlink = true;
+ 		file_info->DeletePending = 0; /* successful open = not delete pending */
+ 	}
+ 
+-- 
+2.54.0
+
