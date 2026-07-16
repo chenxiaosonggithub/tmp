@@ -1,0 +1,22 @@
+From 1f79b21dbb694a5e62a48968e35b043eb7a54e8f Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Wed, 15 Jul 2026 13:44:50 +0000
+Subject: [PATCH 0/3] smb/server: fix some bugs in preparation for change notify support
+
+I have implemented the ksmbd change notify feature, please see the following GitHub link (some minor changes are also needed):
+https://github.com/chenxiaosonggithub/linux/commits/ksmbd-change-notify/
+
+However, to make this feature work properly, some pre-existing bugs need to be fixed first.
+
+ChenXiaoSong (3):
+  smb/server: fix signing when a response uses more than one iov
+  smb/server: cancel async requests when closing connection
+  smb/server: stop new async work when closing connection
+
+ fs/smb/server/connection.c | 21 +++++++++++
+ fs/smb/server/smb2pdu.c    | 76 ++++++++++++++++++++++++++------------
+ 2 files changed, 74 insertions(+), 23 deletions(-)
+
+-- 
+2.54.0
+
