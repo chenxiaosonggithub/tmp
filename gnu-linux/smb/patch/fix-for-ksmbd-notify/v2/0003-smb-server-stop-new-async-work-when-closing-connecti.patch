@@ -1,0 +1,61 @@
+From 5a351ff737157c38fd04e752fa3d408c3a3be927 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Wed, 15 Jul 2026 13:55:13 +0000
+Subject: [PATCH v2 3/3] smb/server: stop new async work when closing
+ connection
+
+A new async request may be added while a connection is closing.
+The close code may miss this request and wait forever.
+
+Check the connection state before adding the request. Return an error
+and release the async ID if the connection is closing.
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/smb2pdu.c | 24 +++++++++++++++---------
+ 1 file changed, 15 insertions(+), 9 deletions(-)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index 966e61788422..b80f0bcf5fc1 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -802,21 +802,27 @@ int setup_async_work(struct ksmbd_work *work, void (*fn)(void **), void **arg)
+ 		pr_err("Failed to alloc async message id\n");
+ 		return id;
+ 	}
+-	work->asynchronous = true;
+-	work->async_id = id;
+ 
+-	ksmbd_debug(SMB,
+-		    "Send interim Response to inform async request id : %d\n",
+-		    work->async_id);
++	spin_lock(&conn->request_lock);
++	if (ksmbd_conn_exiting(conn) || ksmbd_conn_releasing(conn)) {
++		spin_unlock(&conn->request_lock);
++		pr_err_ratelimited("Failed to setup async work: connection is exiting\n");
++		ksmbd_release_id(&conn->async_ida, id);
++		return -ESHUTDOWN;
++	}
+ 
++	work->asynchronous = true;
++	work->async_id = id;
+ 	work->cancel_fn = fn;
+ 	work->cancel_argv = arg;
+ 
+-	if (list_empty(&work->async_request_entry)) {
+-		spin_lock(&conn->request_lock);
++	if (list_empty(&work->async_request_entry))
+ 		list_add_tail(&work->async_request_entry, &conn->async_requests);
+-		spin_unlock(&conn->request_lock);
+-	}
++	spin_unlock(&conn->request_lock);
++
++	ksmbd_debug(SMB,
++		    "Send interim Response to inform async request id : %d\n",
++		    work->async_id);
+ 
+ 	return 0;
+ }
+-- 
+2.54.0
+
