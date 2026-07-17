@@ -50,9 +50,36 @@ phys_tmux() {
 	"
 }
 
-if [ $# -ge 1 ]; then
-	do_tmux $@
-else
-	$ssh_cmd
-fi
+case "$1" in
+1)
+	session="tianyi"
+	if tmux has-session -t $session 2>/dev/null; then
+		tmux att -t $session;
+	else
+		tmux new -t $session;
+	fi
+	;;
+2)
+	do_tmux aorus pm
+	;;
+3)
+	do_tmux code
+	;;
+4)
+	do_tmux build
+	;;
+5)
+	do_tmux qemu01
+	;;
+6)
+	do_tmux qemu02
+	;;
+*)
+	if [ $# -ge 1 ]; then
+		do_tmux $@
+	else
+		$ssh_cmd
+	fi
+esac
+
 
