@@ -9,8 +9,8 @@ v2->v3:
 
 v2: https://lore.kernel.org/linux-cifs/20260716001156.671587-1-chenxiaosong@chenxiaosong.com/
 
-I have implemented the ksmbd change notify feature, please see the following GitHub link:
-https://github.com/chenxiaosonggithub/linux/commits/ksmbd-change-notify/
+I have implemented the ksmbd change notify feature, please see the following link:
+https://chenxiaosong.com/lkml/ksmbd-notify
 
 However, to make this feature work properly, some pre-existing bugs need to be fixed first.
 
