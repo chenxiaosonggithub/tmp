@@ -444,6 +444,13 @@ kylinos_physical()
 	kylinos_install_wireshark
 }
 
+kylinos_vm()
+{
+	dnf install -y xterm-resize
+	# 编辑网络，网络接口名改成和ifconfig中一样的名，启用连接 > 激活
+	nmtui
+}
+
 windows_physical()
 {
 	# 安装windows: https://chenxiaosong.com/src/windows/windows.html
@@ -478,5 +485,6 @@ windows_physical()
 # ubuntu_physical
 # ubuntu_docker
 # kylinos_physical
+# kylinos_vm
 # windows_physical
 
