@@ -1,0 +1,28 @@
+From 89af8716e043d97cdd74d388e4122181c4310934 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Tue, 21 Jul 2026 17:28:48 +0000
+Subject: [PATCH v3 0/3] smb/server: fix some bugs in preparation for change notify support
+
+v2->v3:
+  - Patch#01: use WARN_ON_ONCE(1).
+  - Patch#02: use list_for_each_entry_safe().
+
+v2: https://lore.kernel.org/linux-cifs/20260716001156.671587-1-chenxiaosong@chenxiaosong.com/
+
+I have implemented the ksmbd change notify feature, please see the following link:
+https://chenxiaosong.com/lkml/ksmbd-notify
+
+However, to make this feature work properly, some pre-existing bugs need to be fixed first.
+
+ChenXiaoSong (3):
+  smb/server: fix signing when a response uses more than one iov
+  smb/server: cancel async requests when closing connection
+  smb/server: stop new async work when closing connection
+
+ fs/smb/server/connection.c | 21 +++++++++++
+ fs/smb/server/smb2pdu.c    | 75 ++++++++++++++++++++++++++------------
+ 2 files changed, 73 insertions(+), 23 deletions(-)
+
+-- 
+2.54.0
+

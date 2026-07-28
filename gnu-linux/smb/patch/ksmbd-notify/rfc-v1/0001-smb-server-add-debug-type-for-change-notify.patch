@@ -1,0 +1,47 @@
+From 3555a29c0ef50dde92c540c7be99ce7f2bf6088a Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Thu, 2 Jul 2026 12:24:08 +0800
+Subject: [RFC PATCH 01/11] smb/server: add debug type for change notify
+
+Add KSMBD_DEBUG_NOTIFY and expose it as "notify" to print logs
+for the change notify feature.
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/glob.h   | 3 ++-
+ fs/smb/server/server.c | 2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/fs/smb/server/glob.h b/fs/smb/server/glob.h
+index 344b069cfbbd..87cbc88275fe 100644
+--- a/fs/smb/server/glob.h
++++ b/fs/smb/server/glob.h
+@@ -22,10 +22,11 @@ extern int ksmbd_debug_types;
+ #define KSMBD_DEBUG_IPC         BIT(4)
+ #define KSMBD_DEBUG_CONN        BIT(5)
+ #define KSMBD_DEBUG_RDMA        BIT(6)
++#define KSMBD_DEBUG_NOTIFY      BIT(7)
+ #define KSMBD_DEBUG_ALL         (KSMBD_DEBUG_SMB | KSMBD_DEBUG_AUTH |	\
+ 				KSMBD_DEBUG_VFS | KSMBD_DEBUG_OPLOCK |	\
+ 				KSMBD_DEBUG_IPC | KSMBD_DEBUG_CONN |	\
+-				KSMBD_DEBUG_RDMA)
++				KSMBD_DEBUG_RDMA | KSMBD_DEBUG_NOTIFY)
+ 
+ #ifdef pr_fmt
+ #undef pr_fmt
+diff --git a/fs/smb/server/server.c b/fs/smb/server/server.c
+index 5b38406129b5..4bea3ac8011b 100644
+--- a/fs/smb/server/server.c
++++ b/fs/smb/server/server.c
+@@ -522,7 +522,7 @@ static ssize_t kill_server_store(const struct class *class,
+ 
+ static const char * const debug_type_strings[] = {"smb", "auth", "vfs",
+ 						  "oplock", "ipc", "conn",
+-						  "rdma"};
++						  "rdma", "notify"};
+ 
+ static ssize_t debug_show(const struct class *class, const struct class_attribute *attr,
+ 			  char *buf)
+-- 
+2.54.0
+

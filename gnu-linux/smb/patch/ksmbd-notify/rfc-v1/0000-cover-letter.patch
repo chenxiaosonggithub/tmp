@@ -1,0 +1,50 @@
+From 454ec46313defc90a05edcedc19ac97237790212 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Thu, 23 Jul 2026 02:37:13 +0000
+Subject: [RFC PATCH 00/11] smb/server: change notify support
+
+Sorry for taking such a long time to complete the ksmbd change notify feature.
+Over the past few months, I have been busy with the birth of my daughter and
+my PhD-related tasks, which left me with limited time to work on it.
+
+Once Gaël updates his patch ("ksmbd: defer CHANGE_NOTIFY completion instead of STATUS_NOT_IMPLEMENTED"),
+I will rebase my patchset on top of it.
+
+To test this feature, the following patches need to be applied to cifs-utils and kernel smb client:
+  - cifs-utils: https://chenxiaosong.com/lkml/cifs-utils-parse-notify
+  - kernel smb client: https://chenxiaosong.com/lkml/cifs-improve-notify
+
+The complete kernel client and server patches are also available at the following link:
+https://chenxiaosong.com/repo/linux/ksmbd-change-notify
+
+ChenXiaoSong (11):
+  smb/server: add debug type for change notify
+  smb/server: validate notify requests
+  smb/server: support canceling notify requests
+  smb/server: watch directories for changes
+  smb/server: keep notify watches on file handles
+  smb/server: save simple notify events
+  smb/server: save old names for rename notify events
+  smb/server: match rename notify events
+  smb/server: encode notify events
+  smb/server: send notify events to the client
+  smb/server: break directory leases before sending notify events
+
+ fs/smb/server/Kconfig     |    1 +
+ fs/smb/server/Makefile    |    2 +-
+ fs/smb/server/glob.h      |    3 +-
+ fs/smb/server/notify.c    | 1011 +++++++++++++++++++++++++++++++++++++
+ fs/smb/server/notify.h    |   24 +
+ fs/smb/server/oplock.c    |   40 ++
+ fs/smb/server/oplock.h    |    1 +
+ fs/smb/server/server.c    |    2 +-
+ fs/smb/server/smb2pdu.c   |   12 +-
+ fs/smb/server/vfs_cache.c |    3 +
+ fs/smb/server/vfs_cache.h |    4 +
+ 11 files changed, 1095 insertions(+), 8 deletions(-)
+ create mode 100644 fs/smb/server/notify.c
+ create mode 100644 fs/smb/server/notify.h
+
+-- 
+2.54.0
+

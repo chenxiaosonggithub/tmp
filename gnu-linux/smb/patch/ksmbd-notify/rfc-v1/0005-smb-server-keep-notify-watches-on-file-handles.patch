@@ -1,0 +1,169 @@
+From f3a41417d16091171c739ba392997d363a419ccc Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Tue, 21 Jul 2026 22:38:27 +0800
+Subject: [RFC PATCH 05/11] smb/server: keep notify watches on file handles
+
+Keep one notify watch on each file handle. Reuse it for later requests,
+and remove it when the handle is closed.
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/notify.c    | 47 +++++++++++++++++++++++++++++++++++----
+ fs/smb/server/notify.h    |  2 ++
+ fs/smb/server/vfs_cache.c |  3 +++
+ fs/smb/server/vfs_cache.h |  4 ++++
+ 4 files changed, 52 insertions(+), 4 deletions(-)
+
+diff --git a/fs/smb/server/notify.c b/fs/smb/server/notify.c
+index 1c020752a8ed..82de53963dc0 100644
+--- a/fs/smb/server/notify.c
++++ b/fs/smb/server/notify.c
+@@ -182,6 +182,21 @@ static int ksmbd_notify_add(struct ksmbd_file *fp, u32 mask, u32 filter,
+ 	struct fsnotify_mark *mark;
+ 	int err = 0;
+ 
++	mutex_lock(&fp->notify_lock);
++	if (fp->notify) {
++		spin_lock(&fp->notify->lock);
++		fp->notify->filter |= filter;
++		fp->notify->mask |= mask;
++		spin_unlock(&fp->notify->lock);
++		fsnotify_modify_mark_mask(fp->notify->mark, mask, 0);
++		ksmbd_debug(NOTIFY,
++			    "Updated fsnotify mark, inode %llu, mask 0x%x\n",
++			    (unsigned long long)file_inode(fp->filp)->i_ino,
++			    fp->notify->mark->mask);
++		*notify_out = fp->notify;
++		goto out;
++	}
++
+ 	notify = kzalloc_obj(*notify, KSMBD_DEFAULT_GFP);
+ 	if (!notify) {
+ 		pr_err("Failed to allocate notify watch\n");
+@@ -203,6 +218,7 @@ static int ksmbd_notify_add(struct ksmbd_file *fp, u32 mask, u32 filter,
+ 	}
+ 
+ 	notify->mark = mark;
++	fp->notify = notify;
+ 	*notify_out = notify;
+ 	ksmbd_debug(NOTIFY,
+ 		    "Added fsnotify mark, inode %llu, mask 0x%x, filter 0x%x, "
+@@ -211,9 +227,36 @@ static int ksmbd_notify_add(struct ksmbd_file *fp, u32 mask, u32 filter,
+ 		    filter, max_buffer_size);
+ 
+ out:
++	mutex_unlock(&fp->notify_lock);
+ 	return err;
+ }
+ 
++/**
++ * ksmbd_notify_remove() - remove the notify watch for a closing handle
++ * @fp: file handle whose watch is being removed
++ *
++ * A cancelled CHANGE_NOTIFY request leaves this watch installed. The watch is
++ * owned by @fp and removed only when the file handle is finally closed.
++ */
++void ksmbd_notify_remove(struct ksmbd_file *fp)
++{
++	struct ksmbd_notify *notify;
++
++	mutex_lock(&fp->notify_lock);
++	notify = fp->notify;
++	fp->notify = NULL;
++	mutex_unlock(&fp->notify_lock);
++	if (!notify)
++		return;
++
++	ksmbd_debug(NOTIFY,
++		    "Removing fsnotify mark, inode %llu, mask 0x%x\n",
++		    (unsigned long long)file_inode(fp->filp)->i_ino,
++		    notify->mark->mask);
++	ksmbd_notify_destroy_mark(notify->group, notify->mark);
++	kfree(notify);
++}
++
+ static struct ksmbd_file *
+ ksmbd_notify_validate_req(struct ksmbd_work *work,
+ 			  struct smb2_change_notify_req *req,
+@@ -417,10 +460,6 @@ int ksmbd_handle_notify(struct ksmbd_work *work,
+ 		kfree(argv);
+ 	if (notify_req)
+ 		kfree(notify_req);
+-	if (notify) {
+-		ksmbd_notify_destroy_mark(notify->group, notify->mark);
+-		kfree(notify);
+-	}
+ 	if (fp)
+ 		ksmbd_fd_put(work, fp);
+ 	return err;
+diff --git a/fs/smb/server/notify.h b/fs/smb/server/notify.h
+index 3118ad09c841..9d022ba9090f 100644
+--- a/fs/smb/server/notify.h
++++ b/fs/smb/server/notify.h
+@@ -12,11 +12,13 @@
+ #define __SMB_SERVER_NOTIFY_H__
+ 
+ struct ksmbd_work;
++struct ksmbd_file;
+ struct smb2_change_notify_req;
+ struct smb2_change_notify_rsp;
+ 
+ int ksmbd_handle_notify(struct ksmbd_work *work,
+ 			struct smb2_change_notify_req *req,
+ 			struct smb2_change_notify_rsp *rsp);
++void ksmbd_notify_remove(struct ksmbd_file *fp);
+ 
+ #endif /* __SMB_SERVER_NOTIFY_H__ */
+diff --git a/fs/smb/server/vfs_cache.c b/fs/smb/server/vfs_cache.c
+index d0fd954e9ec8..64bef7ce5fd2 100644
+--- a/fs/smb/server/vfs_cache.c
++++ b/fs/smb/server/vfs_cache.c
+@@ -18,6 +18,7 @@
+ #include "vfs.h"
+ #include "connection.h"
+ #include "misc.h"
++#include "notify.h"
+ #include "mgmt/tree_connect.h"
+ #include "mgmt/user_session.h"
+ #include "mgmt/user_config.h"
+@@ -625,6 +626,7 @@ static void __ksmbd_close_fd(struct ksmbd_file_table *ft, struct ksmbd_file *fp)
+ 	close_id_del_oplock(fp);
+ 	filp = fp->filp;
+ 
++	ksmbd_notify_remove(fp);
+ 	__ksmbd_inode_close(fp);
+ 	if (!IS_ERR_OR_NULL(filp))
+ 		fput(filp);
+@@ -1175,6 +1177,7 @@ struct ksmbd_file *ksmbd_open_fd(struct ksmbd_work *work, struct file *filp)
+ 	INIT_LIST_HEAD(&fp->node);
+ 	INIT_LIST_HEAD(&fp->lock_list);
+ 	spin_lock_init(&fp->f_lock);
++	mutex_init(&fp->notify_lock);
+ 	mutex_init(&fp->readdir_lock);
+ 	atomic_set(&fp->refcount, 1);
+ 
+diff --git a/fs/smb/server/vfs_cache.h b/fs/smb/server/vfs_cache.h
+index 11bfbb981004..aff7db9127e0 100644
+--- a/fs/smb/server/vfs_cache.h
++++ b/fs/smb/server/vfs_cache.h
+@@ -33,6 +33,7 @@
+ #define SMB2_NO_FID		(0xFFFFFFFFFFFFFFFFULL)
+ 
+ struct ksmbd_conn;
++struct ksmbd_notify;
+ struct ksmbd_session;
+ 
+ struct ksmbd_lock {
+@@ -96,6 +97,9 @@ struct ksmbd_file {
+ 	u64				durable_volatile_id;
+ 
+ 	spinlock_t			f_lock;
++	/* Protects notify watch creation and removal. */
++	struct mutex			notify_lock;
++	struct ksmbd_notify		*notify;
+ 
+ 	struct ksmbd_inode		*f_ci;
+ 	struct ksmbd_inode		*f_parent_ci;
+-- 
+2.54.0
+
