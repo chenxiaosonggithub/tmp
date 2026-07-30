@@ -1,0 +1,4 @@
+- struct smb2_open_state单独提一个补丁，在commit message中说明一下后面所有补丁都会用到这个结构体。
+- 重构补丁后面都加No functional change. 注意引入结构体和bugfix补丁不用加。
+- 标题统一写成 smb/server: factor out smb2_validate_stream_options()
+- 
