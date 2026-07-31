@@ -1,0 +1,25 @@
+From 4c026678e63f467852caef7c0d8c5afbd8d25b8c Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Fri, 31 Jul 2026 11:40:40 +0000
+Subject: [PATCH 0/6] ksmbd: fix some bugs
+
+ZhangGuoDong (6):
+  smb/server: fix null-ptr-deref in ksmbd_ipc_tree_connect_request()
+  smb/server: fix memory leak in ksmbd_vfs_set_durable_owner()
+  smb/server: fix invalid pointer dereference in
+    ksmbd_stop_durable_scavenger()
+  smb/server: abort initialization when proc setup fails
+  smb/server: call ksmbd_proc_cleanup() on module init failure
+  smb/server: preserve error status in smb2_handle_negotiate()
+
+ fs/smb/server/mgmt/share_config.c |  7 ++++++-
+ fs/smb/server/misc.h              |  4 ++--
+ fs/smb/server/proc.c              | 13 ++++++++-----
+ fs/smb/server/server.c            | 10 +++++++---
+ fs/smb/server/smb2pdu.c           |  4 ++--
+ fs/smb/server/vfs_cache.c         |  9 +++++++--
+ 6 files changed, 32 insertions(+), 15 deletions(-)
+
+-- 
+2.54.0
+

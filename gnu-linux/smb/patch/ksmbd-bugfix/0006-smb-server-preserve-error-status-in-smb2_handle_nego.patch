@@ -1,7 +1,8 @@
-From 5926c86ed2c257b67c5aa4e4c8a7656fee42813c Mon Sep 17 00:00:00 2001
+From 4c026678e63f467852caef7c0d8c5afbd8d25b8c Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Fri, 31 Jul 2026 16:30:00 +0800
-Subject: [PATCH 6/6] ksmbd: preserve negotiate error status
+Subject: [PATCH 6/6] smb/server: preserve error status in
+ smb2_handle_negotiate()
 
 smb2_handle_negotiate() records specific failures such as
 STATUS_INVALID_PARAMETER or STATUS_NOT_SUPPORTED.
