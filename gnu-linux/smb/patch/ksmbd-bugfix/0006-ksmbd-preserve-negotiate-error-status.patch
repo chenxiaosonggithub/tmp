@@ -1,0 +1,40 @@
+From 5926c86ed2c257b67c5aa4e4c8a7656fee42813c Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Fri, 31 Jul 2026 16:30:00 +0800
+Subject: [PATCH 6/6] ksmbd: preserve negotiate error status
+
+smb2_handle_negotiate() records specific failures such as
+STATUS_INVALID_PARAMETER or STATUS_NOT_SUPPORTED.
+
+Fixes: e2b76ab8b5c9 ("ksmbd: add support for read compound")
+Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/smb2pdu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index 4bde5ab2c881..9b64e28b5d56 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -1722,7 +1722,7 @@ int smb2_handle_negotiate(struct ksmbd_work *work)
+ 				    KSMBD_DEFAULT_GFP);
+ 		if (!conn->preauth_info) {
+ 			rc = -ENOMEM;
+-			rsp->hdr.Status = STATUS_INVALID_PARAMETER;
++			rsp->hdr.Status = STATUS_INSUFFICIENT_RESOURCES;
+ 			goto err_out;
+ 		}
+ 
+@@ -1817,7 +1817,7 @@ int smb2_handle_negotiate(struct ksmbd_work *work)
+ 	ksmbd_conn_set_need_setup(conn);
+ 
+ err_out:
+-	if (rc)
++	if (rc && rsp->hdr.Status == STATUS_SUCCESS)
+ 		rsp->hdr.Status = STATUS_INSUFFICIENT_RESOURCES;
+ 
+ 	if (!rc)
+-- 
+2.54.0
+

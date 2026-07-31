@@ -1,0 +1,57 @@
+From a44753f39c31f6f00c65b181396ef530ea4d3de5 Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Fri, 31 Jul 2026 15:46:08 +0800
+Subject: [PATCH 2/6] smb/server: fix memory leak in
+ ksmbd_vfs_set_durable_owner()
+
+See the procedure below:
+
+  smb2_open
+    ksmbd_vfs_set_durable_owner
+      fp->owner.name = name
+
+  // When the connection goes away
+  ksmbd_sessions_deregister
+    ksmbd_session_destroy
+      ksmbd_destroy_file_table
+        __close_file_table_ids
+          session_fd_check // skip()
+            ksmbd_vfs_set_durable_owner
+              fp->owner.name = name // memory leak
+
+Fixes: 0726814421c2 ("ksmbd: add SMB3 request replay support")
+Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/vfs_cache.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/fs/smb/server/vfs_cache.c b/fs/smb/server/vfs_cache.c
+index c28e3d65d64b..5acd06020d42 100644
+--- a/fs/smb/server/vfs_cache.c
++++ b/fs/smb/server/vfs_cache.c
+@@ -1655,7 +1655,7 @@ void ksmbd_stop_durable_scavenger(void)
+ int ksmbd_vfs_set_durable_owner(struct ksmbd_file *fp,
+ 				struct ksmbd_user *user)
+ {
+-	char *name;
++	char *name, *old_name;
+ 
+ 	if (!user)
+ 		return -EINVAL;
+@@ -1666,10 +1666,12 @@ int ksmbd_vfs_set_durable_owner(struct ksmbd_file *fp,
+ 		return -ENOMEM;
+ 
+ 	spin_lock(&fp->f_lock);
++	old_name = fp->owner.name;
+ 	fp->owner.uid = user->uid;
+ 	fp->owner.gid = user->gid;
+ 	fp->owner.name = name;
+ 	spin_unlock(&fp->f_lock);
++	kfree(old_name);
+ 
+ 	return 0;
+ }
+-- 
+2.54.0
+

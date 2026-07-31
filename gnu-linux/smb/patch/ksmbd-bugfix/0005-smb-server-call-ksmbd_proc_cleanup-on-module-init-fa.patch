@@ -1,0 +1,48 @@
+From fdd8dc1ef5cc06b6f5eefa1ea3735125695cca95 Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Fri, 31 Jul 2026 15:45:43 +0800
+Subject: [PATCH 5/6] smb/server: call ksmbd_proc_cleanup() on module init
+ failure
+
+When a later initializer fails, the unwind chain releases resources
+created after procfs and then jumps directly to class_unregister().
+Returning an error from module_init() leaves the proc tree and its
+per-CPU counters allocated.
+
+Fixes: b38f99c1217a ("ksmbd: add procfs interface for runtime monitoring and statistics")
+Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/server.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/fs/smb/server/server.c b/fs/smb/server/server.c
+index 19630ac53235..0ccd123ba418 100644
+--- a/fs/smb/server/server.c
++++ b/fs/smb/server/server.c
+@@ -630,11 +630,11 @@ static int __init ksmbd_server_init(void)
+ 
+ 	ret = server_conf_init();
+ 	if (ret)
+-		goto err_unregister;
++		goto err_proc_cleanup;
+ 
+ 	ret = ksmbd_work_pool_init();
+ 	if (ret)
+-		goto err_unregister;
++		goto err_proc_cleanup;
+ 
+ 	ret = ksmbd_init_file_cache();
+ 	if (ret)
+@@ -680,6 +680,8 @@ static int __init ksmbd_server_init(void)
+ 	ksmbd_exit_file_cache();
+ err_destroy_work_pools:
+ 	ksmbd_work_pool_destroy();
++err_proc_cleanup:
++	ksmbd_proc_cleanup();
+ err_unregister:
+ 	class_unregister(&ksmbd_control_class);
+ 
+-- 
+2.54.0
+
