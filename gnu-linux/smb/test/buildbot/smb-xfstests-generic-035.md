@@ -21,6 +21,36 @@ $here/t_rename_overwrite $file1 $file2
 rm $file2
 ```
 
+```sh
+umount /mnt
+mount -t cifs -o posix,username=root,password=1 //192.168.53.210/test /mnt
+rm /mnt/* -rf
+touch /mnt/file1 /mnt/file2
+tail -f /mnt/file2
+
+
+umount /mnt
+mount -t cifs -o username=root,password=1 //192.168.53.210/test /mnt
+rm /mnt/* -rf
+touch /mnt/file1 /mnt/file2
+tail -f /mnt/file2
+
+
+umount /mnt
+mount -t cifs -o username=root,password=1 //192.168.53.210/test /mnt
+rm /mnt/* -rf
+touch /mnt/file1 /mnt/file2
+tail -f /mnt/file1
+
+umount /mnt
+mount -t cifs -o username=root,password=1 //192.168.53.210/test /mnt
+rm /mnt/* -rf
+mkdir /mnt/dir1/ /mnt/dir2/; touch /mnt/dir2/file
+tail -f /mnt/dir2/file # open file
+mv /mnt/dir1 /mnt/dir2
+
+```
+
 # samba code analysis {#samba-code}
 
 ```c
