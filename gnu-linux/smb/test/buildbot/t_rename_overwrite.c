@@ -8,6 +8,7 @@ int main(int argc, char *argv[])
 	const char *path1;
 	const char *path2;
 	struct stat stbuf;
+	int nlink;
 	int res;
 	int fd;
 
@@ -26,6 +27,7 @@ int main(int argc, char *argv[])
 	if (res == -1)
 		err(1, "fstat(%i)", fd);
 	printf("before rename, nlink: %lu\n", (unsigned long) stbuf.st_nlink);
+	nlink = stbuf.st_nlink;
 
 	res = rename(path1, path2);
 	if (res == -1)
@@ -36,9 +38,9 @@ int main(int argc, char *argv[])
 		err(1, "fstat(%i)", fd);
 	printf("after rename, nlink: %lu\n", (unsigned long) stbuf.st_nlink);
 
-	if (stbuf.st_nlink != 0) {
-		fprintf(stderr, "nlink is %lu, should be 0\n",
-			(unsigned long) stbuf.st_nlink);
+	if (stbuf.st_nlink != nlink - 1) {
+		fprintf(stderr, "nlink is %lu, should be %d\n",
+			(unsigned long) stbuf.st_nlink, nlink - 1);
 		return 1;
 	}
 
