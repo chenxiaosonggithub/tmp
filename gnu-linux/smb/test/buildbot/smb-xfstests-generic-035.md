@@ -27,7 +27,7 @@ mount -t cifs -o posix,username=root,password=1 //192.168.53.210/test /mnt
 rm /mnt/* -rf
 touch /mnt/file1 /mnt/file2
 tail -f /mnt/file2
-
+mv /mnt/file1 /mnt/file2
 
 umount /mnt
 mount -t cifs -o username=root,password=1 //192.168.53.210/test /mnt
@@ -68,6 +68,14 @@ smbd_smb2_setinfo_rename_dst_delay_done
 
 rename_internals_fsp
   rename_open_files
+
+smbd_smb2_setinfo_send
+  smbd_smb2_setinfo_lease_break_check
+    smbd_do_setfilepathinfo
+      smb2_file_rename_information
+        rename_internals_fsp
+
+have_file_open_below
 ```
 
 # kernel code analysis {#kernel-code}
@@ -80,6 +88,14 @@ smb2_set_info
     set_rename_info
       smb2_rename
         ksmbd_vfs_rename
+
+cifs_rename2
+  cifs_do_rename
+  while (retry_count < 3) // 再尝试3次，总共失败4次
+  cifs_do_rename
+  else if (rc == -EACCES || rc == -EEXIST) {
+  __cifs_unlink
+  cifs_do_rename // 这次成功了
 ```
 
 
