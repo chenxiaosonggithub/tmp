@@ -454,6 +454,7 @@ kylinos_vm()
 windows_physical()
 {
 	# 安装windows: https://chenxiaosong.com/src/windows/windows.html
+	# 设置 → 系统 → 多任务处理 → 对齐或按 Alt+Tab 时显示应用中的选项卡 → 不显示选项卡
 	# ThinkPad X390驱动 20Q0（好像不安装也可以）: https://newthink.lenovo.com.cn/driveList.html?selname=ThinkPad%20X390
 	# git（免安装）: https://git-scm.com/install/windows
 	#     双击 C:\Users\chenx\Desktop\chenxiaosong\PortableGit\bin\bash.exe，可固定到任务栏
