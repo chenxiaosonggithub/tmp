@@ -336,6 +336,27 @@ fedora_physical()
 	qemu-img create -f qcow2 image.qcow2 512G
 }
 
+setup_rdp()
+{
+	ls -la ~/.local/share/keyrings/
+	mv ~/.local/share/keyrings ~/.local/share/keyrings.bak
+	mkdir -m 700 ~/.local/share/keyrings
+	ps aux | grep gnome-keyring-daemon
+	pkill -f gnome-keyring-daemon
+	ps aux | grep gnome-keyring-daemon
+	printf '\0' | gnome-keyring-daemon --unlock
+	pkill -f gnome-keyring-daemon
+	ls -la ~/.local/share/keyrings/
+	sudo reboot
+
+	grdctl rdp enable
+	grdctl rdp set-credentials chenxiaosong 544301
+	grdctl rdp disable-view-only
+	systemctl --user restart gnome-remote-desktop.service
+	grdctl status
+	systemctl --user status gnome-remote-desktop.service
+}
+
 ubuntu_physical()
 {
 	install_linux
@@ -387,6 +408,8 @@ EOF
 
 	ln -s /home/chenxiaosong/sw/Antigravity-IDE/bin/antigravity-ide /home/chenxiaosong/antigravity-ide
 	ln -s /home/chenxiaosong/sw/VSCode-linux-x64/bin/code /home/chenxiaosong/vscode
+
+	setup_rdp
 }
 
 kylinos_install_wireshark()
