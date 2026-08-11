@@ -383,6 +383,9 @@ EOF
 	tip_perm
 	install_code_server
 	# cfg_9p
+
+	ln -s /home/chenxiaosong/sw/Antigravity-IDE/bin/antigravity-ide /home/chenxiaosong/antigravity-ide
+	ln -s /home/chenxiaosong/sw/VSCode-linux-x64/bin/code /home/chenxiaosong/vscode
 }
 
 kylinos_install_wireshark()
