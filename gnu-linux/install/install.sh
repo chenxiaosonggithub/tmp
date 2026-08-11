@@ -62,7 +62,7 @@ add_swap()
 
 setup_nginx()
 {
-	htpasswd -c /etc/nginx/.htpasswd chenxiaosong
+	sudo htpasswd -c /etc/nginx/.htpasswd chenxiaosong
 }
 
 physical_common()
@@ -72,15 +72,15 @@ physical_common()
 	cp_config_file
 	clone_all_repos
 
-	sudo mv /usr/sbin/reboot /usr/sbin/reboot.real
-	sudo mv /usr/sbin/poweroff /usr/sbin/poweroff.real
-	sudo mv /usr/sbin/shutdown /usr/sbin/shutdown.real
-	sudo cp /home/chenxiaosong/code/tmp/gnu-linux/install/systemctl/poweroff /usr/sbin/poweroff
-	sudo sed 's/poweroff/reboot/g' /usr/sbin/poweroff | sudo tee /usr/sbin/reboot
-	sudo sed 's/poweroff/shutdown/g' /usr/sbin/poweroff | sudo tee /usr/sbin/shutdown
-	sudo chmod 700 /usr/sbin/poweroff
-	sudo chmod 700 /usr/sbin/reboot
-	sudo chmod 700 /usr/sbin/shutdown
+	# sudo mv /usr/sbin/reboot /usr/sbin/reboot.real
+	# sudo mv /usr/sbin/poweroff /usr/sbin/poweroff.real
+	# sudo mv /usr/sbin/shutdown /usr/sbin/shutdown.real
+	# sudo cp /home/chenxiaosong/code/tmp/gnu-linux/install/systemctl/poweroff /usr/sbin/poweroff
+	# sudo sed 's/poweroff/reboot/g' /usr/sbin/poweroff | sudo tee /usr/sbin/reboot
+	# sudo sed 's/poweroff/shutdown/g' /usr/sbin/poweroff | sudo tee /usr/sbin/shutdown
+	# sudo chmod 700 /usr/sbin/poweroff
+	# sudo chmod 700 /usr/sbin/reboot
+	# sudo chmod 700 /usr/sbin/shutdown
 	sudo chmod 700 /bin/systemctl
 
 	echo "source /usr/share/bash-completion/completions/git" >> ~/.bashrc
@@ -92,7 +92,7 @@ physical_common()
 	# 172.21.20.210
 	bash /home/chenxiaosong/code/tmp/gnu-linux/install/aorus/ln.sh
 
-	cp /home/chenxiaosong/code/tmp/gnu-linux/install/chown-blog.sh ~
+	ln -s /home/chenxiaosong/code/tmp/gnu-linux/install/chown-blog.sh ~/chown-blog.sh
 
 	sudo cp /home/chenxiaosong/code/tmp/gnu-linux/install/smb.conf /etc/samba/
 	# samba新增用户
@@ -353,6 +353,7 @@ ubuntu_physical()
 
 	cfg_proxy
 	sudo apt update -y
+	# docker: https://docs.docker.com/engine/install/ubuntu/
 	sudo apt install ca-certificates curl -y
 	sudo install -m 0755 -d /etc/apt/keyrings
 	sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc # 可能要尝试多次
@@ -457,6 +458,7 @@ kylinos_vm()
 windows_physical()
 {
 	# 安装windows: https://chenxiaosong.com/src/windows/windows.html
+	# 设置 → 系统 → 多任务处理 → 对齐或按 Alt+Tab 时显示应用中的选项卡 → 不显示选项卡
 	# ThinkPad X390驱动 20Q0（好像不安装也可以）: https://newthink.lenovo.com.cn/driveList.html?selname=ThinkPad%20X390
 	# git（免安装）: https://git-scm.com/install/windows
 	#     双击 C:\Users\chenx\Desktop\chenxiaosong\PortableGit\bin\bash.exe，可固定到任务栏
