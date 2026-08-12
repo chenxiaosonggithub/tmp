@@ -178,6 +178,13 @@ install_code_server()
 	# 浏览器输入http://localhost:8888（8888是config.yaml配置文件中配置的端口）
 }
 
+setup_iptable()
+{
+	dnf install iptables-nft -y
+	vim /etc/qemu-ifup # iptables-restore 替换成 iptables-nft-restore
+	# 然后重启docker fedora
+}
+
 fedora_docker()
 {
 	sudo dnf group install development-tools -y
@@ -210,6 +217,8 @@ fedora_docker()
 	cfg_qemu
 	cp_config_file
 	docker_common
+
+	setup_iptable
 }
 
 ubuntu_docker()
@@ -364,6 +373,7 @@ ubuntu_physical()
 	sudo apt-get update -y
 	# fuse 在ubuntu24.04上不能安装，否则图形界面就芭比q了
 	sudo apt install -y openssh-server net-tools git virt-manager vim tmux pm-utils samba virtiofsd cifs-utils wakeonlan vim-gtk3 remmina
+	sudo apt install -y libvirt-daemon-system
 	sudo apt install -y nginx pandoc jq apache2-utils
 	sudo apt install bash-completion -y
 	sudo systemctl enable ssh
@@ -506,6 +516,12 @@ windows_physical()
 	bash copy-to-home.sh
 }
 
+windows_vm()
+{
+	# virt-manager中安装win11，默认分辨率太低，还要在windows中安装Windows SPICE Guest Tools
+	# 	参考 https://chenxiaosong.com/src/windows/windows.html
+}
+
 # 请根据发行版和机器查看以下函数
 # fedora_physical
 # fedora_docker
@@ -515,4 +531,5 @@ windows_physical()
 # kylinos_physical
 # kylinos_vm
 # windows_physical
+# windows_vm
 
