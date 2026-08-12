@@ -181,6 +181,7 @@ install_code_server()
 setup_iptable()
 {
 	dnf install iptables-nft -y
+	cp /etc/qemu-ifup /etc/qemu-ifup.bak
 	vim /etc/qemu-ifup # iptables-restore 替换成 iptables-nft-restore
 	# 然后重启docker fedora
 }
