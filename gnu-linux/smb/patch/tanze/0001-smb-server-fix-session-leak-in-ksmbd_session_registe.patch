@@ -1,0 +1,57 @@
+From 22022ac6137285b8653022def41fc110b32671d7 Mon Sep 17 00:00:00 2001
+From: Ze Tan <tanze@kylinos.cn>
+Date: Tue, 4 Aug 2026 16:55:25 +0800
+Subject: [PATCH 1/4] smb/server: fix session leak in ksmbd_session_register()
+
+See the procedure below:
+
+  smb2_sess_setup
+    ksmbd_smb2_session_create
+      __session_create
+        atomic_set(&sess->refcnt, 2)
+        hash_add(sessions_table, &sess->hlist, sess->id)
+    ksmbd_session_register
+      xa_store(&conn->sessions, sess->id, sess) // fail
+    ksmbd_user_session_put
+      atomic_dec(&sess->refcnt) // refcnt is 1, session is not freed
+
+Remove the session from sessions_table and drop its table reference if
+xa_store() fails.
+
+Fixes: f5c779b7ddbd ("ksmbd: fix racy issue from session setup and logoff")
+Signed-off-by: Ze Tan <tanze@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/mgmt/user_session.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/fs/smb/server/mgmt/user_session.c b/fs/smb/server/mgmt/user_session.c
+index f4675c457714..eaa0f29a8415 100644
+--- a/fs/smb/server/mgmt/user_session.c
++++ b/fs/smb/server/mgmt/user_session.c
+@@ -449,10 +449,21 @@ static void ksmbd_expire_session(struct ksmbd_conn *conn)
+ int ksmbd_session_register(struct ksmbd_conn *conn,
+ 			   struct ksmbd_session *sess)
+ {
++	int ret;
++
+ 	sess->dialect = conn->dialect;
+ 	memcpy(sess->ClientGUID, conn->ClientGUID, SMB2_CLIENT_GUID_SIZE);
+ 	ksmbd_expire_session(conn);
+-	return xa_err(xa_store(&conn->sessions, sess->id, sess, KSMBD_DEFAULT_GFP));
++	ret = xa_err(xa_store(&conn->sessions, sess->id, sess,
++			      KSMBD_DEFAULT_GFP));
++	if (ret) {
++		down_write(&sessions_table_lock);
++		hash_del(&sess->hlist);
++		up_write(&sessions_table_lock);
++		ksmbd_user_session_put(sess);
++	}
++
++	return ret;
+ }
+ 
+ static int ksmbd_chann_del(struct ksmbd_conn *conn, struct ksmbd_session *sess)
+-- 
+2.55.0
+

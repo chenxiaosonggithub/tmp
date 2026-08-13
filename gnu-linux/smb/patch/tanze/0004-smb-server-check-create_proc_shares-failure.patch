@@ -1,0 +1,33 @@
+From 853493daad10713db0dfcbec1f76ff4b4205a380 Mon Sep 17 00:00:00 2001
+From: Ze Tan <tanze@kylinos.cn>
+Date: Mon, 10 Aug 2026 16:13:27 +0800
+Subject: [PATCH 4/4] smb/server: check create_proc_shares() failure
+
+create_proc_shares() returns -ENOMEM when its procfs entry
+cannot be created.
+
+Fixes: b02a77726ed0 ("ksmbd: add procfs monitoring for active shares")
+Signed-off-by: Ze Tan <tanze@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/server.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/fs/smb/server/server.c b/fs/smb/server/server.c
+index 5418b81a83b5..fbe7a6308131 100644
+--- a/fs/smb/server/server.c
++++ b/fs/smb/server/server.c
+@@ -627,7 +627,9 @@ static int __init ksmbd_server_init(void)
+ 	if (ret)
+ 		goto err_proc_cleanup;
+ 
+-	create_proc_shares();
++	ret = create_proc_shares();
++	if (ret)
++		goto err_proc_cleanup;
+ 
+ 	ksmbd_server_tcp_callbacks_init();
+ 
+-- 
+2.55.0
+

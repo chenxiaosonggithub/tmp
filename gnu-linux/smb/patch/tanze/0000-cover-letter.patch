@@ -1,0 +1,19 @@
+From 853493daad10713db0dfcbec1f76ff4b4205a380 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Thu, 13 Aug 2026 15:31:13 +0000
+Subject: [PATCH 0/4] ksmbd: fix some bugs
+
+Ze Tan (4):
+  smb/server: fix session leak in ksmbd_session_register()
+  smb/server: fix tree connection leak in smb2_tree_connect()
+  smb/server: check create_proc_sessions() failure
+  smb/server: check create_proc_shares() failure
+
+ fs/smb/server/mgmt/user_session.c | 13 ++++++++++++-
+ fs/smb/server/server.c            |  9 +++++++--
+ fs/smb/server/smb2pdu.c           | 10 +++++++++-
+ 3 files changed, 28 insertions(+), 4 deletions(-)
+
+-- 
+2.55.0
+

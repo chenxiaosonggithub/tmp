@@ -1,0 +1,34 @@
+From a5e9f8e043786d41004ffc66623ba70cec8046fe Mon Sep 17 00:00:00 2001
+From: Ze Tan <tanze@kylinos.cn>
+Date: Mon, 10 Aug 2026 16:13:27 +0800
+Subject: [PATCH 3/4] smb/server: check create_proc_sessions() failure
+
+create_proc_sessions() returns -ENOMEM when its procfs entry
+cannot be created.
+
+Fixes: b38f99c1217a ("ksmbd: add procfs interface for runtime monitoring and statistics")
+Signed-off-by: Ze Tan <tanze@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/server.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/fs/smb/server/server.c b/fs/smb/server/server.c
+index 7c4d42e59c1c..5418b81a83b5 100644
+--- a/fs/smb/server/server.c
++++ b/fs/smb/server/server.c
+@@ -623,7 +623,10 @@ static int __init ksmbd_server_init(void)
+ 	ret = ksmbd_proc_init();
+ 	if (ret)
+ 		goto err_unregister;
+-	create_proc_sessions();
++	ret = create_proc_sessions();
++	if (ret)
++		goto err_proc_cleanup;
++
+ 	create_proc_shares();
+ 
+ 	ksmbd_server_tcp_callbacks_init();
+-- 
+2.55.0
+
