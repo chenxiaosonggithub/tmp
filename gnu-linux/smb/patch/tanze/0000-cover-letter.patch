@@ -1,18 +1,28 @@
-From 853493daad10713db0dfcbec1f76ff4b4205a380 Mon Sep 17 00:00:00 2001
+From fe2fe5e0202c6e80c8316dd400b4f3f799259977 Mon Sep 17 00:00:00 2001
 From: Ze Tan <tanze@kylinos.cn>
-Date: Thu, 13 Aug 2026 15:31:13 +0000
-Subject: [PATCH 0/4] ksmbd: fix some bugs
+Date: Fri, 14 Aug 2026 12:54:29 +0000
+Subject: [PATCH v2 0/4] smb/server: fix some bugs
+
+v1->v2:
+  - Patch #01: Print a warning instead of aborting initialization when ksmbd_proc_create() fails.
+  - Add patch #02 #03 #04.
+
+v1: https://lore.kernel.org/linux-cifs/cover.1786674373.git.tanze@kylinos.cn/
+
+The following patches from v1 have already been merged into ksmbd.git ksmbd-for-next-next:
+  - smb/server: fix tree connection leak in smb2_tree_connect()
 
 Ze Tan (4):
+  smb/server: warn if ksmbd_proc_create() fails
   smb/server: fix session leak in ksmbd_session_register()
-  smb/server: fix tree connection leak in smb2_tree_connect()
-  smb/server: check create_proc_sessions() failure
-  smb/server: check create_proc_shares() failure
+  smb/server: update session counter under sessions table lock
+  smb/server: fix session counter on session removal
 
- fs/smb/server/mgmt/user_session.c | 13 ++++++++++++-
- fs/smb/server/server.c            |  9 +++++++--
- fs/smb/server/smb2pdu.c           | 10 +++++++++-
- 3 files changed, 28 insertions(+), 4 deletions(-)
+ fs/smb/server/connection.c        |  3 ++-
+ fs/smb/server/mgmt/user_session.c | 32 +++++++++++++++++++++++++------
+ fs/smb/server/server.c            |  8 ++++++--
+ fs/smb/server/vfs_cache.c         |  6 ++++--
+ 4 files changed, 38 insertions(+), 11 deletions(-)
 
 -- 
 2.55.0

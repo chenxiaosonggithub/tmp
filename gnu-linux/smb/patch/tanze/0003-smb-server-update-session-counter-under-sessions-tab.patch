@@ -1,0 +1,37 @@
+From 2aa64387f9a273cd95d7f637de1ddb89b6231c5d Mon Sep 17 00:00:00 2001
+From: Ze Tan <tanze@kylinos.cn>
+Date: Fri, 14 Aug 2026 16:53:30 +0800
+Subject: [PATCH v2 3/4] smb/server: update session counter under sessions
+ table lock
+
+KSMBD_COUNTER_SESSIONS tracks sessions published in sessions_table.
+Increment it while holding sessions_table_lock so publishing a session and
+updating the counter happen together.
+
+Fixes: b38f99c1217a ("ksmbd: add procfs interface for runtime monitoring and statistics")
+Signed-off-by: Ze Tan <tanze@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/mgmt/user_session.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/smb/server/mgmt/user_session.c b/fs/smb/server/mgmt/user_session.c
+index 0fc26012dbbb..f023e0d2b8f0 100644
+--- a/fs/smb/server/mgmt/user_session.c
++++ b/fs/smb/server/mgmt/user_session.c
+@@ -733,11 +733,11 @@ static struct ksmbd_session *__session_create(int protocol)
+ 
+ 	down_write(&sessions_table_lock);
+ 	hash_add(sessions_table, &sess->hlist, sess->id);
++	ksmbd_counter_inc(KSMBD_COUNTER_SESSIONS);
+ 	up_write(&sessions_table_lock);
+ 
+ 	if (create_proc_session(sess))
+ 		pr_warn_ratelimited("Unable to create session %llu procfs entry\n", sess->id);
+-	ksmbd_counter_inc(KSMBD_COUNTER_SESSIONS);
+ 	return sess;
+ 
+ error:
+-- 
+2.55.0
+
