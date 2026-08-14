@@ -1,0 +1,489 @@
+[   84.664555] ksmbd: Not allow lock operation on exclusive lock range
+[   84.665590] ksmbd: Not allow lock operation on exclusive lock range
+[   84.714681] ksmbd: Try to unlock nolocked range
+[   84.740623] ksmbd: Try to unlock nolocked range
+[   84.742143] ksmbd: Not allow lock operation on exclusive lock range
+[   84.764851] ksmbd: Try to unlock nolocked range
+[   84.765769] ksmbd: Not allow lock operation on exclusive lock range
+[   84.784600] ksmbd: Try to unlock nolocked range
+[   84.786830] ksmbd: Try to unlock nolocked range
+[   84.787325] ksmbd: Try to unlock nolocked range
+[   84.789159] ksmbd: Not allow lock operation on exclusive lock range
+[   84.804530] ksmbd: Not allow lock operation on exclusive lock range
+[   84.820799] ksmbd: Try to unlock nolocked range
+[   84.837724] ksmbd: Try to unlock nolocked range
+[   84.864999] ksmbd: Try to unlock nolocked range
+[   84.866540] ksmbd: Not allow lock operation on exclusive lock range
+[   84.887929] ksmbd: Not allow lock operation on exclusive lock range
+[   84.925672] ksmbd: Try to unlock nolocked range
+[   84.936855] ksmbd: Try to unlock nolocked range
+[   84.944445] ksmbd: Not allow lock operation on exclusive lock range
+[   84.994723] ksmbd: Try to unlock nolocked range
+[   85.019832] ksmbd: Try to unlock nolocked range
+[   85.034808] ksmbd: Try to unlock nolocked range
+[   85.050655] ksmbd: Try to unlock nolocked range
+[   85.071336] ksmbd: Try to unlock nolocked range
+[   85.176775] ksmbd: Failed to send message: -32
+[   85.180491] ksmbd: Try to unlock nolocked range
+[   85.183136] ksmbd: Not allow lock operation on exclusive lock range
+[   85.194585] ksmbd: Try to unlock nolocked range
+[   85.196155] ksmbd: Try to unlock nolocked range
+[   85.216274] ksmbd: Not allow lock operation on exclusive lock range
+[   85.226793] ksmbd: Try to unlock nolocked range
+[   85.261287] ksmbd: Try to unlock nolocked range
+[   85.263395] ksmbd: Try to unlock nolocked range
+[   85.265057] ksmbd: Not allow lock operation on exclusive lock range
+[   85.321359] ksmbd: Not allow lock operation on exclusive lock range
+[   85.331270] ksmbd: Try to unlock nolocked range
+[   85.371560] ksmbd: Failed to send message: -32
+[   85.371601] ksmbd: Failed to send message: -32
+[   85.371648] ksmbd: Failed to send message: -32
+[   85.372321] ksmbd: Failed to send message: -32
+[   85.373672] ksmbd: Failed to send message: -32
+[   85.374293] ksmbd: Failed to send message: -32
+[   85.374451] ksmbd: Failed to send message: -32
+[   85.374512] ksmbd: Failed to send message: -32
+[   85.374563] ksmbd: Failed to send message: -32
+[   85.379029] ksmbd: Failed to send message: -32
+[   85.387278] ksmbd: Try to unlock nolocked range
+[   85.446270] ksmbd: Not allow lock operation on exclusive lock range
+[   85.451452] ksmbd: Try to unlock nolocked range
+[   85.452300] ksmbd: Failed to send message: -32
+[   85.453104] ksmbd: Failed to send message: -32
+[   85.453472] ksmbd: Failed to send message: -32
+[   85.453501] ksmbd: Failed to send message: -32
+[   85.453511] ksmbd: Failed to send message: -32
+[   85.453537] ksmbd: Failed to send message: -32
+[   85.453827] ksmbd: Failed to send message: -32
+[   85.455158] ksmbd: Failed to send message: -32
+[   85.455844] ksmbd: Failed to send message: -32
+[   85.455899] ksmbd: Failed to send message: -32
+[   85.466410] ksmbd: Try to unlock nolocked range
+[   85.501952] ksmbd: Failed to send message: -32
+[   85.502047] ksmbd: Failed to send message: -32
+[   85.502067] ksmbd: Failed to send message: -32
+[   85.502110] ksmbd: Failed to send message: -32
+[   85.502148] ksmbd: Failed to send message: -32
+[   85.502168] ksmbd: Failed to send message: -32
+[   85.502182] ksmbd: Failed to send message: -32
+[   85.502209] ksmbd: Failed to send message: -32
+[   85.502790] ksmbd: Failed to send message: -32
+[   85.504119] ksmbd: Failed to send message: -32
+[   85.504471] ksmbd: Try to unlock nolocked range
+[   85.504616] ksmbd: Not allow lock operation on exclusive lock range
+[   85.504813] ksmbd: Failed to send message: -32
+[   85.512576] ksmbd: Failed to send message: -32
+[   85.512619] ksmbd: Failed to send message: -32
+[   85.551928] ksmbd: Not allow lock operation on exclusive lock range
+[   85.555888] ksmbd: Try to unlock nolocked range
+[   85.566591] ksmbd: Try to unlock nolocked range
+[   85.573660] ksmbd: Try to unlock nolocked range
+[   85.575184] ksmbd: Not allow lock operation on exclusive lock range
+[   85.586589] ksmbd: Try to unlock nolocked range
+[   85.588063] ksmbd: Not allow lock operation on exclusive lock range
+[   85.637455] ksmbd: Try to unlock nolocked range
+[   85.671984] ksmbd: Try to unlock nolocked range
+[   85.683937] ksmbd: Try to unlock nolocked range
+[   85.685626] ksmbd: Not allow lock operation on exclusive lock range
+[   85.695426] ksmbd: Try to unlock nolocked range
+[   85.697101] ksmbd: Not allow lock operation on exclusive lock range
+[   85.717477] ksmbd: Try to unlock nolocked range
+[   85.718964] ksmbd: Not allow lock operation on exclusive lock range
+[   85.722328] ksmbd: Not allow lock operation on exclusive lock range
+[   85.738473] ksmbd: Not allow lock operation on exclusive lock range
+[   85.775389] ksmbd: Try to unlock nolocked range
+[   85.776878] ksmbd: Not allow lock operation on exclusive lock range
+[   85.804331] ksmbd: Failed to send message: -32
+[   85.805158] ksmbd: Failed to send message: -32
+[   85.807839] ksmbd: Failed to send message: -32
+[   85.807863] ksmbd: Failed to send message: -32
+[   85.809928] ksmbd: Failed to send message: -32
+[   85.809966] ksmbd: Failed to send message: -32
+[   85.809999] ksmbd: Failed to send message: -32
+[   85.810024] ksmbd: Failed to send message: -32
+[   85.810039] ksmbd: Failed to send message: -32
+[   85.810065] ksmbd: Failed to send message: -32
+[   85.810093] ksmbd: Failed to send message: -32
+[   85.810234] ksmbd: Failed to send message: -32
+[   85.816632] ksmbd: Try to unlock nolocked range
+[   85.817715] ksmbd: Failed to send message: -32
+[   85.817781] ksmbd: Failed to send message: -32
+[   85.817828] ksmbd: Failed to send message: -32
+[   85.817855] ksmbd: Failed to send message: -32
+[   85.817890] ksmbd: Failed to send message: -32
+[   85.819149] ksmbd: Not allow lock operation on exclusive lock range
+[   85.823803] ksmbd: Try to unlock nolocked range
+[   85.836751] ksmbd: Not allow lock operation on exclusive lock range
+[   85.853588] ksmbd: Not allow lock operation on exclusive lock range
+[   85.916953] ksmbd: Try to unlock nolocked range
+[   85.918653] ksmbd: Not allow lock operation on exclusive lock range
+[   85.944989] ksmbd: Not allow lock operation on exclusive lock range
+[   85.962233] ksmbd: Not allow lock operation on exclusive lock range
+[   85.973783] ksmbd: Try to unlock nolocked range
+[   85.997120] ksmbd: Try to unlock nolocked range
+[   86.024100] ksmbd: Try to unlock nolocked range
+[   86.025667] ksmbd: Not allow lock operation on exclusive lock range
+[   86.025817] ksmbd: Not allow lock operation on exclusive lock range
+[   86.066852] ksmbd: Try to unlock nolocked range
+[   86.074123] ksmbd: Not allow lock operation on exclusive lock range
+[   86.110393] ksmbd: Failed to send message: -32
+[   86.110400] ksmbd: Failed to send message: -32
+[   86.110416] ksmbd: Failed to send message: -32
+[   86.110426] ksmbd: Failed to send message: -32
+[   86.110498] ksmbd: Failed to send message: -32
+[   86.110543] ksmbd: Failed to send message: -32
+[   86.110574] ksmbd: Failed to send message: -32
+[   86.110575] ksmbd: Failed to send message: -32
+[   86.111262] ksmbd: Failed to send message: -32
+[   86.111316] ksmbd: Failed to send message: -32
+[   86.111366] ksmbd: Failed to send message: -32
+[   86.111401] ksmbd: Failed to send message: -32
+[   86.111459] ksmbd: Failed to send message: -32
+[   86.111492] ksmbd: Failed to send message: -32
+[   86.111494] ksmbd: Failed to send message: -32
+[   86.111503] ksmbd: Failed to send message: -32
+[   86.112726] ksmbd: Failed to send message: -32
+[   86.195469] ksmbd: Try to unlock nolocked range
+[   86.212439] ksmbd: Try to unlock nolocked range
+[   86.262868] ksmbd: Try to unlock nolocked range
+[   86.274143] ksmbd: Try to unlock nolocked range
+[   86.275646] ksmbd: Try to unlock nolocked range
+[   86.342916] ksmbd: Try to unlock nolocked range
+[   86.379254] ksmbd: Try to unlock nolocked range
+[   86.408620] ksmbd: Try to unlock nolocked range
+[   86.410078] ksmbd: Not allow lock operation on exclusive lock range
+[   86.418283] ksmbd: Failed to send message: -32
+[   86.418289] ksmbd: Failed to send message: -32
+[   86.418332] ksmbd: Failed to send message: -32
+[   86.418339] ksmbd: Failed to send message: -32
+[   86.418372] ksmbd: Failed to send message: -32
+[   86.418396] ksmbd: Failed to send message: -32
+[   86.418441] ksmbd: Failed to send message: -32
+[   86.418469] ksmbd: Failed to send message: -32
+[   86.419104] ksmbd: Failed to send message: -32
+[   86.419141] ksmbd: Failed to send message: -32
+[   86.419233] ksmbd: Failed to send message: -32
+[   86.419290] ksmbd: Failed to send message: -32
+[   86.419327] ksmbd: Failed to send message: -32
+[   86.419331] ksmbd: Failed to send message: -32
+[   86.419346] ksmbd: Failed to send message: -32
+[   86.419363] ksmbd: Failed to send message: -32
+[   86.419573] ksmbd: Failed to send message: -32
+[   86.419610] ksmbd: Failed to send message: -32
+[   86.419658] ksmbd: Failed to send message: -32
+[   86.419775] ksmbd: Failed to send message: -32
+[   86.419801] ksmbd: Failed to send message: -32
+[   86.419870] ksmbd: Failed to send message: -32
+[   86.420465] ksmbd: Failed to send message: -32
+[   86.455609] ksmbd: Try to unlock nolocked range
+[   86.457220] ksmbd: Not allow lock operation on exclusive lock range
+[   86.509489] ksmbd: Not allow lock operation on exclusive lock range
+[   86.524339] ksmbd: Not allow lock operation on exclusive lock range
+[   86.528598] ksmbd: Try to unlock nolocked range
+[   86.530041] ksmbd: Not allow lock operation on exclusive lock range
+[   86.537555] ksmbd: Not allow lock operation on exclusive lock range
+[   86.538447] ksmbd: Failed to send message: -32
+[   86.538455] ksmbd: Failed to send message: -32
+[   86.538486] ksmbd: Failed to send message: -32
+[   86.538490] ksmbd: Failed to send message: -32
+[   86.538516] ksmbd: Failed to send message: -32
+[   86.538554] ksmbd: Failed to send message: -32
+[   86.538582] ksmbd: Failed to send message: -32
+[   86.538629] ksmbd: Failed to send message: -32
+[   86.538642] ksmbd: Not allow lock operation on exclusive lock range
+[   86.538658] ksmbd: Failed to send message: -32
+[   86.546600] ksmbd: Failed to send message: -32
+[   86.546657] ksmbd: Failed to send message: -32
+[   86.546693] ksmbd: Failed to send message: -32
+[   86.546729] ksmbd: Failed to send message: -32
+[   86.546782] ksmbd: Failed to send message: -32
+[   86.546823] ksmbd: Failed to send message: -32
+[   86.546824] ksmbd: Failed to send message: -32
+[   86.546848] ksmbd: Failed to send message: -32
+[   86.546869] ksmbd: Failed to send message: -32
+[   86.546922] ksmbd: Failed to send message: -32
+[   86.546960] ksmbd: Failed to send message: -32
+[   86.547011] ksmbd: Failed to send message: -32
+[   86.547016] ksmbd: Failed to send message: -32
+[   86.547030] ksmbd: Failed to send message: -32
+[   86.547060] ksmbd: Failed to send message: -32
+[   86.547084] ksmbd: Failed to send message: -32
+[   86.589091] ksmbd: Failed to send message: -32
+[   86.589128] ksmbd: Failed to send message: -32
+[   86.589138] ksmbd: Failed to send message: -32
+[   86.589217] ksmbd: Failed to send message: -32
+[   86.589268] ksmbd: Failed to send message: -32
+[   86.589298] ksmbd: Failed to send message: -32
+[   86.589498] ksmbd: Failed to send message: -32
+[   86.589538] ksmbd: Failed to send message: -32
+[   86.589597] ksmbd: Failed to send message: -32
+[   86.589614] ksmbd: Failed to send message: -32
+[   86.589665] ksmbd: Failed to send message: -32
+[   86.589680] ksmbd: Failed to send message: -32
+[   86.589710] ksmbd: Failed to send message: -32
+[   86.589718] ksmbd: Failed to send message: -32
+[   86.589727] ksmbd: Failed to send message: -32
+[   86.593080] ksmbd: Try to unlock nolocked range
+[   86.593846] ksmbd: Failed to send message: -32
+[   86.595304] ksmbd: Not allow lock operation on exclusive lock range
+[   86.629541] ksmbd: Try to unlock nolocked range
+[   86.631003] ksmbd: Not allow lock operation on exclusive lock range
+[   86.705780] ksmbd: Try to unlock nolocked range
+[   86.713317] ksmbd: Try to unlock nolocked range
+[   86.737762] ksmbd: Try to unlock nolocked range
+[   86.755950] ksmbd: Try to unlock nolocked range
+[   86.757514] ksmbd: Not allow lock operation on exclusive lock range
+[   86.773734] ksmbd: Try to unlock nolocked range
+[   86.787774] ksmbd: Try to unlock nolocked range
+[   86.817753] ksmbd: Try to unlock nolocked range
+[   86.819393] ksmbd: Not allow lock operation on exclusive lock range
+[   86.854633] ksmbd: Try to unlock nolocked range
+[   86.868186] ksmbd: Try to unlock nolocked range
+[   86.879729] ksmbd: Try to unlock nolocked range
+[   86.916297] ksmbd: Not allow lock operation on exclusive lock range
+[   86.929637] ksmbd: Not allow lock operation on exclusive lock range
+[   86.929863] ksmbd: Try to unlock nolocked range
+[   86.949765] ksmbd: Not allow lock operation on exclusive lock range
+[   87.050173] ksmbd: Try to unlock nolocked range
+[   87.051679] ksmbd: Not allow lock operation on exclusive lock range
+[   87.097955] ksmbd: Not allow lock operation on exclusive lock range
+[   87.104818] ksmbd: Try to unlock nolocked range
+[   87.106317] ksmbd: Not allow lock operation on exclusive lock range
+[   87.154999] ksmbd: Try to unlock nolocked range
+[   87.166693] ksmbd: Not allow lock operation on exclusive lock range
+[   87.179865] ksmbd: Try to unlock nolocked range
+[   87.200003] ksmbd: Try to unlock nolocked range
+[   87.204035] ksmbd: Try to unlock nolocked range
+[   87.205613] ksmbd: Not allow lock operation on exclusive lock range
+[   87.232104] ksmbd: Not allow lock operation on exclusive lock range
+[   87.280468] ksmbd: Try to unlock nolocked range
+[   87.282087] ksmbd: Not allow lock operation on exclusive lock range
+[   87.288362] ksmbd: Try to unlock nolocked range
+[   87.290010] ksmbd: Not allow lock operation on exclusive lock range
+[   87.300686] ksmbd: Not allow lock operation on exclusive lock range
+[   87.307640] ksmbd: Not allow lock operation on exclusive lock range
+[   87.338782] ksmbd: Not allow lock operation on exclusive lock range
+[   87.348175] ksmbd: Try to unlock nolocked range
+[   87.349702] ksmbd: Not allow lock operation on exclusive lock range
+[   87.360548] ksmbd: Try to unlock nolocked range
+[   87.362052] ksmbd: Not allow lock operation on exclusive lock range
+[   87.410941] ksmbd: Try to unlock nolocked range
+[   87.412459] ksmbd: Not allow lock operation on exclusive lock range
+[   87.428355] ksmbd: Try to unlock nolocked range
+[   87.429868] ksmbd: Not allow lock operation on exclusive lock range
+[   87.430250] ksmbd: Try to unlock nolocked range
+[   87.433218] ksmbd: Not allow lock operation on exclusive lock range
+[   87.458230] ksmbd: Failed to send message: -32
+[   87.458261] ksmbd: Failed to send message: -32
+[   87.458300] ksmbd: Failed to send message: -32
+[   87.458368] ksmbd: Failed to send message: -32
+[   87.458405] ksmbd: Failed to send message: -32
+[   87.458420] ksmbd: Failed to send message: -32
+[   87.458447] ksmbd: Failed to send message: -32
+[   87.467873] ksmbd: Failed to send message: -32
+[   87.469277] ksmbd: Failed to send message: -32
+[   87.469326] ksmbd: Failed to send message: -32
+[   87.469485] ksmbd: Failed to send message: -32
+[   87.469515] ksmbd: Failed to send message: -32
+[   87.470668] ksmbd: Failed to send message: -32
+[   87.472166] ksmbd: Failed to send message: -32
+[   87.472177] ksmbd: Failed to send message: -32
+[   87.472196] ksmbd: Failed to send message: -32
+[   87.472211] ksmbd: Failed to send message: -32
+[   87.472214] ksmbd: Failed to send message: -32
+[   87.472263] ksmbd: Failed to send message: -32
+[   87.472305] ksmbd: Failed to send message: -32
+[   87.472332] ksmbd: Failed to send message: -32
+[   87.472346] ksmbd: Failed to send message: -32
+[   87.472386] ksmbd: Failed to send message: -32
+[   87.472452] ksmbd: Failed to send message: -32
+[   87.472484] ksmbd: Failed to send message: -32
+[   87.472733] ksmbd: Failed to send message: -32
+[   87.472783] ksmbd: Failed to send message: -32
+[   87.472956] ksmbd: Failed to send message: -32
+[   87.472978] ksmbd: Failed to send message: -32
+[   87.473014] ksmbd: Failed to send message: -32
+[   87.473044] ksmbd: Failed to send message: -32
+[   87.475203] ksmbd: Failed to send message: -32
+[   87.481410] ksmbd: Try to unlock nolocked range
+[   87.482423] ksmbd: Failed to send message: -32
+[   87.482472] ksmbd: Failed to send message: -32
+[   87.482517] ksmbd: Failed to send message: -32
+[   87.482567] ksmbd: Failed to send message: -32
+[   87.482608] ksmbd: Failed to send message: -32
+[   87.491240] ksmbd: Try to unlock nolocked range
+[   87.491952] ksmbd: Failed to send message: -32
+[   87.496761] ksmbd: Try to unlock nolocked range
+[   87.497241] ksmbd: Failed to send message: -32
+[   87.497299] ksmbd: Failed to send message: -32
+[   87.497323] ksmbd: Failed to send message: -32
+[   87.497332] ksmbd: Failed to send message: -32
+[   87.497365] ksmbd: Failed to send message: -32
+[   87.497875] ksmbd: Failed to send message: -32
+[   87.497923] ksmbd: Failed to send message: -32
+[   87.497961] ksmbd: Failed to send message: -32
+[   87.497992] ksmbd: Failed to send message: -32
+[   87.498002] ksmbd: Failed to send message: -32
+[   87.498060] ksmbd: Failed to send message: -32
+[   87.498077] ksmbd: Failed to send message: -32
+[   87.498173] ksmbd: Failed to send message: -32
+[   87.498203] ksmbd: Failed to send message: -32
+[   87.498261] ksmbd: Failed to send message: -32
+[   87.498474] ksmbd: Failed to send message: -32
+[   87.498482] ksmbd: Failed to send message: -32
+[   87.498508] ksmbd: Failed to send message: -32
+[   87.498526] ksmbd: Failed to send message: -32
+[   87.499210] ksmbd: Failed to send message: -32
+[   87.511313] ksmbd: Try to unlock nolocked range
+[   87.550308] ksmbd: Try to unlock nolocked range
+[   87.557874] ksmbd: Try to unlock nolocked range
+[   87.559615] ksmbd: Not allow lock operation on exclusive lock range
+[   87.602879] ksmbd: Try to unlock nolocked range
+[   87.618629] ksmbd: Try to unlock nolocked range
+[   87.620804] ksmbd: Not allow lock operation on exclusive lock range
+[   87.632034] ksmbd: Try to unlock nolocked range
+[   87.634266] ksmbd: Not allow lock operation on exclusive lock range
+[   87.700986] ksmbd: Try to unlock nolocked range
+[   87.797131] ksmbd: Try to unlock nolocked range
+[   87.798786] ksmbd: Not allow lock operation on exclusive lock range
+[   87.800464] ksmbd: Try to unlock nolocked range
+[   87.801231] ksmbd: Failed to send message: -32
+[   87.802339] ksmbd: Not allow lock operation on exclusive lock range
+[   87.806315] ksmbd: Failed to send message: -32
+[   87.806321] ksmbd: Failed to send message: -32
+[   87.806401] ksmbd: Failed to send message: -32
+[   87.806476] ksmbd: Failed to send message: -32
+[   87.811629] ksmbd: Failed to send message: -32
+[   87.811682] ksmbd: Failed to send message: -32
+[   87.811709] ksmbd: Failed to send message: -32
+[   87.811757] ksmbd: Failed to send message: -32
+[   87.811798] ksmbd: Failed to send message: -32
+[   87.811838] ksmbd: Failed to send message: -32
+[   87.811851] ksmbd: Failed to send message: -32
+[   87.811893] ksmbd: Failed to send message: -32
+[   87.811922] ksmbd: Failed to send message: -32
+[   87.811973] ksmbd: Failed to send message: -32
+[   87.812025] ksmbd: Failed to send message: -32
+[   87.812066] ksmbd: Failed to send message: -32
+[   87.812157] ksmbd: Failed to send message: -32
+[   87.812163] ksmbd: Failed to send message: -32
+[   87.812177] ksmbd: Failed to send message: -32
+[   87.812178] ksmbd: Failed to send message: -32
+[   87.812633] ksmbd: Failed to send message: -32
+[   87.813186] ksmbd: Failed to send message: -32
+[   87.814574] ksmbd: Failed to send message: -32
+[   87.816058] ksmbd: Failed to send message: -32
+[   87.816064] ksmbd: Failed to send message: -32
+[   87.816138] ksmbd: Failed to send message: -32
+[   87.816165] ksmbd: Failed to send message: -32
+[   87.816383] ksmbd: Failed to send message: -32
+[   87.846865] ksmbd: Failed to send message: -32
+[   87.846944] ksmbd: Failed to send message: -32
+[   87.846967] ksmbd: Failed to send message: -32
+[   87.847013] ksmbd: Failed to send message: -32
+[   87.847116] ksmbd: Failed to send message: -32
+[   87.847144] ksmbd: Failed to send message: -32
+[   87.847155] ksmbd: Failed to send message: -32
+[   87.847188] ksmbd: Failed to send message: -32
+[   87.847214] ksmbd: Failed to send message: -32
+[   87.847258] ksmbd: Failed to send message: -32
+[   87.847290] ksmbd: Failed to send message: -32
+[   87.847326] ksmbd: Failed to send message: -32
+[   87.847361] ksmbd: Failed to send message: -32
+[   87.847366] ksmbd: Failed to send message: -32
+[   87.847369] ksmbd: Failed to send message: -32
+[   87.847411] ksmbd: Failed to send message: -32
+[   87.848420] ksmbd: Failed to send message: -32
+[   87.849825] ksmbd: Failed to send message: -32
+[   87.864578] ksmbd: Not allow lock operation on exclusive lock range
+[   87.883687] ksmbd: Not allow lock operation on exclusive lock range
+[   87.883767] ksmbd: Failed to send message: -32
+[   87.883769] ksmbd: Failed to send message: -32
+[   87.883848] ksmbd: Failed to send message: -32
+[   87.883888] ksmbd: Failed to send message: -32
+[   87.884433] ksmbd: Try to unlock nolocked range
+[   87.902006] ksmbd: Not allow lock operation on exclusive lock range
+[   87.920639] ksmbd: Not allow lock operation on exclusive lock range
+[   87.928765] ksmbd: Try to unlock nolocked range
+[   87.933748] ksmbd: Failed to send message: -32
+[   87.933883] ksmbd: Failed to send message: -32
+[   87.933899] ksmbd: Failed to send message: -32
+[   87.933933] ksmbd: Failed to send message: -32
+[   87.933976] ksmbd: Failed to send message: -32
+[   87.944742] ksmbd: Try to unlock nolocked range
+[   87.946242] ksmbd: Not allow lock operation on exclusive lock range
+[   87.951185] ksmbd: Try to unlock nolocked range
+[   87.952676] ksmbd: Not allow lock operation on exclusive lock range
+[   87.975554] ksmbd: Try to unlock nolocked range
+[   87.979205] ksmbd: Try to unlock nolocked range
+[   88.004640] ksmbd: Not allow lock operation on exclusive lock range
+[   88.024586] ksmbd: Not allow lock operation on exclusive lock range
+[   88.024956] ksmbd: Try to unlock nolocked range
+[   88.029316] ksmbd: Not allow lock operation on exclusive lock range
+[   88.040821] ksmbd: Not allow lock operation on exclusive lock range
+[   88.053966] ksmbd: Not allow lock operation on exclusive lock range
+[   88.054937] ksmbd: Try to unlock nolocked range
+[   88.057390] ksmbd: Not allow lock operation on exclusive lock range
+[   88.071435] ksmbd: Try to unlock nolocked range
+[   88.095930] ksmbd: Maximum IP connections exceeded (32/32)
+[   88.105512] ksmbd: Maximum IP connections exceeded (32/32)
+[   88.118169] ------------[ cut here ]------------
+[   88.119560] kernel BUG at fs/locks.c:312!
+[   88.120849] Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
+[   88.122475] CPU: 11 UID: 0 PID: 984 Comm: ksmbd:::ffff:19 Not tainted 7.2.0-rc7+ #2 PREEMPT(full)
+[   88.125014] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.17.0-9.fc43 06/10/2025
+[   88.127515] RIP: 0010:locks_release_private+0x20a/0x210
+[   88.129012] Code: 80 7c 25 00 00 74 08 4c 89 f7 e8 21 96 e1 ff 49 c7 06 00 00 00 00 5b 41 5c 41 5d 41 5e 41 5f 5d e9 ab ff 17 02 cc 0f 0b 0f 0b <0f> 0b 0f 0b 0f 0b 90 90 90 90 90 90
+[   88.134207] RSP: 0018:ffff88810528faf8 EFLAGS: 00010283
+[   88.135716] RAX: ffff888106e1e438 RBX: ffff888108ebc600 RCX: dffffc0000000000
+[   88.137740] RDX: 0000000000000001 RSI: 0000000000000004 RDI: ffff888108ebc600
+[   88.139801] RBP: ffff88810528fb20 R08: ffff8881092cb277 R09: 1ffff1102125964e
+[   88.141857] R10: dffffc0000000000 R11: ffffed102125964f R12: dffffc0000000000
+[   88.143879] R13: ffff8881093a6d00 R14: ffff888108ebc628 R15: dffffc0000000000
+[   88.145939] FS:  0000000000000000(0000) GS:ffff88819474b000(0000) knlGS:0000000000000000
+[   88.148275] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   88.149411] ksmbd: Not allow lock operation on exclusive lock range
+[   88.149892] CR2: 00007ff7501a3008 CR3: 000000010e077000 CR4: 0000000000350ef0
+[   88.152980] Call Trace:
+[   88.153747]  <TASK>
+[   88.154423]  locks_free_lock+0x16/0x30
+[   88.155539]  __ksmbd_close_fd+0x692/0xaf0 [ksmbd]
+[   88.156964]  __close_file_table_ids+0x626/0x730 [ksmbd]
+[   88.158554]  ? __pfx_session_fd_check+0x10/0x10 [ksmbd]
+[   88.160076]  ksmbd_destroy_file_table+0x5a/0xb0 [ksmbd]
+[   88.161381] ksmbd: Maximum IP connections exceeded (32/32)
+[   88.161827]  ksmbd_session_destroy+0x75/0x320 [ksmbd]
+[   88.164952]  ksmbd_sessions_deregister+0x24c/0x530 [ksmbd]
+[   88.166609]  ksmbd_server_terminate_conn+0x16/0x30 [ksmbd]
+[   88.168295]  ksmbd_conn_handler_loop+0xc4d/0xee0 [ksmbd]
+[   88.169878]  ? __kasan_check_read+0x15/0x20
+[   88.171137]  ? __kthread_parkme+0x85/0x160
+[   88.172381]  kthread+0x2e5/0x3c0
+[   88.173362]  ? __pfx_ksmbd_conn_handler_loop+0x10/0x10 [ksmbd]
+[   88.174003] ksmbd: Try to unlock nolocked range
+[   88.175064]  ? __pfx_kthread+0x10/0x10
+[   88.175076]  ret_from_fork+0x168/0x4f0
+[   88.175097]  ? __pfx_kthread+0x10/0x10
+[   88.175104]  ret_from_fork_asm+0x1a/0x30
+[   88.175113]  </TASK>
+[   88.175116] Modules linked in: ksmbd smb_compress smbdirect rdma_cm ib_cm iw_cm ib_core
+[   88.175147] ksmbd: Try to unlock nolocked range
+[   88.176733] ksmbd: Not allow lock operation on exclusive lock range
+[   88.177664]  libarc4 nls_ucs2_utils
+[   88.177720] ---[ end trace 0000000000000000 ]---
+[   88.187806] RIP: 0010:locks_release_private+0x20a/0x210
+[   88.189038] Code: 80 7c 25 00 00 74 08 4c 89 f7 e8 21 96 e1 ff 49 c7 06 00 00 00 00 5b 41 5c 41 5d 41 5e 41 5f 5d e9 ab ff 17 02 cc 0f 0b 0f 0b <0f> 0b 0f 0b 0f 0b 90 90 90 90 90 90
+[   88.191765] ksmbd: Try to unlock nolocked range
+[   88.193475] RSP: 0018:ffff88810528faf8 EFLAGS: 00010283
+[   88.194864] ksmbd: Not allow lock operation on exclusive lock range
+[   88.195989] RAX: ffff888106e1e438 RBX: ffff888108ebc600 RCX: dffffc0000000000
+[   88.199587] RDX: 0000000000000001 RSI: 0000000000000004 RDI: ffff888108ebc600
+[   88.201269] RBP: ffff88810528fb20 R08: ffff8881092cb277 R09: 1ffff1102125964e
+[   88.202393] R10: dffffc0000000000 R11: ffffed102125964f R12: dffffc0000000000
+[   88.203492] R13: ffff8881093a6d00 R14: ffff888108ebc628 R15: dffffc0000000000
+[   88.204568] FS:  0000000000000000(0000) GS:ffff88819474b000(0000) knlGS:0000000000000000
+[   88.205767] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   88.206660] CR2: 00007ff7501a3008 CR3: 000000010e077000 CR4: 0000000000350ef0
+[   88.207758] Kernel panic - not syncing: Fatal exception
+[   88.209172] Kernel Offset: disabled
+[   88.209694] ---[ end Kernel panic - not syncing: Fatal exception ]---
