@@ -74,6 +74,9 @@ case "$1" in
 6)
 	do_tmux qemu02
 	;;
+7)
+	do_tmux qemu03
+	;;
 *)
 	if [ $# -ge 1 ]; then
 		do_tmux $@
