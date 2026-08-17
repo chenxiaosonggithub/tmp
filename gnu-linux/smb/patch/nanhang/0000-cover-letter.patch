@@ -3,16 +3,14 @@ From: Hang Nan <2122295973@qq.com>
 Date: Mon, 17 Aug 2026 09:12:57 +0000
 Subject: [PATCH v3 0/3] ksmbd: bound smb_check_perm_dacl() ACE walks by DACL size
 
-v2->v3:
-  - Split the KUnit tests into patch 1 and patch 2.
-  - Add patch 3.
-  - Build the KUnit tests as a separate .ko instead of linking them into ksmbd.ko.
+Changes in v3:
 
-v2: https://lore.kernel.org/linux-cifs/tencent_9141A44794315FE8DB5711273E6522357E0A@qq.com/
-v1: https://lore.kernel.org/linux-cifs/tencent_1C4F8C48E45F6AE9D165CC17B3F620C40C08@qq.com/
+- Split the KUnit tests into patch 1 and patch 2.
+- Add patch 3.
+- Build the KUnit tests as a separate .ko instead of linking them into ksmbd.ko.
 
-The following patches from v2 have already been merged into ksmbd.git ksmbd-for-next-next:
-  - ksmbd: bound smb_check_perm_dacl() ACE walks by DACL size
+The following patch from v2 have already been merged into #ksmbd-for-next-next:
+https://lore.kernel.org/linux-cifs/CAKYAXd9XHJSNfrFr+F8thNxFnXqGGcKpS1b1qR4DNuu82+j_VQ@mail.gmail.com/
 
 Hang Nan (3):
   ksmbd: add KUnit test for the DACL walk boundary
