@@ -1,4 +1,4 @@
-From cc8e44437cdfa9a8844249c196bc533905859343 Mon Sep 17 00:00:00 2001
+From fcf58e4e184d27699456a29ee5328aaf91a6a400 Mon Sep 17 00:00:00 2001
 From: Hang Nan <2122295973@qq.com>
 Date: Wed, 12 Aug 2026 18:39:46 +0800
 Subject: [PATCH v3 2/3] ksmbd: test smb_check_perm_dacl() DACL walk boundary
@@ -9,6 +9,7 @@ crafted descriptor whose second ACE is beyond the declared DACL size.
 Verify that the out-of-boundary ACE is not selected and access remains
 denied.
 
+Suggested-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Signed-off-by: Hang Nan <2122295973@qq.com>
 Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---

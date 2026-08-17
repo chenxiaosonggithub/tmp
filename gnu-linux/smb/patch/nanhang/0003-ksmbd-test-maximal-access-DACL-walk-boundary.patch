@@ -1,4 +1,4 @@
-From 44393ce2ca7cd1a7fee1e95939154d4227a55389 Mon Sep 17 00:00:00 2001
+From d67d610e012aff21225e98abf5bedddb5678a4da Mon Sep 17 00:00:00 2001
 From: Hang Nan <2122295973@qq.com>
 Date: Wed, 12 Aug 2026 18:39:46 +0800
 Subject: [PATCH v3 3/3] ksmbd: test maximal-access DACL walk boundary
@@ -10,6 +10,7 @@ beyond the declared DACL size grants write access.
 Verify that maximal-access calculation includes the in-boundary
 permission and ignores the trailing permission.
 
+Suggested-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Signed-off-by: Hang Nan <2122295973@qq.com>
 Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
