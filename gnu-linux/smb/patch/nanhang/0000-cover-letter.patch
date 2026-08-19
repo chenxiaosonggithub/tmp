@@ -1,13 +1,12 @@
-From 44393ce2ca7cd1a7fee1e95939154d4227a55389 Mon Sep 17 00:00:00 2001
-From: Hang Nan <2122295973@qq.com>
-Date: Mon, 17 Aug 2026 09:12:57 +0000
-Subject: [PATCH v3 0/3] ksmbd: bound smb_check_perm_dacl() ACE walks by DACL size
+From eba4334425b8d565ec8e068ae8ca9e1ccd55bc04 Mon Sep 17 00:00:00 2001
+From: Hang Nan <nanx95726@gmail.com>
+Date: Wed, 19 Aug 2026 03:09:00 +0000
+Subject: [PATCH v4 0/3] ksmbd: bound smb_check_perm_dacl() ACE walks by DACL size
 
 Changes in v3:
 
-- Split the KUnit tests into patch 1 and patch 2.
-- Add patch 3.
-- Build the KUnit tests as a separate .ko instead of linking them into ksmbd.ko.
+- Update SMB_SERVER_KUNIT_TESTS help text.
+- Moved kunit tests under fs/smb/server/tests/.
 
 The following patch from v2 have already been merged into #ksmbd-for-next-next:
 https://lore.kernel.org/linux-cifs/CAKYAXd9XHJSNfrFr+F8thNxFnXqGGcKpS1b1qR4DNuu82+j_VQ@mail.gmail.com/
@@ -17,13 +16,17 @@ Hang Nan (3):
   ksmbd: test smb_check_perm_dacl() DACL walk boundary
   ksmbd: test maximal-access DACL walk boundary
 
- fs/smb/server/Kconfig       |  15 ++
- fs/smb/server/Makefile      |   1 +
- fs/smb/server/smbacl.c      |   2 +
- fs/smb/server/smbacl_test.c | 301 ++++++++++++++++++++++++++++++++++++
- fs/smb/server/vfs.c         |   2 +
- 5 files changed, 321 insertions(+)
- create mode 100644 fs/smb/server/smbacl_test.c
+ fs/smb/server/Kconfig              |   2 +
+ fs/smb/server/Makefile             |   1 +
+ fs/smb/server/smbacl.c             |   2 +
+ fs/smb/server/tests/Kconfig        |  15 ++
+ fs/smb/server/tests/Makefile       |   4 +
+ fs/smb/server/tests/smbacl_kunit.c | 301 +++++++++++++++++++++++++++++
+ fs/smb/server/vfs.c                |   2 +
+ 7 files changed, 327 insertions(+)
+ create mode 100644 fs/smb/server/tests/Kconfig
+ create mode 100644 fs/smb/server/tests/Makefile
+ create mode 100644 fs/smb/server/tests/smbacl_kunit.c
 
 -- 
 2.55.0

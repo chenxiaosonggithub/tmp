@@ -1,7 +1,7 @@
-From d67d610e012aff21225e98abf5bedddb5678a4da Mon Sep 17 00:00:00 2001
-From: Hang Nan <2122295973@qq.com>
+From eba4334425b8d565ec8e068ae8ca9e1ccd55bc04 Mon Sep 17 00:00:00 2001
+From: Hang Nan <nanx95726@gmail.com>
 Date: Wed, 12 Aug 2026 18:39:46 +0800
-Subject: [PATCH v3 3/3] ksmbd: test maximal-access DACL walk boundary
+Subject: [PATCH v4 3/3] ksmbd: test maximal-access DACL walk boundary
 
 Add a maximal-access variant of the smb_check_perm_dacl() boundary
 test.  The in-boundary ACE grants read access, while a trailing ACE
@@ -11,16 +11,16 @@ Verify that maximal-access calculation includes the in-boundary
 permission and ignores the trailing permission.
 
 Suggested-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
-Signed-off-by: Hang Nan <2122295973@qq.com>
+Signed-off-by: Hang Nan <nanx95726@gmail.com>
 Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
- fs/smb/server/smbacl_test.c | 47 ++++++++++++++++++++++++++++++++++---
+ fs/smb/server/tests/smbacl_kunit.c | 47 ++++++++++++++++++++++++++++--
  1 file changed, 44 insertions(+), 3 deletions(-)
 
-diff --git a/fs/smb/server/smbacl_test.c b/fs/smb/server/smbacl_test.c
-index d1703b83aeff..f1f7722bb5d5 100644
---- a/fs/smb/server/smbacl_test.c
-+++ b/fs/smb/server/smbacl_test.c
+diff --git a/fs/smb/server/tests/smbacl_kunit.c b/fs/smb/server/tests/smbacl_kunit.c
+index 391b1f5d181c..33496b4d31a3 100644
+--- a/fs/smb/server/tests/smbacl_kunit.c
++++ b/fs/smb/server/tests/smbacl_kunit.c
 @@ -12,10 +12,11 @@
   *   sits beyond struct smb_acl::size; stopping at the declared DACL
   *   size (the fixed behaviour) rejects it.
