@@ -1,0 +1,129 @@
+From f89f0d6cc9d599b08beae69d82bd7855ac1d7a3e Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Sat, 22 Aug 2026 18:59:39 +0800
+Subject: [PATCH] smb/client: move maperror KUnit tests into test directory
+
+Move the SMB1 and SMB2 maperror KUnit tests into fs/smb/client/test/
+and rename them to use the _kunit.c suffix.
+
+Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+---
+ fs/smb/client/Kconfig                               | 12 +-----------
+ fs/smb/client/Makefile                              |  3 +--
+ fs/smb/client/test/Kconfig                          | 13 +++++++++++++
+ fs/smb/client/test/Makefile                         |  4 ++++
+ .../smb1maperror_kunit.c}                           |  6 +++---
+ .../smb2maperror_kunit.c}                           |  6 +++---
+ 6 files changed, 25 insertions(+), 19 deletions(-)
+ create mode 100644 fs/smb/client/test/Kconfig
+ create mode 100644 fs/smb/client/test/Makefile
+ rename fs/smb/client/{smb1maperror_test.c => test/smb1maperror_kunit.c} (97%)
+ rename fs/smb/client/{smb2maperror_test.c => test/smb2maperror_kunit.c} (94%)
+
+diff --git a/fs/smb/client/Kconfig b/fs/smb/client/Kconfig
+index 2b7db5fb0fd9..bd8078878426 100644
+--- a/fs/smb/client/Kconfig
++++ b/fs/smb/client/Kconfig
+@@ -218,15 +218,5 @@ config CIFS_COMPRESSION
+ 	  Say Y here if you want SMB traffic to be compressed.
+ 	  If unsure, say N.
+ 
+-config SMB1_KUNIT_TESTS
+-	tristate "KUnit tests for SMB1"
+-	depends on SMB_KUNIT_TESTS && CIFS_ALLOW_INSECURE_LEGACY
+-	default SMB_KUNIT_TESTS
+-	help
+-	  This builds the SMB1-specific KUnit tests.
+-
+-	  These tests are only enabled when legacy insecure SMB1 support
+-	  (CIFS_ALLOW_INSECURE_LEGACY) is enabled.
+-
+-	  If unsure, say N.
++source "fs/smb/client/test/Kconfig"
+ endif
+diff --git a/fs/smb/client/Makefile b/fs/smb/client/Makefile
+index fc6b9d35c962..8c50ae78d28f 100644
+--- a/fs/smb/client/Makefile
++++ b/fs/smb/client/Makefile
+@@ -76,8 +76,7 @@ $(obj)/smb2maperror.o: $(obj)/smb2_mapping_table.c
+ quiet_cmd_gen_smb2_mapping = GEN     $@
+       cmd_gen_smb2_mapping = perl $(src)/gen_smb2_mapping $< $@
+ 
+-obj-$(CONFIG_SMB1_KUNIT_TESTS) += smb1maperror_test.o
+-obj-$(CONFIG_SMB_KUNIT_TESTS) += smb2maperror_test.o
++obj-$(CONFIG_SMB_KUNIT_TESTS) += test/
+ 
+ # Let Kbuild handle tracking and cleaning
+ targets += smb2_mapping_table.c $(smb1-gen-y)
+diff --git a/fs/smb/client/test/Kconfig b/fs/smb/client/test/Kconfig
+new file mode 100644
+index 000000000000..c59dd38d43b4
+--- /dev/null
++++ b/fs/smb/client/test/Kconfig
+@@ -0,0 +1,13 @@
++# SPDX-License-Identifier: GPL-2.0-only
++
++config SMB1_KUNIT_TESTS
++	tristate "KUnit tests for SMB1"
++	depends on SMB_KUNIT_TESTS && CIFS_ALLOW_INSECURE_LEGACY
++	default SMB_KUNIT_TESTS
++	help
++	  This builds the SMB1-specific KUnit tests.
++
++	  These tests are only enabled when legacy insecure SMB1 support
++	  (CIFS_ALLOW_INSECURE_LEGACY) is enabled.
++
++	  If unsure, say N.
+diff --git a/fs/smb/client/test/Makefile b/fs/smb/client/test/Makefile
+new file mode 100644
+index 000000000000..43271be2b202
+--- /dev/null
++++ b/fs/smb/client/test/Makefile
+@@ -0,0 +1,4 @@
++# SPDX-License-Identifier: GPL-2.0
++
++obj-$(CONFIG_SMB1_KUNIT_TESTS) += smb1maperror_kunit.o
++obj-$(CONFIG_SMB_KUNIT_TESTS) += smb2maperror_kunit.o
+diff --git a/fs/smb/client/smb1maperror_test.c b/fs/smb/client/test/smb1maperror_kunit.c
+similarity index 97%
+rename from fs/smb/client/smb1maperror_test.c
+rename to fs/smb/client/test/smb1maperror_kunit.c
+index 903c46f71291..e5888f8b04e7 100644
+--- a/fs/smb/client/smb1maperror_test.c
++++ b/fs/smb/client/test/smb1maperror_kunit.c
+@@ -10,9 +10,9 @@
+  */
+ 
+ #include <kunit/test.h>
+-#include "smb1proto.h"
+-#include "nterr.h"
+-#include "smberr.h"
++#include "../smb1proto.h"
++#include "../nterr.h"
++#include "../smberr.h"
+ 
+ #define DEFINE_CHECK_SEARCH_FUNC(__struct_name, __field,		\
+ 				 __array, __num)			\
+diff --git a/fs/smb/client/smb2maperror_test.c b/fs/smb/client/test/smb2maperror_kunit.c
+similarity index 94%
+rename from fs/smb/client/smb2maperror_test.c
+rename to fs/smb/client/test/smb2maperror_kunit.c
+index 44dc5e899cad..82813b53d051 100644
+--- a/fs/smb/client/smb2maperror_test.c
++++ b/fs/smb/client/test/smb2maperror_kunit.c
+@@ -9,9 +9,9 @@
+  */
+ 
+ #include <kunit/test.h>
+-#include "cifsglob.h"
+-#include "smb2glob.h"
+-#include "smb2proto.h"
++#include "../cifsglob.h"
++#include "../smb2glob.h"
++#include "../smb2proto.h"
+ 
+ static void
+ test_cmp_map(struct kunit *test, const struct status_to_posix_error *expect)
+-- 
+2.55.0
+
