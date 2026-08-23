@@ -1,0 +1,859 @@
+A8293 MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/dvb-frontends/a8293*
+
+ADM8211 WIRELESS DRIVER
+L:	linux-wireless@vger.kernel.org
+S:	Orphan
+F:	drivers/net/wireless/admtek/
+
+AF9013 MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/dvb-frontends/af9013*
+
+AF9033 MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/dvb-frontends/af9033*
+
+AIRSPY MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/usb/airspy/
+
+AMD GEODE CS5536 USB DEVICE CONTROLLER DRIVER
+L:	linux-geode@lists.infradead.org (moderated for non-subscribers)
+S:	Orphan
+F:	drivers/usb/gadget/udc/amd5536udc.*
+
+ATHEROS ATH6KL WIRELESS DRIVER
+L:	linux-wireless@vger.kernel.org
+S:	Orphan
+W:	https://wireless.wiki.kernel.org/en/users/Drivers/ath6kl
+F:	drivers/net/wireless/ath/ath6kl/
+
+AXENTIA ARM DEVICES
+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+S:	Orphan
+F:	arch/arm/boot/dts/microchip/at91-linea.dtsi
+F:	arch/arm/boot/dts/microchip/at91-natte.dtsi
+F:	arch/arm/boot/dts/microchip/at91-nattis-2-natte-2.dts
+F:	arch/arm/boot/dts/microchip/at91-tse850-3.dts
+
+AXENTIA ASOC DRIVERS
+L:	linux-sound@vger.kernel.org
+S:	Orphan
+F:	Documentation/devicetree/bindings/sound/axentia,*
+F:	sound/soc/atmel/tse850-pcm5142.c
+
+B43 WIRELESS DRIVER
+L:	linux-wireless@vger.kernel.org
+L:	b43-dev@lists.infradead.org
+S:	Orphan
+W:	https://wireless.wiki.kernel.org/en/users/Drivers/b43
+F:	drivers/net/wireless/broadcom/b43/
+
+B43LEGACY WIRELESS DRIVER
+L:	linux-wireless@vger.kernel.org
+L:	b43-dev@lists.infradead.org
+S:	Orphan
+W:	https://wireless.wiki.kernel.org/en/users/Drivers/b43
+F:	drivers/net/wireless/broadcom/b43legacy/
+
+CA8210 IEEE-802.15.4 RADIO DRIVER
+L:	linux-wpan@vger.kernel.org
+S:	Orphan
+W:	https://github.com/Cascoda/ca8210-linux.git
+F:	Documentation/devicetree/bindings/net/ieee802154/ca8210.txt
+F:	drivers/net/ieee802154/ca8210.c
+
+CADENCE NAND DRIVER
+L:	linux-mtd@lists.infradead.org
+S:	Orphan
+F:	Documentation/devicetree/bindings/mtd/cdns,hp-nfc.yaml
+F:	drivers/mtd/nand/raw/cadence-nand-controller.c
+
+CAFE CMOS INTEGRATED CAMERA CONTROLLER DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+T:	git git://linuxtv.org/media.git
+F:	Documentation/admin-guide/media/cafe_ccic*
+F:	drivers/media/platform/marvell/
+
+CAVIUM LIQUIDIO NETWORK DRIVER
+L:	netdev@vger.kernel.org
+S:	Orphan
+W:	http://www.marvell.com
+F:	drivers/net/ethernet/cavium/liquidio/
+
+CELL BROADBAND ENGINE ARCHITECTURE
+L:	linuxppc-dev@lists.ozlabs.org
+S:	Orphan
+F:	arch/powerpc/include/asm/cell*.h
+F:	arch/powerpc/include/asm/spu*.h
+F:	arch/powerpc/include/uapi/asm/spu*.h
+F:	arch/powerpc/platforms/cell/
+
+CONEXANT ACCESSRUNNER USB DRIVER
+L:	accessrunner-general@lists.sourceforge.net
+S:	Orphan
+W:	http://accessrunner.sourceforge.net/
+F:	drivers/usb/atm/cxacru.c
+
+CORETEMP HARDWARE MONITORING DRIVER
+L:	linux-hwmon@vger.kernel.org
+S:	Orphan
+F:	Documentation/hwmon/coretemp.rst
+F:	drivers/hwmon/coretemp.c
+
+CW1200 WLAN driver
+S:	Orphan
+L:	linux-wireless@vger.kernel.org
+F:	drivers/net/wireless/st/
+F:	include/linux/platform_data/net-cw1200.h
+
+CXD2820R MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/dvb-frontends/cxd2820r*
+
+CYCLADES PC300 DRIVER
+S:	Orphan
+F:	drivers/net/wan/pc300*
+
+CYPRESS_FIRMWARE MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/common/cypress_firmware*
+
+DAVICOM FAST ETHERNET (DMFE) NETWORK DRIVER
+L:	netdev@vger.kernel.org
+S:	Orphan
+F:	Documentation/networking/device_drivers/ethernet/dec/dmfe.rst
+F:	drivers/net/ethernet/dec/tulip/dmfe.c
+
+DENALI NAND DRIVER
+L:	linux-mtd@lists.infradead.org
+S:	Orphan
+F:	drivers/mtd/nand/raw/denali*
+
+DESIGNWARE XDATA IP DRIVER
+L:	linux-pci@vger.kernel.org
+S:	Orphan
+F:	Documentation/misc-devices/dw-xdata-pcie.rst
+F:	drivers/misc/dw-xdata-pcie.c
+
+DONGWOON DW9768 LENS VOICE COIL DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+T:	git git://linuxtv.org/media.git
+F:	Documentation/devicetree/bindings/media/i2c/dongwoon,dw9768.yaml
+F:	drivers/media/i2c/dw9768.c
+
+DRM DRIVER FOR HX8357D PANELS
+S:	Orphan
+T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
+F:	Documentation/devicetree/bindings/display/himax,hx8357.yaml
+F:	drivers/gpu/drm/tiny/hx8357d.c
+
+DRM DRIVER FOR MIPI DBI compatible panels
+S:	Orphan
+W:	https://github.com/notro/panel-mipi-dbi/wiki
+T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
+F:	Documentation/devicetree/bindings/display/panel/panel-mipi-dbi-spi.yaml
+F:	drivers/gpu/drm/tiny/panel-mipi-dbi.c
+
+DVB_USB_AF9015 MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/usb/dvb-usb-v2/af9015*
+
+DVB_USB_AF9035 MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/usb/dvb-usb-v2/af9035*
+
+DVB_USB_ANYSEE MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/usb/dvb-usb-v2/anysee*
+
+DVB_USB_AU6610 MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/usb/dvb-usb-v2/au6610*
+
+DVB_USB_CE6230 MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/usb/dvb-usb-v2/ce6230*
+
+DVB_USB_EC168 MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/usb/dvb-usb-v2/ec168*
+
+DVB_USB_GL861 MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/usb/dvb-usb-v2/gl861*
+
+DVB_USB_RTL28XXU MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/usb/dvb-usb-v2/rtl28xxu*
+
+DVB_USB_V2 MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+W:	http://palosaari.fi/linux/
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/usb/dvb-usb-v2/dvb_usb*
+F:	drivers/media/usb/dvb-usb-v2/usb_urb.c
+
+E4000 MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/tuners/e4000*
+
+EC100 MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/dvb-frontends/ec100*
+
+EDAC-I3000
+L:	linux-edac@vger.kernel.org
+S:	Orphan
+F:	drivers/edac/i3000_edac.c
+
+FC2580 MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/tuners/fc2580*
+
+FREESCALE QUICC ENGINE UCC ETHERNET DRIVER
+L:	netdev@vger.kernel.org
+L:	linuxppc-dev@lists.ozlabs.org
+S:	Orphan
+F:	drivers/net/ethernet/freescale/ucc_geth*
+
+FREESCALE USB PERIPHERAL DRIVERS
+L:	linux-usb@vger.kernel.org
+L:	linuxppc-dev@lists.ozlabs.org
+S:	Orphan
+F:	drivers/usb/gadget/udc/fsl*
+
+FREESCALE USB PHY DRIVER
+L:	linux-usb@vger.kernel.org
+L:	linuxppc-dev@lists.ozlabs.org
+S:	Orphan
+F:	drivers/usb/phy/phy-fsl-usb*
+
+HACKRF MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/usb/hackrf/
+
+HP COMPAQ TC1100 TABLET WMI EXTRAS DRIVER
+L:	platform-driver-x86@vger.kernel.org
+S:	Orphan
+F:	drivers/platform/x86/hp/tc1100-wmi.c
+
+HPET:	x86
+S:	Orphan
+F:	arch/x86/include/asm/hpet.h
+F:	arch/x86/kernel/hpet.c
+
+HSO 3G MODEM DRIVER
+L:	linux-usb@vger.kernel.org
+S:	Orphan
+F:	drivers/net/usb/hso.c
+
+HSR NETWORK PROTOCOL
+L:	netdev@vger.kernel.org
+S:	Orphan
+F:	net/hsr/
+F:	tools/testing/selftests/net/hsr/
+
+I3C DRIVER FOR SYNOPSYS DESIGNWARE
+S:	Orphan
+F:	Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.yaml
+F:	drivers/i3c/master/dw*
+
+IBM ServeRAID RAID DRIVER
+S:	Orphan
+F:	drivers/scsi/ips.*
+
+IMGTEC IR DECODER DRIVER
+S:	Orphan
+F:	drivers/media/rc/img-ir/
+
+IMS TWINTURBO FRAMEBUFFER DRIVER
+L:	linux-fbdev@vger.kernel.org
+S:	Orphan
+F:	drivers/video/fbdev/imsttfb.c
+
+INTEL C600 SERIES SAS CONTROLLER DRIVER
+L:	linux-scsi@vger.kernel.org
+S:	Orphan
+T:	git git://git.code.sf.net/p/intel-sas/isci
+F:	drivers/scsi/isci/
+
+INTEL KEEM BAY OCS AES/SM4 CRYPTO DRIVER
+S:	Orphan
+F:	Documentation/devicetree/bindings/crypto/intel,keembay-ocs-aes.yaml
+F:	drivers/crypto/intel/keembay/Kconfig
+F:	drivers/crypto/intel/keembay/Makefile
+F:	drivers/crypto/intel/keembay/keembay-ocs-aes-core.c
+F:	drivers/crypto/intel/keembay/ocs-aes.c
+F:	drivers/crypto/intel/keembay/ocs-aes.h
+
+INTEL PTP DFL ToD DRIVER
+L:	linux-fpga@vger.kernel.org
+L:	netdev@vger.kernel.org
+S:	Orphan
+F:	drivers/ptp/ptp_dfl_tod.c
+
+INTEL WMI SLIM BOOTLOADER (SBL) FIRMWARE UPDATE DRIVER
+S:	Orphan
+W:	https://slimbootloader.github.io/security/firmware-update.html
+F:	drivers/platform/x86/intel/wmi/sbl-fw-update.c
+
+INTEL WWAN IOSM DRIVER
+L:	netdev@vger.kernel.org
+S:	Orphan
+F:	drivers/net/wwan/iosm/
+
+IT913X MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/tuners/it913x*
+
+JSM Neo PCI based serial card
+L:	linux-serial@vger.kernel.org
+S:	Orphan
+F:	drivers/tty/serial/jsm/
+
+LINUX FOR POWER MACINTOSH
+L:	linuxppc-dev@lists.ozlabs.org
+S:	Orphan
+F:	arch/powerpc/platforms/powermac/
+F:	drivers/macintosh/
+X:	drivers/macintosh/adb-iop.c
+X:	drivers/macintosh/via-macii.c
+
+LINUX FOR POWERPC EMBEDDED PPC4XX
+L:	linuxppc-dev@lists.ozlabs.org
+S:	Orphan
+F:	arch/powerpc/platforms/44x/
+
+M88DS3103 MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/dvb-frontends/m88ds3103*
+
+MARVELL GIGABIT ETHERNET DRIVERS (skge/sky2)
+L:	netdev@vger.kernel.org
+S:	Orphan
+F:	drivers/net/ethernet/marvell/sk*
+
+MARVELL LIBERTAS WIRELESS DRIVER
+L:	linux-wireless@vger.kernel.org
+L:	libertas-dev@lists.infradead.org
+S:	Orphan
+F:	drivers/net/wireless/marvell/libertas/
+F:	drivers/net/wireless/marvell/libertas_tf/
+
+MARVELL MWL8K WIRELESS DRIVER
+L:	linux-wireless@vger.kernel.org
+S:	Orphan
+F:	drivers/net/wireless/marvell/mwl8k.c
+
+MATROX FRAMEBUFFER DRIVER
+L:	linux-fbdev@vger.kernel.org
+S:	Orphan
+F:	drivers/video/fbdev/matrox/matroxfb_*
+F:	include/uapi/linux/matroxfb.h
+
+MAX6650 HARDWARE MONITOR AND FAN CONTROLLER DRIVER
+L:	linux-hwmon@vger.kernel.org
+S:	Orphan
+F:	Documentation/hwmon/max6650.rst
+F:	drivers/hwmon/max6650.c
+
+MEDIA DRIVERS FOR DIGITAL DEVICES PCIE DEVICES
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+T:	git git://linuxtv.org/media.git
+F:	drivers/media/pci/ddbridge/*
+
+MEDIA DRIVERS FOR MXL5XX TUNER DEMODULATORS
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+T:	git git://linuxtv.org/media.git
+F:	drivers/media/dvb-frontends/mxl5xx*
+
+MEDIA DRIVERS FOR ST STV0910 DEMODULATOR ICs
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+T:	git git://linuxtv.org/media.git
+F:	drivers/media/dvb-frontends/stv0910*
+
+MEDIA DRIVERS FOR ST STV6111 TUNER ICs
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+T:	git git://linuxtv.org/media.git
+F:	drivers/media/dvb-frontends/stv6111*
+
+MEDIATEK NAND CONTROLLER DRIVER
+L:	linux-mtd@lists.infradead.org
+S:	Orphan
+F:	Documentation/devicetree/bindings/mtd/mediatek,mtk-nfc.yaml
+F:	drivers/mtd/nand/raw/mtk_*
+
+MICROCHIP NAND DRIVER
+L:	linux-mtd@lists.infradead.org
+S:	Orphan
+F:	Documentation/devicetree/bindings/mtd/atmel-nand.txt
+F:	drivers/mtd/nand/raw/atmel/*
+
+MN88472 MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/dvb-frontends/mn88472*
+
+MN88473 MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/dvb-frontends/mn88473*
+
+MSI WMI SUPPORT
+L:	platform-driver-x86@vger.kernel.org
+S:	Orphan
+F:	drivers/platform/x86/msi-wmi.c
+
+MSI001 MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/tuners/msi001*
+
+MSI2500 MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/usb/msi2500/
+
+MULTIMEDIA CARD (MMC) ETC. OVER SPI
+S:	Orphan
+F:	drivers/mmc/host/mmc_spi.c
+F:	include/linux/spi/mmc_spi.h
+
+MYRICOM MYRI-10G 10GbE DRIVER (MYRI10GE)
+L:	netdev@vger.kernel.org
+S:	Orphan
+W:	https://www.cspi.com/ethernet-products/support/downloads/
+F:	drivers/net/ethernet/myricom/myri10ge/
+
+NATSEMI ETHERNET DRIVER (DP8381x)
+S:	Orphan
+F:	drivers/net/ethernet/natsemi/natsemi.c
+
+NXP-NCI NFC DRIVER
+S:	Orphan
+F:	Documentation/devicetree/bindings/net/nfc/nxp,nci.yaml
+F:	drivers/nfc/nxp-nci
+
+OMAP DISPLAY SUBSYSTEM and FRAMEBUFFER SUPPORT (DSS2)
+L:	linux-omap@vger.kernel.org
+L:	linux-fbdev@vger.kernel.org
+S:	Orphan
+F:	Documentation/arch/arm/omap/dss.rst
+F:	drivers/video/fbdev/omap2/
+
+OMAP FRAMEBUFFER SUPPORT
+L:	linux-fbdev@vger.kernel.org
+L:	linux-omap@vger.kernel.org
+S:	Orphan
+F:	drivers/video/fbdev/omap/
+
+OMAP HARDWARE SPINLOCK SUPPORT
+L:	linux-omap@vger.kernel.org
+S:	Orphan
+F:	drivers/hwspinlock/omap_hwspinlock.c
+
+OMAP HS MMC SUPPORT
+L:	linux-mmc@vger.kernel.org
+L:	linux-omap@vger.kernel.org
+S:	Orphan
+F:	drivers/mmc/host/omap_hsmmc.c
+
+OMAP USB SUPPORT
+L:	linux-usb@vger.kernel.org
+L:	linux-omap@vger.kernel.org
+S:	Orphan
+F:	arch/arm/*omap*/usb*
+F:	drivers/usb/*/*omap*
+
+OMNIVISION OV02A10 SENSOR DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+T:	git git://linuxtv.org/media.git
+F:	Documentation/devicetree/bindings/media/i2c/ovti,ov02a10.yaml
+F:	drivers/media/i2c/ov02a10.c
+
+OMNIVISION OV7670 SENSOR DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+T:	git git://linuxtv.org/media.git
+F:	Documentation/devicetree/bindings/media/i2c/ovti,ov7670.txt
+F:	drivers/media/i2c/ov7670.c
+
+OMNIVISION OV7740 SENSOR DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+T:	git git://linuxtv.org/media.git
+F:	Documentation/devicetree/bindings/media/i2c/ovti,ov7740.txt
+F:	drivers/media/i2c/ov7740.c
+
+PCI DRIVER FOR ALTERA PCIE IP
+L:	linux-pci@vger.kernel.org
+S:	Orphan
+F:	Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
+F:	drivers/pci/controller/pcie-altera.c
+
+PCI DRIVER FOR CADENCE PCIE IP
+R:	Aksh Garg <a-garg7@ti.com>
+L:	linux-pci@vger.kernel.org
+S:	Orphan
+F:	Documentation/devicetree/bindings/pci/cdns,*
+F:	drivers/pci/controller/cadence/
+
+PCI MSI DRIVER FOR ALTERA MSI IP
+L:	linux-pci@vger.kernel.org
+S:	Orphan
+F:	Documentation/devicetree/bindings/interrupt-controller/altr,msi-controller.yaml
+F:	drivers/pci/controller/pcie-altera-msi.c
+
+PCIE DRIVER FOR INTEL LGM GW SOC
+L:	linux-pci@vger.kernel.org
+S:	Orphan
+F:	Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml
+F:	drivers/pci/controller/dwc/pcie-intel-gw.c
+
+PIN CONTROLLER - KEEMBAY
+S:	Orphan
+F:	drivers/pinctrl/pinctrl-keembay*
+
+PMC SIERRA MaxRAID DRIVER
+L:	linux-scsi@vger.kernel.org
+S:	Orphan
+W:	http://www.pmc-sierra.com/
+F:	drivers/scsi/pmcraid.*
+
+PPP OVER ETHERNET
+S:	Orphan
+F:	drivers/net/ppp/pppoe.c
+F:	drivers/net/ppp/pppox.c
+
+PPP PROTOCOL DRIVERS AND COMPRESSORS
+L:	linux-ppp@vger.kernel.org
+S:	Orphan
+F:	drivers/net/ppp/ppp_*
+F:	tools/testing/selftests/net/ppp/
+
+PXA MMCI DRIVER
+S:	Orphan
+
+QLOGIC QL4xxx ETHERNET DRIVER
+L:	netdev@vger.kernel.org
+S:	Orphan
+F:	drivers/net/ethernet/qlogic/qed/
+F:	drivers/net/ethernet/qlogic/qede/
+F:	include/linux/qed/
+
+QNX6 FILESYSTEM
+S:	Orphan
+F:	Documentation/filesystems/qnx6.rst
+F:	fs/qnx6/
+F:	include/linux/qnx6_fs.h
+
+QT1010 MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/tuners/qt1010*
+
+RAGE128 FRAMEBUFFER DISPLAY DRIVER
+L:	linux-fbdev@vger.kernel.org
+S:	Orphan
+F:	drivers/video/fbdev/aty/aty128fb.c
+
+REDPINE WIRELESS DRIVER
+L:	linux-wireless@vger.kernel.org
+S:	Orphan
+F:	drivers/net/wireless/rsi/
+
+RTL2830 MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/dvb-frontends/rtl2830*
+
+RTL2832 MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/dvb-frontends/rtl2832*
+
+RTL2832_SDR MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/dvb-frontends/rtl2832_sdr*
+
+RTL8180 WIRELESS DRIVER
+L:	linux-wireless@vger.kernel.org
+S:	Orphan
+F:	drivers/net/wireless/realtek/rtl818x/rtl8180/
+
+SCSI TAPE DRIVER
+L:	linux-scsi@vger.kernel.org
+S:	Orphan
+F:	Documentation/scsi/st.rst
+F:	drivers/scsi/st.*
+F:	drivers/scsi/st_*.h
+
+SH_VOU V4L2 OUTPUT DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+F:	drivers/media/platform/renesas/sh_vou.c
+F:	include/media/drv-intf/sh_vou.h
+
+SI2157 MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/tuners/si2157*
+
+SI2168 MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/dvb-frontends/si2168*
+
+SIS FRAMEBUFFER DRIVER
+S:	Orphan
+F:	Documentation/fb/sisfb.rst
+F:	drivers/video/fbdev/sis/
+F:	include/video/sisfb.h
+
+SOCIONEXT UNIPHIER SOUND DRIVER
+L:	linux-sound@vger.kernel.org
+S:	Orphan
+F:	sound/soc/uniphier/
+
+SONY IMX334 SENSOR DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+T:	git git://linuxtv.org/media.git
+F:	Documentation/devicetree/bindings/media/i2c/sony,imx334.yaml
+F:	drivers/media/i2c/imx334.c
+
+SONY IMX412 SENSOR DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+T:	git git://linuxtv.org/media.git
+F:	Documentation/devicetree/bindings/media/i2c/sony,imx412.yaml
+F:	drivers/media/i2c/imx412.c
+
+SPU FILE SYSTEM
+L:	linuxppc-dev@lists.ozlabs.org
+S:	Orphan
+F:	Documentation/filesystems/spufs/spufs.rst
+F:	arch/powerpc/platforms/cell/spufs/
+
+SUNPLUS ETHERNET DRIVER
+L:	netdev@vger.kernel.org
+S:	Orphan
+W:	https://sunplus.atlassian.net/wiki/spaces/doc/overview
+F:	Documentation/devicetree/bindings/net/sunplus,sp7021-emac.yaml
+F:	drivers/net/ethernet/sunplus/
+
+SYNOPSYS DESIGNWARE ETHERNET XPCS DRIVER
+L:	netdev@vger.kernel.org
+S:	Orphan
+F:	drivers/net/pcs/pcs-xpcs.c
+F:	drivers/net/pcs/pcs-xpcs.h
+F:	include/linux/pcs/pcs-xpcs.h
+
+TDA10071 MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/dvb-frontends/tda10071*
+
+TDA18212 MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/tuners/tda18212*
+
+TDA18218 MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/tuners/tda18218*
+
+TECHWELL TW9910 VIDEO DECODER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+F:	drivers/media/i2c/tw9910.c
+F:	include/media/i2c/tw9910.h
+
+TI WILINK WIRELESS DRIVERS
+L:	linux-wireless@vger.kernel.org
+S:	Orphan
+W:	https://wireless.wiki.kernel.org/en/users/Drivers/wl12xx
+W:	https://wireless.wiki.kernel.org/en/users/Drivers/wl1251
+F:	drivers/net/wireless/ti/
+
+TUA9001 MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org
+Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/tuners/tua9001*
+
+TULIP NETWORK DRIVERS
+L:	netdev@vger.kernel.org
+L:	linux-parisc@vger.kernel.org
+S:	Orphan
+F:	drivers/net/ethernet/dec/tulip/
+
+USB AR5523 WIRELESS DRIVER
+L:	linux-wireless@vger.kernel.org
+S:	Orphan
+F:	drivers/net/wireless/ath/ar5523/
+
+USB CYPRESS C67X00 DRIVER
+L:	linux-usb@vger.kernel.org
+S:	Orphan
+F:	drivers/usb/c67x00/
+
+USB WEBCAM GADGET
+L:	linux-usb@vger.kernel.org
+S:	Orphan
+F:	drivers/usb/gadget/function/*uvc*
+F:	drivers/usb/gadget/legacy/webcam.c
+F:	include/uapi/linux/usb/g_uvc.h
+
+VME SUBSYSTEM
+L:	linux-kernel@vger.kernel.org
+S:	Orphan
+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git
+F:	Documentation/driver-api/vme.rst
+F:	drivers/staging/vme_user/
+
+VUB300 USB to SDIO/SD/MMC bridge chip
+L:	linux-mmc@vger.kernel.org
+S:	Orphan
+F:	drivers/mmc/host/vub300.c
+
+WILOCITY WIL6210 WIRELESS DRIVER
+L:	linux-wireless@vger.kernel.org
+S:	Orphan
+W:	https://wireless.wiki.kernel.org/en/users/Drivers/wil6210
+F:	drivers/net/wireless/ath/wil6210/
+
+WINSYSTEMS EBC-C384 WATCHDOG DRIVER
+L:	linux-watchdog@vger.kernel.org
+S:	Orphan
+F:	drivers/watchdog/ebc-c384_wdt.c
+
+XILINX LL TEMAC ETHERNET DRIVER
+L:	netdev@vger.kernel.org
+S:	Orphan
+F:	drivers/net/ethernet/xilinx/ll_temac*
+
+ZD1211RW WIRELESS DRIVER
+L:	linux-wireless@vger.kernel.org
+S:	Orphan
+F:	drivers/net/wireless/zydas/
+
+ZD1301 MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org/
+Q:	https://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/usb/dvb-usb-v2/zd1301*
+
+ZD1301_DEMOD MEDIA DRIVER
+L:	linux-media@vger.kernel.org
+S:	Orphan
+W:	https://linuxtv.org/
+Q:	https://patchwork.linuxtv.org/project/linux-media/list/
+F:	drivers/media/dvb-frontends/zd1301_demod*
+
