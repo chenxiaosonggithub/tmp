@@ -1,0 +1,272 @@
+Linux 内核安全模块与源码目录说明
+==============================
+
+结论
+----
+
+安全相关代码并不都在 security/ 目录下面。
+
+security/ 是 Linux 内核安全机制的中心目录，主要包含 LSM 框架、Capabilities、
+强制访问控制策略、完整性保护和一些专项安全模块。但最基础的文件权限、进程
+凭据、系统调用过滤、网络安全、密码算法和内核漏洞缓解机制分布在其他子系统中。
+
+
+一、security/ 中最核心的组成
+-----------------------------
+
+1. LSM 核心框架
+
+主要文件：
+
+  security/security.c
+  security/lsm_init.c
+  include/linux/lsm_hooks.h
+  include/linux/lsm_hook_defs.h
+
+security/security.c 负责调用和分发 security_*() 安全钩子；
+security/lsm_init.c 负责选择、排序并初始化启用的 LSM。
+
+LSM 框架本身通常不决定允许或拒绝，而是为 SELinux、AppArmor、Landlock 等
+安全策略提供统一的接入点。
+
+
+2. Capabilities
+
+主要文件：
+
+  security/commoncap.c
+
+Capabilities 将传统的超级用户权限拆分为 CAP_SYS_ADMIN、CAP_NET_ADMIN、
+CAP_SYS_PTRACE 等独立能力，是 Linux 权限模型的基础组成部分。
+
+security/Makefile 中使用 obj-y 编译 commoncap.o，说明默认 capability 支持会
+始终包含在内核中。
+
+
+3. 主访问控制 LSM
+
+  security/selinux/
+      SELinux，功能完整、粒度细的标签式强制访问控制（MAC）。Android、
+      Fedora、RHEL 等系统广泛使用。
+
+  security/apparmor/
+      AppArmor，以路径和 profile 为中心，策略相对容易编写，Ubuntu、SUSE
+      等系统广泛使用。
+
+  security/smack/
+      Smack，简化的标签式强制访问控制，主要用于一些特定嵌入式系统。
+
+  security/tomoyo/
+      TOMOYO，以路径控制和行为学习为特点。
+
+对于通用 Linux 系统，SELinux 或 AppArmor 通常是最重要的主安全策略。
+在当前源码树中，SELinux、AppArmor 和 Smack 被标记为互斥 LSM，不能简单地
+全部同时启用。
+
+
+4. 完整性和可信启动链
+
+  security/integrity/ima/
+      IMA（Integrity Measurement Architecture），测量或验证文件、程序、
+      内核模块等内容。
+
+  security/integrity/evm/
+      EVM（Extended Verification Module），保护文件的安全扩展属性不被
+      离线或未授权篡改。
+
+  security/lockdown/
+      Kernel Lockdown。即使进程拥有 root 权限，也限制直接读取或修改内核、
+      加载未授权代码等高风险操作。
+
+  security/ipe/
+      IPE（Integrity Policy Enforcement），根据内容来源和完整性属性控制
+      是否允许执行或加载。
+
+  security/loadpin/
+      限制内核模块、固件等内容只能从指定的可信文件系统加载。
+
+
+5. 面向特定风险的辅助 LSM
+
+  security/landlock/
+      允许普通进程主动限制自身及其子进程的文件、网络等访问范围，适合构建
+      应用沙箱。
+
+  security/yama/
+      收紧 ptrace 等进程间访问。
+
+  security/safesetid/
+      限制 UID/GID 切换，减少 CAP_SETUID 和 CAP_SETGID 带来的权限风险。
+
+  security/bpf/
+      BPF LSM，允许使用 BPF 程序实现可编程安全策略。
+
+  security/keys/
+      内核 keyring、密钥保存、查找和权限管理。
+
+这些模块的主要编译入口位于：
+
+  security/Makefile
+  security/Kconfig
+
+启用哪些 LSM 以及检查顺序主要由 CONFIG_LSM 配置和 lsm= 内核启动参数控制。
+
+
+二、安全代码为什么不都在 security/ 中
+-----------------------------------
+
+以文件访问为例，简化的权限检查过程是：
+
+  VFS 文件访问
+    -> 超级块、只读文件系统和 immutable 检查
+    -> Unix DAC：UID/GID、rwx 和 POSIX ACL
+    -> device cgroup 等检查
+    -> security_inode_permission()
+    -> SELinux、AppArmor、Landlock 等启用的 LSM
+
+相关代码可以从 fs/namei.c 的 inode_permission() 开始阅读。它先执行文件系统
+和传统权限检查，最后才调用 security_inode_permission() 进入 LSM 框架。
+
+
+三、security/ 之外的重要安全机制
+--------------------------------
+
+1. UID/GID 和进程凭据
+
+  kernel/cred.c
+  include/linux/cred.h
+
+2. 传统文件权限和 ACL
+
+  fs/namei.c
+  fs/posix_acl.c
+
+3. seccomp 系统调用过滤
+
+  kernel/seccomp.c
+
+seccomp 用于缩小进程能够调用的内核系统调用范围，是容器和应用沙箱的重要
+组成部分，但它不是完整的访问控制系统。
+
+4. namespaces 和 cgroups 隔离
+
+  kernel/nsproxy.c
+  kernel/cgroup/
+
+它们提供资源视图、用户、网络、挂载点和设备等方面的隔离，是容器安全基础。
+
+5. 密码算法
+
+  crypto/
+
+这里提供哈希、对称加密、非对称加密、签名等密码学基础能力。密码算法是安全
+机制使用的基础工具，但其本身通常不负责制定访问策略。
+
+6. 证书、内核信任链和模块签名
+
+  certs/
+  kernel/module/
+
+这些代码负责可信证书管理以及内核模块签名验证。
+
+7. 文件加密与内容验证
+
+  fs/crypto/
+  fs/verity/
+  drivers/md/dm-verity-*
+
+fscrypt 用于文件系统加密；fs-verity 和 dm-verity 用于检测文件或块设备内容
+是否被篡改。
+
+8. 网络安全
+
+  net/netfilter/
+  net/xfrm/
+  net/tls/
+
+分别涉及防火墙和包过滤、IPsec、内核 TLS 等机制。
+
+9. 内核自身漏洞缓解和自保护
+
+  arch/
+  mm/
+  security/Kconfig.hardening
+
+包括 KASLR、栈保护、严格内核内存权限、用户空间拷贝检查、内存初始化、CFI
+以及不同体系结构的漏洞缓解。这些机制非常核心，但代码不可能全部集中到
+security/ 目录，因为它们需要直接结合体系结构、编译器和内存管理实现。
+
+10. 安全审计
+
+  kernel/audit.c
+  kernel/auditsc.c
+
+Audit 负责记录安全相关事件，主要提供可观测性和追踪能力，本身通常不是访问
+控制策略。
+
+
+四、最重要的安全层次
+--------------------
+
+如果按学习和理解 Linux 安全架构的优先级排列：
+
+1. DAC、credentials 和 capabilities
+   Linux 权限体系的基础，没有启用额外 LSM 时也会发挥作用。
+
+2. LSM 框架
+   SELinux、AppArmor、Landlock 等安全策略接入内核的统一骨架。
+
+3. SELinux 或 AppArmor
+   通用系统中最主要的强制访问控制机制。一般根据发行版和部署环境选择其中
+   一个作为主 LSM。
+
+4. seccomp、namespaces、cgroups 和 Landlock
+   用于容器、浏览器和普通应用的隔离及攻击面缩减。
+
+5. 模块签名、Lockdown、IMA/EVM、fs-verity 和 dm-verity
+   建立从启动、内核到用户空间文件的可信链和完整性保障。
+
+6. 内核自保护
+   KASLR、栈保护、只读内存、CFI、越界检查等机制用于提高内核漏洞的利用难度。
+
+
+五、推荐的源码阅读顺序
+----------------------
+
+1. fs/namei.c 中的 inode_permission()
+   了解传统 DAC 检查和 LSM 检查如何串联。
+
+2. security/security.c
+   了解 security_*() 接口如何分发到各个 LSM hook。
+
+3. security/lsm_init.c
+   了解 LSM 的选择、排序、互斥关系和初始化过程。
+
+4. security/commoncap.c
+   了解 capabilities 如何参与权限判定。
+
+5. include/linux/lsm_hook_defs.h 和 include/linux/lsm_hooks.h
+   了解 LSM 能够拦截哪些文件、进程、网络、IPC 和内核操作。
+
+6. security/selinux/hooks.c 或 security/apparmor/lsm.c
+   选择一个主 LSM，观察它如何注册并实现具体安全钩子。
+
+7. kernel/seccomp.c 和 security/landlock/
+   了解系统调用过滤与对象级沙箱的区别和配合方式。
+
+
+总结
+----
+
+security/ 更准确的定位是“LSM 与安全策略中心”，而不是 Linux 内核全部安全
+代码的集合。Linux 的完整安全体系是一套纵深防御，贯穿 kernel/、fs/、mm/、
+arch/、net/、crypto/、certs/ 和驱动层。
+
+若只关注最核心的代码，应优先理解：
+
+  DAC/credentials/capabilities
+    -> LSM 框架
+    -> SELinux 或 AppArmor
+    -> seccomp/隔离机制
+    -> 完整性与可信启动链
+    -> 内核自保护
