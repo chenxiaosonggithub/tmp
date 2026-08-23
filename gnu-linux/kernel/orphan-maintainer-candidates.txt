@@ -1,0 +1,168 @@
+Linux Orphan 模块 Maintainer 候选分析
+=====================================
+
+分析日期：2026-08-23
+
+一、结论
+--------
+
+最值得争取 Maintainer 的模块是：
+
+1. HSR NETWORK PROTOCOL
+2. PPP PROTOCOL DRIVERS AND COMPRESSORS / PPP OVER ETHERNET
+3. CORETEMP HARDWARE MONITORING DRIVER
+4. USB WEBCAM GADGET
+
+这些模块仍有实际用户和持续修改，而且个人能够建立测试环境。结合当前从事
+KSMBD/VFS 开发的背景，建议优先考虑 PPP/PPPoE 或 HSR；如果希望从范围较小的
+模块开始，可以考虑 coretemp。
+
+二、分析口径
+------------
+
+* 分析 MAINTAINERS 中全部 139 个 S: Orphan 条目。
+* 活跃度统计范围为 2023-01-01 至分析日期。
+* “提交/作者”表示触及对应 F: 文件范围的非合并提交数和去重作者数。
+* 提交数包含部分 treewide API 改造，只用于判断活跃度，不能直接等同于用户数量。
+* 综合考虑实际使用面、近期开发活动、代码规模、硬件依赖和测试可行性。
+
+三、优先候选
+------------
+
+1. HSR NETWORK PROTOCOL
+
+   提交/作者：105/46
+   代码规模：约 5,400 行（含 selftest）
+
+   工业冗余网络协议，近期有大量真实修复。基本测试可通过 network namespace
+   和内核 selftest 完成，不需要专用硬件，是最推荐的候选。
+
+2. PPP PROTOCOL DRIVERS AND COMPRESSORS / PPP OVER ETHERNET
+
+   提交/作者：65/31
+   代码规模：约 8,500 行（合计）
+
+   用于路由器、运营商接入、PPPoE 和 PPPoL2TP。近期仍增加 GRO/GSO 和
+   selftest，并修复 UAF、并发问题。可以在虚拟网络环境中测试。
+
+3. CORETEMP HARDWARE MONITORING DRIVER
+
+   提交/作者：30/11
+   代码规模：约 1,000 行
+
+   覆盖大多数带 DTS 的 Intel Core/Atom CPU。代码边界清楚，普通 Intel
+   机器即可测试，是影响面大而代码量较小的候选。
+
+4. USB WEBCAM GADGET
+
+   提交/作者：88/31
+   代码规模：约 8,400 行
+
+   用于嵌入式摄像头和开发板模拟 USB 摄像头。近期有竞态、越界和计算错误
+   修复，需要支持 USB device/OTG 的开发板。
+
+5. SYNOPSYS DESIGNWARE ETHERNET XPCS DRIVER
+
+   提交/作者：79/12
+   代码规模：约 1,900 行
+
+   被 stmmac、AMD XGBE、Meta FBNIC 和多个 DSA 驱动使用，影响面较大。
+   涉及 phylink、PCS 和高速以太网，测试依赖硬件。
+
+6. I3C DRIVER FOR SYNOPSYS DESIGNWARE
+
+   提交/作者：60/25
+   代码规模：约 2,000 行
+
+   I3C 仍在发展，驱动近期修复较多。需要带 DesignWare I3C 控制器的 SoC
+   或开发板。
+
+7. PCI DRIVER FOR CADENCE PCIE IP
+
+   提交/作者：80/32
+   代码规模：约 4,900 行
+
+   被 TI J721E、Sophgo SG2042、CIX Sky1 等平台使用。PCIe Host/Endpoint
+   调试难度较高，需要相应硬件。
+
+四、有相应硬件时可以考虑
+--------------------------
+
+1. Sony IMX334 / IMX412
+
+   每个驱动约 1,300 行。模块范围清晰，适合拥有对应摄像头模组和 CSI 接口
+   开发板的人。没有硬件时难以验证时序、曝光和格式相关修改。
+
+2. RTL2832 SDR
+
+   USB SDR 硬件便宜，仍有无线电和 SDR 用户。测试门槛相对较低，但近期开发
+   活跃度不如首选模块。
+
+3. MMC over SPI
+
+   代码约 1,400 行，硬件比较容易搭建。使用面小于原生 SD/MMC 控制器，维护
+   影响力有限。
+
+五、不建议作为首次 Maintainer 目标
+----------------------------------
+
+1. QLogic qed/qede
+
+   2023 年以来约有 103 个提交、56 位作者，但代码约 10.6 万行。需要企业网卡、
+   固件以及以太网/RDMA 相关知识，更适合有硬件和厂商支持的团队。
+
+2. Intel WWAN IOSM
+
+   依赖特定 Intel WWAN Modem。没有对应设备时难以验证电源管理、休眠、MUX
+   和固件交互。
+
+3. TI WiLink、B43、ath6kl
+
+   旧无线硬件仍可能有用户，但代码规模较大，测试依赖特定硬件和固件。
+
+4. QNX6、SPUFS、旧 framebuffer 和老 DVB 解调器
+
+   主要服务遗留硬件或数据恢复场景。仍有保留价值，但用户面和持续开发需求
+   有限，不适合以扩大维护影响力为目标时优先选择。
+
+六、针对当前背景的推荐顺序
+--------------------------
+
+1. PPP/PPPoE
+   涉及网络协议、并发和对象生命周期，与 KSMBD 中积累的网络及并发经验接近。
+
+2. HSR
+   缺少维护者时间长、近期补丁多，并且已有 selftest，容易持续产出可验证的
+   维护工作。
+
+3. coretemp
+   代码范围最小，适合先建立独立模块维护经验。
+
+4. USB UVC Gadget
+   如果能准备 USB OTG 开发板，是用户面和开发活跃度都不错的选择。
+
+七、争取 Maintainer 的建议步骤
+------------------------------
+
+1. 选择自己能够长期测试的模块，而不只选择提交数多的模块。
+2. 运行并完善现有 selftest，修复当前告警、竞态或错误路径问题。
+3. 持续审阅该模块的补丁，提供带依据的 Reviewed-by 或测试反馈。
+4. 与上级子系统维护者和邮件列表保持沟通：
+   - HSR、PPP/PPPoE、XPCS：netdev@vger.kernel.org
+   - PPP：linux-ppp@vger.kernel.org
+   - coretemp：linux-hwmon@vger.kernel.org
+   - USB UVC Gadget：linux-usb@vger.kernel.org
+5. 在形成持续贡献和审阅记录后，先申请加入 R:；获得子系统认可后再申请
+   成为 M:。
+
+八、参考资料
+------------
+
+HSR/PRP 内核说明：
+https://docs.kernel.org/6.5/networking/dsa/dsa.html
+
+coretemp 内核文档：
+https://docs.kernel.org/hwmon/coretemp.html
+
+USB UVC Gadget 内核文档：
+https://docs.kernel.org/usb/gadget_uvc.html
