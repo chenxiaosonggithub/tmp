@@ -17,23 +17,6 @@ result_log_file=${script_dir}/"xfstests-result-log.txt"
 > ${result_file}
 > ${result_log_file}
 
-do_test()
-{
-	local test_item=$1
-	local date_time=`date +"%F %T"`
-	cd ${xfstests_path}
-	echo "starting run fstests $test_item at $date_time" >> ${result_log_file}  2>&1
-	sudo ./check ${test_item} >> ${result_log_file}  2>&1
-	result=$?
-	if [[ ${result} == 0 ]]; then
-		echo "${test_item} success" >> ${result_file}
-	else
-		echo "${test_item} fail" >> ${result_file}
-	fi
-	date_time=`date +"%F %T"`
-	echo "finished run fstests $test_item at $date_time" >> ${result_log_file}  2>&1
-}
-
 test_all()
 {
 	do_test cifs/001
@@ -168,6 +151,23 @@ test_all()
 	do_test generic/567
 	do_test generic/568
 	do_test generic/599
+}
+
+do_test()
+{
+	local test_item=$1
+	local date_time=`date +"%F %T"`
+	cd ${xfstests_path}
+	echo "starting run fstests $test_item at $date_time" >> ${result_log_file}  2>&1
+	sudo ./check ${test_item} >> ${result_log_file}  2>&1
+	result=$?
+	if [[ ${result} == 0 ]]; then
+		echo "${test_item} success" >> ${result_file}
+	else
+		echo "${test_item} fail" >> ${result_file}
+	fi
+	date_time=`date +"%F %T"`
+	echo "finished run fstests $test_item at $date_time" >> ${result_log_file}  2>&1
 }
 
 init_client_dir
