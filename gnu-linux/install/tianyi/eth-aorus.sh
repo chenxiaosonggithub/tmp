@@ -77,6 +77,12 @@ case "$1" in
 7)
 	do_tmux qemu03
 	;;
+8)
+	do_tmux qemu04
+	;;
+9)
+	do_tmux qemu05
+	;;
 *)
 	if [ $# -ge 1 ]; then
 		do_tmux $@
