@@ -1,0 +1,45 @@
+From 3f8899e04f0a71c52f4b943519aabf33acc67a7d Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Mon, 31 Aug 2026 15:19:41 +0000
+Subject: [PATCH 00/11] smb/server: change notify support
+
+rfc v1 -> v1:
+  - STATUS_INVALID_PARAMETER for CHANGE_NOTIFY on non-directory opens.
+  - Do not reject a CompletionFilter if no mapped bits remain, keep the request pending.
+  - Do not merge later `CHANGE_NOTIFY` filters into the existing watch.
+  - Give queued events to the oldest pending waiter first.
+  - Use the current request's `OutputBufferLength` instead of `notify->max_buffer_size`.
+
+rfc v1: https://lore.kernel.org/linux-cifs/20260723031644.312866-1-chenxiaosong@chenxiaosong.com/
+
+ChenXiaoSong (11):
+  smb/server: move change notify handling into notify.c
+  smb/server: add more validation for change notify requests
+  smb/server: add debug type for change notify
+  smb/server: watch directories for changes
+  smb/server: keep notify watches on file handles
+  smb/server: save simple notify events
+  smb/server: save old names for rename notify events
+  smb/server: match rename notify events
+  smb/server: encode notify events
+  smb/server: send notify events to the client
+  smb/server: break directory leases before sending notify events
+
+ fs/smb/server/Kconfig     |    1 +
+ fs/smb/server/Makefile    |    3 +-
+ fs/smb/server/glob.h      |    3 +-
+ fs/smb/server/notify.c    | 1031 +++++++++++++++++++++++++++++++++++++
+ fs/smb/server/notify.h    |   26 +
+ fs/smb/server/oplock.c    |   40 ++
+ fs/smb/server/oplock.h    |    1 +
+ fs/smb/server/server.c    |    2 +-
+ fs/smb/server/smb2pdu.c   |  112 +---
+ fs/smb/server/vfs_cache.c |    3 +
+ fs/smb/server/vfs_cache.h |    4 +
+ 11 files changed, 1116 insertions(+), 110 deletions(-)
+ create mode 100644 fs/smb/server/notify.c
+ create mode 100644 fs/smb/server/notify.h
+
+-- 
+2.55.0
+
