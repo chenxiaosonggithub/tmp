@@ -443,7 +443,7 @@ EOF
 	sudo apt install -y wireshark
 }
 
-kylinos_physical()
+kylinos_desktop_physical()
 {
 	install_linux
 
@@ -482,7 +482,19 @@ kylinos_physical()
 	kylinos_install_wireshark
 }
 
-kylinos_vm()
+kylinos_desktop_vm()
+{
+	# virtiofs共享目录: https://chenxiaosong.com/course/gnu-linux/install.html#virtiofs
+	sudo apt install -y virtiofsd
+	mkdir ~/virtio
+	echo "sudo mount -t virtiofs virtiofs ~/virtio" > mount-virtio.sh
+
+	sudo apt install cifs-utils -y
+	mkdir ~/samba
+	echo "sudo mount -t cifs -o username=chenxiaosong,uid=1000,gid=1000 //172.21.20.206/chenxiaosong ~/samba" > mount-samba.sh
+}
+
+kylinos_server_vm()
 {
 	dnf install -y xterm-resize
 	# 编辑网络，网络接口名改成和ifconfig中一样的名，启用连接 > 激活
@@ -492,6 +504,7 @@ kylinos_vm()
 windows_physical()
 {
 	# 安装windows: https://chenxiaosong.com/src/windows/windows.html
+	# 英文系统默认桌面放在OneDrive下面，需要重新设置位置放到 C:\Users\chenx\Desktop
 	# 设置 → 系统 → 多任务处理 → 对齐或按 Alt+Tab 时显示应用中的选项卡 → 不显示选项卡
 	# ThinkPad X390驱动 20Q0（好像不安装也可以）: https://newthink.lenovo.com.cn/driveList.html?selname=ThinkPad%20X390
 	# git（免安装）: https://git-scm.com/install/windows
@@ -521,6 +534,16 @@ windows_vm()
 {
 	# virt-manager中安装win11，默认分辨率太低，还要在windows中安装Windows SPICE Guest Tools
 	# 	参考 https://chenxiaosong.com/src/windows/windows.html
+
+	# virtio-win: https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/latest-virtio/virtio-win-guest-tools.exe?utm_source=chatgpt.com
+	# 官方 virtio-win 项目: https://github.com/virtio-win/virtio-win-pkg-scripts/blob/master/README.md?plain=1&utm_source=chatgpt.com
+	# 下载 ISO: https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/?utm_source=chatgpt.com
+	# WinFsp: https://winfsp.dev/rel/?utm_source=chatgpt.com
+
+	sc query VirtioFsSvc
+	sc start VirtioFsSvc # 非管理员没有权限，官方实现默认会从 Z: 开始寻找可用盘符进行挂载
+	cd "C:\Program Files\Virtio-Win\VioFS"
+	virtiofs.exe -t virtiofs -m Y:
 }
 
 # 请根据发行版和机器查看以下函数
@@ -529,8 +552,9 @@ windows_vm()
 # fedora_vm
 # ubuntu_physical
 # ubuntu_docker
-# kylinos_physical
-# kylinos_vm
+# kylinos_desktop_physical
+# kylinos_desktop_vm
+# kylinos_server_vm
 # windows_physical
 # windows_vm
 
