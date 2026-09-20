@@ -1,0 +1,67 @@
+From 26889af32d896d80723e4939d167fe6600894dc4 Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Sun, 20 Sep 2026 05:38:11 +0000
+Subject: [PATCH 1/3] smb/server: update POSIX extension specification
+ references
+
+The POSIX extension specifications have now been published:
+https://smb3posix.org/
+
+Suggested-by: Paulo Alcantara <pc@manguebit.org>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+---
+ fs/smb/server/smb2pdu.h | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
+
+diff --git a/fs/smb/server/smb2pdu.h b/fs/smb/server/smb2pdu.h
+index 95c89087553b..40d61745ef41 100644
+--- a/fs/smb/server/smb2pdu.h
++++ b/fs/smb/server/smb2pdu.h
+@@ -156,8 +156,7 @@ struct create_durable_rsp {
+ } __packed;
+ 
+ /*
+- * See POSIX-SMB2 2.2.14.2.16
+- * Link: https://gitlab.com/samba-team/smb3-posix-spec/-/blob/master/smb3_posix_extensions.md
++ * See POSIX-SMB2 2.1.3.2.1
+  */
+ struct create_posix_rsp {
+ 	struct create_context_hdr ccontext;
+@@ -349,6 +348,7 @@ struct create_sd_buf_req {
+ 	struct smb_ntsd ntsd;
+ } __packed;
+ 
++/* See POSIX-FSCC 2.2.1 */
+ struct smb2_posix_info {
+ 	__le32 NextEntryOffset;
+ 	__u32 Ignored;
+@@ -362,20 +362,18 @@ struct smb2_posix_info {
+ 	__le64 Inode;
+ 	__le32 DeviceId;
+ 	__le32 Zero;
+-	/* beginning of POSIX Create Context Response */
++	/*
++	 * Beginning of POSIX Create Context Response
++	 * See POSIX-SMB2 2.1.3.2.1
++	 */
+ 	__le32 HardLinks;
+ 	__le32 ReparseTag;
+ 	__le32 Mode;
+ 	/* SidBuffer contain two sids (UNIX user sid(16), UNIX group sid(16)) */
+ 	u8 SidBuffer[32];
++	/* End of POSIX Create Context Response */
+ 	__le32 name_len;
+ 	u8 name[];
+-	/*
+-	 * var sized owner SID
+-	 * var sized group SID
+-	 * le32 filenamelength
+-	 * u8  filename[]
+-	 */
+ } __packed;
+ 
+ /* functions */
+-- 
+2.55.0
+

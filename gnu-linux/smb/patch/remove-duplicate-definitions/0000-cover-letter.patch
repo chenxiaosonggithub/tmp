@@ -1,0 +1,18 @@
+From 053dbc5d66a8485cac41df21e180de9d78b61997 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Sun, 20 Sep 2026 05:50:27 +0000
+Subject: [PATCH 0/3] smb: update POSIX extension specification references
+
+ZhangGuoDong (3):
+  smb/server: update POSIX extension specification references
+  smb/client: update POSIX extension specification references
+  smb/common: update POSIX extension specification references
+
+ fs/smb/client/smb2pdu.h | 10 +++++++---
+ fs/smb/common/fscc.h    |  3 +--
+ fs/smb/server/smb2pdu.h | 16 +++++++---------
+ 3 files changed, 15 insertions(+), 14 deletions(-)
+
+-- 
+2.55.0
+
