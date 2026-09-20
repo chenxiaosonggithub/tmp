@@ -1,4 +1,4 @@
-From 2b3ac2b8ca35f3f96f0d371bf32d3c691c2a153f Mon Sep 17 00:00:00 2001
+From 47c0f87ac61d217c2cccea745129fa3233db9609 Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Wed, 16 Sep 2026 08:19:23 +0000
 Subject: [PATCH] smb: update POSIX extension specification references
@@ -9,13 +9,13 @@ https://smb3posix.org/
 Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
 Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
- fs/smb/client/smb2pdu.h | 20 +++++++++++---------
+ fs/smb/client/smb2pdu.h | 10 +++++++---
  fs/smb/common/fscc.h    |  3 +--
  fs/smb/server/smb2pdu.h | 16 +++++++---------
- 3 files changed, 19 insertions(+), 20 deletions(-)
+ 3 files changed, 15 insertions(+), 14 deletions(-)
 
 diff --git a/fs/smb/client/smb2pdu.h b/fs/smb/client/smb2pdu.h
-index ab6c667bebc0..62dbe08387e5 100644
+index ab6c667bebc0..b37a1e3941a1 100644
 --- a/fs/smb/client/smb2pdu.h
 +++ b/fs/smb/client/smb2pdu.h
 @@ -224,8 +224,7 @@ struct smb2_file_id_extd_directory_info {
@@ -36,7 +36,7 @@ index ab6c667bebc0..62dbe08387e5 100644
   * SMB2-only POSIX info level for query dir
   *
   * See posix_info_sid_size(), posix_info_extra_size() and
-@@ -256,16 +256,18 @@ struct smb2_posix_info {
+@@ -256,13 +256,17 @@ struct smb2_posix_info {
  	__le64 Inode;
  	__le32 DeviceId;
  	__le32 Zero;
@@ -48,20 +48,13 @@ index ab6c667bebc0..62dbe08387e5 100644
  	__le32 HardLinks;
  	__le32 ReparseTag;
  	__le32 Mode;
--	/*
--	 * var sized owner SID
--	 * var sized group SID
--	 * le32 filenamelength
--	 * u8  filename[]
--	 */
-+	// var sized owner SID
-+	// var sized group SID
-+	/* End of POSIX Create Context Response */
-+	// le32 filenamelength
-+	// u8  filename[]
- } __packed;
- 
- /*
+ 	/*
+ 	 * var sized owner SID
+ 	 * var sized group SID
++	 * End of POSIX Create Context Response
+ 	 * le32 filenamelength
+ 	 * u8  filename[]
+ 	 */
 diff --git a/fs/smb/common/fscc.h b/fs/smb/common/fscc.h
 index e46d3379b779..61bb1f8e4a64 100644
 --- a/fs/smb/common/fscc.h
@@ -125,5 +118,5 @@ index 95c89087553b..40d61745ef41 100644
  
  /* functions */
 -- 
-2.53.0
+2.55.0
 
