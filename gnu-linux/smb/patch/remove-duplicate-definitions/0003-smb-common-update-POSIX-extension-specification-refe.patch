@@ -1,23 +1,33 @@
-From 053dbc5d66a8485cac41df21e180de9d78b61997 Mon Sep 17 00:00:00 2001
+From 4afe5c9e8d54572340d46131a53635b09f5aed4f Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Sun, 20 Sep 2026 05:44:16 +0000
-Subject: [PATCH 3/3] smb/common: update POSIX extension specification
+Subject: [PATCH v2 3/3] smb/common: update POSIX extension specification
  references
 
 The POSIX extension specifications have now been published:
 https://smb3posix.org/
 
 Suggested-by: Paulo Alcantara <pc@manguebit.org>
+Suggested-by: Namjae Jeon <linkinjeon@kernel.org>
 Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
 ---
- fs/smb/common/fscc.h | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/smb/common/fscc.h | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
 diff --git a/fs/smb/common/fscc.h b/fs/smb/common/fscc.h
-index e46d3379b779..61bb1f8e4a64 100644
+index e46d3379b779..00f09e1a3afe 100644
 --- a/fs/smb/common/fscc.h
 +++ b/fs/smb/common/fscc.h
+@@ -399,7 +399,7 @@ static_assert(offsetof(struct smb2_file_rename_info, FileName) == sizeof(struct
+ #define FS_OBJECT_ID_INFORMATION	8 /* Query, Set */
+ #define FS_DRIVER_PATH_INFORMATION	9 /* Query */
+ #define FS_SECTOR_SIZE_INFORMATION	11 /* SMB3 or later. Query */
+-/* See POSIX Extensions to MS-FSCC 2.3.1.1 */
++/* See POSIX-FSCC 2.3 */
+ #define FS_POSIX_INFORMATION		100 /* SMB3.1.1 POSIX. Query */
+ 
+ /* See MS-FSCC 2.5.1 */
 @@ -575,8 +575,7 @@ struct file_notify_information {
  } __packed;
  

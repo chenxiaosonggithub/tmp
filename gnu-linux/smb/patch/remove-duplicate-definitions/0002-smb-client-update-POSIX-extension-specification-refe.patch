@@ -1,7 +1,7 @@
 From ae6993c5babcc460156c3905f51e33ce27a8657d Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Sun, 20 Sep 2026 05:39:34 +0000
-Subject: [PATCH 2/3] smb/client: update POSIX extension specification
+Subject: [PATCH v2 2/3] smb/client: update POSIX extension specification
  references
 
 The POSIX extension specifications have now been published:

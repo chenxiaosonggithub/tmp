@@ -1,7 +1,11 @@
-From 053dbc5d66a8485cac41df21e180de9d78b61997 Mon Sep 17 00:00:00 2001
+From 4afe5c9e8d54572340d46131a53635b09f5aed4f Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
-Date: Sun, 20 Sep 2026 05:50:27 +0000
-Subject: [PATCH 0/3] smb: update POSIX extension specification references
+Date: Mon, 21 Sep 2026 00:43:04 +0000
+Subject: [PATCH v2 0/3] smb: update POSIX extension specification references
+
+v1->v2: Patch #03: update FS_POSIX_INFORMATION reference.
+
+v1: https://lore.kernel.org/linux-cifs/20260920055653.114794-1-zhang.guodong@linux.dev/
 
 ZhangGuoDong (3):
   smb/server: update POSIX extension specification references
@@ -9,9 +13,9 @@ ZhangGuoDong (3):
   smb/common: update POSIX extension specification references
 
  fs/smb/client/smb2pdu.h | 10 +++++++---
- fs/smb/common/fscc.h    |  3 +--
+ fs/smb/common/fscc.h    |  5 ++---
  fs/smb/server/smb2pdu.h | 16 +++++++---------
- 3 files changed, 15 insertions(+), 14 deletions(-)
+ 3 files changed, 16 insertions(+), 15 deletions(-)
 
 -- 
 2.55.0
