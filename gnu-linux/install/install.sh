@@ -526,6 +526,8 @@ windows_physical()
 	#     Manage > Settings > User > Text Editor > Files > Auto Save > onFocusChange
 	# wireshark（免安装）: https://www.wireshark.org/#download
 	# 远程桌面工具: https://chenxiaosong.com/course/gnu-linux/ssh-reverse.html#remote-desktop
+	# 百度网盘限制设备的规则太他妈艹蛋了，7天内只能退出2台，点击这里查看设备管理的网页: https://pan.baidu.com/disk/base/device#/index
+
 	cd /home/chenxiaosong/code/blog/course/gnu-linux/src/config-file
 	bash copy-to-home.sh
 }
@@ -537,14 +539,15 @@ windows_vm()
 	# 安卓模拟器: MuMu模拟器: https://mumu.163.com/
 
 	# virtio-win: https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/latest-virtio/virtio-win-guest-tools.exe?utm_source=chatgpt.com
-	# 官方 virtio-win 项目: https://github.com/virtio-win/virtio-win-pkg-scripts/blob/master/README.md?plain=1&utm_source=chatgpt.com
-	# 下载 ISO: https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/?utm_source=chatgpt.com
+	#   官方 virtio-win 项目: https://github.com/virtio-win/virtio-win-pkg-scripts/blob/master/README.md?plain=1&utm_source=chatgpt.com
+	#   下载 ISO: https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/?utm_source=chatgpt.com
 	# WinFsp: https://winfsp.dev/rel/?utm_source=chatgpt.com
 
 	sc query VirtioFsSvc
 	sc start VirtioFsSvc # 非管理员没有权限，官方实现默认会从 Z: 开始寻找可用盘符进行挂载
-	cd "C:\Program Files\Virtio-Win\VioFS"
-	virtiofs.exe -t virtiofs -m Y:
+	# 下面2个命令放到windoes git脚本中
+	cd /c/Program\ Files/Virtio-Win/VioFS/ # cd "C:\Program Files\Virtio-Win\VioFS"
+	./virtiofs.exe -t virtiofs -m Y:
 }
 
 # 请根据发行版和机器查看以下函数
