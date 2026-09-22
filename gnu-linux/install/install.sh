@@ -534,6 +534,7 @@ windows_vm()
 {
 	# virt-manager中安装win11，默认分辨率太低，还要在windows中安装Windows SPICE Guest Tools
 	# 	参考 https://chenxiaosong.com/src/windows/windows.html
+	# 安卓模拟器: MuMu模拟器: https://mumu.163.com/
 
 	# virtio-win: https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/latest-virtio/virtio-win-guest-tools.exe?utm_source=chatgpt.com
 	# 官方 virtio-win 项目: https://github.com/virtio-win/virtio-win-pkg-scripts/blob/master/README.md?plain=1&utm_source=chatgpt.com
