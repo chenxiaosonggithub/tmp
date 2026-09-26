@@ -1,0 +1,177 @@
+From 58adace6fc47b494c79c7f3ac20c2e4978887864 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Thu, 23 Jul 2026 01:49:46 +0000
+Subject: [PATCH 12/12] smb/server: break directory leases before sending
+ notify events
+
+Reproducer:
+
+  1. ksmbd: `ksmbd.conf`:
+     [global]
+             smb2 leases = yes
+  2. ksmbd: systemctl start ksmbd
+  3. Windows 11 File Explorer:
+     Mount the share and enter the top-level directory of the mount point.
+  4. ksmbd: touch /export/file
+  5. Windows 11 File Explorer:
+     `file` does not appear in the top-level directory of the mount point.
+
+Windows can keep directory data in a cache while it has a directory
+lease. A file change made on the server does not use the SMB request
+path, so the lease is not broken.
+
+The server sends a notify event, but Windows may still use the old data.
+Some new files are then not shown in File Explorer.
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/notify.c | 34 +++++++++++++++++++++++++++++++---
+ fs/smb/server/oplock.c | 40 ++++++++++++++++++++++++++++++++++++++++
+ fs/smb/server/oplock.h |  1 +
+ 3 files changed, 72 insertions(+), 3 deletions(-)
+
+diff --git a/fs/smb/server/notify.c b/fs/smb/server/notify.c
+index dc62b5d6d17d..ff014f856ac9 100644
+--- a/fs/smb/server/notify.c
++++ b/fs/smb/server/notify.c
+@@ -18,6 +18,7 @@
+ #include "connection.h"
+ #include "ksmbd_work.h"
+ #include "notify.h"
++#include "oplock.h"
+ #include "smb_common.h"
+ #include "smb2pdu.h"
+ #include "vfs_cache.h"
+@@ -361,13 +362,34 @@ static void ksmbd_notify_broadcast(struct ksmbd_notify *notify)
+ 	spin_unlock(&notify->lock);
+ }
+ 
++static bool ksmbd_notify_events_pending(struct ksmbd_notify *notify)
++{
++	bool pending;
++
++	spin_lock(&notify->lock);
++	pending = !list_empty(&notify->events);
++	spin_unlock(&notify->lock);
++
++	return pending;
++}
++
++/* Invalidate directory caches before making the change visible to a client. */
++static void ksmbd_notify_dispatch(struct ksmbd_notify *notify)
++{
++	if (!ksmbd_notify_events_pending(notify))
++		return;
++
++	smb_break_dir_lease(notify->fp);
++	ksmbd_notify_broadcast(notify);
++}
++
+ static void ksmbd_notify_broadcast_work(struct work_struct *work)
+ {
+ 	struct ksmbd_notify *notify;
+ 
+ 	notify = container_of(to_delayed_work(work), struct ksmbd_notify,
+ 			      broadcast_work);
+-	ksmbd_notify_broadcast(notify);
++	ksmbd_notify_dispatch(notify);
+ }
+ 
+ static int ksmbd_notify_handle_inode_event(struct ksmbd_notify *notify,
+@@ -731,6 +753,12 @@ ksmbd_notify_take_events(struct ksmbd_notify *notify, struct list_head *events)
+ {
+ 	unsigned int num_events;
+ 
++	if (!ksmbd_notify_events_pending(notify))
++		return 0;
++
++	/* This path bypasses broadcast_work, so break directory leases here. */
++	smb_break_dir_lease(notify->fp);
++
+ 	spin_lock(&notify->lock);
+ 	num_events = notify->num_events;
+ 	if (num_events && ksmbd_notify_wake_waiter(notify)) {
+@@ -762,7 +790,7 @@ ksmbd_notify_requeue_events(struct ksmbd_notify *notify,
+ 	notify_req->num_events = 0;
+ 	spin_unlock(&notify->lock);
+ 
+-	ksmbd_notify_broadcast(notify);
++	ksmbd_notify_dispatch(notify);
+ }
+ 
+ static int ksmbd_notify_event_cmp(void *priv, const struct list_head *a,
+@@ -1033,7 +1061,7 @@ static int ksmbd_notify_wait(struct ksmbd_work *work,
+ 	read_unlock(&work->sess->file_table.lock);
+ 
+ 	/* Close the race between the synchronous check and queuing the waiter. */
+-	ksmbd_notify_broadcast(notify);
++	ksmbd_notify_dispatch(notify);
+ 
+ 	ksmbd_debug(NOTIFY, "Notify request pending, async id %d\n",
+ 		    work->async_id);
+diff --git a/fs/smb/server/oplock.c b/fs/smb/server/oplock.c
+index 1b8c3482d1e4..ec2ee2acca35 100644
+--- a/fs/smb/server/oplock.c
++++ b/fs/smb/server/oplock.c
+@@ -1526,6 +1526,46 @@ void smb_send_parent_lease_break_noti(struct ksmbd_file *fp,
+ 	ksmbd_inode_put(p_ci);
+ }
+ 
++/**
++ * smb_break_dir_lease() - break leases when a directory changes
++ * @fp: open directory that changed
++ *
++ * Some directory changes do not go through the SMB request path. fsnotify
++ * reports these changes. Break the directory leases before sending the
++ * changes to the SMB client.
++ *
++ * This function can sleep while it waits for a reply from the client. Do not
++ * call it from the fsnotify callback.
++ */
++void smb_break_dir_lease(struct ksmbd_file *fp)
++{
++	struct ksmbd_inode *ci = fp->f_ci;
++	struct oplock_info *opinfo;
++	LIST_HEAD(brk_list);
++
++	down_read(&ci->m_lock);
++	list_for_each_entry(opinfo, &ci->m_op_list, op_entry) {
++		if (!opinfo->conn || !opinfo->is_lease ||
++		    !opinfo->o_lease->is_dir ||
++		    opinfo->o_lease->state == SMB2_LEASE_NONE_LE)
++			continue;
++
++		if (!atomic_inc_not_zero(&opinfo->refcount))
++			continue;
++
++		if (ksmbd_conn_releasing(opinfo->conn)) {
++			opinfo_put(opinfo);
++			continue;
++		}
++
++		if (oplock_break_add(&brk_list, opinfo))
++			opinfo_put(opinfo);
++	}
++	up_read(&ci->m_lock);
++
++	oplock_break_drain_none(&brk_list, ci);
++}
++
+ void smb_lazy_parent_lease_break_close(struct ksmbd_file *fp)
+ {
+ 	struct oplock_info *opinfo;
+diff --git a/fs/smb/server/oplock.h b/fs/smb/server/oplock.h
+index b08d21758e07..72ebcbacd2be 100644
+--- a/fs/smb/server/oplock.h
++++ b/fs/smb/server/oplock.h
+@@ -137,6 +137,7 @@ int find_same_lease_key(struct ksmbd_conn *conn, struct ksmbd_inode *ci,
+ void destroy_lease_table(struct ksmbd_conn *conn);
+ void smb_send_parent_lease_break_noti(struct ksmbd_file *fp,
+ 				      struct lease_ctx_info *lctx);
++void smb_break_dir_lease(struct ksmbd_file *fp);
+ void smb_lazy_parent_lease_break_close(struct ksmbd_file *fp);
+ int smb2_check_durable_oplock(struct ksmbd_conn *conn,
+ 			      struct ksmbd_share_config *share,
+-- 
+2.55.0
+

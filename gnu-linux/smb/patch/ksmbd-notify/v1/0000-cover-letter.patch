@@ -1,7 +1,7 @@
-From 3f8899e04f0a71c52f4b943519aabf33acc67a7d Mon Sep 17 00:00:00 2001
+From 58adace6fc47b494c79c7f3ac20c2e4978887864 Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
-Date: Mon, 31 Aug 2026 15:19:41 +0000
-Subject: [PATCH 00/11] smb/server: change notify support
+Date: Sat, 26 Sep 2026 08:46:56 +0000
+Subject: [PATCH 00/12] smb/server: change notify support
 
 rfc v1 -> v1:
   - Patch #02: STATUS_INVALID_PARAMETER for CHANGE_NOTIFY on non-directory opens.
@@ -15,11 +15,12 @@ rfc v1: https://lore.kernel.org/linux-cifs/20260723031644.312866-1-chenxiaosong@
 
 TODO: stream-related notify.
 
-ChenXiaoSong (11):
+ChenXiaoSong (12):
   smb/server: move change notify handling into notify.c
   smb/server: add more validation for change notify requests
   smb/server: add debug type for change notify
-  smb/server: watch directories for changes
+  smb/server: support non-recursive directory change watches
+  smb/server: support recursive directory change watches
   smb/server: keep notify watches on file handles
   smb/server: save simple notify events
   smb/server: save old names for rename notify events
@@ -31,7 +32,7 @@ ChenXiaoSong (11):
  fs/smb/server/Kconfig     |    1 +
  fs/smb/server/Makefile    |    3 +-
  fs/smb/server/glob.h      |    3 +-
- fs/smb/server/notify.c    | 1031 +++++++++++++++++++++++++++++++++++++
+ fs/smb/server/notify.c    | 1193 +++++++++++++++++++++++++++++++++++++
  fs/smb/server/notify.h    |   26 +
  fs/smb/server/oplock.c    |   40 ++
  fs/smb/server/oplock.h    |    1 +
@@ -39,7 +40,7 @@ ChenXiaoSong (11):
  fs/smb/server/smb2pdu.c   |  112 +---
  fs/smb/server/vfs_cache.c |    3 +
  fs/smb/server/vfs_cache.h |    4 +
- 11 files changed, 1116 insertions(+), 110 deletions(-)
+ 11 files changed, 1278 insertions(+), 110 deletions(-)
  create mode 100644 fs/smb/server/notify.c
  create mode 100644 fs/smb/server/notify.h
 

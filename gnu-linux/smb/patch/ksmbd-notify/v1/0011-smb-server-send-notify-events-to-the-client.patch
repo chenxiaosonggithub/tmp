@@ -1,0 +1,329 @@
+From 4a240fd81274f7e7236e51f6e92fb3be5d5c59ee Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Tue, 21 Jul 2026 17:52:15 +0800
+Subject: [PATCH 11/12] smb/server: send notify events to the client
+
+Wake one pending request and send its saved events in the reply.
+
+Example:
+
+  smbinfo notify /mnt
+
+  # server: touch /export/file1
+  Notifications received, returned data_len is 48
+  Action: 0x00000001, FileName: file1
+  Action: 0x00000003, FileName: file1
+
+  # server: mv /export/file1 /export/file2
+  Notifications received, returned data_len is 48
+  Action: 0x00000004, FileName: file1
+  Action: 0x00000005, FileName: file2
+
+Suggested-by: Namjae Jeon <linkinjeon@kernel.org>
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/notify.c | 188 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 185 insertions(+), 3 deletions(-)
+
+diff --git a/fs/smb/server/notify.c b/fs/smb/server/notify.c
+index da30cc058d78..dc62b5d6d17d 100644
+--- a/fs/smb/server/notify.c
++++ b/fs/smb/server/notify.c
+@@ -47,12 +47,18 @@ struct ksmbd_notify {
+ 	u32 moved_from_mask;
+ 	u32 moved_from_cookie;
+ 	struct delayed_work moved_from_work;
++	struct delayed_work broadcast_work;
+ };
+ 
+ struct ksmbd_notify_req {
+ 	wait_queue_head_t wait;
++	struct list_head events;
++	unsigned int num_events;
++	bool notified;
+ };
+ 
++#define KSMBD_NOTIFY_BROADCAST_MSECS	1000
++#define KSMBD_NOTIFY_BROADCAST_MAX_EVENTS	100
+ #define KSMBD_NOTIFY_MOVED_FROM_MSECS	100
+ #define KSMBD_NOTIFY_NAME_EVENT_MASK	(FS_CREATE | FS_DELETE | \
+ 					 FS_MOVED_FROM | FS_MOVED_TO)
+@@ -169,13 +175,28 @@ static void
+ ksmbd_notify_queue_event(struct ksmbd_notify *notify,
+ 			 struct ksmbd_notify_event *event)
+ {
++	unsigned long broadcast_delay = 0;
++	bool schedule_broadcast = false;
++
+ 	ksmbd_debug(NOTIFY, "Queueing notify event, action %u, name %s\n",
+ 		    event->action, event->name);
+ 
+ 	spin_lock(&notify->lock);
+ 	list_add_tail(&event->list, &notify->events);
+ 	notify->num_events++;
++	/* Start one timer per batch; reaching the limit flushes it early. */
++	if (notify->num_events == 1) {
++		broadcast_delay =
++			msecs_to_jiffies(KSMBD_NOTIFY_BROADCAST_MSECS);
++		schedule_broadcast = true;
++	} else if (notify->num_events >= KSMBD_NOTIFY_BROADCAST_MAX_EVENTS) {
++		schedule_broadcast = true;
++	}
+ 	spin_unlock(&notify->lock);
++
++	if (schedule_broadcast)
++		mod_delayed_work(system_dfl_long_wq, &notify->broadcast_work,
++				 broadcast_delay);
+ }
+ 
+ static void
+@@ -298,6 +319,57 @@ ksmbd_notify_handle_rename(struct ksmbd_notify *notify, u32 mask,
+ 	return true;
+ }
+ 
++/*
++ * Give queued events to the oldest pending notify request. The caller holds
++ * notify->lock so this lookup and transfer are atomic with synchronous takes.
++ */
++static bool ksmbd_notify_wake_waiter(struct ksmbd_notify *notify)
++{
++	struct ksmbd_notify_req *notify_req;
++	struct ksmbd_work *work;
++	bool found = false;
++
++	spin_lock(&notify->fp->f_lock);
++	list_for_each_entry(work, &notify->fp->blocked_works, fp_entry) {
++		if (READ_ONCE(work->state) != KSMBD_WORK_ACTIVE ||
++		    work->cancel_fn != smb2_notify_cancel ||
++		    !work->cancel_argv)
++			continue;
++
++		notify_req = work->cancel_argv[0];
++		if (READ_ONCE(notify_req->notified))
++			continue;
++
++		list_splice_tail_init(&notify->events, &notify_req->events);
++		notify_req->num_events = notify->num_events;
++		notify->num_events = 0;
++		WRITE_ONCE(notify_req->notified, true);
++		wake_up(&notify_req->wait);
++		found = true;
++		break;
++	}
++	spin_unlock(&notify->fp->f_lock);
++
++	return found;
++}
++
++static void ksmbd_notify_broadcast(struct ksmbd_notify *notify)
++{
++	spin_lock(&notify->lock);
++	if (!list_empty(&notify->events))
++		ksmbd_notify_wake_waiter(notify);
++	spin_unlock(&notify->lock);
++}
++
++static void ksmbd_notify_broadcast_work(struct work_struct *work)
++{
++	struct ksmbd_notify *notify;
++
++	notify = container_of(to_delayed_work(work), struct ksmbd_notify,
++			      broadcast_work);
++	ksmbd_notify_broadcast(notify);
++}
++
+ static int ksmbd_notify_handle_inode_event(struct ksmbd_notify *notify,
+ 					   u32 mask, struct inode *inode,
+ 					   struct inode *dir,
+@@ -571,6 +643,8 @@ static int ksmbd_notify_add(struct ksmbd_file *fp, u32 mask, u32 filter,
+ 	notify->watch_tree = watch_tree;
+ 	INIT_DELAYED_WORK(&notify->moved_from_work,
+ 			  ksmbd_notify_moved_from_timeout);
++	INIT_DELAYED_WORK(&notify->broadcast_work,
++			  ksmbd_notify_broadcast_work);
+ 
+ 	notify->group = fsnotify_alloc_group(&ksmbd_notify_fsnotify_ops, 0);
+ 	if (IS_ERR(notify->group)) {
+@@ -646,11 +720,51 @@ void ksmbd_notify_remove(struct ksmbd_file *fp)
+ 		    notify->mark->mask, notify->watch_tree);
+ 	ksmbd_notify_destroy_marks(notify);
+ 	cancel_delayed_work_sync(&notify->moved_from_work);
++	cancel_delayed_work_sync(&notify->broadcast_work);
+ 	kfree(notify->moved_from_event);
+ 	ksmbd_notify_free_events(&notify->events);
+ 	kfree(notify);
+ }
+ 
++static unsigned int
++ksmbd_notify_take_events(struct ksmbd_notify *notify, struct list_head *events)
++{
++	unsigned int num_events;
++
++	spin_lock(&notify->lock);
++	num_events = notify->num_events;
++	if (num_events && ksmbd_notify_wake_waiter(notify)) {
++		num_events = 0;
++	} else if (num_events) {
++		list_splice_tail_init(&notify->events, events);
++		notify->num_events = 0;
++	}
++	spin_unlock(&notify->lock);
++
++	if (num_events)
++		ksmbd_debug(NOTIFY,
++			    "Take %u queued notify events for synchronous reply\n",
++			    num_events);
++	return num_events;
++}
++
++static void
++ksmbd_notify_requeue_events(struct ksmbd_notify *notify,
++			    struct ksmbd_notify_req *notify_req)
++{
++	if (!notify_req->num_events)
++		return;
++
++	spin_lock(&notify->lock);
++	/* These events happened before any events already on the queue. */
++	list_splice_init(&notify_req->events, &notify->events);
++	notify->num_events += notify_req->num_events;
++	notify_req->num_events = 0;
++	spin_unlock(&notify->lock);
++
++	ksmbd_notify_broadcast(notify);
++}
++
+ static int ksmbd_notify_event_cmp(void *priv, const struct list_head *a,
+ 				  const struct list_head *b)
+ {
+@@ -756,6 +870,48 @@ static void *ksmbd_notify_encode_events(struct ksmbd_work *work,
+ 	return NULL;
+ }
+ 
++static int ksmbd_notify_reply(struct ksmbd_work *work,
++			      struct smb2_change_notify_req *req,
++			      struct smb2_change_notify_rsp *rsp,
++			      struct list_head *events)
++{
++	u32 max_len = le32_to_cpu(req->OutputBufferLength);
++	size_t data_len = 0;
++	void *data;
++	int err;
++
++	data = ksmbd_notify_encode_events(work, events, max_len, &data_len);
++	ksmbd_notify_free_events(events);
++
++	/* Maps a successful zero-length notify reply to ENUM_DIR. */
++	if (!data_len) {
++		ksmbd_debug(NOTIFY,
++			    "Return notify enum directory, output buffer length %u\n",
++			    max_len);
++		rsp->hdr.Status = STATUS_NOTIFY_ENUM_DIR;
++		return 0;
++	}
++
++	rsp->StructureSize = cpu_to_le16(9);
++	rsp->OutputBufferOffset = cpu_to_le16(72);
++	rsp->OutputBufferLength = cpu_to_le32(data_len);
++	err = ksmbd_iov_pin_rsp_read(work, rsp,
++				     offsetof(struct smb2_change_notify_rsp, Buffer),
++				     data, data_len);
++	if (err) {
++		pr_err("Failed to pin notify response data, length %zu: %d\n",
++		       data_len, err);
++		kvfree(data);
++		rsp->hdr.Status = STATUS_INSUFFICIENT_RESOURCES;
++	} else {
++		ksmbd_debug(NOTIFY,
++			    "Prepared notify response, data length %zu\n",
++			    data_len);
++	}
++
++	return err;
++}
++
+ static struct ksmbd_file *
+ ksmbd_notify_validate_req(struct ksmbd_work *work,
+ 			  struct smb2_change_notify_req *req,
+@@ -876,11 +1032,15 @@ static int ksmbd_notify_wait(struct ksmbd_work *work,
+ 	spin_unlock(&fp->f_lock);
+ 	read_unlock(&work->sess->file_table.lock);
+ 
++	/* Close the race between the synchronous check and queuing the waiter. */
++	ksmbd_notify_broadcast(notify);
++
+ 	ksmbd_debug(NOTIFY, "Notify request pending, async id %d\n",
+ 		    work->async_id);
+ 	smb2_send_interim_resp(work, STATUS_PENDING);
+ 
+ 	err = wait_event_interruptible(notify_req->wait,
++				       READ_ONCE(notify_req->notified) ||
+ 				       READ_ONCE(work->state) !=
+ 					       KSMBD_WORK_ACTIVE);
+ 	if (err && READ_ONCE(work->state) == KSMBD_WORK_ACTIVE) {
+@@ -916,6 +1076,7 @@ int ksmbd_handle_notify(struct ksmbd_work *work,
+ 	struct ksmbd_notify_req notify_req = {};
+ 	struct ksmbd_notify *notify = NULL;
+ 	struct ksmbd_file *fp = NULL;
++	LIST_HEAD(events);
+ 	void **argv = NULL;
+ 	bool async_work = false;
+ 	int err = 0;
+@@ -934,6 +1095,12 @@ int ksmbd_handle_notify(struct ksmbd_work *work,
+ 		goto out;
+ 	}
+ 
++	/* Changes which arrived without a waiter are returned synchronously. */
++	if (ksmbd_notify_take_events(notify, &events)) {
++		err = ksmbd_notify_reply(work, req, rsp, &events);
++		goto out;
++	}
++
+ 	argv = kmalloc_obj(*argv, KSMBD_DEFAULT_GFP);
+ 	if (!argv) {
+ 		pr_err("Failed to allocate notify cancel arguments\n");
+@@ -942,6 +1109,7 @@ int ksmbd_handle_notify(struct ksmbd_work *work,
+ 		goto out;
+ 	}
+ 	init_waitqueue_head(&notify_req.wait);
++	INIT_LIST_HEAD(&notify_req.events);
+ 	argv[0] = &notify_req;
+ 
+ 	err = setup_async_work(work, smb2_notify_cancel, argv);
+@@ -959,16 +1127,30 @@ int ksmbd_handle_notify(struct ksmbd_work *work,
+ 	}
+ 
+ 	if (work->state == KSMBD_WORK_CLOSED) {
++		ksmbd_notify_requeue_events(notify, &notify_req);
+ 		rsp->hdr.Status = STATUS_NOTIFY_CLEANUP;
+ 		ksmbd_debug(NOTIFY, "Notify handle closed, async id %d\n",
+ 			    work->async_id);
+-	} else {
++		smb2_send_interim_resp(work, rsp->hdr.Status);
++		work->send_no_response = 1;
++	} else if (work->state == KSMBD_WORK_CANCELLED) {
++		ksmbd_notify_requeue_events(notify, &notify_req);
+ 		rsp->hdr.Status = STATUS_CANCELLED;
+ 		ksmbd_debug(NOTIFY, "Notify request cancelled, async id %d\n",
+ 			    work->async_id);
++		smb2_send_interim_resp(work, rsp->hdr.Status);
++		work->send_no_response = 1;
++	} else {
++		/* Complete the request using the AsyncId sent in STATUS_PENDING. */
++		rsp->hdr.Flags |= SMB2_FLAGS_ASYNC_COMMAND;
++		rsp->hdr.Id.AsyncId = cpu_to_le64(work->async_id);
++		err = ksmbd_notify_reply(work, req, rsp,
++					 &notify_req.events);
++		if (!err)
++			ksmbd_debug(NOTIFY,
++				    "Completed notify request, async id %d\n",
++				    work->async_id);
+ 	}
+-	smb2_send_interim_resp(work, rsp->hdr.Status);
+-	work->send_no_response = 1;
+ 
+ out:
+ 	if (rsp->hdr.Status != STATUS_SUCCESS && !work->send_no_response)
+-- 
+2.55.0
+

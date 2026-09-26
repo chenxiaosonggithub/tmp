@@ -1,0 +1,200 @@
+From 32e9616567e8150ed81946389a0d8cd51ad613c9 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Tue, 21 Jul 2026 17:47:16 +0800
+Subject: [PATCH 07/12] smb/server: save simple notify events
+
+Save create, delete, and change events.
+
+Example:
+
+  1. client: smbinfo notify /mnt
+  2. server: ksmbd.control --debug=notify
+  3. server: touch /export/file
+     server debug log:
+       ksmbd: Queueing notify event, action 1, name file
+       ksmbd: Queueing notify event, action 3, name file
+  4. server: rm /export/file
+     server debug log:
+       ksmbd: Queueing notify event, action 2, name file
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/notify.c | 105 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 105 insertions(+)
+
+diff --git a/fs/smb/server/notify.c b/fs/smb/server/notify.c
+index b49c0ec5117d..355370c66de0 100644
+--- a/fs/smb/server/notify.c
++++ b/fs/smb/server/notify.c
+@@ -22,6 +22,14 @@
+ #include "vfs_cache.h"
+ #include "mgmt/user_session.h"
+ 
++struct ksmbd_notify_event {
++	struct list_head list;
++	u32 action;
++	u64 when;
++	size_t name_len;
++	char name[];
++};
++
+ struct ksmbd_notify {
+ 	struct fsnotify_group *group;
+ 	struct fsnotify_mark *mark;
+@@ -29,6 +37,8 @@ struct ksmbd_notify {
+ 	struct ksmbd_file *fp;
+ 	/* Protects filter, rename state and the queued events. */
+ 	spinlock_t lock;
++	struct list_head events;
++	unsigned int num_events;
+ 	u32 filter;
+ 	u32 mask;
+ 	bool watch_tree;
+@@ -40,6 +50,8 @@ struct ksmbd_notify_req {
+ 
+ #define KSMBD_NOTIFY_NAME_EVENT_MASK	(FS_CREATE | FS_DELETE | \
+ 					 FS_MOVED_FROM | FS_MOVED_TO)
++#define KSMBD_NOTIFY_EVENT_MASK		(FS_ATTRIB | FS_MODIFY | \
++					 KSMBD_NOTIFY_NAME_EVENT_MASK)
+ 
+ static const struct {
+ 	u32 notify_mask;
+@@ -75,6 +87,34 @@ static u32 ksmbd_notify_map(u32 filter)
+ 	return mask;
+ }
+ 
++static void ksmbd_notify_free_events(struct list_head *events)
++{
++	struct ksmbd_notify_event *event, *tmp;
++
++	list_for_each_entry_safe(event, tmp, events, list) {
++		list_del(&event->list);
++		kfree(event);
++	}
++}
++
++static bool ksmbd_notify_filter_match(struct ksmbd_notify *notify, u32 mask)
++{
++	u32 filter, notify_mask;
++
++	spin_lock(&notify->lock);
++	filter = notify->filter;
++	notify_mask = notify->mask;
++	spin_unlock(&notify->lock);
++
++	if (mask & KSMBD_NOTIFY_NAME_EVENT_MASK) {
++		if (mask & FS_ISDIR)
++			return filter & FILE_NOTIFY_CHANGE_DIR_NAME;
++		return filter & FILE_NOTIFY_CHANGE_FILE_NAME;
++	}
++
++	return mask & notify_mask;
++}
++
+ /*
+  * Cancel handler for a pending CHANGE_NOTIFY. Called either by
+  * smb2_cancel() (conn->request_lock held, work->state already set to
+@@ -94,14 +134,54 @@ static void smb2_notify_cancel(void **argv)
+ 	wake_up(&notify_req->wait);
+ }
+ 
++static struct ksmbd_notify_event *
++ksmbd_notify_alloc_event(u32 action, const struct qstr *file_name, gfp_t gfp)
++{
++	struct ksmbd_notify_event *event;
++	size_t name_len = file_name ? file_name->len : 0;
++
++	event = kmalloc(sizeof(*event) + name_len + 1, gfp);
++	if (!event) {
++		pr_err("Failed to allocate notify event, action %u, name %.*s\n",
++		       action, file_name ? file_name->len : 0,
++		       file_name ? (const char *)file_name->name : "");
++		return NULL;
++	}
++
++	INIT_LIST_HEAD(&event->list);
++	event->action = action;
++	event->when = ktime_get_ns();
++	event->name_len = name_len;
++	if (name_len)
++		memcpy(event->name, file_name->name, name_len);
++	event->name[name_len] = '\0';
++
++	return event;
++}
++
++static void
++ksmbd_notify_queue_event(struct ksmbd_notify *notify,
++			 struct ksmbd_notify_event *event)
++{
++	ksmbd_debug(NOTIFY, "Queueing notify event, action %u, name %s\n",
++		    event->action, event->name);
++
++	spin_lock(&notify->lock);
++	list_add_tail(&event->list, &notify->events);
++	notify->num_events++;
++	spin_unlock(&notify->lock);
++}
++
+ static int ksmbd_notify_handle_inode_event(struct ksmbd_notify *notify,
+ 					   u32 mask, struct inode *inode,
+ 					   struct inode *dir,
+ 					   const struct qstr *file_name,
+ 					   u32 cookie)
+ {
++	struct ksmbd_notify_event *event;
+ 	struct inode *event_inode = dir ?: inode;
+ 	struct ksmbd_file *fp;
++	u32 action;
+ 
+ 	fp = notify->fp;
+ 
+@@ -112,6 +192,29 @@ static int ksmbd_notify_handle_inode_event(struct ksmbd_notify *notify,
+ 		    file_name ? file_name->len : 0,
+ 		    file_name ? (const char *)file_name->name : "", cookie);
+ 
++	if (!(mask & KSMBD_NOTIFY_EVENT_MASK)) {
++		ksmbd_debug(NOTIFY, "Ignored notify event mask 0x%x\n", mask);
++		return 0;
++	}
++
++	if (mask & FS_CREATE) {
++		action = FILE_ACTION_ADDED;
++	} else if (mask & FS_DELETE) {
++		action = FILE_ACTION_REMOVED;
++	} else {
++		action = FILE_ACTION_MODIFIED;
++	}
++
++	if (!ksmbd_notify_filter_match(notify, mask))
++		return 0;
++
++	event = ksmbd_notify_alloc_event(action, file_name,
++					 KSMBD_DEFAULT_GFP);
++	if (!event)
++		return 0;
++
++	ksmbd_notify_queue_event(notify, event);
++
+ 	return 0;
+ }
+ 
+@@ -326,6 +429,7 @@ static int ksmbd_notify_add(struct ksmbd_file *fp, u32 mask, u32 filter,
+ 
+ 	notify->fp = fp;
+ 	spin_lock_init(&notify->lock);
++	INIT_LIST_HEAD(&notify->events);
+ 	notify->filter = filter;
+ 	notify->mask = mask;
+ 	notify->watch_tree = watch_tree;
+@@ -403,6 +507,7 @@ void ksmbd_notify_remove(struct ksmbd_file *fp)
+ 		    (unsigned long long)file_inode(fp->filp)->i_ino,
+ 		    notify->mark->mask, notify->watch_tree);
+ 	ksmbd_notify_destroy_marks(notify);
++	ksmbd_notify_free_events(&notify->events);
+ 	kfree(notify);
+ }
+ 
+-- 
+2.55.0
+

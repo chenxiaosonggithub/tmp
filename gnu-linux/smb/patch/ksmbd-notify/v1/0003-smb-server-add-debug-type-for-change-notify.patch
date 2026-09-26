@@ -1,0 +1,113 @@
+From 60f5e9d170405ba34fe1f46feaaea0536ea396b2 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Thu, 2 Jul 2026 12:24:08 +0800
+Subject: [PATCH 03/12] smb/server: add debug type for change notify
+
+Add KSMBD_DEBUG_NOTIFY and expose it as "notify" to print logs
+for the change notify feature.
+
+Example:
+
+  ksmbd.control --debug=notify
+  [ksmbd.control/802]: INFO: smb auth vfs oplock ipc conn rdma [notify]
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/glob.h    |  3 ++-
+ fs/smb/server/notify.c  | 12 ++++++++++++
+ fs/smb/server/server.c  |  2 +-
+ fs/smb/server/smb2pdu.c |  2 +-
+ 4 files changed, 16 insertions(+), 3 deletions(-)
+
+diff --git a/fs/smb/server/glob.h b/fs/smb/server/glob.h
+index 4ea187af2348..5131bad88d96 100644
+--- a/fs/smb/server/glob.h
++++ b/fs/smb/server/glob.h
+@@ -21,10 +21,11 @@ extern int ksmbd_debug_types;
+ #define KSMBD_DEBUG_IPC         BIT(4)
+ #define KSMBD_DEBUG_CONN        BIT(5)
+ #define KSMBD_DEBUG_RDMA        BIT(6)
++#define KSMBD_DEBUG_NOTIFY      BIT(7)
+ #define KSMBD_DEBUG_ALL         (KSMBD_DEBUG_SMB | KSMBD_DEBUG_AUTH |	\
+ 				KSMBD_DEBUG_VFS | KSMBD_DEBUG_OPLOCK |	\
+ 				KSMBD_DEBUG_IPC | KSMBD_DEBUG_CONN |	\
+-				KSMBD_DEBUG_RDMA)
++				KSMBD_DEBUG_RDMA | KSMBD_DEBUG_NOTIFY)
+ 
+ #ifdef pr_fmt
+ #undef pr_fmt
+diff --git a/fs/smb/server/notify.c b/fs/smb/server/notify.c
+index 18cf0005a037..502ec551c01e 100644
+--- a/fs/smb/server/notify.c
++++ b/fs/smb/server/notify.c
+@@ -39,6 +39,7 @@ static void smb2_notify_cancel(void **argv)
+ {
+ 	struct ksmbd_notify_req *notify_req = argv[0];
+ 
++	ksmbd_debug(NOTIFY, "Wake pending notify request\n");
+ 	wake_up(&notify_req->wait);
+ }
+ 
+@@ -66,6 +67,11 @@ ksmbd_notify_validate_req(struct ksmbd_work *work,
+ 		return ERR_PTR(-ENOENT);
+ 	}
+ 
++	ksmbd_debug(NOTIFY,
++		    "fid %llu:%llu, handle notify request, filter 0x%x, flags 0x%x\n",
++		    fp->persistent_id, fp->volatile_id,
++		    le32_to_cpu(req->CompletionFilter), le16_to_cpu(req->Flags));
++
+ 	if (le32_to_cpu(req->OutputBufferLength) >
+ 	    work->conn->vals->max_trans_size) {
+ 		pr_err("Notify output buffer length %u exceeds maximum %u\n",
+@@ -121,6 +127,8 @@ static int ksmbd_notify_wait(struct ksmbd_work *work,
+ 	spin_unlock(&fp->f_lock);
+ 	read_unlock(&work->sess->file_table.lock);
+ 
++	ksmbd_debug(NOTIFY, "Notify request pending, async id %d\n",
++		    work->async_id);
+ 	smb2_send_interim_resp(work, STATUS_PENDING);
+ 
+ 	err = wait_event_interruptible(notify_req->wait,
+@@ -195,8 +203,12 @@ int ksmbd_handle_notify(struct ksmbd_work *work,
+ 
+ 	if (work->state == KSMBD_WORK_CLOSED) {
+ 		rsp->hdr.Status = STATUS_NOTIFY_CLEANUP;
++		ksmbd_debug(NOTIFY, "Notify handle closed, async id %d\n",
++			    work->async_id);
+ 	} else {
+ 		rsp->hdr.Status = STATUS_CANCELLED;
++		ksmbd_debug(NOTIFY, "Notify request cancelled, async id %d\n",
++			    work->async_id);
+ 	}
+ 	smb2_send_interim_resp(work, rsp->hdr.Status);
+ 	work->send_no_response = 1;
+diff --git a/fs/smb/server/server.c b/fs/smb/server/server.c
+index 0827c8c51006..958e952223aa 100644
+--- a/fs/smb/server/server.c
++++ b/fs/smb/server/server.c
+@@ -564,7 +564,7 @@ static ssize_t kill_server_store(const struct class *class,
+ 
+ static const char * const debug_type_strings[] = {"smb", "auth", "vfs",
+ 						  "oplock", "ipc", "conn",
+-						  "rdma"};
++						  "rdma", "notify"};
+ 
+ static ssize_t debug_show(const struct class *class, const struct class_attribute *attr,
+ 			  char *buf)
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index 1f45a0836fe9..eb15cda699b7 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -11830,7 +11830,7 @@ int smb2_notify(struct ksmbd_work *work)
+ 	struct smb2_change_notify_req *req;
+ 	struct smb2_change_notify_rsp *rsp;
+ 
+-	ksmbd_debug(SMB, "Received smb2 notify\n");
++	ksmbd_debug(NOTIFY, "Received smb2 notify\n");
+ 
+ 	WORK_BUFFERS(work, req, rsp);
+ 
+-- 
+2.55.0
+
