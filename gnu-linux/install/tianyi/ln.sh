@@ -1,6 +1,6 @@
 script_dir=$(dirname "$(realpath "${BASH_SOURCE[0]}")")
 
-array=(eth-aorus.sh  wake-aorus-eth.sh start-vm.sh)
+array=(eth-aorus.sh  wake-aorus-eth.sh start-vm.sh mount-nfs.sh)
 
 for element in ${array[@]}
 do

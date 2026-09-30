@@ -93,13 +93,6 @@ physical_common()
 	bash /home/chenxiaosong/code/tmp/gnu-linux/install/aorus/ln.sh
 
 	ln -s /home/chenxiaosong/code/tmp/gnu-linux/install/chown-blog.sh ~/chown-blog.sh
-
-	sudo cp /home/chenxiaosong/code/tmp/gnu-linux/install/smb.conf /etc/samba/
-	# samba新增用户
-	sudo pdbedit -a -u $USER
-	# samba重启服务
-	sudo systemctl restart smbd # ubuntu"
-	sudo systemctl restart smb # fedora"
 }
 
 docker_common()
@@ -367,13 +360,41 @@ setup_rdp()
 	systemctl --user status gnome-remote-desktop.service
 }
 
+setup_nfs()
+{
+	# server
+	sudo apt-get install nfs-kernel-server -y
+	sudo vim /etc/exports # /home/chenxiaosong/ *(rw,no_root_squash,fsid=0)
+	sudo systemctl restart nfs-server
+
+	# client
+	sudo apt-get install nfs-common -y
+	mkdir ~/nfs-aorus
+	sudo mount -t nfs 172.21.20.210:/ ~/nfs-aorus
+}
+
+setup_smb()
+{
+	# server
+	sudo apt install samba -y
+	sudo cp /home/chenxiaosong/code/tmp/gnu-linux/install/smb.conf /etc/samba/
+	sudo pdbedit -a -u $USER # samba新增用户
+	sudo systemctl restart smbd # ubuntu"
+	sudo systemctl restart smb # fedora"
+
+	# client
+	sudo apt install cifs-utils -y
+	mkdir ~/samba-tianyi
+	sudo mount -t cifs -o username=chenxiaosong,uid=$(id -u),gid=$(id -g) //172.21.20.206/chenxiaosong ~/samba-tianyi
+}
+
 ubuntu_physical()
 {
 	install_linux
 
 	sudo apt-get update -y
 	# fuse 在ubuntu24.04上不能安装，否则图形界面就芭比q了
-	sudo apt install -y openssh-server net-tools git virt-manager vim tmux pm-utils samba virtiofsd cifs-utils wakeonlan vim-gtk3 remmina
+	sudo apt install -y openssh-server net-tools git virt-manager vim tmux pm-utils virtiofsd wakeonlan vim-gtk3 remmina
 	sudo apt install -y libvirt-daemon-system
 	sudo apt install -y nginx pandoc jq apache2-utils
 	sudo apt install bash-completion -y
@@ -421,6 +442,8 @@ EOF
 	ln -s /home/chenxiaosong/sw/VSCode-linux-x64/bin/code /home/chenxiaosong/vscode
 
 	setup_rdp
+	setup_nfs
+	setup_smb
 }
 
 kylinos_install_wireshark()
@@ -491,7 +514,7 @@ kylinos_desktop_vm()
 
 	sudo apt install cifs-utils -y
 	mkdir ~/samba
-	echo "sudo mount -t cifs -o username=chenxiaosong,uid=1000,gid=1000 //172.21.20.206/chenxiaosong ~/samba" > mount-samba.sh
+	echo "sudo mount -t cifs -o username=chenxiaosong,uid=$(id -u),gid=$(id -g) //172.21.20.206/chenxiaosong ~/samba" > mount-samba.sh
 }
 
 kylinos_server_vm()

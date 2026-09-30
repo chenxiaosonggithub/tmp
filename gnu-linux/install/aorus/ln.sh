@@ -1,6 +1,6 @@
 script_dir=$(dirname "$(realpath "${BASH_SOURCE[0]}")")
 
-array=(eth-tianyi.sh  start-vm.sh  suspend.sh  tmux.sh)
+array=(eth-tianyi.sh  start-vm.sh  suspend.sh  tmux.sh mount-samba.sh)
 
 for element in ${array[@]}
 do
