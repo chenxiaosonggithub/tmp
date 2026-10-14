@@ -7,7 +7,6 @@
 #	目的文件，html文件相对路径，如果是~，就代表只和源文件的后缀名不同
 #	网页标题
 comm_tmp_array=(
-	1 1 tmp/gnu-linux/openeuler/review.md enfs-review.html "陈孝松review的enfs补丁"
 )
 
 for element in ${comm_tmp_array[@]}
