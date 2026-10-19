@@ -9,6 +9,9 @@ do_tmux() {
 		docker)
 			docker_tmux $1
 			;;
+		vm)
+			vm_tmux $1
+			;;
 		*)
 			usage
 			;;
@@ -28,6 +31,21 @@ docker_tmux() {
 	# 退出tmux立刻回到原来的环境
 	$ssh_cmd " \
 	docker exec -it workspace-fedora bash -c ' \
+	export LC_ALL=zh_CN.UTF-8; \
+	if tmux has-session -t $1 2>/dev/null; then \
+		tmux att -t $1; \
+	else \
+		tmux new -t $1; \
+	fi \
+	'"
+	# 加上下面的，退出tmux不会立刻回到原来的环境
+	# exec bash'; exec bash -l"
+}
+
+vm_tmux() {
+	# 退出tmux立刻回到原来的环境
+	$ssh_cmd " \
+	. vm-ssh.sh ' \
 	export LC_ALL=zh_CN.UTF-8; \
 	if tmux has-session -t $1 2>/dev/null; then \
 		tmux att -t $1; \
