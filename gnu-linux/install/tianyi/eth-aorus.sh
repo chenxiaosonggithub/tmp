@@ -78,7 +78,7 @@ case "$1" in
 	fi
 	;;
 2)
-	do_tmux aorus pm
+	do_tmux ai vm
 	;;
 3)
 	do_tmux code
