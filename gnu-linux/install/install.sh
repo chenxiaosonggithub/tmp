@@ -243,6 +243,13 @@ ubuntu_docker()
 	docker_common
 }
 
+ubuntu_vm()
+{
+	# 共享剪贴板
+	sudo apt install spice-vdagent -y
+	sudo reboot
+}
+
 fedora_vm()
 {
 	# [FAILED] Failed to mount boot-efi.mount - /boot/efi.
@@ -557,6 +564,12 @@ windows_physical()
 
 windows_vm()
 {
+	# 复制粘贴要安装SPICE Guest Tools和virtio-win-guest-tools
+	# 	但是virtio-win-guest-tools安装后鼠标不能点击，需要进行以下配置:
+	# 	将 Windows 虚拟机正常关机，在 virt-manager 中打开硬件详情，找到 Display Spice > XML
+	# 	在现有的 <graphics type='spice' ...> 元素内部，加入下面两项；如果已经存在，就修改原来的值，不要重复添加：
+	# 		<clipboard copypaste='yes'/>
+	# 		<mouse mode='server'/>
 	# virt-manager中安装win11，默认分辨率太低，还要在windows中安装Windows SPICE Guest Tools
 	# 	参考 https://chenxiaosong.com/src/windows/windows.html
 	# 安卓模拟器: MuMu模拟器: https://mumu.163.com/
@@ -579,6 +592,7 @@ windows_vm()
 # fedora_vm
 # ubuntu_physical
 # ubuntu_docker
+# ubuntu_vm
 # kylinos_desktop_physical
 # kylinos_desktop_vm
 # kylinos_server_vm
