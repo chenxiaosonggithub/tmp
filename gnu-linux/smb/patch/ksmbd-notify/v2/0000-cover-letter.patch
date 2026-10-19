@@ -1,0 +1,52 @@
+From 58adace6fc47b494c79c7f3ac20c2e4978887864 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Sat, 26 Sep 2026 08:46:56 +0000
+Subject: [PATCH 00/12] smb/server: change notify support
+
+v1->v2:
+- Fix LAST_WRITE and LAST_ACCESS notify event mappings.
+  - smb/server: support non-recursive directory change watches
+  - smb/server: save simple notify events
+- limit notify event memory per open
+  - smb/server: break directory leases before sending notify events
+  - smb/server: send notify events to the client
+  - smb/server: match rename notify events
+  - smb/server: save old names for rename notify events
+  - smb/server: save simple notify events
+
+v1: https://lore.kernel.org/linux-cifs/20260926090518.78547-1-chenxiaosong@chenxiaosong.com/
+
+TODO: stream-related notify.
+
+ChenXiaoSong (12):
+  smb/server: move change notify handling into notify.c
+  smb/server: add more validation for change notify requests
+  smb/server: add debug type for change notify
+  smb/server: support non-recursive directory change watches
+  smb/server: support recursive directory change watches
+  smb/server: keep notify watches on file handles
+  smb/server: save simple notify events
+  smb/server: save old names for rename notify events
+  smb/server: match rename notify events
+  smb/server: encode notify events
+  smb/server: send notify events to the client
+  smb/server: break directory leases before sending notify events
+
+ fs/smb/server/Kconfig     |    1 +
+ fs/smb/server/Makefile    |    3 +-
+ fs/smb/server/glob.h      |    3 +-
+ fs/smb/server/notify.c    | 1193 +++++++++++++++++++++++++++++++++++++
+ fs/smb/server/notify.h    |   26 +
+ fs/smb/server/oplock.c    |   40 ++
+ fs/smb/server/oplock.h    |    1 +
+ fs/smb/server/server.c    |    2 +-
+ fs/smb/server/smb2pdu.c   |  112 +---
+ fs/smb/server/vfs_cache.c |    3 +
+ fs/smb/server/vfs_cache.h |    4 +
+ 11 files changed, 1278 insertions(+), 110 deletions(-)
+ create mode 100644 fs/smb/server/notify.c
+ create mode 100644 fs/smb/server/notify.h
+
+-- 
+2.55.0
+
