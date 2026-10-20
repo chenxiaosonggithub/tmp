@@ -1,0 +1,30 @@
+From 8c75343fc48066b82c464685738b5a5828b58658 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
+Date: Tue, 20 Oct 2026 10:27:20 +0800
+Subject: [PATCH] mailmap: update email addresses for ChenXiaoSong
+
+Map ChenXiaoSong's Kylin and Huawei email addresses to
+chenxiaosong@chenxiaosong.com so that contributions made with these
+addresses are attributed to the same identity.
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
+---
+ .mailmap | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/.mailmap b/.mailmap
+index 1f5540bc33f1..7a96b99069d7 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -195,6 +195,8 @@ Changbin Du <changbin.du@intel.com> <changbin.du@gmail.com>
+ Chao Yu <chao@kernel.org> <chao2.yu@samsung.com>
+ Chao Yu <chao@kernel.org> <yuchao0@huawei.com>
+ Charlie Jenkins <thecharlesjenkins@gmail.com> <charlie@rivosinc.com>
++ChenXiaoSong <chenxiaosong@chenxiaosong.com> <chenxiaosong@kylinos.cn>
++ChenXiaoSong <chenxiaosong@chenxiaosong.com> <chenxiaosong2@huawei.com>
+ Chen-Yu Tsai <wens@kernel.org> <wens@csie.org>
+ Chester Lin <chester62515@gmail.com> <clin@suse.com>
+ Chris Chiu <chris.chiu@canonical.com> <chiu@endlessm.com>
+-- 
+2.53.0
+
