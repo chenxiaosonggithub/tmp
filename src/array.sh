@@ -10,7 +10,4 @@ comm_tmp_array=(
 	1 1 tmp/PhD/wifi8-uhr.md PhD/wifi8-uhr.html "Wi-Fi 8超高可靠性通信（UHR）关键技术与实现机制"
 )
 
-for element in ${comm_tmp_array[@]}
-do
-        comm_array+=(${element})
-done
+comm_array+=("${comm_tmp_array[@]}")
