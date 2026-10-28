@@ -1,4 +1,3 @@
-. ~/.top-path
 code_path=$MY_CODE_TOP_PATH/
 . ${code_path}/blog/src/blog-web/repos.sh
 . ${code_path}/private-blog/script/repos.sh

@@ -1,4 +1,3 @@
-. ~/.top-path
 
 # git log origin/master --oneline --grep=chenxiaosong > mainline.txt
 mainline_gitlog=mainline.txt

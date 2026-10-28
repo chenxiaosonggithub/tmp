@@ -12,7 +12,6 @@
 # 	https://tool.lu/py5bconvert/ (只能简码，还要用dos2unix转换，有些字没有，如"该")
 # 	https://toolkits.cn/wubi (全码和简码全部列出)
 
-. ~/.top-path
 tmp_repo_path=${MY_CODE_TOP_PATH}/tmp/
 
 . ${MY_CODE_TOP_PATH}/blog/src/blog-web/common-lib.sh
