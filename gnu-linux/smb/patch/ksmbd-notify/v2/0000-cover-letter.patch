@@ -1,24 +1,25 @@
-From 58adace6fc47b494c79c7f3ac20c2e4978887864 Mon Sep 17 00:00:00 2001
+From ddd0f53f800ca08ac203cdfbe5ceab520101ab59 Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
-Date: Sat, 26 Sep 2026 08:46:56 +0000
-Subject: [PATCH 00/12] smb/server: change notify support
+Date: Sun, 25 Oct 2026 08:21:35 +0000
+Subject: [PATCH v2 00/13] smb/server: change notify support
 
 v1->v2:
-- Fix LAST_WRITE and LAST_ACCESS notify event mappings.
-  - smb/server: support non-recursive directory change watches
-  - smb/server: save simple notify events
-- limit notify event memory per open
-  - smb/server: break directory leases before sending notify events
-  - smb/server: send notify events to the client
-  - smb/server: match rename notify events
-  - smb/server: save old names for rename notify events
-  - smb/server: save simple notify events
+- Patch #04 #07: fix LAST_WRITE and LAST_ACCESS notify event mappings.
+- Patch #04 #08 #09 #11 #12: limit notify event memory per open.
+- Add patch #13: support change notify for named streams.
 
 v1: https://lore.kernel.org/linux-cifs/20260926090518.78547-1-chenxiaosong@chenxiaosong.com/
 
-TODO: stream-related notify.
+TODO: The KUnit test cases are still being modified.
 
-ChenXiaoSong (12):
+To test this feature, the following patches need to be applied to cifs-utils and kernel smb client:
+  - cifs-utils: https://chenxiaosong.com/lkml/cifs-utils-parse-notify
+  - kernel smb client: https://chenxiaosong.com/lkml/cifs-improve-notify
+
+The complete kernel client and server patches are also available at the following link:
+https://chenxiaosong.com/repo/linux/ksmbd-change-notify
+
+ChenXiaoSong (13):
   smb/server: move change notify handling into notify.c
   smb/server: add more validation for change notify requests
   smb/server: add debug type for change notify
@@ -31,19 +32,21 @@ ChenXiaoSong (12):
   smb/server: encode notify events
   smb/server: send notify events to the client
   smb/server: break directory leases before sending notify events
+  smb/server: support change notify for named streams
 
  fs/smb/server/Kconfig     |    1 +
  fs/smb/server/Makefile    |    3 +-
  fs/smb/server/glob.h      |    3 +-
- fs/smb/server/notify.c    | 1193 +++++++++++++++++++++++++++++++++++++
- fs/smb/server/notify.h    |   26 +
+ fs/smb/server/notify.c    | 1415 +++++++++++++++++++++++++++++++++++++
+ fs/smb/server/notify.h    |   80 +++
  fs/smb/server/oplock.c    |   40 ++
  fs/smb/server/oplock.h    |    1 +
  fs/smb/server/server.c    |    2 +-
- fs/smb/server/smb2pdu.c   |  112 +---
+ fs/smb/server/smb2pdu.c   |  112 +--
+ fs/smb/server/vfs.c       |   67 +-
  fs/smb/server/vfs_cache.c |    3 +
  fs/smb/server/vfs_cache.h |    4 +
- 11 files changed, 1278 insertions(+), 110 deletions(-)
+ 12 files changed, 1614 insertions(+), 117 deletions(-)
  create mode 100644 fs/smb/server/notify.c
  create mode 100644 fs/smb/server/notify.h
 
