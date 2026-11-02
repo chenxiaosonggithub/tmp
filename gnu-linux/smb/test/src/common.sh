@@ -5,6 +5,25 @@ sshpass_cmd="sshpass -p ${smb_server_password}"
 script_path="$(realpath "${BASH_SOURCE[0]}")"
 script_dir="$(dirname "${script_path}")"
 
+# 统一记录测试起止时间和结果，后续参数是要执行的命令。
+run_test_command() {
+	local suite=$1
+	local test_item=$2
+	shift 2
+	local date_time=$(date +"%F %T")
+
+	echo "starting run ${suite} $test_item at $date_time" >> ${result_log_file} 2>&1
+	"$@" >> ${result_log_file} 2>&1
+	local result=$?
+	if [[ ${result} == 0 ]]; then
+		echo "${test_item} success" >> ${result_file}
+	else
+		echo "${test_item} fail" >> ${result_file}
+	fi
+	date_time=$(date +"%F %T")
+	echo "finished run ${suite} $test_item at $date_time" >> ${result_log_file} 2>&1
+}
+
 test_ssh() {
 	local test_ssh_cmd="$sshpass_cmd ssh -o ConnectTimeout=3 -q ${smb_server_username}@${smb_server_ip} exit"
 	$test_ssh_cmd
