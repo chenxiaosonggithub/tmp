@@ -87,25 +87,23 @@ show_args() {
 
 make_cmd="make $ARCH_OPT $OTHER_OPT $COMPILER_OPT $LINKER_OPT O=$BUILD_DIR -j`nproc`"
 
-print_result() {
-	if [ "$1" -ne 0 ]; then
+# 各阶段共用执行和报错逻辑，保留调用阶段的名称及退出状态。
+run_make() {
+	$make_cmd "$@"
+	local result=$?
+	if [ "${result}" -ne 0 ]; then
 		echo
 		echo -e '\033[1;31m' "!!!!!!!!!!!!!!!!!!!!!!!!${FUNCNAME[1]} fail!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" '\033[0m'
 	fi
+	return "${result}"
 }
 
 olddefconfig() {
-	$make_cmd olddefconfig
-	result=$?
-	print_result $result
-	return $result
+	run_make olddefconfig
 }
 
 menuconfig() {
-	$make_cmd menuconfig
-	result=$?
-	print_result $result
-	return $result
+	run_make menuconfig
 }
 
 Image() {
@@ -116,31 +114,19 @@ Image() {
 		;;
 	esac
 
-	$make_cmd $image_cmd
-	result=$?
-	print_result $result
-	return $result
+	run_make "${image_cmd}"
 }
 
 modules() {
-	$make_cmd modules
-	result=$?
-	print_result $result
-	return $result
+	run_make modules
 }
 
 modules_install() {
-	$make_cmd modules_install INSTALL_MOD_PATH=mod
-	result=$?
-	print_result $result
-	return $result
+	run_make modules_install INSTALL_MOD_PATH=mod
 }
 
 clean() {
-	$make_cmd clean
-	result=$?
-	print_result $result
-	return $result
+	run_make clean
 }
 
 show_args
