@@ -1,0 +1,320 @@
+From 2fb01a1adc57746e433d07e8639320d794e8cfff Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Tue, 3 Nov 2026 16:03:06 +0800
+Subject: [PATCH 3/7] smb/server: protect reparse handles from data operations
+
+Prepare metadata-only handles for symbolic links. Reject data operations
+on O_PATH and reparse handles, including truncation, allocation, zeroing,
+copying and compression changes. Preserve the derived reparse attribute
+when updating ordinary DOS attributes.
+
+Allow directory emptiness checks to reopen an O_PATH handle using its
+original credentials, and propagate errors from those checks. Symlink
+opens are still disabled at this preparation stage.
+
+Example (ordinary-file regression on a fresh writable test share):
+
+  for mode in noposix posix; do
+      mount -t cifs //${server_ip}/test /mnt \
+          -o username=${smb_user},vers=3.1.1,$mode || exit 1
+      printf 'abcdef\n' > /mnt/guard-test
+      cat /mnt/guard-test
+      truncate -s 3 /mnt/guard-test
+      stat -c %s /mnt/guard-test
+      cp /mnt/guard-test /mnt/guard-copy
+      cmp /mnt/guard-test /mnt/guard-copy
+      mv /mnt/guard-copy /mnt/guard-renamed
+      rm /mnt/guard-test /mnt/guard-renamed
+      mkdir /mnt/guard-dir
+      rmdir /mnt/guard-dir
+      umount /mnt || exit 1
+  done
+
+Expect abcdef from cat, 3 from stat, and all commands to succeed in both
+modes. Enable SMB3 POSIX extensions on the server for the POSIX pass.
+Once link opens are enabled, direct SMB data requests on such handles
+must fail with STATUS_ACCESS_DENIED.
+
+Code and test instructions generated with OpenAI Codex assistance.
+---
+ fs/smb/server/smb2pdu.c | 36 ++++++++++++++++++++++++----
+ fs/smb/server/vfs.c     | 53 +++++++++++++++++++++++++++++++++++++----
+ fs/smb/server/vfs.h     |  1 +
+ 3 files changed, 81 insertions(+), 9 deletions(-)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index 1be0de361c40..89a3c1d3d0c0 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -3739,7 +3739,9 @@ static void smb2_update_xattrs(struct ksmbd_tree_connect *tcon,
+ 					    path->dentry, &da);
+ 	if (rc > 0) {
+ 		if (store_dos_attrs) {
+-			fp->f_ci->m_fattr = cpu_to_le32(da.attr);
++			fp->f_ci->m_fattr = cpu_to_le32(da.attr &
++							 ~FILE_ATTRIBUTE_REPARSE_POINT) |
++				(fp->f_ci->m_fattr & FILE_ATTRIBUTE_REPARSE_POINT_LE);
+ 			fp->create_time = da.create_time;
+ 			fp->itime = da.itime;
+ 		} else {
+@@ -5233,6 +5235,10 @@ int smb2_open(struct ksmbd_work *work)
+ 	}
+ 
+ 	if (need_truncate) {
++		if (ksmbd_vfs_is_reparse_point(fp)) {
++			rc = -EACCES;
++			goto err_out1;
++		}
+ 		rc = smb2_create_truncate(&fp->filp->f_path);
+ 		if (rc)
+ 			goto err_out1;
+@@ -5249,6 +5255,10 @@ int smb2_open(struct ksmbd_work *work)
+ 		} else if (az_req) {
+ 			int err;
+ 
++			if (ksmbd_vfs_is_reparse_point(fp)) {
++				rc = -EACCES;
++				goto err_out1;
++			}
+ 			if (le16_to_cpu(az_req->ccontext.DataOffset) +
+ 			    le32_to_cpu(az_req->ccontext.DataLength) <
+ 			    sizeof(struct create_alloc_size_req)) {
+@@ -8815,7 +8825,7 @@ static int set_file_basic_info(struct ksmbd_file *fp,
+ 	struct inode *inode;
+ 	const struct mnt_idmap *idmap;
+ 	__le32 attrs_mask = FILE_ATTRIBUTE_DIRECTORY_LE |
+-		FILE_ATTRIBUTE_COMPRESSED_LE;
++		FILE_ATTRIBUTE_COMPRESSED_LE | FILE_ATTRIBUTE_REPARSE_POINT_LE;
+ 	int rc = 0;
+ 
+ 	if (!(fp->daccess & FILE_WRITE_ATTRIBUTES_LE))
+@@ -8859,8 +8869,10 @@ static int set_file_basic_info(struct ksmbd_file *fp,
+ 
+ 		if (!(S_ISDIR(inode->i_mode) && file_info->Attributes == FILE_ATTRIBUTE_NORMAL_LE))
+ 			fp->f_ci->m_fattr =
+-				(file_info->Attributes & ~FILE_ATTRIBUTE_COMPRESSED_LE) |
++				(file_info->Attributes & ~attrs_mask) |
+ 				(fp->f_ci->m_fattr & attrs_mask);
++		if (fp->f_ci->m_fattr & FILE_ATTRIBUTE_REPARSE_POINT_LE)
++			fp->f_ci->m_fattr &= ~FILE_ATTRIBUTE_NORMAL_LE;
+ 	}
+ 
+ 	if (test_share_config_flag(share, KSMBD_SHARE_FLAG_STORE_DOS_ATTRS) &&
+@@ -8913,7 +8925,8 @@ static int set_file_allocation_info(struct ksmbd_work *work,
+ 	struct kstatfs stfs;
+ 	int rc;
+ 
+-	if (!(fp->daccess & FILE_WRITE_DATA_LE))
++	if (ksmbd_vfs_is_reparse_point(fp) ||
++	    !(fp->daccess & FILE_WRITE_DATA_LE))
+ 		return -EACCES;
+ 
+ 	if (ksmbd_stream_fd(fp) == true)
+@@ -8976,7 +8989,8 @@ static int set_end_of_file_info(struct ksmbd_work *work, struct ksmbd_file *fp,
+ 	struct inode *inode;
+ 	int rc;
+ 
+-	if (!(fp->daccess & FILE_WRITE_DATA_LE))
++	if (ksmbd_vfs_is_reparse_point(fp) ||
++	    !(fp->daccess & FILE_WRITE_DATA_LE))
+ 		return -EACCES;
+ 
+ 	newsize = le64_to_cpu(file_eof_info->EndOfFile);
+@@ -9049,6 +9063,8 @@ static int set_file_disposition_info(struct ksmbd_work *work,
+ 			mutex_unlock(&fp->readdir_lock);
+ 			if (err == -ENOTEMPTY)
+ 				return -EBUSY;
++			if (err)
++				return err;
+ 		}
+ 		smb_break_all_levII_oplock_for_delete(work, fp);
+ 		ksmbd_fd_set_delete_pending(fp);
+@@ -11658,6 +11674,10 @@ static inline int fsctl_set_sparse(struct ksmbd_work *work, u64 id,
+ 	if (!fp)
+ 		return -ENOENT;
+ 
++	if (ksmbd_vfs_is_reparse_point(fp)) {
++		ret = -EACCES;
++		goto out;
++	}
+ 	if (S_ISDIR(file_inode(fp->filp)->i_mode)) {
+ 		ret = -EINVAL;
+ 		goto out;
+@@ -12298,6 +12318,12 @@ int smb2_ioctl(struct ksmbd_work *work)
+ 			goto dup_ext_out;
+ 		}
+ 
++		if (ksmbd_vfs_is_reparse_point(fp_in) ||
++		    ksmbd_vfs_is_reparse_point(fp_out)) {
++			ret = -EACCES;
++			goto dup_ext_out;
++		}
++
+ 		src_off = le64_to_cpu(dup_ext->SourceFileOffset);
+ 		dst_off = le64_to_cpu(dup_ext->TargetFileOffset);
+ 		length = le64_to_cpu(dup_ext->ByteCount);
+diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
+index e4753cdf2cdd..9eb503546c8e 100644
+--- a/fs/smb/server/vfs.c
++++ b/fs/smb/server/vfs.c
+@@ -335,6 +335,13 @@ static int check_lock_range(struct file *filp, loff_t start, loff_t end,
+ 	return error;
+ }
+ 
++bool ksmbd_vfs_is_reparse_point(const struct ksmbd_file *fp)
++{
++	return (fp->filp->f_mode & FMODE_PATH) ||
++		d_is_symlink(fp->filp->f_path.dentry) ||
++		(READ_ONCE(fp->f_ci->m_fattr) & FILE_ATTRIBUTE_REPARSE_POINT_LE);
++}
++
+ /**
+  * ksmbd_vfs_read() - vfs helper for smb file read
+  * @work:	smb work
+@@ -352,6 +359,8 @@ int ksmbd_vfs_read(struct ksmbd_work *work, struct ksmbd_file *fp, size_t count,
+ 	ssize_t nbytes = 0;
+ 	struct inode *inode = file_inode(filp);
+ 
++	if (ksmbd_vfs_is_reparse_point(fp))
++		return -EACCES;
+ 	if (S_ISDIR(inode->i_mode) && !ksmbd_stream_fd(fp))
+ 		return -EISDIR;
+ 
+@@ -546,6 +555,11 @@ int ksmbd_vfs_write(struct ksmbd_work *work, struct ksmbd_file *fp,
+ 
+ 	filp = fp->filp;
+ 
++	if (ksmbd_vfs_is_reparse_point(fp)) {
++		err = -EACCES;
++		goto out;
++	}
++
+ 	if (ksmbd_stream_fd(fp)) {
+ 		err = ksmbd_vfs_stream_write(fp, buf, pos, count);
+ 		if (!err)
+@@ -624,7 +638,10 @@ int ksmbd_vfs_fsync(struct ksmbd_work *work, u64 fid, u64 p_id)
+ 		pr_err("failed to get filp for fid %llu\n", fid);
+ 		return -ENOENT;
+ 	}
+-	err = vfs_fsync(fp->filp, 0);
++	if (ksmbd_vfs_is_reparse_point(fp))
++		err = -EACCES;
++	else
++		err = vfs_fsync(fp->filp, 0);
+ 	if (err < 0)
+ 		pr_err("smb fsync failed, err = %d\n", err);
+ 	ksmbd_fd_put(work, fp);
+@@ -845,6 +862,8 @@ int ksmbd_vfs_truncate(struct ksmbd_work *work,
+ 	int err = 0;
+ 	struct file *filp;
+ 
++	if (ksmbd_vfs_is_reparse_point(fp))
++		return -EACCES;
+ 	filp = fp->filp;
+ 
+ 	/* Do we need to break any of a levelII oplock? */
+@@ -1051,6 +1070,8 @@ int ksmbd_vfs_zero_data(struct ksmbd_work *work, struct ksmbd_file *fp,
+ 	char *zero_buf = NULL;
+ 	int err;
+ 
++	if (ksmbd_vfs_is_reparse_point(fp))
++		return -EACCES;
+ 	/*
+ 	 * A directory handle can hold FILE_WRITE_DATA (the add-file right),
+ 	 * so the caller access check does not exclude it. Writing zeroes to a
+@@ -1123,6 +1144,8 @@ int ksmbd_vfs_zero_holes(struct ksmbd_file *fp)
+ 	char *zero_buf;
+ 	int err;
+ 
++	if (ksmbd_vfs_is_reparse_point(fp))
++		return -EACCES;
+ 	err = file_write_and_wait(f);
+ 	if (err)
+ 		return err;
+@@ -1194,6 +1217,8 @@ int ksmbd_vfs_trim_data(struct ksmbd_work *work, struct ksmbd_file *fp,
+ 	const struct cred *saved_cred;
+ 	int err;
+ 
++	if (ksmbd_vfs_is_reparse_point(fp))
++		return -EACCES;
+ 	smb_break_all_levII_oplock(work, fp, 1);
+ 	if (!work->tcon->posix_extensions) {
+ 		loff_t size = i_size_read(file_inode(fp->filp));
+@@ -1228,6 +1253,8 @@ int ksmbd_vfs_query_allocated_ranges(struct ksmbd_file *fp, loff_t start,
+ 	int ret = 0;
+ 
+ 	*out_count = 0;
++	if (ksmbd_vfs_is_reparse_point(fp))
++		return -EACCES;
+ 	if (start < 0 || length < 0)
+ 		return -EINVAL;
+ 	if (start > maxbytes)
+@@ -1375,6 +1402,8 @@ static bool __dir_empty(struct dir_context *ctx, const char *name, int namlen,
+  */
+ int ksmbd_vfs_empty_dir(struct ksmbd_file *fp)
+ {
++	const struct cred *saved_cred;
++	struct file *file = fp->filp;
+ 	int err;
+ 	struct ksmbd_readdir_data readdir_data;
+ 
+@@ -1383,11 +1412,22 @@ int ksmbd_vfs_empty_dir(struct ksmbd_file *fp)
+ 	set_ctx_actor(&readdir_data.ctx, __dir_empty);
+ 	readdir_data.dirent_count = 0;
+ 
+-	err = iterate_dir(fp->filp, &readdir_data.ctx);
++	if (file->f_mode & FMODE_PATH) {
++		saved_cred = override_creds(file->f_cred);
++		file = dentry_open(&file->f_path, O_RDONLY | O_DIRECTORY,
++				  current_cred());
++		if (IS_ERR(file)) {
++			err = PTR_ERR(file);
++		} else {
++			err = iterate_dir(file, &readdir_data.ctx);
++			fput(file);
++		}
++		revert_creds(saved_cred);
++	} else {
++		err = iterate_dir(file, &readdir_data.ctx);
++	}
+ 	if (readdir_data.dirent_count)
+ 		err = -ENOTEMPTY;
+-	else
+-		err = 0;
+ 	return err;
+ }
+ 
+@@ -2164,6 +2204,9 @@ int ksmbd_vfs_copy_file_ranges(struct ksmbd_work *work,
+ 	*chunk_size_written = 0;
+ 	*total_size_written = 0;
+ 
++	if (ksmbd_vfs_is_reparse_point(src_fp) ||
++	    ksmbd_vfs_is_reparse_point(dst_fp))
++		return -EACCES;
+ 	if (!(src_fp->daccess & (FILE_READ_DATA_LE | FILE_EXECUTE_LE))) {
+ 		pr_err("no right to read(%pD)\n", src_fp->filp);
+ 		return -EACCES;
+@@ -2465,6 +2508,8 @@ static int __ksmbd_vfs_set_compression(struct ksmbd_work *work,
+ 	__le32 old_fattr;
+ 	int rc;
+ 
++	if (ksmbd_vfs_is_reparse_point(fp))
++		return -EACCES;
+ 	if (check_access && !(fp->daccess & FILE_WRITE_DATA_LE)) {
+ 		rc = -EACCES;
+ 		goto out;
+diff --git a/fs/smb/server/vfs.h b/fs/smb/server/vfs.h
+index 21b0d29a3db0..a0e9db22316d 100644
+--- a/fs/smb/server/vfs.h
++++ b/fs/smb/server/vfs.h
+@@ -77,6 +77,7 @@ int ksmbd_vfs_lock_parent(struct dentry *parent, struct dentry *child);
+ void ksmbd_vfs_query_maximal_access(const struct mnt_idmap *idmap,
+ 				   struct dentry *dentry, __le32 *daccess);
+ int ksmbd_vfs_create(struct ksmbd_work *work, const char *name, umode_t mode);
++bool ksmbd_vfs_is_reparse_point(const struct ksmbd_file *fp);
+ int ksmbd_vfs_mkdir(struct ksmbd_work *work, const char *name, umode_t mode);
+ int ksmbd_vfs_read(struct ksmbd_work *work, struct ksmbd_file *fp, size_t count,
+ 		   loff_t *pos, char *rbuf);
+-- 
+2.53.0
+

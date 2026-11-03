@@ -1,0 +1,461 @@
+From a1ed124baa690cfd0c60b1a09d30964b5fa9242c Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Tue, 3 Nov 2026 16:01:56 +0800
+Subject: [PATCH 2/7] smb/server: validate symbolic link reparse buffers
+
+Add strict parsing of IO_REPARSE_TAG_SYMLINK buffers before exposing
+FSCTL_SET_REPARSE_POINT. Validate lengths, offsets, flags, embedded NULs
+and UTF-16 scalar values. Decode POSIX targets without changing their
+separators and translate relative Windows targets to local path syntax.
+
+Add three KUnit tests covering valid targets, malformed buffers and the
+PATH_MAX boundary. No SMB command uses the parser at this stage.
+
+Example:
+
+  1. Enable these options in the test kernel configuration:
+     CONFIG_KUNIT=y
+     CONFIG_SMB_SERVER=y
+     CONFIG_SMB_KUNIT_TESTS=y
+     CONFIG_SMB_SERVER_KUNIT_TESTS=y
+     CONFIG_TMPFS=y
+     CONFIG_TMPFS_XATTR=y
+  2. Build and boot that kernel.
+  3. Read its boot log:
+     dmesg | sed -n '/# Subtest: ksmbd-reparse/,+9p'
+
+     ok 1 ksmbd_symlink_parse_targets
+     ok 2 ksmbd_symlink_parse_malformed
+     ok 3 ksmbd_symlink_parse_length_limit
+     # ksmbd-reparse: pass:3 fail:0 skip:0 total:3
+
+Remote ln -s remains unsupported until SET is wired up later.
+
+Code and test instructions generated with OpenAI Codex assistance.
+---
+ fs/smb/server/Makefile              |   2 +-
+ fs/smb/server/reparse.c             | 144 +++++++++++++++++++
+ fs/smb/server/reparse.h             |  14 ++
+ fs/smb/server/tests/Makefile        |   1 +
+ fs/smb/server/tests/reparse_kunit.c | 215 ++++++++++++++++++++++++++++
+ 5 files changed, 375 insertions(+), 1 deletion(-)
+ create mode 100644 fs/smb/server/reparse.c
+ create mode 100644 fs/smb/server/reparse.h
+ create mode 100644 fs/smb/server/tests/reparse_kunit.c
+
+diff --git a/fs/smb/server/Makefile b/fs/smb/server/Makefile
+index 5daae1727b32..2b38a9fb92ff 100644
+--- a/fs/smb/server/Makefile
++++ b/fs/smb/server/Makefile
+@@ -11,7 +11,7 @@ ksmbd-y :=	unicode.o auth.o vfs.o vfs_cache.o server.o ndr.o \
+ 		transport_tcp.o transport_ipc.o smbacl.o smb2pdu.o \
+ 		smb2ops.o smb2misc.o ksmbd_spnego_negtokeninit.asn1.o \
+ 		ksmbd_spnego_negtokentarg.asn1.o asn1.o compress.o \
+-		notify.o
++		notify.o reparse.o
+ 
+ $(obj)/asn1.o: $(obj)/ksmbd_spnego_negtokeninit.asn1.h $(obj)/ksmbd_spnego_negtokentarg.asn1.h
+ 
+diff --git a/fs/smb/server/reparse.c b/fs/smb/server/reparse.c
+new file mode 100644
+index 000000000000..6270dd1cfee3
+--- /dev/null
++++ b/fs/smb/server/reparse.c
+@@ -0,0 +1,144 @@
++// SPDX-License-Identifier: GPL-2.0-only
++
++#include <kunit/visibility.h>
++#include <linux/fs.h>
++#include <linux/limits.h>
++#include <linux/nls.h>
++#include <linux/sizes.h>
++#include <linux/slab.h>
++#include <linux/unaligned.h>
++
++#include "connection.h"
++#include "ksmbd_work.h"
++#include "reparse.h"
++#include "vfs.h"
++#include "../common/smb2status.h"
++#include "../common/smbfsctl.h"
++
++static bool symlink_utf16_valid(const u8 *src, unsigned int len)
++{
++	u16 c;
++	unsigned int i;
++
++	if (len & 1)
++		return false;
++	for (i = 0; i < len; i += 2) {
++		c = get_unaligned_le16(src + i);
++		if (!c || (c >= 0xdc00 && c <= 0xdfff))
++			return false;
++		if (c < 0xd800 || c > 0xdbff)
++			continue;
++		i += 2;
++		if (i == len)
++			return false;
++		c = get_unaligned_le16(src + i);
++		if (c < 0xdc00 || c > 0xdfff)
++			return false;
++	}
++	return true;
++}
++
++/* The input has already been checked for complete UTF-16 scalar values. */
++static int symlink_from_utf16(const u8 *src, unsigned int len,
++			      const struct nls_table *nls, char **target)
++{
++	char *out;
++	unsigned int i, used = 0;
++	u32 c;
++	int ret;
++	bool utf8 = !strcmp(nls->charset, "utf8");
++
++	out = kmalloc(PATH_MAX, KSMBD_DEFAULT_GFP);
++	if (!out)
++		return -ENOMEM;
++	for (i = 0; i < len; i += 2) {
++		c = get_unaligned_le16(src + i);
++		if (c >= 0xd800 && c <= 0xdbff) {
++			i += 2;
++			c = 0x10000 + ((c - 0xd800) << 10) +
++			    get_unaligned_le16(src + i) - 0xdc00;
++		}
++		if (utf8)
++			ret = utf32_to_utf8(c, (u8 *)out + used,
++					    PATH_MAX - 1 - used);
++		else if (c <= 0xffff)
++			ret = nls->uni2char(c, out + used, PATH_MAX - 1 - used);
++		else
++			ret = -EILSEQ;
++		if (ret <= 0)
++			goto out_free;
++		used += ret;
++	}
++	out[used] = '\0';
++	*target = out;
++	return 0;
++out_free:
++	kfree(out);
++	if (ret == -EOVERFLOW)
++		ret = -ENAMETOOLONG;
++	return ret ? ret : -EILSEQ;
++}
++
++int ksmbd_symlink_parse(struct ksmbd_work *work, const void *buf,
++			unsigned int len, bool posix, char **target)
++{
++	const struct reparse_symlink_data_buffer *reparse = buf;
++	unsigned int data_len, path_len, sub_off, sub_len, print_off, print_len;
++	u32 flags;
++	char *name, *p;
++	int ret;
++
++	*target = NULL;
++	if (len < sizeof(struct reparse_data_buffer) || len > SZ_16K)
++		return -EINVAL;
++	if (le32_to_cpu(reparse->ReparseTag) != IO_REPARSE_TAG_SYMLINK)
++		return -EOPNOTSUPP;
++	data_len = le16_to_cpu(reparse->ReparseDataLength);
++	if (data_len < 12 || data_len != len - sizeof(struct reparse_data_buffer))
++		return -EINVAL;
++	path_len = data_len - 12;
++	sub_off = le16_to_cpu(reparse->SubstituteNameOffset);
++	sub_len = le16_to_cpu(reparse->SubstituteNameLength);
++	print_off = le16_to_cpu(reparse->PrintNameOffset);
++	print_len = le16_to_cpu(reparse->PrintNameLength);
++	flags = le32_to_cpu(reparse->Flags);
++	if (flags & ~SYMLINK_FLAG_RELATIVE || !sub_len ||
++	    (sub_off | print_off) & 1 ||
++	    sub_off > path_len || sub_len > path_len - sub_off ||
++	    print_off > path_len || print_len > path_len - print_off)
++		return -EINVAL;
++	if (!symlink_utf16_valid(reparse->PathBuffer + sub_off, sub_len) ||
++	    !symlink_utf16_valid(reparse->PathBuffer + print_off, print_len))
++		return -EINVAL;
++	ret = symlink_from_utf16(reparse->PathBuffer + sub_off, sub_len,
++				 work->conn->local_nls, &name);
++	if (ret)
++		return ret;
++
++	if (posix) {
++		if ((name[0] == '/') == !!(flags & SYMLINK_FLAG_RELATIVE)) {
++			ret = -EINVAL;
++			goto out_free;
++		}
++	} else {
++		/* NT absolute paths cannot be represented as local Unix links. */
++		if (!(flags & SYMLINK_FLAG_RELATIVE)) {
++			ret = -EOPNOTSUPP;
++			goto out_free;
++		}
++		if (name[0] == '\\' || name[0] == '/') {
++			ret = -EINVAL;
++			goto out_free;
++		}
++		for (p = name; *p; p++) {
++			if (*p == '\\')
++				*p = '/';
++		}
++	}
++	*target = name;
++	return 0;
++out_free:
++	kfree(name);
++	return ret;
++}
++EXPORT_SYMBOL_IF_KUNIT(ksmbd_symlink_parse);
+diff --git a/fs/smb/server/reparse.h b/fs/smb/server/reparse.h
+new file mode 100644
+index 000000000000..4a8b205e3fff
+--- /dev/null
++++ b/fs/smb/server/reparse.h
+@@ -0,0 +1,14 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++
++#ifndef __KSMBD_REPARSE_H__
++#define __KSMBD_REPARSE_H__
++
++#include <linux/limits.h>
++#include <linux/types.h>
++
++struct ksmbd_work;
++
++int ksmbd_symlink_parse(struct ksmbd_work *work, const void *buf,
++		       unsigned int len, bool posix, char **target);
++
++#endif /* __KSMBD_REPARSE_H__ */
+diff --git a/fs/smb/server/tests/Makefile b/fs/smb/server/tests/Makefile
+index 8738ab0b0667..2cb685017ca7 100644
+--- a/fs/smb/server/tests/Makefile
++++ b/fs/smb/server/tests/Makefile
+@@ -2,3 +2,4 @@
+ # Copyright (C) 2026 Hang Nan <nanx95726@gmail.com>
+ 
+ obj-$(CONFIG_SMB_SERVER_KUNIT_TESTS) += smbacl_kunit.o
++obj-$(CONFIG_SMB_SERVER_KUNIT_TESTS) += reparse_kunit.o
+diff --git a/fs/smb/server/tests/reparse_kunit.c b/fs/smb/server/tests/reparse_kunit.c
+new file mode 100644
+index 000000000000..8b674e6f9880
+--- /dev/null
++++ b/fs/smb/server/tests/reparse_kunit.c
+@@ -0,0 +1,215 @@
++// SPDX-License-Identifier: GPL-2.0-only
++
++#include <kunit/test.h>
++#include <linux/nls.h>
++#include <linux/unaligned.h>
++
++#include "../connection.h"
++#include "../reparse.h"
++#include "../../common/smbfsctl.h"
++
++struct reparse_test_ctx {
++	struct ksmbd_work work;
++	struct ksmbd_conn conn;
++};
++
++static int reparse_test_init(struct kunit *test)
++{
++	struct reparse_test_ctx *ctx;
++
++	ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
++	if (!ctx)
++		return -ENOMEM;
++	ctx->conn.local_nls = load_nls("utf8");
++	if (!ctx->conn.local_nls)
++		return -EINVAL;
++	ctx->work.conn = &ctx->conn;
++	test->priv = ctx;
++	return 0;
++}
++
++static void reparse_test_exit(struct kunit *test)
++{
++	struct reparse_test_ctx *ctx = test->priv;
++
++	unload_nls(ctx->conn.local_nls);
++}
++
++static struct reparse_symlink_data_buffer *make_reparse(struct kunit *test,
++						       const u16 *target,
++						       unsigned int count,
++						       u32 flags)
++{
++	struct reparse_symlink_data_buffer *buf;
++	unsigned int i;
++
++	buf = kunit_kzalloc(test, struct_size(buf, PathBuffer, 2 * count),
++			   GFP_KERNEL);
++	if (!buf)
++		return NULL;
++	buf->ReparseTag = cpu_to_le32(IO_REPARSE_TAG_SYMLINK);
++	buf->ReparseDataLength = cpu_to_le16(12 + 2 * count);
++	buf->SubstituteNameLength = cpu_to_le16(2 * count);
++	buf->PrintNameLength = cpu_to_le16(2 * count);
++	buf->Flags = cpu_to_le32(flags);
++	for (i = 0; i < count; i++)
++		put_unaligned_le16(target[i], buf->PathBuffer + 2 * i);
++	return buf;
++}
++
++static void ksmbd_symlink_parse_targets(struct kunit *test)
++{
++	static const struct {
++		u16 wire[10];
++		u8 count;
++		bool posix;
++		u32 flags;
++		int error;
++		const char *expected;
++	} cases[] = {
++		{ { 'f', 'i', 'l', 'e' }, 4, false, 1, 0, "file" },
++		{ { 'd', '\\', 'f' }, 3, false, 1, 0, "d/f" },
++		{ { 'd', '\\', 'f' }, 3, true, 1, 0, "d\\f" },
++		{ { '/', 'f' }, 2, true, 0, 0, "/f" },
++		{ { '/', 'f' }, 2, true, 1, -EINVAL, NULL },
++		{ { 'f' }, 1, true, 0, -EINVAL, NULL },
++		{ { '/', 'f' }, 2, false, 0, -EOPNOTSUPP, NULL },
++		{ { '\\', 'f' }, 2, false, 1, -EINVAL, NULL },
++		{ { 0x6570, 0x636e, 0xd83d, 0xde00 }, 4, true, 1, 0,
++		  "\xe6\x95\xb0\xe6\x8d\xae\xf0\x9f\x98\x80" },
++	};
++	struct reparse_test_ctx *ctx = test->priv;
++	struct reparse_symlink_data_buffer *buf;
++	char *target;
++	int i, ret;
++
++	for (i = 0; i < ARRAY_SIZE(cases); i++) {
++		buf = make_reparse(test, cases[i].wire, cases[i].count,
++				   cases[i].flags);
++		KUNIT_ASSERT_NOT_NULL(test, buf);
++		ret = ksmbd_symlink_parse(&ctx->work, buf,
++					 sizeof(*buf) + 2 * cases[i].count,
++					 cases[i].posix, &target);
++		KUNIT_EXPECT_EQ_MSG(test, ret, cases[i].error, "case %d", i);
++		if (cases[i].error)
++			KUNIT_EXPECT_NULL(test, target);
++		else if (target)
++			KUNIT_EXPECT_STREQ(test, target, cases[i].expected);
++		else
++			KUNIT_FAIL(test, "case %d returned no target", i);
++		kfree(target);
++	}
++}
++
++static void ksmbd_symlink_parse_malformed(struct kunit *test)
++{
++	const u16 name[] = { 'f', 'i', 'l', 'e' };
++	struct reparse_test_ctx *ctx = test->priv;
++	struct reparse_symlink_data_buffer *buf;
++	unsigned int len;
++	char *target;
++	int i, ret;
++
++	for (i = 0; i < 13; i++) {
++		buf = make_reparse(test, name, ARRAY_SIZE(name), 1);
++		KUNIT_ASSERT_NOT_NULL(test, buf);
++		len = sizeof(*buf) + sizeof(name);
++		switch (i) {
++		case 0:
++			len = 7;
++			break;
++		case 1:
++			buf->ReparseDataLength = cpu_to_le16(19);
++			break;
++		case 2:
++			buf->SubstituteNameOffset = cpu_to_le16(1);
++			break;
++		case 3:
++			buf->SubstituteNameOffset = cpu_to_le16(10);
++			break;
++		case 4:
++			buf->SubstituteNameLength = cpu_to_le16(7);
++			break;
++		case 5:
++			buf->SubstituteNameLength = 0;
++			break;
++		case 6:
++			put_unaligned_le16(0, buf->PathBuffer + 2);
++			break;
++		case 7:
++			put_unaligned_le16(0xd800, buf->PathBuffer + 2);
++			break;
++		case 8:
++			put_unaligned_le16(0xdc00, buf->PathBuffer + 2);
++			break;
++		case 9:
++			buf->Flags = cpu_to_le32(2);
++			break;
++		case 10:
++			buf->PrintNameLength = cpu_to_le16(7);
++			break;
++		case 11:
++			buf->PrintNameOffset = cpu_to_le16(10);
++			break;
++		case 12:
++			buf->PrintNameOffset = cpu_to_le16(1);
++			break;
++		}
++		ret = ksmbd_symlink_parse(&ctx->work, buf, len, true, &target);
++		KUNIT_EXPECT_EQ_MSG(test, ret, -EINVAL, "case %d", i);
++		KUNIT_EXPECT_NULL(test, target);
++		kfree(target);
++	}
++}
++
++static void ksmbd_symlink_parse_length_limit(struct kunit *test)
++{
++	struct reparse_test_ctx *ctx = test->priv;
++	struct reparse_symlink_data_buffer *buf;
++	u16 *name;
++	char *target;
++	int i, ret;
++
++	name = kunit_kmalloc_array(test, PATH_MAX, sizeof(*name), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_NULL(test, name);
++	for (i = 0; i < PATH_MAX; i++)
++		name[i] = 'a';
++	buf = make_reparse(test, name, PATH_MAX - 1, 1);
++	KUNIT_ASSERT_NOT_NULL(test, buf);
++	ret = ksmbd_symlink_parse(&ctx->work, buf,
++				 sizeof(*buf) + 2 * (PATH_MAX - 1), true, &target);
++	KUNIT_EXPECT_EQ(test, ret, 0);
++	if (target)
++		KUNIT_EXPECT_EQ(test, strlen(target), (size_t)PATH_MAX - 1);
++	else
++		KUNIT_FAIL(test, "maximum valid target was not returned");
++	kfree(target);
++
++	buf = make_reparse(test, name, PATH_MAX, 1);
++	KUNIT_ASSERT_NOT_NULL(test, buf);
++	ret = ksmbd_symlink_parse(&ctx->work, buf,
++				 sizeof(*buf) + 2 * PATH_MAX, true, &target);
++	KUNIT_EXPECT_EQ(test, ret, -ENAMETOOLONG);
++	KUNIT_EXPECT_NULL(test, target);
++	kfree(target);
++}
++
++static struct kunit_case ksmbd_reparse_test_cases[] = {
++	KUNIT_CASE(ksmbd_symlink_parse_targets),
++	KUNIT_CASE(ksmbd_symlink_parse_malformed),
++	KUNIT_CASE(ksmbd_symlink_parse_length_limit),
++	{}
++};
++
++static struct kunit_suite ksmbd_reparse_test_suite = {
++	.name = "ksmbd-reparse",
++	.init = reparse_test_init,
++	.exit = reparse_test_exit,
++	.test_cases = ksmbd_reparse_test_cases,
++};
++
++kunit_test_suite(ksmbd_reparse_test_suite);
++
++MODULE_DESCRIPTION("KUnit tests for ksmbd symbolic link reparse data");
++MODULE_LICENSE("GPL");
++MODULE_IMPORT_NS("EXPORTED_FOR_KUNIT_TESTING");
+-- 
+2.53.0
+

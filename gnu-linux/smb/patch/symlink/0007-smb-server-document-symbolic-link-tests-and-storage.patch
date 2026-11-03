@@ -1,0 +1,167 @@
+From 3c2c87ddbf713aaecd9e56b4a058ded9772dd484 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Tue, 3 Nov 2026 16:09:27 +0800
+Subject: [PATCH 7/7] smb/server: document symbolic link tests and storage
+
+Document the native and xattr-backed representations, client-side path
+resolution, mode differences, backup requirements and implementation
+limits. Include complete manual mount tests, additional protocol cases
+and the KUnit configuration. Runtime code is unchanged by this patch.
+
+Example:
+
+  1. Read fs/smb/server/tests/symlink.rst and create its dedicated share.
+  2. Run the POSIX and non-POSIX mount loops in that document.
+  3. Remount in both modes to read links created by the other mode.
+  4. Boot the KUnit-enabled kernel and check ksmbd-reparse reports
+     pass:3 fail:0 skip:0 total:3.
+
+Both mounts must retain relative, directory and dangling link targets.
+The document lists validation steps; results from an actual run belong
+in the test record, not in the generic test instructions.
+
+Documentation and test instructions generated with OpenAI Codex
+assistance.
+---
+ fs/smb/server/tests/symlink.rst | 129 ++++++++++++++++++++++++++++++++
+ 1 file changed, 129 insertions(+)
+ create mode 100644 fs/smb/server/tests/symlink.rst
+
+diff --git a/fs/smb/server/tests/symlink.rst b/fs/smb/server/tests/symlink.rst
+new file mode 100644
+index 000000000000..18129a57e05a
+--- /dev/null
++++ b/fs/smb/server/tests/symlink.rst
+@@ -0,0 +1,129 @@
++.. SPDX-License-Identifier: GPL-2.0-only
++
++ksmbd symbolic link tests
++========================
++
++Representation and path resolution
++----------------------------------
++
++ksmbd exposes existing filesystem symbolic links as SMB symbolic-link reparse
++points. Links created through ``FSCTL_SET_REPARSE_POINT`` instead store their
++target in the private ``user.ksmbd.symlink`` extended attribute of an empty
++regular file or empty directory. The attribute contains the local target bytes
++without a terminating NUL. Setting it preserves the backing inode and existing
++open handles; it does not replace the object with a filesystem symbolic link.
++Consequently, local filesystem tools still see the backing file or directory.
++
++SMB queries present either representation as a symbolic link. A normal open
++stops at the first link, including a link in an intermediate path component,
++and returns ``STATUS_STOPPED_ON_SYMLINK`` with the target and unparsed suffix.
++The client resolves the target. An open with ``FILE_OPEN_REPARSE_POINT`` can
++query the link itself using ``FSCTL_GET_REPARSE_POINT``. The server does not
++follow these targets to access the server's filesystem.
++
++Both POSIX and non-POSIX connections use ``IO_REPARSE_TAG_SYMLINK``. POSIX
++connections preserve Unix target syntax, including absolute targets; an
++absolute target refers to the client's root. Non-POSIX connections support
++relative targets and translate path separators to Windows syntax. Absolute
++targets are unsupported in non-POSIX mode. A literal backslash in a POSIX
++target cannot be used reliably across both modes, because non-POSIX clients
++interpret it as a separator.
++
++The private attribute requires backing filesystem support for user extended
++attributes. Backups and restores must preserve it together with the backing
++object. This format is not interchangeable with Samba's stored reparse-point
++format. Native filesystem symbolic links do not use this attribute. Magic
++links such as those in procfs are unsupported.
++
++Manual Linux client tests
++-------------------------
++
++Use a test server and client with the changed ksmbd and a Linux CIFS client
++supporting ``symlink=native``. Create a dedicated fixture on the server as the
++Unix user mapped to the test SMB account::
++
++    share_dir=$(mktemp -d /tmp/ksmbd-symlink.XXXXXX)
++    mkdir "$share_dir/subdir"
++    printf 'file target\n' > "$share_dir/file"
++    printf 'directory target\n' > "$share_dir/subdir/file"
++    ln -s file "$share_dir/native"
++    ln -s subdir "$share_dir/native-dir"
++    ln -s missing "$share_dir/dangling"
++    printf '%s\n' "$share_dir"
++
++Export that directory as a writable ``symlink-test`` share for an existing
++test account, here named ``smbtest``. Enable SMB3 POSIX extensions on the server
++for the POSIX pass. Run the following on the test client as root, replacing
++``SERVER`` with the server address. Mount prompts for the account password::
++
++    mount_dir=$(mktemp -d /tmp/ksmbd-symlink-mnt.XXXXXX)
++    for mode in noposix posix; do
++        mount -t cifs //SERVER/symlink-test "$mount_dir" \
++            -o "vers=3.1.1,username=smbtest,symlink=native,$mode" || break
++        ls -l "$mount_dir"
++        readlink "$mount_dir/native"
++        cat "$mount_dir/native"
++        cat "$mount_dir/native-dir/file"
++        readlink "$mount_dir/dangling"
++        ln -s file "$mount_dir/remote-$mode"
++        ln -s subdir "$mount_dir/remote-dir-$mode"
++        ln -s missing "$mount_dir/remote-dangling-$mode"
++        readlink "$mount_dir/remote-$mode"
++        readlink "$mount_dir/remote-dangling-$mode"
++        cat "$mount_dir/remote-$mode"
++        cat "$mount_dir/remote-dir-$mode/file"
++        ls -l "$mount_dir"
++        umount "$mount_dir" || break
++    done
++
++Check each command's result before continuing after a failure. ``readlink``
++must return the stored relative target, and ``cat`` must print the matching
++fixture content. Dangling links must remain visible to ``ls -l`` and
++``readlink``; opening their missing targets must fail. File modes and ownership
++reported without POSIX extensions need not match those on a POSIX mount.
++
++Remount each mode and repeat the queries to check persistence and access to
++links created in the other mode. On the server, inspect a remotely created
++link with ``getfattr -n user.ksmbd.symlink "$share_dir/remote-posix"`` and verify
++that its target is ``file``. Local ``readlink`` on that backing object should
++not report a native link. Keep these fixtures for inspection; unmount the
++client before removing the dedicated test directories.
++
++Additional protocol coverage
++----------------------------
++
++Exercise the following with an SMB request generator or integration harness:
++
++* ``GET_REPARSE_POINT`` on native and stored links, including dangling links;
++  normal opens through intermediate links with non-ASCII names and suffixes.
++* ``SET_REPARSE_POINT`` on an empty regular file and an empty directory;
++  reject nonempty objects, the share root, streams and malformed buffers
++  without deleting the backing object or its contents.
++* Link-handle reads, writes, truncation, allocation, zeroing and copying,
++  including the original handle used for ``SET_REPARSE_POINT``. These must
++  not operate on the backing data as ordinary file contents.
++* POSIX absolute targets resolving at the client, and rejection of absolute
++  targets through non-POSIX connections. Use a dedicated client fixture.
++* Renaming and removing links without changing their targets. A stored
++  directory containing locally added entries must not lose those entries.
++* Generic SMB extended-attribute requests must not expose or modify the
++  private ``user.ksmbd.symlink`` attribute.
++
++KUnit
++-----
++
++For a kernel satisfying the ksmbd and tmpfs prerequisites, enable::
++
++    CONFIG_KUNIT=y
++    CONFIG_SMB_SERVER=y
++    CONFIG_SMB_KUNIT_TESTS=y
++    CONFIG_SMB_SERVER_KUNIT_TESTS=y
++    CONFIG_TMPFS=y
++    CONFIG_TMPFS_XATTR=y
++
++Build and boot the test kernel, or use the KUnit runner described in
++``Documentation/dev-tools/kunit/``. Inspect the ``ksmbd-reparse`` suite results.
++The suite checks target parsing, malformed reparse buffers and length limits.
++It does not replace the mount, VFS persistence or protocol tests above. These
++instructions describe validation to perform; they do not record a completed
++end-to-end test run.
+-- 
+2.53.0
+

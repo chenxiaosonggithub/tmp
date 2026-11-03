@@ -1,0 +1,288 @@
+From de2accd926b398f2f398bc58534acffef5d87476 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Tue, 3 Nov 2026 16:08:16 +0800
+Subject: [PATCH 6/7] smb/server: create symbolic link reparse points
+
+Implement FSCTL_SET_REPARSE_POINT using the validated target parser and
+private xattr format. Accept empty file or directory placeholders while
+preserving their inodes and open handles. Reject invalid data, nonempty
+objects, public EAs, streams and handles without write access.
+
+Advertise FILE_SUPPORTS_REPARSE_POINTS now that creation is available.
+This enables native ln -s on ordinary Linux CIFS mounts as well as POSIX
+mounts. Keep data operations blocked on the original placeholder handle
+after converting it into a reparse point.
+
+Example (export a fresh /export as a writable test share):
+
+  1. Server:
+     printf 'target\n' > /export/file
+     mkdir /export/subdir
+     printf 'nested\n' > /export/subdir/file
+  2. Client, with SMB3 POSIX extensions enabled on the server:
+     for mode in noposix posix; do
+         mount -t cifs //${server_ip}/test /mnt \
+             -o username=${smb_user},vers=3.1.1,$mode || exit 1
+         ln -s file /mnt/remote-$mode
+         ln -s subdir /mnt/remote-dir-$mode
+         ln -s missing /mnt/remote-dangling-$mode
+         readlink /mnt/remote-$mode
+         cat /mnt/remote-$mode
+         cat /mnt/remote-dir-$mode/file
+         readlink /mnt/remote-dangling-$mode
+         mv /mnt/remote-$mode /mnt/renamed-$mode
+         readlink /mnt/renamed-$mode
+         rm /mnt/renamed-$mode
+         test -f /mnt/file
+         umount /mnt || exit 1
+     done
+
+Expect file, target, nested, missing and file from each pass. Remount
+each mode and read the directory and dangling links created in the
+other mode. On the server, getfattr shows user.ksmbd.symlink on these
+placeholders; they are not native Unix symlinks locally.
+
+Direct SMB tests must also reject WRITE, EOF/allocation changes and
+zeroing through the original handle after SET, including after a normal
+FileBasicInformation update. Native links from earlier stages must
+remain readable. Non-POSIX absolute targets remain unsupported.
+
+The empty-directory and public-EA prechecks are not serialized against
+concurrent local modifications; this stage does not promise an atomic
+conversion under such mutations.
+
+Code and test instructions generated with OpenAI Codex assistance.
+---
+ fs/smb/server/smb2pdu.c | 106 ++++++++++++++++++++++++++++++++++++++++
+ fs/smb/server/vfs.c     |  71 +++++++++++++++++++++++++++
+ fs/smb/server/vfs.h     |   1 +
+ 3 files changed, 178 insertions(+)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index 3d0a121187f5..b876828bf04f 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -3432,6 +3432,58 @@ static bool smb2_is_private_ea(const char *name, size_t name_len)
+ 	return false;
+ }
+ 
++static int smb2_has_public_ea(struct ksmbd_file *fp)
++{
++	struct dentry *dentry = fp->filp->f_path.dentry;
++	const struct cred *saved_cred;
++	char *list = NULL, *name;
++	ssize_t size;
++	size_t offset = 0, name_len;
++	int ret = 0;
++
++	saved_cred = override_creds(fp->filp->f_cred);
++	size = vfs_listxattr(dentry, NULL, 0);
++	if (size <= 0) {
++		ret = size == -EOPNOTSUPP ? 0 : size;
++		goto out;
++	}
++	if (size > XATTR_LIST_MAX) {
++		ret = -E2BIG;
++		goto out;
++	}
++	list = kvmalloc(size, KSMBD_DEFAULT_GFP);
++	if (!list) {
++		ret = -ENOMEM;
++		goto out;
++	}
++	size = vfs_listxattr(dentry, list, size);
++	if (size < 0) {
++		ret = size;
++		goto out;
++	}
++	while (offset < size) {
++		name = list + offset;
++		name_len = strnlen(name, size - offset);
++		if (!name_len || name_len == size - offset) {
++			ret = -EIO;
++			goto out;
++		}
++		offset += name_len + 1;
++		if (name_len <= XATTR_USER_PREFIX_LEN ||
++		    strncmp(name, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN))
++			continue;
++		if (!smb2_is_private_ea(name + XATTR_USER_PREFIX_LEN,
++					name_len - XATTR_USER_PREFIX_LEN)) {
++			ret = 1;
++			break;
++		}
++	}
++out:
++	kvfree(list);
++	revert_creds(saved_cred);
++	return ret;
++}
++
+ /**
+  * smb2_set_ea() - handler for setting extended attributes using set
+  *		info command
+@@ -8125,6 +8177,7 @@ static int smb2_get_info_filesystem(struct ksmbd_work *work,
+ 			FILE_UNICODE_ON_DISK |
+ 			FILE_FILE_COMPRESSION |
+ 			FILE_SUPPORTS_SPARSE_FILES |
++			FILE_SUPPORTS_REPARSE_POINTS |
+ 			FILE_SUPPORTS_BLOCK_REFCOUNTING;
+ 
+ 		err = vfs_fileattr_get(path.dentry, &fa);
+@@ -12295,6 +12348,59 @@ int smb2_ioctl(struct ksmbd_work *work)
+ 
+ 		nbytes *= sizeof(struct file_allocated_range_buffer);
+ 		break;
++	case FSCTL_SET_REPARSE_POINT:
++	{
++		struct ksmbd_file *fp;
++		char *target = NULL;
++
++		if (!test_tree_conn_flag(work->tcon, KSMBD_TREE_CONN_FLAG_WRITABLE)) {
++			ret = -EACCES;
++			goto out;
++		}
++		fp = ksmbd_lookup_fd_slow(work, id, pid);
++		if (!fp) {
++			ret = -ENOENT;
++			goto out;
++		}
++		if (!(fp->daccess & (FILE_WRITE_DATA_LE | FILE_WRITE_ATTRIBUTES_LE)) ||
++		    ksmbd_stream_fd(fp)) {
++			ret = -EACCES;
++			goto set_reparse_out;
++		}
++		ret = ksmbd_symlink_parse(work, buffer, in_buf_len,
++					 fp->is_posix_ctxt, &target);
++		if (ret) {
++			if (ret == -EINVAL || ret == -EILSEQ)
++				rsp->hdr.Status = STATUS_IO_REPARSE_DATA_INVALID;
++			goto set_reparse_out;
++		}
++		/* MS-FSA forbids adding reparse data to a file with public EAs. */
++		if (!(READ_ONCE(fp->f_ci->m_fattr) & FILE_ATTRIBUTE_REPARSE_POINT_LE)) {
++			ret = smb2_has_public_ea(fp);
++			if (ret) {
++				if (ret > 0) {
++					rsp->hdr.Status = STATUS_EAS_NOT_SUPPORTED;
++					ret = -EOPNOTSUPP;
++				}
++				goto set_reparse_out;
++			}
++		}
++		smb_break_all_oplock(work, fp);
++		ret = ksmbd_vfs_set_symlink(fp, target);
++		if (ret == -ENOTEMPTY)
++			rsp->hdr.Status = STATUS_DIRECTORY_NOT_EMPTY;
++		else if (ret == -EINVAL)
++			rsp->hdr.Status = STATUS_IO_REPARSE_DATA_INVALID;
++set_reparse_out:
++		kfree(target);
++		ksmbd_fd_put(work, fp);
++		if (ret) {
++			if (rsp->hdr.Status)
++				goto out2;
++			goto out;
++		}
++		break;
++	}
+ 	case FSCTL_GET_REPARSE_POINT:
+ 	{
+ 		struct reparse_symlink_data_buffer *symlink_buf;
+diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
+index 9d142f7746d3..0de79c7de535 100644
+--- a/fs/smb/server/vfs.c
++++ b/fs/smb/server/vfs.c
+@@ -1512,6 +1512,77 @@ int ksmbd_vfs_empty_dir(struct ksmbd_file *fp)
+ 	return err;
+ }
+ 
++int ksmbd_vfs_set_symlink(struct ksmbd_file *fp, const char *target)
++{
++	const struct path *path = &fp->filp->f_path;
++	struct inode *inode = file_inode(fp->filp);
++	struct delegated_inode delegated_inode = {};
++	struct ksmbd_readdir_data readdir_data = {
++		.ctx.actor = __dir_empty,
++	};
++	const struct cred *saved_cred;
++	struct file *dir;
++	size_t len;
++	int err;
++
++	len = strnlen(target, PATH_MAX);
++	if (!len || len == PATH_MAX)
++		return -EINVAL;
++	if (ksmbd_stream_fd(fp) ||
++	    (!S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode)) ||
++	    path_equal(path, &fp->share_conf->vfs_path))
++		return -EINVAL;
++
++	saved_cred = override_creds(fp->filp->f_cred);
++	err = mnt_want_write(path->mnt);
++	if (err)
++		goto out_revert;
++
++	if (S_ISDIR(inode->i_mode)) {
++		dir = dentry_open(path, O_RDONLY | O_DIRECTORY, current_cred());
++		if (IS_ERR(dir)) {
++			err = PTR_ERR(dir);
++			goto out_drop_write;
++		}
++		err = iterate_dir(dir, &readdir_data.ctx);
++		fput(dir);
++		if (readdir_data.dirent_count)
++			err = -ENOTEMPTY;
++		if (err)
++			goto out_drop_write;
++	}
++
++retry_deleg:
++	inode_lock(inode);
++	if (S_ISREG(inode->i_mode) && i_size_read(inode))
++		err = -EINVAL;
++	else
++		err = __vfs_setxattr_locked(mnt_idmap(path->mnt), path->dentry,
++					  XATTR_NAME_KSMBD_SYMLINK, target, len,
++					  0, &delegated_inode);
++	inode_unlock(inode);
++	if (is_delegated(&delegated_inode)) {
++		err = break_deleg_wait(&delegated_inode);
++		if (!err)
++			goto retry_deleg;
++	}
++	if (!err) {
++		down_write(&fp->f_ci->m_lock);
++		fp->f_ci->m_fattr &= ~(FILE_ATTRIBUTE_NORMAL_LE |
++					FILE_ATTRIBUTE_DIRECTORY_LE);
++		fp->f_ci->m_fattr |= FILE_ATTRIBUTE_REPARSE_POINT_LE;
++		if (S_ISREG(inode->i_mode))
++			fp->f_ci->m_fattr |= FILE_ATTRIBUTE_ARCHIVE_LE;
++		up_write(&fp->f_ci->m_lock);
++		fp->change_time = ksmbd_UnixTimeToNT(inode_get_ctime(inode));
++	}
++out_drop_write:
++	mnt_drop_write(path->mnt);
++out_revert:
++	revert_creds(saved_cred);
++	return err;
++}
++
+ static bool __caseless_lookup(struct dir_context *ctx, const char *name,
+ 			     int namlen, loff_t offset, u64 ino,
+ 			     unsigned int d_type)
+diff --git a/fs/smb/server/vfs.h b/fs/smb/server/vfs.h
+index f7452cccacbf..da1fbb1ff519 100644
+--- a/fs/smb/server/vfs.h
++++ b/fs/smb/server/vfs.h
+@@ -79,6 +79,7 @@ void ksmbd_vfs_query_maximal_access(const struct mnt_idmap *idmap,
+ 				   struct dentry *dentry, __le32 *daccess);
+ int ksmbd_vfs_create(struct ksmbd_work *work, const char *name, umode_t mode);
+ int ksmbd_vfs_get_symlink(const struct path *path, char **target);
++int ksmbd_vfs_set_symlink(struct ksmbd_file *fp, const char *target);
+ int ksmbd_vfs_symlink_stat(const struct path *path, struct kstat *stat);
+ bool ksmbd_vfs_is_reparse_point(const struct ksmbd_file *fp);
+ int ksmbd_vfs_mkdir(struct ksmbd_work *work, const char *name, umode_t mode);
+-- 
+2.53.0
+

@@ -1,0 +1,63 @@
+From 0f6c6ef6db175b036f3aaa79e4e239d655361ae2 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Tue, 3 Nov 2026 16:00:28 +0800
+Subject: [PATCH 1/7] smb/server: reject embedded NULs in EA names
+
+EA names have a counted length on the wire, but become C strings when
+passed to the VFS. Reject an embedded NUL before filtering private names
+or constructing the xattr name, so these two interpretations agree.
+
+Example (Python 3 with Impacket, against a writable test share):
+
+python3 - "$server_ip" "$smb_user" <<'PY'
+import getpass, struct, sys
+from impacket.smbconnection import SMBConnection
+from impacket import smb3structs as S
+c = SMBConnection(sys.argv[1], sys.argv[1],
+                  preferredDialect=S.SMB2_DIALECT_311)
+c.login(sys.argv[2], getpass.getpass())
+t = c.connectTree('test')
+f = c.createFile(t, 'ea-probe', desiredAccess=S.GENERIC_ALL,
+                 shareMode=7, creationDisposition=S.FILE_OPEN_IF)
+cases = [(b'normal', 0), (b'normal\x00suffix', 0x80000014)]
+for name, expected in cases:
+    ea = struct.pack('<IBBH', 0, 0, len(name), 1)
+    ea += name + b'\x00x'
+    status = 0
+    try:
+        c.getSMBServer().setInfo(t, f, inputBlob=ea,
+                                 infoType=1, fileInfoClass=15)
+    except Exception as e:
+        status = e.get_error_code()
+    assert status == expected, hex(status)
+    print(hex(status))
+c.closeFile(t, f)
+PY
+
+Expect 0x0 followed by 0x80000014 (STATUS_EA_LIST_INCONSISTENT).
+A normal Linux setfattr call cannot generate an embedded-NUL EA name.
+
+Code and test instructions generated with OpenAI Codex assistance.
+
+Fixes: 4ea46ea602fc ("ksmbd: protect private extended attributes")
+---
+ fs/smb/server/smb2pdu.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index 9cb533a030f4..1be0de361c40 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -3455,7 +3455,8 @@ static int smb2_set_ea(struct smb2_ea_info *eabuf, unsigned int buf_len,
+ 		if (!eabuf->EaNameLength)
+ 			goto next;
+ 
+-		if (eabuf->name[eabuf->EaNameLength]) {
++		if (eabuf->name[eabuf->EaNameLength] ||
++		    memchr(eabuf->name, '\0', eabuf->EaNameLength)) {
+ 			rc = -EBADMSG;
+ 			break;
+ 		}
+-- 
+2.53.0
+
