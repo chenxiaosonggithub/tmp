@@ -1,0 +1,100 @@
+From 8412b5c3689465dcb007ec6451c765e651aa71ab Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Wed, 4 Nov 2026 10:45:41 +0800
+Subject: [PATCH 07/21] smb/server: factor out smb2_query_maximal_access()
+
+Use smb2_query_maximal_access() to share the access query code.
+
+No functional change.
+
+Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/smb2pdu.c | 43 ++++++++++++++++++++++-------------------
+ 1 file changed, 23 insertions(+), 20 deletions(-)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index a01f4158aebb..cb7ab8c5768a 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -4285,6 +4285,24 @@ static int smb2_app_instance_stream_matches(struct ksmbd_file *fp,
+ 	return 0;
+ }
+ 
++static int smb2_query_maximal_access(struct ksmbd_conn *conn,
++				     const struct path *path, int uid,
++				     __le32 *maximal_access)
++{
++	int rc;
++
++	*maximal_access = FILE_MAXIMAL_ACCESS_LE;
++	rc = smb_check_perm_dacl(conn, path, maximal_access, 0, uid, false);
++	if (rc)
++		return rc;
++
++	/* No stored NT ACL leaves the MAXIMUM_ALLOWED request unchanged. */
++	if (*maximal_access == FILE_MAXIMAL_ACCESS_LE)
++		ksmbd_vfs_query_maximal_access(mnt_idmap(path->mnt),
++					       path->dentry, maximal_access);
++	return 0;
++}
++
+ static int smb2_handle_app_instance_id(struct ksmbd_work *work,
+ 				       struct smb2_create_rsp *rsp,
+ 				       struct durable_info *dh_info,
+@@ -4296,7 +4314,7 @@ static int smb2_handle_app_instance_id(struct ksmbd_work *work,
+ 	struct ksmbd_file *old_fp;
+ 	const struct path *old_path;
+ 	char *app_instance_id;
+-	__le32 maximal_access = FILE_MAXIMAL_ACCESS_LE;
++	__le32 maximal_access;
+ 	bool reject = false, stream_matches;
+ 	int cursor = 0, rc;
+ 
+@@ -4351,16 +4369,13 @@ static int smb2_handle_app_instance_id(struct ksmbd_work *work,
+ 
+ 	/* Authorize the referenced open even if its name changes meanwhile. */
+ 	old_path = &old_fp->filp->f_path;
+-	rc = smb_check_perm_dacl(conn, old_path, &maximal_access, 0,
+-				 work->sess->user->uid, false);
++	rc = smb2_query_maximal_access(conn, old_path, work->sess->user->uid,
++				       &maximal_access);
+ 	if (rc) {
+ 		/* Access denial prevents takeover, not the CREATE itself. */
+ 		ksmbd_put_durable_fd(old_fp);
+ 		return rc == -EACCES ? 0 : rc;
+ 	}
+-	if (maximal_access == FILE_MAXIMAL_ACCESS_LE)
+-		ksmbd_vfs_query_maximal_access(mnt_idmap(old_path->mnt),
+-					       old_path->dentry, &maximal_access);
+ 	/* Also require read access with the effective VFS credentials. */
+ 	if ((le32_to_cpu(maximal_access) & GENERIC_READ_FLAGS) !=
+ 	    GENERIC_READ_FLAGS ||
+@@ -5039,22 +5054,10 @@ int smb2_open(struct ksmbd_work *work)
+ 			goto err_out;
+ 
+ 		if (ctx.query_maximal_access) {
+-			ctx.maximal_access = FILE_MAXIMAL_ACCESS_LE;
+-			rc = smb_check_perm_dacl(conn, &path, &ctx.maximal_access,
+-						 0, sess->user->uid, false);
++			rc = smb2_query_maximal_access(conn, &path, sess->user->uid,
++						       &ctx.maximal_access);
+ 			if (rc)
+ 				goto err_out;
+-
+-			/*
+-			 * smb_check_perm_dacl() returns success without
+-			 * touching *pdaccess when the object has no stored
+-			 * NT ACL, leaving maximal_access as the
+-			 * FILE_MAXIMAL_ACCESS_LE request sentinel instead of
+-			 * a real access mask.
+-			 */
+-			if (ctx.maximal_access == FILE_MAXIMAL_ACCESS_LE)
+-				ksmbd_vfs_query_maximal_access(idmap, path.dentry,
+-							       &ctx.maximal_access);
+ 		}
+ 	}
+ 
+-- 
+2.53.0
+

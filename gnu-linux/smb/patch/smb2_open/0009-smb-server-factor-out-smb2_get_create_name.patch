@@ -1,0 +1,134 @@
+From 2b81e10eaa003b94cf27ecc993c97cc6222c42db Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Wed, 4 Nov 2026 10:47:30 +0800
+Subject: [PATCH 09/21] smb/server: factor out smb2_get_create_name()
+
+Move file name parsing and checks into smb2_get_create_name().
+
+No functional change.
+
+Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/smb2pdu.c | 98 ++++++++++++++++++++++++-----------------
+ 1 file changed, 57 insertions(+), 41 deletions(-)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index 3c807ca990d6..838159fc4eb1 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -4524,6 +4524,58 @@ static int smb2_check_create_request(struct smb2_create_req *req,
+ 	return 0;
+ }
+ 
++static char *smb2_get_create_name(struct ksmbd_work *work,
++				  struct smb2_create_req *req, bool posix,
++				  char **stream_name, int *s_type)
++{
++	struct ksmbd_share_config *share = work->tcon->share_conf;
++	char *name;
++	int rc;
++
++	if (!req->NameLength) {
++		name = kstrdup("", KSMBD_DEFAULT_GFP);
++		return name ? name : ERR_PTR(-ENOMEM);
++	}
++
++	name = smb2_get_name((char *)req + le16_to_cpu(req->NameOffset),
++			     le16_to_cpu(req->NameLength),
++			     work->conn->local_nls);
++	if (IS_ERR(name))
++		return name;
++
++	ksmbd_debug(SMB, "converted name = %s\n", name);
++
++	if (!posix) {
++		if (strchr(name, ':')) {
++			if (!test_share_config_flag(share,
++						    KSMBD_SHARE_FLAG_STREAMS)) {
++				rc = -EBADF;
++				goto out_free_name;
++			}
++			rc = parse_stream_name(name, stream_name, s_type);
++			if (rc < 0)
++				goto out_free_name;
++		}
++
++		rc = ksmbd_validate_filename(name);
++		if (rc < 0)
++			goto out_free_name;
++	}
++
++	if (ksmbd_share_veto_filename(share, name)) {
++		rc = -ENOENT;
++		ksmbd_debug(SMB, "Reject open(), vetoed file: %s\n",
++			    name);
++		goto out_free_name;
++	}
++
++	return name;
++
++out_free_name:
++	kfree(name);
++	return ERR_PTR(rc);
++}
++
+ static int smb2_parse_posix_context(struct ksmbd_work *work,
+ 				    struct smb2_create_req *req,
+ 				    struct smb2_create_rsp *rsp,
+@@ -4821,47 +4873,11 @@ int smb2_open(struct ksmbd_work *work)
+ 		return create_smb2_pipe(work);
+ 	}
+ 
+-	if (req->NameLength) {
+-		name = smb2_get_name((char *)req + le16_to_cpu(req->NameOffset),
+-				     le16_to_cpu(req->NameLength),
+-				     work->conn->local_nls);
+-		if (IS_ERR(name)) {
+-			rc = PTR_ERR(name);
+-			name = NULL;
+-			goto err_out2;
+-		}
+-
+-		ksmbd_debug(SMB, "converted name = %s\n", name);
+-
+-		if (ctx.posix == false) {
+-			if (strchr(name, ':')) {
+-				if (!test_share_config_flag(work->tcon->share_conf,
+-							KSMBD_SHARE_FLAG_STREAMS)) {
+-					rc = -EBADF;
+-					goto err_out2;
+-				}
+-				rc = parse_stream_name(name, &stream_name, &s_type);
+-				if (rc < 0)
+-					goto err_out2;
+-			}
+-
+-			rc = ksmbd_validate_filename(name);
+-			if (rc < 0)
+-				goto err_out2;
+-		}
+-
+-		if (ksmbd_share_veto_filename(share, name)) {
+-			rc = -ENOENT;
+-			ksmbd_debug(SMB, "Reject open(), vetoed file: %s\n",
+-				    name);
+-			goto err_out2;
+-		}
+-	} else {
+-		name = kstrdup("", KSMBD_DEFAULT_GFP);
+-		if (!name) {
+-			rc = -ENOMEM;
+-			goto err_out2;
+-		}
++	name = smb2_get_create_name(work, req, ctx.posix, &stream_name, &s_type);
++	if (IS_ERR(name)) {
++		rc = PTR_ERR(name);
++		name = NULL;
++		goto err_out2;
+ 	}
+ 
+ 	ctx.oplock_level = req->RequestedOplockLevel;
+-- 
+2.53.0
+

@@ -1,0 +1,54 @@
+From 5b9c0a5fb88e90aec680a890272fd25614ba9608 Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Wed, 4 Nov 2026 10:51:39 +0800
+Subject: [PATCH 17/21] smb/server: use smb2_add_create_context() for durable
+ v1 responses
+
+Remove the remaining manual context length and link updates from the
+durable v1 path. Both durable response types now share the same setup.
+
+No functional change.
+
+Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/smb2pdu.c | 20 ++++----------------
+ 1 file changed, 4 insertions(+), 16 deletions(-)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index 2ea79f73bccd..1a7f7563f1cd 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -5595,25 +5595,13 @@ int smb2_open(struct ksmbd_work *work)
+ 		last_context = disk_id_ccontext;
+ 	}
+ 
+-	if (durable_rsp && ctx.durable.type == DURABLE_REQ) {
+-		struct create_context *durable_ccontext;
+-
+-		durable_ccontext = (struct create_context *)(rsp->Buffer +
+-				le32_to_cpu(rsp->CreateContextsLength));
+-		create_durable_rsp_buf(rsp->Buffer +
+-				le32_to_cpu(rsp->CreateContextsLength));
+-		le32_add_cpu(&rsp->CreateContextsLength,
+-				conn->vals->create_durable_size);
+-
+-		if (last_context)
+-			last_context->Next =
+-				cpu_to_le32((char *)durable_ccontext - (char *)last_context);
+-		last_context = durable_ccontext;
+-	} else if (durable_rsp && ctx.durable.type == DURABLE_REQ_V2) {
++	if (durable_rsp && ctx.durable.type == DURABLE_REQ)
++		create_durable_rsp_buf(smb2_add_create_context(rsp, &last_context,
++							     conn->vals->create_durable_size));
++	else if (durable_rsp && ctx.durable.type == DURABLE_REQ_V2)
+ 		create_durable_v2_rsp_buf(smb2_add_create_context(rsp, &last_context,
+ 								conn->vals->create_durable_v2_size),
+ 					 fp);
+-	}
+ 
+ 	if (ctx.posix)
+ 		create_posix_rsp_buf(smb2_add_create_context(rsp, &last_context,
+-- 
+2.53.0
+

@@ -1,0 +1,317 @@
+From 14951ddb08983cd433fae87fb8c1b3f827f24f0d Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Wed, 4 Nov 2026 10:53:25 +0800
+Subject: [PATCH 21/21] smb/server: factor out smb2_build_create_rsp()
+
+Put the fixed fields and optional contexts in one response helper.
+Return the response size to smb2_open(), which keeps the error cleanup.
+
+No functional change.
+
+Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/smb2pdu.c | 264 +++++++++++++++++++++-------------------
+ 1 file changed, 139 insertions(+), 125 deletions(-)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index 402897965236..ddfff3106425 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -4857,6 +4857,144 @@ static void *smb2_add_create_context(struct smb2_create_rsp *rsp,
+ 	return context;
+ }
+ 
++static int smb2_build_create_rsp(struct ksmbd_work *work,
++				 struct ksmbd_file *fp, const struct kstat *stat,
++				 struct smb2_create_contexts *ctx,
++				 int file_info, const char *name)
++{
++	struct smb2_create_rsp *rsp = ksmbd_resp_buf_next(work);
++	struct ksmbd_conn *conn = work->conn;
++	struct ksmbd_tree_connect *tcon = work->tcon;
++	const struct path *path = &fp->filp->f_path;
++	const struct mnt_idmap *idmap = mnt_idmap(path->mnt);
++	struct create_context *last_context = NULL;
++	struct oplock_info *opinfo;
++	bool durable_rsp = true;
++	u64 time;
++
++	if (ctx->durable.replay)
++		file_info = le32_to_cpu(fp->create_action);
++	rsp->StructureSize = cpu_to_le16(89);
++	opinfo = opinfo_get(fp);
++	rsp->OplockLevel = opinfo != NULL ? opinfo->level : 0;
++	/*
++	 * A durable CREATE replay does not modify the existing open. When
++	 * replayed without an oplock, however, its response reflects that
++	 * request and cannot include a new durable-handle response context.
++	 */
++	if (ctx->durable.replay && !ctx->lease &&
++	    ctx->oplock_level == SMB2_OPLOCK_LEVEL_NONE) {
++		rsp->OplockLevel = SMB2_OPLOCK_LEVEL_NONE;
++		durable_rsp = false;
++	}
++	rsp->Flags = 0;
++	rsp->CreateAction = cpu_to_le32(file_info);
++	rsp->CreationTime = cpu_to_le64(fp->create_time);
++	time = ksmbd_UnixTimeToNT(stat->atime);
++	rsp->LastAccessTime = cpu_to_le64(time);
++	time = ksmbd_UnixTimeToNT(stat->mtime);
++	fp->open_mtime = time;
++	rsp->LastWriteTime = cpu_to_le64(time);
++	rsp->ChangeTime = cpu_to_le64(fp->change_time);
++	/*
++	 * The cached allocation size hides filesystem rounding for the
++	 * requested allocation, but it can go stale when the file grows past
++	 * it via writes (e.g. across a durable reconnect). Refresh it once the
++	 * file exceeds the cached value, rounding the end of file up to the
++	 * volume allocation unit (the filesystem block size, matching the
++	 * SectorsPerAllocationUnit/BytesPerSector ksmbd advertises) rather than
++	 * using the raw on-disk block count, which can include filesystem
++	 * preallocation and metadata rounding.
++	 */
++	if (ksmbd_stream_fd(fp)) {
++		loff_t seof = ksmbd_stream_eof(fp);
++
++		rsp->AllocationSize = cpu_to_le64((u64)seof);
++		rsp->EndofFile = cpu_to_le64((u64)seof);
++	} else {
++		if (!S_ISDIR(stat->mode) && stat->size > fp->allocation_size)
++			fp->allocation_size = round_up(stat->size, stat->blksize);
++		rsp->AllocationSize = cpu_to_le64(fp->allocation_size);
++		rsp->EndofFile = S_ISDIR(stat->mode) ? 0 : cpu_to_le64(stat->size);
++	}
++	rsp->FileAttributes = fp->f_ci->m_fattr;
++
++	rsp->Reserved2 = 0;
++
++	rsp->PersistentFileId = fp->persistent_id;
++	rsp->VolatileFileId = fp->volatile_id;
++
++	rsp->CreateContextsOffset = 0;
++	rsp->CreateContextsLength = 0;
++
++	/* If lease is requested, send a lease context response. */
++	if (opinfo && opinfo->is_lease) {
++		ksmbd_debug(SMB, "lease granted on(%s) lease state 0x%x\n",
++			    name, opinfo->o_lease->state);
++		rsp->OplockLevel = SMB2_OPLOCK_LEVEL_LEASE;
++		create_lease_buf(smb2_add_create_context(rsp, &last_context,
++						       conn->vals->create_lease_size),
++				 opinfo->o_lease);
++	}
++	opinfo_put(opinfo);
++
++	if (ctx->query_maximal_access) {
++		if (ctx->maximal_access == 0)
++			ksmbd_vfs_query_maximal_access(idmap,
++						       path->dentry,
++						       &ctx->maximal_access);
++		create_mxac_rsp_buf(smb2_add_create_context(rsp, &last_context,
++							  conn->vals->create_mxac_size),
++				    le32_to_cpu(ctx->maximal_access));
++	}
++
++	if (ctx->query_disk_id)
++		create_disk_id_rsp_buf(smb2_add_create_context(rsp, &last_context,
++							     conn->vals->create_disk_id_size),
++				       stat->ino, tcon->id);
++
++	if (durable_rsp && ctx->durable.type == DURABLE_REQ)
++		create_durable_rsp_buf(smb2_add_create_context(rsp, &last_context,
++							     conn->vals->create_durable_size));
++	else if (durable_rsp && ctx->durable.type == DURABLE_REQ_V2)
++		create_durable_v2_rsp_buf(smb2_add_create_context(rsp, &last_context,
++								conn->vals->create_durable_v2_size),
++					 fp);
++
++	if (ctx->posix)
++		create_posix_rsp_buf(smb2_add_create_context(rsp, &last_context,
++							   conn->vals->create_posix_size),
++				     fp);
++
++	/*
++	 * AAPL create context response: see smb2pdu.h for the capability
++	 * rationale. Scoped to TIME_MACHINE shares only.
++	 */
++	if (ctx->aapl) {
++		if (ctx->aapl_client_caps & SMB2_CRTCTX_AAPL_SUPPORTS_READ_DIR_ATTR)
++			conn->aapl_readdir_attr = true;
++		/*
++		 * V2 extends the same inline-FinderInfo mechanism (see
++		 * smb2pdu.h), so a V2-requesting client also gets
++		 * aapl_readdir_attr treatment -- the reply just advertises
++		 * the V2 bit instead of the V1 one (create_aapl_rsp_buf).
++		 */
++		if (ctx->aapl_client_caps & SMB2_CRTCTX_AAPL_SUPPORTS_READ_DIR_ATTR_V2) {
++			conn->aapl_readdir_attr = true;
++			conn->aapl_readdir_attr_v2 = true;
++		}
++
++		create_aapl_rsp_buf(smb2_add_create_context(rsp, &last_context,
++							  conn->vals->create_aapl_size),
++				    SMB2_CRTCTX_AAPL_FULL_SYNC,
++				    ctx->aapl_req_bitmap,
++				    conn->aapl_readdir_attr_v2);
++	}
++
++	return offsetof(struct smb2_create_rsp, Buffer) +
++		le32_to_cpu(rsp->CreateContextsLength);
++}
++
+ /**
+  * smb2_open() - handler for smb file open request
+  * @work:	smb work containing request buffer
+@@ -4876,19 +5014,15 @@ int smb2_open(struct ksmbd_work *work)
+ 	struct file *filp = NULL;
+ 	const struct mnt_idmap *idmap = NULL;
+ 	struct kstat stat;
+-	struct oplock_info *opinfo;
+ 	struct smb2_create_contexts ctx = {};
+-	struct create_context *last_context = NULL;
+ 	int open_flags = 0, may_flags = 0, file_info = 0;
+ 	int rc = 0;
+-	bool durable_rsp = true;
+ 	int s_type = 0;
+ 	char *name = NULL;
+ 	char *stream_name = NULL;
+ 	bool file_present = false, created = false, already_permitted = false;
+ 	bool app_instance_id_checked = false, app_instance_closed;
+ 	int need_truncate = 0;
+-	u64 time;
+ 	__le32 daccess;
+ 	u32 dos_attr;
+ 	int iov_len = 0;
+@@ -5488,127 +5622,7 @@ int smb2_open(struct ksmbd_work *work)
+ 	 * this function's normal (non-reconnect) parsing already handles.
+ 	 */
+ 	reconnected_fp:
+-	if (ctx.durable.replay)
+-		file_info = le32_to_cpu(fp->create_action);
+-	rsp->StructureSize = cpu_to_le16(89);
+-	opinfo = opinfo_get(fp);
+-	rsp->OplockLevel = opinfo != NULL ? opinfo->level : 0;
+-	/*
+-	 * A durable CREATE replay does not modify the existing open. When
+-	 * replayed without an oplock, however, its response reflects that
+-	 * request and cannot include a new durable-handle response context.
+-	 */
+-	if (ctx.durable.replay && !ctx.lease &&
+-	    ctx.oplock_level == SMB2_OPLOCK_LEVEL_NONE) {
+-		rsp->OplockLevel = SMB2_OPLOCK_LEVEL_NONE;
+-		durable_rsp = false;
+-	}
+-	rsp->Flags = 0;
+-	rsp->CreateAction = cpu_to_le32(file_info);
+-	rsp->CreationTime = cpu_to_le64(fp->create_time);
+-	time = ksmbd_UnixTimeToNT(stat.atime);
+-	rsp->LastAccessTime = cpu_to_le64(time);
+-	time = ksmbd_UnixTimeToNT(stat.mtime);
+-	fp->open_mtime = time;
+-	rsp->LastWriteTime = cpu_to_le64(time);
+-	rsp->ChangeTime = cpu_to_le64(fp->change_time);
+-	/*
+-	 * The cached allocation size hides filesystem rounding for the
+-	 * requested allocation, but it can go stale when the file grows past
+-	 * it via writes (e.g. across a durable reconnect). Refresh it once the
+-	 * file exceeds the cached value, rounding the end of file up to the
+-	 * volume allocation unit (the filesystem block size, matching the
+-	 * SectorsPerAllocationUnit/BytesPerSector ksmbd advertises) rather than
+-	 * using the raw on-disk block count, which can include filesystem
+-	 * preallocation and metadata rounding.
+-	 */
+-	if (ksmbd_stream_fd(fp)) {
+-		loff_t seof = ksmbd_stream_eof(fp);
+-
+-		rsp->AllocationSize = cpu_to_le64((u64)seof);
+-		rsp->EndofFile = cpu_to_le64((u64)seof);
+-	} else {
+-		if (!S_ISDIR(stat.mode) && stat.size > fp->allocation_size)
+-			fp->allocation_size = round_up(stat.size, stat.blksize);
+-		rsp->AllocationSize = cpu_to_le64(fp->allocation_size);
+-		rsp->EndofFile = S_ISDIR(stat.mode) ? 0 : cpu_to_le64(stat.size);
+-	}
+-	rsp->FileAttributes = fp->f_ci->m_fattr;
+-
+-	rsp->Reserved2 = 0;
+-
+-	rsp->PersistentFileId = fp->persistent_id;
+-	rsp->VolatileFileId = fp->volatile_id;
+-
+-	rsp->CreateContextsOffset = 0;
+-	rsp->CreateContextsLength = 0;
+-
+-	/* If lease is requested, send a lease context response. */
+-	if (opinfo && opinfo->is_lease) {
+-		ksmbd_debug(SMB, "lease granted on(%s) lease state 0x%x\n",
+-			    name, opinfo->o_lease->state);
+-		rsp->OplockLevel = SMB2_OPLOCK_LEVEL_LEASE;
+-		create_lease_buf(smb2_add_create_context(rsp, &last_context,
+-						       conn->vals->create_lease_size),
+-				 opinfo->o_lease);
+-	}
+-	opinfo_put(opinfo);
+-
+-	if (ctx.query_maximal_access) {
+-		if (ctx.maximal_access == 0)
+-			ksmbd_vfs_query_maximal_access(idmap,
+-						       path.dentry,
+-						       &ctx.maximal_access);
+-		create_mxac_rsp_buf(smb2_add_create_context(rsp, &last_context,
+-							  conn->vals->create_mxac_size),
+-				    le32_to_cpu(ctx.maximal_access));
+-	}
+-
+-	if (ctx.query_disk_id)
+-		create_disk_id_rsp_buf(smb2_add_create_context(rsp, &last_context,
+-							     conn->vals->create_disk_id_size),
+-				       stat.ino, tcon->id);
+-
+-	if (durable_rsp && ctx.durable.type == DURABLE_REQ)
+-		create_durable_rsp_buf(smb2_add_create_context(rsp, &last_context,
+-							     conn->vals->create_durable_size));
+-	else if (durable_rsp && ctx.durable.type == DURABLE_REQ_V2)
+-		create_durable_v2_rsp_buf(smb2_add_create_context(rsp, &last_context,
+-								conn->vals->create_durable_v2_size),
+-					 fp);
+-
+-	if (ctx.posix)
+-		create_posix_rsp_buf(smb2_add_create_context(rsp, &last_context,
+-							   conn->vals->create_posix_size),
+-				     fp);
+-
+-	/*
+-	 * AAPL create context response: see smb2pdu.h for the capability
+-	 * rationale. Scoped to TIME_MACHINE shares only.
+-	 */
+-	if (ctx.aapl) {
+-		if (ctx.aapl_client_caps & SMB2_CRTCTX_AAPL_SUPPORTS_READ_DIR_ATTR)
+-			conn->aapl_readdir_attr = true;
+-		/*
+-		 * V2 extends the same inline-FinderInfo mechanism (see
+-		 * smb2pdu.h), so a V2-requesting client also gets
+-		 * aapl_readdir_attr treatment -- the reply just advertises
+-		 * the V2 bit instead of the V1 one (create_aapl_rsp_buf).
+-		 */
+-		if (ctx.aapl_client_caps & SMB2_CRTCTX_AAPL_SUPPORTS_READ_DIR_ATTR_V2) {
+-			conn->aapl_readdir_attr = true;
+-			conn->aapl_readdir_attr_v2 = true;
+-		}
+-
+-		create_aapl_rsp_buf(smb2_add_create_context(rsp, &last_context,
+-							  conn->vals->create_aapl_size),
+-				    SMB2_CRTCTX_AAPL_FULL_SYNC,
+-				    ctx.aapl_req_bitmap,
+-				    conn->aapl_readdir_attr_v2);
+-	}
+-
+-	iov_len = offsetof(struct smb2_create_rsp, Buffer) +
+-		le32_to_cpu(rsp->CreateContextsLength);
++	iov_len = smb2_build_create_rsp(work, fp, &stat, &ctx, file_info, name);
+ 
+ err_out:
+ 	if (rc && (file_present || created))
+-- 
+2.53.0
+

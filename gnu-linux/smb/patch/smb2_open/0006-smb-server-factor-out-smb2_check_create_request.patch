@@ -1,0 +1,174 @@
+From 57ca49a7f343a2b18aa911fa174786d581e5d828 Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Wed, 4 Nov 2026 10:45:05 +0800
+Subject: [PATCH 06/21] smb/server: factor out smb2_check_create_request()
+
+Move CREATE request checks into smb2_check_create_request().
+
+No functional change.
+
+Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/smb2pdu.c | 137 ++++++++++++++++++++--------------------
+ 1 file changed, 68 insertions(+), 69 deletions(-)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index ee7dbbae01d6..a01f4158aebb 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -4373,6 +4373,72 @@ static int smb2_handle_app_instance_id(struct ksmbd_work *work,
+ 	return ksmbd_close_fd_app_instance_id(work, old_fp, closed);
+ }
+ 
++static int smb2_check_create_request(struct smb2_create_req *req,
++				    struct smb2_create_rsp *rsp)
++{
++	if (le32_to_cpu(req->ImpersonationLevel) > le32_to_cpu(IL_DELEGATE)) {
++		pr_err("Invalid impersonationlevel : 0x%x\n",
++		       le32_to_cpu(req->ImpersonationLevel));
++		rsp->hdr.Status = STATUS_BAD_IMPERSONATION_LEVEL;
++		return -EIO;
++	}
++
++	if (req->CreateOptions && !(req->CreateOptions & CREATE_OPTIONS_MASK_LE)) {
++		pr_err("Invalid create options : 0x%x\n",
++		       le32_to_cpu(req->CreateOptions));
++		return -EINVAL;
++	}
++
++	if (req->CreateOptions & FILE_SEQUENTIAL_ONLY_LE &&
++	    req->CreateOptions & FILE_RANDOM_ACCESS_LE)
++		req->CreateOptions &= ~FILE_SEQUENTIAL_ONLY_LE;
++
++	if (req->CreateOptions &
++	    (FILE_OPEN_BY_FILE_ID_LE | CREATE_TREE_CONNECTION |
++	     FILE_RESERVE_OPFILTER_LE)) {
++		return -EOPNOTSUPP;
++	}
++
++	if (req->CreateOptions & FILE_DIRECTORY_FILE_LE &&
++	    req->CreateOptions & FILE_NON_DIRECTORY_FILE_LE)
++		return -EINVAL;
++
++	/* MS-FSA 2.1.5.1: delete-on-close requires DELETE access */
++	if (req->CreateOptions & FILE_DELETE_ON_CLOSE_LE &&
++	    !(smb_map_generic_desired_access(req->DesiredAccess) &
++	      FILE_DELETE_LE)) {
++		return -EINVAL;
++	}
++
++	if (le32_to_cpu(req->CreateDisposition) >
++	    le32_to_cpu(FILE_OVERWRITE_IF_LE)) {
++		pr_err("Invalid create disposition : 0x%x\n",
++		       le32_to_cpu(req->CreateDisposition));
++		return -EINVAL;
++	}
++
++	if (!(req->DesiredAccess & DESIRED_ACCESS_MASK)) {
++		pr_err("Invalid desired access : 0x%x\n",
++		       le32_to_cpu(req->DesiredAccess));
++		return -EACCES;
++	}
++
++	if (req->DesiredAccess == FILE_SYNCHRONIZE_LE &&
++	    req->CreateDisposition == FILE_OPEN_IF_LE &&
++	    !req->FileAttributes) {
++		return -EACCES;
++	}
++
++	if (req->FileAttributes &&
++	    (req->FileAttributes & ~cpu_to_le32(SMB2_CREATE_FILE_ATTRIBUTE_MASK))) {
++		pr_err("Invalid file attribute : 0x%x\n",
++		       le32_to_cpu(req->FileAttributes));
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
+ static int smb2_parse_posix_context(struct ksmbd_work *work,
+ 				    struct smb2_create_req *req,
+ 				    struct smb2_create_rsp *rsp,
+@@ -4803,76 +4869,9 @@ int smb2_open(struct ksmbd_work *work)
+ 		}
+ 	}
+ 
+-	if (le32_to_cpu(req->ImpersonationLevel) > le32_to_cpu(IL_DELEGATE)) {
+-		pr_err("Invalid impersonationlevel : 0x%x\n",
+-		       le32_to_cpu(req->ImpersonationLevel));
+-		rc = -EIO;
+-		rsp->hdr.Status = STATUS_BAD_IMPERSONATION_LEVEL;
+-		goto err_out2;
+-	}
+-
+-	if (req->CreateOptions && !(req->CreateOptions & CREATE_OPTIONS_MASK_LE)) {
+-		pr_err("Invalid create options : 0x%x\n",
+-		       le32_to_cpu(req->CreateOptions));
+-		rc = -EINVAL;
+-		goto err_out2;
+-	} else {
+-		if (req->CreateOptions & FILE_SEQUENTIAL_ONLY_LE &&
+-		    req->CreateOptions & FILE_RANDOM_ACCESS_LE)
+-			req->CreateOptions &= ~FILE_SEQUENTIAL_ONLY_LE;
+-
+-		if (req->CreateOptions &
+-		    (FILE_OPEN_BY_FILE_ID_LE | CREATE_TREE_CONNECTION |
+-		     FILE_RESERVE_OPFILTER_LE)) {
+-			rc = -EOPNOTSUPP;
+-			goto err_out2;
+-		}
+-
+-		if (req->CreateOptions & FILE_DIRECTORY_FILE_LE) {
+-			if (req->CreateOptions & FILE_NON_DIRECTORY_FILE_LE) {
+-				rc = -EINVAL;
+-				goto err_out2;
+-			}
+-		}
+-
+-		/* MS-FSA 2.1.5.1: delete-on-close requires DELETE access */
+-		if (req->CreateOptions & FILE_DELETE_ON_CLOSE_LE &&
+-		    !(smb_map_generic_desired_access(req->DesiredAccess) &
+-		      FILE_DELETE_LE)) {
+-			rc = -EINVAL;
+-			goto err_out2;
+-		}
+-	}
+-
+-	if (le32_to_cpu(req->CreateDisposition) >
+-	    le32_to_cpu(FILE_OVERWRITE_IF_LE)) {
+-		pr_err("Invalid create disposition : 0x%x\n",
+-		       le32_to_cpu(req->CreateDisposition));
+-		rc = -EINVAL;
+-		goto err_out2;
+-	}
+-
+-	if (!(req->DesiredAccess & DESIRED_ACCESS_MASK)) {
+-		pr_err("Invalid desired access : 0x%x\n",
+-		       le32_to_cpu(req->DesiredAccess));
+-		rc = -EACCES;
+-		goto err_out2;
+-	}
+-
+-	if (req->DesiredAccess == FILE_SYNCHRONIZE_LE &&
+-	    req->CreateDisposition == FILE_OPEN_IF_LE &&
+-	    !req->FileAttributes) {
+-		rc = -EACCES;
+-		goto err_out2;
+-	}
+-
+-	if (req->FileAttributes &&
+-	    (req->FileAttributes & ~cpu_to_le32(SMB2_CREATE_FILE_ATTRIBUTE_MASK))) {
+-		pr_err("Invalid file attribute : 0x%x\n",
+-		       le32_to_cpu(req->FileAttributes));
+-		rc = -EINVAL;
++	rc = smb2_check_create_request(req, rsp);
++	if (rc)
+ 		goto err_out2;
+-	}
+ 
+ 	rc = smb2_parse_create_contexts(req, rsp, &ctx);
+ 	if (rc)
+-- 
+2.53.0
+

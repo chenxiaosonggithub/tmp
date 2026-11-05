@@ -1,0 +1,113 @@
+From ef9c3b4096caf2ccf4fa742c5ff62036f40323c0 Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Wed, 4 Nov 2026 10:49:54 +0800
+Subject: [PATCH 02/21] smb/server: factor out smb2_parse_posix_context()
+
+Move POSIX CREATE context parsing into smb2_parse_posix_context().
+
+No functional change.
+
+Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/smb2pdu.c | 76 ++++++++++++++++++++++++-----------------
+ 1 file changed, 44 insertions(+), 32 deletions(-)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index 306b36a3b262..db3c73252989 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -4373,6 +4373,47 @@ static int smb2_handle_app_instance_id(struct ksmbd_work *work,
+ 	return ksmbd_close_fd_app_instance_id(work, old_fp, closed);
+ }
+ 
++static int smb2_parse_posix_context(struct ksmbd_work *work,
++				    struct smb2_create_req *req,
++				    struct smb2_create_rsp *rsp,
++				    struct smb2_create_contexts *ctx)
++{
++	struct ksmbd_conn *conn = work->conn;
++	struct ksmbd_tree_connect *tcon = work->tcon;
++	struct ksmbd_share_config *share = tcon->share_conf;
++	struct create_context *context;
++
++	if (!req->CreateContextsOffset)
++		return 0;
++
++	context = smb2_find_context_vals(req, SMB2_CREATE_TAG_POSIX, 16);
++	if (IS_ERR(context)) {
++		return PTR_ERR(context);
++	} else if (context) {
++		struct create_posix *posix = (struct create_posix *)context;
++
++		if (conn->dialect != SMB311_PROT_ID) {
++			rsp->hdr.Status = STATUS_INVALID_INFO_CLASS;
++			return -ENOTTY;
++		}
++		if (!tcon->posix_extensions)
++			return -EOPNOTSUPP;
++		if (test_share_config_flag(share, KSMBD_SHARE_FLAG_PIPE))
++			return -EOPNOTSUPP;
++		if (le16_to_cpu(context->DataOffset) +
++			le32_to_cpu(context->DataLength) <
++		    sizeof(struct create_posix) - 4) {
++			return -EINVAL;
++		}
++		ksmbd_debug(SMB, "get posix context\n");
++
++		ctx->posix_mode = le32_to_cpu(posix->Mode);
++		ctx->posix = true;
++	}
++
++	return 0;
++}
++
+ /**
+  * smb2_open() - handler for smb file open request
+  * @work:	smb work containing request buffer
+@@ -4424,39 +4465,10 @@ int smb2_open(struct ksmbd_work *work)
+ 		return -EINVAL;
+ 	}
+ 
+-	if (req->CreateContextsOffset) {
+-		context = smb2_find_context_vals(req, SMB2_CREATE_TAG_POSIX, 16);
+-		if (IS_ERR(context)) {
+-			rc = PTR_ERR(context);
+-			goto err_out2;
+-		} else if (context) {
+-			struct create_posix *posix = (struct create_posix *)context;
+-
+-			if (conn->dialect != SMB311_PROT_ID) {
+-				rsp->hdr.Status = STATUS_INVALID_INFO_CLASS;
+-				rc = -ENOTTY;
+-				goto err_out2;
+-			}
+-			if (!tcon->posix_extensions) {
+-				rc = -EOPNOTSUPP;
+-				goto err_out2;
+-			}
+-			if (test_share_config_flag(share, KSMBD_SHARE_FLAG_PIPE)) {
+-				rc = -EOPNOTSUPP;
+-				goto err_out2;
+-			}
+-			if (le16_to_cpu(context->DataOffset) +
+-				le32_to_cpu(context->DataLength) <
+-			    sizeof(struct create_posix) - 4) {
+-				rc = -EINVAL;
+-				goto err_out2;
+-			}
+-			ksmbd_debug(SMB, "get posix context\n");
++	rc = smb2_parse_posix_context(work, req, rsp, &ctx);
++	if (rc)
++		goto err_out2;
+ 
+-			ctx.posix_mode = le32_to_cpu(posix->Mode);
+-			ctx.posix = true;
+-		}
+-	}
+ 	if (test_share_config_flag(share, KSMBD_SHARE_FLAG_PIPE)) {
+ 		ksmbd_debug(SMB, "IPC pipe create request\n");
+ 		return create_smb2_pipe(work);
+-- 
+2.53.0
+

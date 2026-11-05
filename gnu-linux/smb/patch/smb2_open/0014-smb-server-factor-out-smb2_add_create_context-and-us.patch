@@ -1,0 +1,82 @@
+From 6374468fa7321d2bb5eb8218d758d0a2b4f4a92c Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Wed, 4 Nov 2026 10:51:39 +0800
+Subject: [PATCH 14/21] smb/server: factor out smb2_add_create_context() and
+ use it for AAPL
+
+Each response context needs space, a link to the previous context and
+length updates. Put this shared work in one helper and use it first
+for AAPL.
+
+No functional change.
+
+Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/smb2pdu.c | 36 +++++++++++++++++++++---------------
+ 1 file changed, 21 insertions(+), 15 deletions(-)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index 94facca99a89..bbe2265b4676 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -4841,6 +4841,22 @@ static int smb2_open_oplock(struct ksmbd_work *work, struct ksmbd_file *fp,
+ 	return rc;
+ }
+ 
++static void *smb2_add_create_context(struct smb2_create_rsp *rsp,
++				     struct create_context **last_context, int size)
++{
++	struct create_context *context;
++
++	context = (struct create_context *)(rsp->Buffer +
++			le32_to_cpu(rsp->CreateContextsLength));
++	if (*last_context)
++		(*last_context)->Next = cpu_to_le32((char *)context - (char *)*last_context);
++	*last_context = context;
++	le32_add_cpu(&rsp->CreateContextsLength, size);
++	rsp->CreateContextsOffset =
++		cpu_to_le32(offsetof(struct smb2_create_rsp, Buffer));
++	return context;
++}
++
+ /**
+  * smb2_open() - handler for smb file open request
+  * @work:	smb work containing request buffer
+@@ -5625,8 +5641,6 @@ int smb2_open(struct ksmbd_work *work)
+ 	 * rationale. Scoped to TIME_MACHINE shares only.
+ 	 */
+ 	if (ctx.aapl) {
+-		struct create_context *aapl_ccontext;
+-
+ 		if (ctx.aapl_client_caps & SMB2_CRTCTX_AAPL_SUPPORTS_READ_DIR_ATTR)
+ 			conn->aapl_readdir_attr = true;
+ 		/*
+@@ -5640,19 +5654,11 @@ int smb2_open(struct ksmbd_work *work)
+ 			conn->aapl_readdir_attr_v2 = true;
+ 		}
+ 
+-		aapl_ccontext = (struct create_context *)(rsp->Buffer +
+-				le32_to_cpu(rsp->CreateContextsLength));
+-		create_aapl_rsp_buf(rsp->Buffer +
+-				le32_to_cpu(rsp->CreateContextsLength),
+-				SMB2_CRTCTX_AAPL_FULL_SYNC,
+-				ctx.aapl_req_bitmap,
+-				conn->aapl_readdir_attr_v2);
+-		le32_add_cpu(&rsp->CreateContextsLength,
+-			     conn->vals->create_aapl_size);
+-		if (last_context)
+-			last_context->Next =
+-				cpu_to_le32((char *)aapl_ccontext - (char *)last_context);
+-		last_context = aapl_ccontext;
++		create_aapl_rsp_buf(smb2_add_create_context(rsp, &last_context,
++							  conn->vals->create_aapl_size),
++				    SMB2_CRTCTX_AAPL_FULL_SYNC,
++				    ctx.aapl_req_bitmap,
++				    conn->aapl_readdir_attr_v2);
+ 	}
+ 
+ 	if (last_context) {
+-- 
+2.53.0
+

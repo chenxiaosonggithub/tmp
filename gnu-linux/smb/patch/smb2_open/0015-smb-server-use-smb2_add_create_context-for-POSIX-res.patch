@@ -1,0 +1,50 @@
+From 556df24bcb48caac04efdd689b2180ee3bc347ab Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Wed, 4 Nov 2026 10:51:39 +0800
+Subject: [PATCH 15/21] smb/server: use smb2_add_create_context() for POSIX
+ responses
+
+Let the shared helper update the response length and link the POSIX
+context to the previous one. This removes the repeated setup code.
+
+No functional change.
+
+Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/smb2pdu.c | 19 ++++---------------
+ 1 file changed, 4 insertions(+), 15 deletions(-)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index bbe2265b4676..47843ee1275e 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -5620,21 +5620,10 @@ int smb2_open(struct ksmbd_work *work)
+ 		last_context = durable_ccontext;
+ 	}
+ 
+-	if (ctx.posix) {
+-		struct create_context *posix_ccontext;
+-
+-		posix_ccontext = (struct create_context *)(rsp->Buffer +
+-				le32_to_cpu(rsp->CreateContextsLength));
+-		create_posix_rsp_buf(rsp->Buffer +
+-				le32_to_cpu(rsp->CreateContextsLength),
+-				fp);
+-		le32_add_cpu(&rsp->CreateContextsLength,
+-			     conn->vals->create_posix_size);
+-		if (last_context)
+-			last_context->Next =
+-				cpu_to_le32((char *)posix_ccontext - (char *)last_context);
+-		last_context = posix_ccontext;
+-	}
++	if (ctx.posix)
++		create_posix_rsp_buf(smb2_add_create_context(rsp, &last_context,
++							   conn->vals->create_posix_size),
++				     fp);
+ 
+ 	/*
+ 	 * AAPL create context response: see smb2pdu.h for the capability
+-- 
+2.53.0
+

@@ -1,0 +1,60 @@
+From 8ce148b8eece9b9901230e01c67128871134c4db Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Wed, 4 Nov 2026 10:51:39 +0800
+Subject: [PATCH 20/21] smb/server: use smb2_add_create_context() for lease
+ responses
+
+All response contexts now use the shared helper, which also sets the
+context offset. Drop the extra offset update at the end.
+
+No functional change.
+
+Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/smb2pdu.c | 18 ++++--------------
+ 1 file changed, 4 insertions(+), 14 deletions(-)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index 0ef2adfae86f..402897965236 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -5543,19 +5543,14 @@ int smb2_open(struct ksmbd_work *work)
+ 	rsp->CreateContextsOffset = 0;
+ 	rsp->CreateContextsLength = 0;
+ 
+-	/* If lease is request send lease context response */
++	/* If lease is requested, send a lease context response. */
+ 	if (opinfo && opinfo->is_lease) {
+-		struct create_context *lease_ccontext;
+-
+ 		ksmbd_debug(SMB, "lease granted on(%s) lease state 0x%x\n",
+ 			    name, opinfo->o_lease->state);
+ 		rsp->OplockLevel = SMB2_OPLOCK_LEVEL_LEASE;
+-
+-		lease_ccontext = (struct create_context *)rsp->Buffer;
+-		create_lease_buf(rsp->Buffer, opinfo->o_lease);
+-		le32_add_cpu(&rsp->CreateContextsLength,
+-			     conn->vals->create_lease_size);
+-		last_context = lease_ccontext;
++		create_lease_buf(smb2_add_create_context(rsp, &last_context,
++						       conn->vals->create_lease_size),
++				 opinfo->o_lease);
+ 	}
+ 	opinfo_put(opinfo);
+ 
+@@ -5612,11 +5607,6 @@ int smb2_open(struct ksmbd_work *work)
+ 				    conn->aapl_readdir_attr_v2);
+ 	}
+ 
+-	if (last_context) {
+-		rsp->CreateContextsOffset =
+-			cpu_to_le32(offsetof(struct smb2_create_rsp, Buffer));
+-	}
+-
+ 	iov_len = offsetof(struct smb2_create_rsp, Buffer) +
+ 		le32_to_cpu(rsp->CreateContextsLength);
+ 
+-- 
+2.53.0
+

@@ -1,0 +1,222 @@
+From ae1fa56d6d9c599d63f2e9d64468b0a678e33519 Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Wed, 4 Nov 2026 10:49:54 +0800
+Subject: [PATCH 04/21] smb/server: factor out smb2_apply_create_contexts()
+
+Move allocation size, disk ID and AAPL handling into
+smb2_apply_create_contexts().
+
+No functional change.
+
+Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/smb2pdu.c | 178 +++++++++++++++++++++-------------------
+ 1 file changed, 94 insertions(+), 84 deletions(-)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index f5c223036021..cdcc29b3e5f1 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -4463,6 +4463,97 @@ static int smb2_parse_create_contexts(struct smb2_create_req *req,
+ 	return 0;
+ }
+ 
++static int smb2_apply_create_contexts(struct ksmbd_work *work,
++				     struct smb2_create_req *req,
++				     struct ksmbd_file *fp,
++				     struct smb2_create_contexts *ctx)
++{
++	struct ksmbd_conn *conn = work->conn;
++	struct ksmbd_share_config *share = work->tcon->share_conf;
++	struct create_alloc_size_req *az_req;
++	struct create_context *context;
++
++	if (!req->CreateContextsOffset)
++		return 0;
++
++	az_req = (struct create_alloc_size_req *)smb2_find_context_vals(req,
++				SMB2_CREATE_ALLOCATION_SIZE, 4);
++	if (IS_ERR(az_req)) {
++		return PTR_ERR(az_req);
++	} else if (az_req) {
++		int err;
++
++		if (le16_to_cpu(az_req->ccontext.DataOffset) +
++		    le32_to_cpu(az_req->ccontext.DataLength) <
++		    sizeof(struct create_alloc_size_req)) {
++			return -EINVAL;
++		}
++		ctx->alloc_size = le64_to_cpu(az_req->AllocationSize);
++		fp->allocation_size_set = true;
++		ksmbd_debug(SMB,
++			    "request smb2 create allocate size : %llu\n",
++			    ctx->alloc_size);
++		/*
++		 * fp->filp is the base file's data fork for a stream
++		 * handle (streams are xattr-backed on the same
++		 * underlying file) -- fallocate has no meaning for a
++		 * stream and would otherwise pre-allocate storage on
++		 * the base file's data instead.
++		 */
++		if (!ksmbd_stream_fd(fp)) {
++			smb_break_all_levII_oplock(work, fp, 1);
++			err = vfs_fallocate(fp->filp, FALLOC_FL_KEEP_SIZE, 0,
++					    ctx->alloc_size);
++			if (err < 0)
++				ksmbd_debug(SMB,
++					    "vfs_fallocate is failed : %d\n",
++					    err);
++		}
++	}
++
++	context = smb2_find_context_vals(req, SMB2_CREATE_QUERY_ON_DISK_ID, 4);
++	if (IS_ERR(context)) {
++		return PTR_ERR(context);
++	} else if (context) {
++		ksmbd_debug(SMB, "get query on disk id context\n");
++		ctx->query_disk_id = true;
++	}
++
++	if (test_share_config_flag(share, KSMBD_SHARE_FLAG_TIME_MACHINE)) {
++		context = smb2_find_context_vals(req, SMB2_CREATE_AAPL, 4);
++		if (IS_ERR(context)) {
++			return PTR_ERR(context);
++		} else if (context) {
++			struct aapl_server_query_req *aapl_req;
++
++			if (le32_to_cpu(context->DataLength) <
++			    sizeof(struct aapl_server_query_req)) {
++				return -EINVAL;
++			}
++
++			aapl_req = (struct aapl_server_query_req *)
++				((char *)context +
++				 le16_to_cpu(context->DataOffset));
++			if (le32_to_cpu(aapl_req->cmd) ==
++			    SMB2_CRTCTX_AAPL_SERVER_QUERY) {
++				conn->is_aapl = true;
++				ctx->aapl = true;
++				ctx->aapl_req_bitmap = le64_to_cpu(aapl_req->req_bitmap);
++				ctx->aapl_client_caps = le64_to_cpu(aapl_req->client_caps);
++			}
++		}
++	} else if (conn->is_aapl == false) {
++		context = smb2_find_context_vals(req, SMB2_CREATE_AAPL, 4);
++		if (IS_ERR(context))
++			return PTR_ERR(context);
++		if (context)
++			conn->is_aapl = true;
++	}
++
++
++	return 0;
++}
++
+ /**
+  * smb2_open() - handler for smb file open request
+  * @work:	smb work containing request buffer
+@@ -4482,7 +4573,6 @@ int smb2_open(struct ksmbd_work *work)
+ 	struct file *filp = NULL;
+ 	const struct mnt_idmap *idmap = NULL;
+ 	struct kstat stat;
+-	struct create_context *context;
+ 	struct oplock_info *opinfo;
+ 	struct smb2_create_contexts ctx = {};
+ 	__le32 *next_ptr = NULL;
+@@ -5268,89 +5358,9 @@ int smb2_open(struct ksmbd_work *work)
+ 			goto err_out1;
+ 	}
+ 
+-	if (req->CreateContextsOffset) {
+-		struct create_alloc_size_req *az_req;
+-
+-		az_req = (struct create_alloc_size_req *)smb2_find_context_vals(req,
+-					SMB2_CREATE_ALLOCATION_SIZE, 4);
+-		if (IS_ERR(az_req)) {
+-			rc = PTR_ERR(az_req);
+-			goto err_out1;
+-		} else if (az_req) {
+-			int err;
+-
+-			if (le16_to_cpu(az_req->ccontext.DataOffset) +
+-			    le32_to_cpu(az_req->ccontext.DataLength) <
+-			    sizeof(struct create_alloc_size_req)) {
+-				rc = -EINVAL;
+-				goto err_out1;
+-			}
+-			ctx.alloc_size = le64_to_cpu(az_req->AllocationSize);
+-			fp->allocation_size_set = true;
+-			ksmbd_debug(SMB,
+-				    "request smb2 create allocate size : %llu\n",
+-				    ctx.alloc_size);
+-			/*
+-			 * fp->filp is the base file's data fork for a stream
+-			 * handle (streams are xattr-backed on the same
+-			 * underlying file) -- fallocate has no meaning for a
+-			 * stream and would otherwise pre-allocate storage on
+-			 * the base file's data instead.
+-			 */
+-			if (!ksmbd_stream_fd(fp)) {
+-				smb_break_all_levII_oplock(work, fp, 1);
+-				err = vfs_fallocate(fp->filp, FALLOC_FL_KEEP_SIZE, 0,
+-						    ctx.alloc_size);
+-				if (err < 0)
+-					ksmbd_debug(SMB,
+-						    "vfs_fallocate is failed : %d\n",
+-						    err);
+-			}
+-		}
+-
+-		context = smb2_find_context_vals(req, SMB2_CREATE_QUERY_ON_DISK_ID, 4);
+-		if (IS_ERR(context)) {
+-			rc = PTR_ERR(context);
+-			goto err_out1;
+-		} else if (context) {
+-			ksmbd_debug(SMB, "get query on disk id context\n");
+-			ctx.query_disk_id = true;
+-		}
+-
+-		if (test_share_config_flag(share, KSMBD_SHARE_FLAG_TIME_MACHINE)) {
+-			context = smb2_find_context_vals(req, SMB2_CREATE_AAPL, 4);
+-			if (IS_ERR(context)) {
+-				rc = PTR_ERR(context);
+-				goto err_out1;
+-			} else if (context) {
+-				struct aapl_server_query_req *aapl_req;
+-
+-				if (le32_to_cpu(context->DataLength) <
+-				    sizeof(struct aapl_server_query_req)) {
+-					rc = -EINVAL;
+-					goto err_out1;
+-				}
+-
+-				aapl_req = (struct aapl_server_query_req *)
+-					((char *)context +
+-					 le16_to_cpu(context->DataOffset));
+-				if (le32_to_cpu(aapl_req->cmd) ==
+-				    SMB2_CRTCTX_AAPL_SERVER_QUERY) {
+-					conn->is_aapl = true;
+-					ctx.aapl = true;
+-					ctx.aapl_req_bitmap = le64_to_cpu(aapl_req->req_bitmap);
+-					ctx.aapl_client_caps = le64_to_cpu(aapl_req->client_caps);
+-				}
+-			}
+-		} else if (conn->is_aapl == false) {
+-			context = smb2_find_context_vals(req, SMB2_CREATE_AAPL, 4);
+-			if (IS_ERR(context)) {
+-				rc = PTR_ERR(context);
+-				goto err_out1;
+-			} else if (context)
+-				conn->is_aapl = true;
+-		}
+-	}
++	rc = smb2_apply_create_contexts(work, req, fp, &ctx);
++	if (rc)
++		goto err_out1;
+ 
+ 	rc = ksmbd_vfs_getattr(&path, &stat);
+ 	if (rc)
+-- 
+2.53.0
+

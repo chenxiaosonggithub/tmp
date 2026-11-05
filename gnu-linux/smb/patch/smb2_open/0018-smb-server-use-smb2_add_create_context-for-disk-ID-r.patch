@@ -1,0 +1,50 @@
+From 976c15bf4d6fd1ebf0fc9e6c29b6efd95532abdd Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Wed, 4 Nov 2026 10:51:39 +0800
+Subject: [PATCH 18/21] smb/server: use smb2_add_create_context() for disk ID
+ responses
+
+Let the shared helper reserve space and link the disk ID context.
+This removes the local context pointer and repeated length updates.
+
+No functional change.
+
+Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/smb2pdu.c | 19 ++++---------------
+ 1 file changed, 4 insertions(+), 15 deletions(-)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index 1a7f7563f1cd..130e7d2c3608 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -5579,21 +5579,10 @@ int smb2_open(struct ksmbd_work *work)
+ 		last_context = mxac_ccontext;
+ 	}
+ 
+-	if (ctx.query_disk_id) {
+-		struct create_context *disk_id_ccontext;
+-
+-		disk_id_ccontext = (struct create_context *)(rsp->Buffer +
+-				le32_to_cpu(rsp->CreateContextsLength));
+-		create_disk_id_rsp_buf(rsp->Buffer +
+-				le32_to_cpu(rsp->CreateContextsLength),
+-				stat.ino, tcon->id);
+-		le32_add_cpu(&rsp->CreateContextsLength,
+-			     conn->vals->create_disk_id_size);
+-		if (last_context)
+-			last_context->Next =
+-				cpu_to_le32((char *)disk_id_ccontext - (char *)last_context);
+-		last_context = disk_id_ccontext;
+-	}
++	if (ctx.query_disk_id)
++		create_disk_id_rsp_buf(smb2_add_create_context(rsp, &last_context,
++							     conn->vals->create_disk_id_size),
++				       stat.ino, tcon->id);
+ 
+ 	if (durable_rsp && ctx.durable.type == DURABLE_REQ)
+ 		create_durable_rsp_buf(smb2_add_create_context(rsp, &last_context,
+-- 
+2.53.0
+

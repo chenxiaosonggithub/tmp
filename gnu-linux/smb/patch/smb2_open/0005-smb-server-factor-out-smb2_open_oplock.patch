@@ -1,0 +1,150 @@
+From f925e64247c151efa8008094535c22a322edf402 Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Wed, 4 Nov 2026 10:50:49 +0800
+Subject: [PATCH 05/21] smb/server: factor out smb2_open_oplock()
+
+Move share checks and oplock handling into smb2_open_oplock().
+
+No functional change.
+
+Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/smb2pdu.c | 107 +++++++++++++++++++++++-----------------
+ 1 file changed, 61 insertions(+), 46 deletions(-)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index cdcc29b3e5f1..ee7dbbae01d6 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -4554,6 +4554,63 @@ static int smb2_apply_create_contexts(struct ksmbd_work *work,
+ 	return 0;
+ }
+ 
++static int smb2_open_oplock(struct ksmbd_work *work, struct ksmbd_file *fp,
++			    struct smb2_create_contexts *ctx, int open_flags,
++			    bool created, const char *name)
++{
++	struct smb2_create_req *req = ksmbd_req_buf_next(work);
++	struct ksmbd_conn *conn = work->conn;
++	int share_ret, rc = 0;
++
++	share_ret = ksmbd_smb_check_shared_mode(fp->filp, fp);
++	if (!test_share_config_flag(work->tcon->share_conf, KSMBD_SHARE_FLAG_OPLOCKS) ||
++	    (ctx->oplock_level == SMB2_OPLOCK_LEVEL_LEASE &&
++	     !(conn->vals->req_capabilities & SMB2_GLOBAL_CAP_LEASING))) {
++		if (share_ret < 0 && !S_ISDIR(file_inode(fp->filp)->i_mode)) {
++			rc = share_ret;
++			return rc;
++		}
++	} else {
++		if (created && !ctx->lease)
++			smb_send_parent_lease_break_noti(fp, NULL);
++
++		if (ctx->oplock_level == SMB2_OPLOCK_LEVEL_LEASE && ctx->lease) {
++			if (S_ISDIR(file_inode(fp->filp)->i_mode)) {
++				ctx->lease->req_state &= ~SMB2_LEASE_WRITE_CACHING_LE;
++				ctx->lease->is_dir = true;
++			}
++
++			/*
++			 * Compare parent lease using parent key. If there is no
++			 * a lease that has same parent key, Send lease break
++			 * notification.
++			 */
++			smb_send_parent_lease_break_noti(fp, ctx->lease);
++
++			ctx->oplock_level = smb2_map_lease_to_oplock(ctx->lease->req_state);
++			ksmbd_debug(SMB,
++				    "lease req for(%s) req oplock state 0x%x, lease state 0x%x\n",
++				    name, ctx->oplock_level, ctx->lease->req_state);
++			rc = find_same_lease_key(conn, fp->f_ci, ctx->lease);
++			if (rc)
++				return rc;
++		} else if (open_flags == O_RDONLY &&
++			   (ctx->oplock_level == SMB2_OPLOCK_LEVEL_BATCH ||
++			    ctx->oplock_level == SMB2_OPLOCK_LEVEL_EXCLUSIVE))
++			ctx->oplock_level = SMB2_OPLOCK_LEVEL_II;
++
++		rc = smb_grant_oplock(work, ctx->oplock_level,
++				      fp->persistent_id, fp,
++				      le32_to_cpu(req->hdr.Id.SyncId.TreeId),
++				      ctx->lease, share_ret,
++				      smb3_hdr_replay(&req->hdr));
++		if (rc < 0)
++			return rc;
++	}
++
++	return rc;
++}
++
+ /**
+  * smb2_open() - handler for smb file open request
+  * @work:	smb work containing request buffer
+@@ -4586,7 +4643,7 @@ int smb2_open(struct ksmbd_work *work)
+ 	char *stream_name = NULL;
+ 	bool file_present = false, created = false, already_permitted = false;
+ 	bool app_instance_id_checked = false, app_instance_closed;
+-	int share_ret, need_truncate = 0;
++	int need_truncate = 0;
+ 	u64 time;
+ 	__le32 daccess;
+ 	u32 dos_attr;
+@@ -5301,51 +5358,9 @@ int smb2_open(struct ksmbd_work *work)
+ 		need_truncate = 1;
+ 	}
+ 
+-	share_ret = ksmbd_smb_check_shared_mode(fp->filp, fp);
+-	if (!test_share_config_flag(work->tcon->share_conf, KSMBD_SHARE_FLAG_OPLOCKS) ||
+-	    (ctx.oplock_level == SMB2_OPLOCK_LEVEL_LEASE &&
+-	     !(conn->vals->req_capabilities & SMB2_GLOBAL_CAP_LEASING))) {
+-		if (share_ret < 0 && !S_ISDIR(file_inode(fp->filp)->i_mode)) {
+-			rc = share_ret;
+-			goto err_out1;
+-		}
+-	} else {
+-		if (created && !ctx.lease)
+-			smb_send_parent_lease_break_noti(fp, NULL);
+-
+-		if (ctx.oplock_level == SMB2_OPLOCK_LEVEL_LEASE && ctx.lease) {
+-			if (S_ISDIR(file_inode(filp)->i_mode)) {
+-				ctx.lease->req_state &= ~SMB2_LEASE_WRITE_CACHING_LE;
+-				ctx.lease->is_dir = true;
+-			}
+-
+-			/*
+-			 * Compare parent lease using parent key. If there is no
+-			 * a lease that has same parent key, Send lease break
+-			 * notification.
+-			 */
+-			smb_send_parent_lease_break_noti(fp, ctx.lease);
+-
+-			ctx.oplock_level = smb2_map_lease_to_oplock(ctx.lease->req_state);
+-			ksmbd_debug(SMB,
+-				    "lease req for(%s) req oplock state 0x%x, lease state 0x%x\n",
+-				    name, ctx.oplock_level, ctx.lease->req_state);
+-			rc = find_same_lease_key(conn, fp->f_ci, ctx.lease);
+-			if (rc)
+-				goto err_out1;
+-		} else if (open_flags == O_RDONLY &&
+-			   (ctx.oplock_level == SMB2_OPLOCK_LEVEL_BATCH ||
+-			    ctx.oplock_level == SMB2_OPLOCK_LEVEL_EXCLUSIVE))
+-			ctx.oplock_level = SMB2_OPLOCK_LEVEL_II;
+-
+-		rc = smb_grant_oplock(work, ctx.oplock_level,
+-				      fp->persistent_id, fp,
+-				      le32_to_cpu(req->hdr.Id.SyncId.TreeId),
+-				      ctx.lease, share_ret,
+-				      smb3_hdr_replay(&req->hdr));
+-		if (rc < 0)
+-			goto err_out1;
+-	}
++	rc = smb2_open_oplock(work, fp, &ctx, open_flags, created, name);
++	if (rc < 0)
++		goto err_out1;
+ 
+ 	if (req->CreateOptions & FILE_DELETE_ON_CLOSE_LE) {
+ 		smb_break_all_levII_oplock_for_delete(work, fp);
+-- 
+2.53.0
+

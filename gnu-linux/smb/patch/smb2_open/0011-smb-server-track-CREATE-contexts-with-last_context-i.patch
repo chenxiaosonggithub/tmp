@@ -1,0 +1,144 @@
+From bf0a97722bb0435a92dc744dde95dfb1568bb22a Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Thu, 5 Nov 2026 14:50:47 +0800
+Subject: [PATCH 11/21] smb/server: track CREATE contexts with last_context in
+ smb2_open()
+
+This prepares for factoring out smb2_add_create_context().
+
+Use last_context to link CREATE response contexts.
+
+No functional change.
+
+Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/smb2pdu.c | 51 +++++++++++++++++++++--------------------
+ 1 file changed, 26 insertions(+), 25 deletions(-)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index cf8fde27ad2f..7109b324ed2d 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -4862,13 +4862,12 @@ int smb2_open(struct ksmbd_work *work)
+ 	struct kstat stat;
+ 	struct oplock_info *opinfo;
+ 	struct smb2_create_contexts ctx = {};
+-	__le32 *next_ptr = NULL;
++	struct create_context *last_context = NULL;
+ 	int open_flags = 0, may_flags = 0, file_info = 0;
+ 	int rc = 0;
+ 	int contxt_cnt = 0;
+ 	bool durable_rsp = true;
+ 	int s_type = 0;
+-	int next_off = 0;
+ 	char *name = NULL;
+ 	char *stream_name = NULL;
+ 	bool file_present = false, created = false, already_permitted = false;
+@@ -5544,8 +5543,7 @@ int smb2_open(struct ksmbd_work *work)
+ 		le32_add_cpu(&rsp->CreateContextsLength,
+ 			     conn->vals->create_lease_size);
+ 		iov_len += conn->vals->create_lease_size;
+-		next_ptr = &lease_ccontext->Next;
+-		next_off = conn->vals->create_lease_size;
++		last_context = lease_ccontext;
+ 	}
+ 	opinfo_put(opinfo);
+ 
+@@ -5565,10 +5563,10 @@ int smb2_open(struct ksmbd_work *work)
+ 		le32_add_cpu(&rsp->CreateContextsLength,
+ 			     conn->vals->create_mxac_size);
+ 		iov_len += conn->vals->create_mxac_size;
+-		if (next_ptr)
+-			*next_ptr = cpu_to_le32(next_off);
+-		next_ptr = &mxac_ccontext->Next;
+-		next_off = conn->vals->create_mxac_size;
++		if (last_context)
++			last_context->Next =
++				cpu_to_le32((char *)mxac_ccontext - (char *)last_context);
++		last_context = mxac_ccontext;
+ 	}
+ 
+ 	if (ctx.query_disk_id) {
+@@ -5583,10 +5581,10 @@ int smb2_open(struct ksmbd_work *work)
+ 		le32_add_cpu(&rsp->CreateContextsLength,
+ 			     conn->vals->create_disk_id_size);
+ 		iov_len += conn->vals->create_disk_id_size;
+-		if (next_ptr)
+-			*next_ptr = cpu_to_le32(next_off);
+-		next_ptr = &disk_id_ccontext->Next;
+-		next_off = conn->vals->create_disk_id_size;
++		if (last_context)
++			last_context->Next =
++				cpu_to_le32((char *)disk_id_ccontext - (char *)last_context);
++		last_context = disk_id_ccontext;
+ 	}
+ 
+ 	if (durable_rsp &&
+@@ -5611,12 +5609,10 @@ int smb2_open(struct ksmbd_work *work)
+ 			iov_len += conn->vals->create_durable_v2_size;
+ 		}
+ 
+-		if (next_ptr)
+-			*next_ptr = cpu_to_le32(next_off);
+-		next_ptr = &durable_ccontext->Next;
+-		next_off = ctx.durable.type == DURABLE_REQ ?
+-			conn->vals->create_durable_size :
+-			conn->vals->create_durable_v2_size;
++		if (last_context)
++			last_context->Next =
++				cpu_to_le32((char *)durable_ccontext - (char *)last_context);
++		last_context = durable_ccontext;
+ 	}
+ 
+ 	if (ctx.posix) {
+@@ -5631,10 +5627,10 @@ int smb2_open(struct ksmbd_work *work)
+ 		le32_add_cpu(&rsp->CreateContextsLength,
+ 			     conn->vals->create_posix_size);
+ 		iov_len += conn->vals->create_posix_size;
+-		if (next_ptr)
+-			*next_ptr = cpu_to_le32(next_off);
+-		next_ptr = &posix_ccontext->Next;
+-		next_off = conn->vals->create_posix_size;
++		if (last_context)
++			last_context->Next =
++				cpu_to_le32((char *)posix_ccontext - (char *)last_context);
++		last_context = posix_ccontext;
+ 	}
+ 
+ 	/*
+@@ -5642,6 +5638,8 @@ int smb2_open(struct ksmbd_work *work)
+ 	 * rationale. Scoped to TIME_MACHINE shares only.
+ 	 */
+ 	if (ctx.aapl) {
++		struct create_context *aapl_ccontext;
++
+ 		if (ctx.aapl_client_caps & SMB2_CRTCTX_AAPL_SUPPORTS_READ_DIR_ATTR)
+ 			conn->aapl_readdir_attr = true;
+ 		/*
+@@ -5655,6 +5653,8 @@ int smb2_open(struct ksmbd_work *work)
+ 			conn->aapl_readdir_attr_v2 = true;
+ 		}
+ 
++		aapl_ccontext = (struct create_context *)(rsp->Buffer +
++				le32_to_cpu(rsp->CreateContextsLength));
+ 		contxt_cnt++;
+ 		create_aapl_rsp_buf(rsp->Buffer +
+ 				le32_to_cpu(rsp->CreateContextsLength),
+@@ -5664,9 +5664,10 @@ int smb2_open(struct ksmbd_work *work)
+ 		le32_add_cpu(&rsp->CreateContextsLength,
+ 			     conn->vals->create_aapl_size);
+ 		iov_len += conn->vals->create_aapl_size;
+-		if (next_ptr)
+-			*next_ptr = cpu_to_le32(next_off);
+-		/* AAPL is last; next_ptr need not be updated */
++		if (last_context)
++			last_context->Next =
++				cpu_to_le32((char *)aapl_ccontext - (char *)last_context);
++		last_context = aapl_ccontext;
+ 	}
+ 
+ 	if (contxt_cnt > 0) {
+-- 
+2.53.0
+

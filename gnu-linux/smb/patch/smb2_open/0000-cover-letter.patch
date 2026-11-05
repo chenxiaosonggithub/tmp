@@ -1,0 +1,44 @@
+From 14951ddb08983cd433fae87fb8c1b3f827f24f0d Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Thu, 5 Nov 2026 17:13:40 +0800
+Subject: [PATCH 00/21] smb/server: refactor smb2_open()
+
+smb2_open() was already long, and it has grown much larger over the
+past few months. This makes the code harder to read and change.
+Many memory leaks and reference leaks have already been found in
+this function.
+
+This patchset reduces smb2_open() from 1336 lines to 720 lines.
+And I plan to keep refactoring smb2_open() to make it shorter.
+
+No functional change is intended.
+
+ZhangGuoDong (21):
+  smb/server: add struct smb2_create_contexts
+  smb/server: factor out smb2_parse_posix_context()
+  smb/server: factor out smb2_parse_create_contexts()
+  smb/server: factor out smb2_apply_create_contexts()
+  smb/server: factor out smb2_open_oplock()
+  smb/server: factor out smb2_check_create_request()
+  smb/server: factor out smb2_query_maximal_access()
+  smb/server: factor out smb2_init_create_acl()
+  smb/server: factor out smb2_get_create_name()
+  smb/server: factor out smb2_parse_lease_context()
+  smb/server: track CREATE contexts with last_context in smb2_open()
+  smb/server: replace contxt_cnt with last_context in smb2_open()
+  smb/server: calculate CREATE response iov_len once in smb2_open()
+  smb/server: factor out smb2_add_create_context() and use it for AAPL
+  smb/server: use smb2_add_create_context() for POSIX responses
+  smb/server: use smb2_add_create_context() for durable v2 responses
+  smb/server: use smb2_add_create_context() for durable v1 responses
+  smb/server: use smb2_add_create_context() for disk ID responses
+  smb/server: use smb2_add_create_context() for maximal access responses
+  smb/server: use smb2_add_create_context() for lease responses
+  smb/server: factor out smb2_build_create_rsp()
+
+ fs/smb/server/smb2pdu.c | 1557 ++++++++++++++++++++-------------------
+ 1 file changed, 790 insertions(+), 767 deletions(-)
+
+-- 
+2.53.0
+

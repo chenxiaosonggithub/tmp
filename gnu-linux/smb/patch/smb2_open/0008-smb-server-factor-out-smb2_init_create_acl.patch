@@ -1,0 +1,191 @@
+From 5529c87de8782442043053cd07e7b4c706998f56 Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Wed, 4 Nov 2026 10:46:29 +0800
+Subject: [PATCH 08/21] smb/server: factor out smb2_init_create_acl()
+
+Move new file ACL setup into smb2_init_create_acl().
+
+No functional change.
+
+Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/smb2pdu.c | 153 +++++++++++++++++++---------------------
+ 1 file changed, 72 insertions(+), 81 deletions(-)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index cb7ab8c5768a..3c807ca990d6 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -3858,6 +3858,76 @@ static int ksmbd_acls_fattr(struct smb_fattr *fattr,
+ 	return 0;
+ }
+ 
++static int smb2_init_create_acl(struct ksmbd_work *work,
++				struct smb2_create_req *req,
++				const struct path *path)
++{
++	struct ksmbd_conn *conn = work->conn;
++	struct ksmbd_session *sess = work->sess;
++	const struct mnt_idmap *idmap = mnt_idmap(path->mnt);
++	struct smb_ntsd *pntsd = NULL;
++	struct smb_fattr fattr;
++	size_t scratch_len;
++	__u32 pntsd_size;
++	int posix_acl_rc, rc;
++
++	posix_acl_rc = ksmbd_vfs_inherit_posix_acl(idmap, path,
++						 d_inode(path->dentry->d_parent));
++	if (posix_acl_rc)
++		ksmbd_debug(SMB, "inherit posix acl failed : %d\n", posix_acl_rc);
++
++	rc = smb2_create_sd_buffer(work, req, path);
++	if (rc != -ENOENT)
++		return rc;
++
++	if (test_share_config_flag(work->tcon->share_conf,
++				   KSMBD_SHARE_FLAG_ACL_XATTR))
++		rc = smb_inherit_dacl(conn, path, sess->user->uid, sess->user->gid);
++	if (!rc)
++		return 0;
++
++	if (posix_acl_rc)
++		ksmbd_vfs_set_init_posix_acl(idmap, path);
++
++	if (!test_share_config_flag(work->tcon->share_conf,
++				    KSMBD_SHARE_FLAG_ACL_XATTR))
++		return 0;
++
++	rc = ksmbd_acls_fattr(&fattr, idmap, d_inode(path->dentry));
++	if (rc)
++		return rc;
++
++	scratch_len = smb_acl_sec_desc_scratch_len(&fattr, NULL, 0,
++				OWNER_SECINFO | GROUP_SECINFO | DACL_SECINFO);
++	if (!scratch_len || scratch_len == SIZE_MAX) {
++		rc = -EFBIG;
++		goto out_release_acls;
++	}
++
++	pntsd = kvzalloc(scratch_len, KSMBD_DEFAULT_GFP);
++	if (!pntsd) {
++		rc = -ENOMEM;
++		goto out_release_acls;
++	}
++
++	rc = build_sec_desc(idmap, pntsd, NULL, 0,
++			    OWNER_SECINFO | GROUP_SECINFO | DACL_SECINFO,
++			    &pntsd_size, &fattr);
++
++out_release_acls:
++	posix_acl_release(fattr.cf_acls);
++	posix_acl_release(fattr.cf_dacls);
++	if (!rc) {
++		rc = ksmbd_vfs_set_sd_xattr(conn, idmap, path, pntsd,
++					    pntsd_size, false);
++		if (rc)
++			pr_err("failed to store ntacl in xattr : %d\n", rc);
++		rc = 0;
++	}
++	kvfree(pntsd);
++	return rc;
++}
++
+ enum {
+ 	DURABLE_RECONN_V2 = 1,
+ 	DURABLE_RECONN,
+@@ -5230,89 +5300,10 @@ int smb2_open(struct ksmbd_work *work)
+ 	fp->saccess = req->ShareAccess;
+ 	fp->coption = req->CreateOptions;
+ 
+-	/* Set default windows and posix acls if creating new file */
+ 	if (created) {
+-		int posix_acl_rc;
+-		struct inode *inode = d_inode(path.dentry);
+-
+-		posix_acl_rc = ksmbd_vfs_inherit_posix_acl(idmap,
+-							   &path,
+-							   d_inode(path.dentry->d_parent));
+-		if (posix_acl_rc)
+-			ksmbd_debug(SMB, "inherit posix acl failed : %d\n", posix_acl_rc);
+-
+-		rc = smb2_create_sd_buffer(work, req, &path);
+-		if (rc && rc != -ENOENT)
++		rc = smb2_init_create_acl(work, req, &path);
++		if (rc)
+ 			goto err_out;
+-
+-		if (rc == -ENOENT) {
+-			if (test_share_config_flag(work->tcon->share_conf,
+-						   KSMBD_SHARE_FLAG_ACL_XATTR)) {
+-				rc = smb_inherit_dacl(conn, &path, sess->user->uid,
+-						      sess->user->gid);
+-			}
+-			if (rc) {
+-				if (posix_acl_rc)
+-					ksmbd_vfs_set_init_posix_acl(idmap,
+-								     &path);
+-
+-				if (test_share_config_flag(work->tcon->share_conf,
+-							   KSMBD_SHARE_FLAG_ACL_XATTR)) {
+-					struct smb_fattr fattr;
+-					struct smb_ntsd *pntsd;
+-					int pntsd_size;
+-					size_t scratch_len;
+-
+-					rc = ksmbd_acls_fattr(&fattr, idmap, inode);
+-					if (rc)
+-						goto err_out;
+-
+-					scratch_len = smb_acl_sec_desc_scratch_len(&fattr,
+-							NULL, 0,
+-							OWNER_SECINFO | GROUP_SECINFO |
+-							DACL_SECINFO);
+-					if (!scratch_len || scratch_len == SIZE_MAX) {
+-						rc = -EFBIG;
+-						posix_acl_release(fattr.cf_acls);
+-						posix_acl_release(fattr.cf_dacls);
+-						goto err_out;
+-					}
+-
+-					pntsd = kvzalloc(scratch_len, KSMBD_DEFAULT_GFP);
+-					if (!pntsd) {
+-						rc = -ENOMEM;
+-						posix_acl_release(fattr.cf_acls);
+-						posix_acl_release(fattr.cf_dacls);
+-						goto err_out;
+-					}
+-
+-					rc = build_sec_desc(idmap,
+-							    pntsd, NULL, 0,
+-							    OWNER_SECINFO |
+-							    GROUP_SECINFO |
+-							    DACL_SECINFO,
+-							    &pntsd_size, &fattr);
+-					posix_acl_release(fattr.cf_acls);
+-					posix_acl_release(fattr.cf_dacls);
+-					if (rc) {
+-						kvfree(pntsd);
+-						goto err_out;
+-					}
+-
+-					rc = ksmbd_vfs_set_sd_xattr(conn,
+-								    idmap,
+-								    &path,
+-								    pntsd,
+-								    pntsd_size,
+-								    false);
+-					kvfree(pntsd);
+-					if (rc)
+-						pr_err("failed to store ntacl in xattr : %d\n",
+-						       rc);
+-				}
+-			}
+-		}
+-		rc = 0;
+ 	}
+ 
+ 	if (stream_name) {
+-- 
+2.53.0
+
