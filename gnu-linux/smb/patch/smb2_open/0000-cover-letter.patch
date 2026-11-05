@@ -3,13 +3,15 @@ From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Thu, 5 Nov 2026 17:13:40 +0800
 Subject: [PATCH 00/21] smb/server: refactor smb2_open()
 
+Refactoring and validation were assisted by LLM.
+
 smb2_open() was already long, and it has grown much larger over the
 past few months. This makes the code harder to read and change.
 Many memory leaks and reference leaks have already been found in
 this function.
 
 This patchset reduces smb2_open() from 1336 lines to 720 lines.
-And I plan to keep refactoring smb2_open() to make it shorter.
+And we plan to keep refactoring smb2_open() to make it shorter.
 
 No functional change is intended.
 
