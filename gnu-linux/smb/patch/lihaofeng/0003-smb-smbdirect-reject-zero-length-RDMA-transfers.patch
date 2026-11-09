@@ -1,0 +1,57 @@
+From cbe5a11283eb60d89150dbfa09a30e55f8b8529e Mon Sep 17 00:00:00 2001
+From: Haofeng Li <lihaofeng@kylinos.cn>
+Date: Wed, 24 Jun 2026 13:39:16 +0800
+Subject: [PATCH 3/8] smb: smbdirect: reject zero-length RDMA transfers
+
+ksmbd accepts an SMB2 WRITE request using an RDMA channel with
+RemainingBytes set to zero. smb2_write_rdma_channel() then passes a zero
+buffer length to smbdirect_connection_rdma_xmit().
+
+For a zero-length transfer, smbdirect_connection_rdma_xmit() breaks out
+of descriptor accounting before adding any descriptors, leaving desc_num
+and credits_needed as zero. The zero-credit wait succeeds, no RDMA
+contexts are built, first_wr remains NULL, and the function can reach the
+empty-list completion wait path with no work request that can signal it.
+
+Reject zero-length RDMA WRITE requests in ksmbd and make
+smbdirect_connection_rdma_xmit() reject zero-length transfers or missing
+descriptors before building work requests.
+
+Fixes: 6cc55655d0bc ("smb: smbdirect: introduce smbdirect_rw.c with server rw code")
+Cc: stable@vger.kernel.org
+Signed-off-by: Haofeng Li <lihaofeng@kylinos.cn>
+---
+ fs/smb/server/smb2pdu.c | 2 +-
+ fs/smb/smbdirect/rw.c   | 3 +++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index c1c6c1a64f60..170cf10f2768 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -7307,7 +7307,7 @@ int smb2_write(struct ksmbd_work *work)
+ 	if (is_rdma_channel == true) {
+ 		unsigned int ch_offset = le16_to_cpu(req->WriteChannelInfoOffset);
+ 
+-		if (req->Length != 0 || req->DataOffset != 0 ||
++		if (req->Length != 0 || req->DataOffset != 0 || !length ||
+ 		    ch_offset < offsetof(struct smb2_write_req, Buffer)) {
+ 			err = -EINVAL;
+ 			goto out;
+diff --git a/fs/smb/smbdirect/rw.c b/fs/smb/smbdirect/rw.c
+index 6fe38042cfb9..2d511d0c3b88 100644
+--- a/fs/smb/smbdirect/rw.c
++++ b/fs/smb/smbdirect/rw.c
+@@ -129,6 +129,9 @@ int smbdirect_connection_rdma_xmit(struct smbdirect_socket *sc,
+ 	if (buf_len > sp->max_read_write_size)
+ 		return -EINVAL;
+ 
++	if (!buf_len || desc_len < sizeof(*desc))
++		return -EINVAL;
++
+ 	/* calculate needed credits */
+ 	credits_needed = 0;
+ 	desc_buf = buf;
+-- 
+2.55.0
+

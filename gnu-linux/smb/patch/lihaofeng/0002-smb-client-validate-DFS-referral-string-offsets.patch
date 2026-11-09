@@ -1,0 +1,78 @@
+From 13bff0590b118dac17cee3b3265af553662a132e Mon Sep 17 00:00:00 2001
+From: Haofeng Li <lihaofeng@kylinos.cn>
+Date: Wed, 24 Jun 2026 11:27:14 +0800
+Subject: [PATCH 2/8] smb: client: validate DFS referral string offsets
+
+DFS referral entries carry offsets to the path and target UNC strings in
+the referral response. parse_dfs_referrals() only validates that the
+referral entry array fits in the response buffer, then uses
+DfsPathOffset and NetworkAddressOffset without checking that either
+offset points into the buffer.
+
+A malformed server can point either offset past the end of the
+response. That makes max_len negative. In the non-Unicode SMB1 path,
+cifs_strndup_from_utf16() passes the negative value to kstrndup(),
+where it is converted to a large size_t and strnlen() can read out of
+bounds.
+
+Reject referral string offsets that do not point inside the response
+buffer. Also reject negative lengths in cifs_strndup_from_utf16() so
+other callers cannot pass a negative bound to kstrndup().
+
+Fixes: 4ecce920e13a ("CIFS: move DFS response parsing out of SMB1 code")
+Cc: stable@vger.kernel.org
+Signed-off-by: Haofeng Li <lihaofeng@kylinos.cn>
+---
+ fs/smb/client/cifs_unicode.c |  3 +++
+ fs/smb/client/misc.c         | 14 ++++++++++++++
+ 2 files changed, 17 insertions(+)
+
+diff --git a/fs/smb/client/cifs_unicode.c b/fs/smb/client/cifs_unicode.c
+index 4a8a591f4bca..534f701ec386 100644
+--- a/fs/smb/client/cifs_unicode.c
++++ b/fs/smb/client/cifs_unicode.c
+@@ -335,6 +335,9 @@ cifs_strndup_from_utf16(const char *src, const int maxlen,
+ 	int len;
+ 	char *dst;
+ 
++	if (maxlen < 0)
++		return NULL;
++
+ 	if (is_unicode) {
+ 		len = cifs_utf16_bytes((__le16 *) src, maxlen, codepage);
+ 		len += nls_nullsize(codepage);
+diff --git a/fs/smb/client/misc.c b/fs/smb/client/misc.c
+index 0c54b9b79a2c..a43389a82172 100644
+--- a/fs/smb/client/misc.c
++++ b/fs/smb/client/misc.c
+@@ -753,6 +753,13 @@ parse_dfs_referrals(struct get_dfs_referral_rsp *rsp, u32 rsp_size,
+ 
+ 		/* copy DfsPath */
+ 		temp = (char *)ref + le16_to_cpu(ref->DfsPathOffset);
++		if (temp >= data_end) {
++			cifs_dbg(VFS | ONCE,
++				 "%s: malformed dfs referral: DfsPathOffset beyond end of buffer\n",
++				 __func__);
++			rc = -EINVAL;
++			goto parse_DFS_referrals_exit;
++		}
+ 		max_len = data_end - temp;
+ 		node->path_name = cifs_strndup_from_utf16(temp, max_len,
+ 						is_unicode, nls_codepage);
+@@ -763,6 +770,13 @@ parse_dfs_referrals(struct get_dfs_referral_rsp *rsp, u32 rsp_size,
+ 
+ 		/* copy link target UNC */
+ 		temp = (char *)ref + le16_to_cpu(ref->NetworkAddressOffset);
++		if (temp >= data_end) {
++			cifs_dbg(VFS | ONCE,
++				 "%s: malformed dfs referral: NetworkAddressOffset beyond end of buffer\n",
++				 __func__);
++			rc = -EINVAL;
++			goto parse_DFS_referrals_exit;
++		}
+ 		max_len = data_end - temp;
+ 		node->node_name = cifs_strndup_from_utf16(temp, max_len,
+ 						is_unicode, nls_codepage);
+-- 
+2.55.0
+

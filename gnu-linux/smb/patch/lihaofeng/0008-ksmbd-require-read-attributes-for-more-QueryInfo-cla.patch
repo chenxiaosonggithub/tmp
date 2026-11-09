@@ -1,0 +1,72 @@
+From ddc4071c4c73d252c587853d8e88e5e9cae5bb75 Mon Sep 17 00:00:00 2001
+From: Haofeng Li <lihaofeng@kylinos.cn>
+Date: Sat, 27 Jun 2026 18:35:19 +0800
+Subject: [PATCH 8/8] ksmbd: require read attributes for more QueryInfo classes
+
+get_file_standard_info(), get_file_internal_info(), and
+get_file_compression_info() return stat-derived metadata but did
+not check whether the opened handle was granted
+FILE_READ_ATTRIBUTES_LE.
+
+The attack chain is:
+1. An authenticated client opens a file with only FILE_WRITE_DATA.
+2. FileBasicInformation is denied by its existing gate.
+3. The same handle queries Standard, Internal, or Compression.
+4. The server returns size, link count, inode, or compression data.
+
+Mirror the sibling handlers and reject these classes before
+vfs_getattr() or ksmbd_vfs_get_compression() run.
+
+Fixes: e2f34481b24d ("cifsd: add server-side procedures for SMB3")
+Signed-off-by: Haofeng Li <lihaofeng@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/smb2pdu.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index 8e5525debf2a..445d7fac8e43 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -5047,6 +5047,12 @@ static int get_file_standard_info(struct smb2_query_info_rsp *rsp,
+ 	struct kstat stat;
+ 	int ret;
+ 
++	if (!(fp->daccess & FILE_READ_ATTRIBUTES_LE)) {
++		pr_err("no right to read the attributes : 0x%x\n",
++		       fp->daccess);
++		return -EACCES;
++	}
++
+ 	ret = vfs_getattr(&fp->filp->f_path, &stat, STATX_BASIC_STATS,
+ 			  AT_STATX_SYNC_AS_STAT);
+ 	if (ret)
+@@ -5304,6 +5310,12 @@ static int get_file_internal_info(struct smb2_query_info_rsp *rsp,
+ 	struct kstat stat;
+ 	int ret;
+ 
++	if (!(fp->daccess & FILE_READ_ATTRIBUTES_LE)) {
++		pr_err("no right to read the attributes : 0x%x\n",
++		       fp->daccess);
++		return -EACCES;
++	}
++
+ 	ret = vfs_getattr(&fp->filp->f_path, &stat, STATX_BASIC_STATS,
+ 			  AT_STATX_SYNC_AS_STAT);
+ 	if (ret)
+@@ -5403,6 +5415,12 @@ static int get_file_compression_info(struct smb2_query_info_rsp *rsp,
+ 	u16 fmt;
+ 	int ret;
+ 
++	if (!(fp->daccess & FILE_READ_ATTRIBUTES_LE)) {
++		pr_err("no right to read the attributes : 0x%x\n",
++		       fp->daccess);
++		return -EACCES;
++	}
++
+ 	ret = vfs_getattr(&fp->filp->f_path, &stat, STATX_BASIC_STATS,
+ 			  AT_STATX_SYNC_AS_STAT);
+ 	if (ret)
+-- 
+2.55.0
+

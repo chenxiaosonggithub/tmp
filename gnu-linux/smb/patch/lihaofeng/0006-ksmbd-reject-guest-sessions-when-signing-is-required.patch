@@ -1,0 +1,94 @@
+From b437d0c794b107bc81dcc80f21280806b6197482 Mon Sep 17 00:00:00 2001
+From: Haofeng Li <lihaofeng@kylinos.cn>
+Date: Fri, 26 Jun 2026 21:01:02 +0800
+Subject: [PATCH 6/8] ksmbd: reject guest sessions when signing is required
+
+MS-SMB2 requires servers to fail guest or null logons when
+signing is required. ksmbd accepted a guest-mapped NTLMSSP
+authenticate message before checking the NTLM proof, then skipped
+server-enforced signing because the response had the guest flag.
+
+Attack chain:
+1. Server is configured for mandatory SMB2 signing.
+2. Client offers signing but does not require it.
+3. Client sends NTLMSSP_AUTH for a guest-mapped account.
+4. ksmbd marks the session guest without validating the blob.
+5. The session becomes valid with sess->sign left false.
+6. Unsigned TREE_CONNECT and later requests can be accepted.
+
+Reject guest or null sessions before establishment whenever
+server or client policy requires signing. Apply the same guard to
+the Kerberos path and leave normal authenticated signing unchanged.
+
+Signed-off-by: Haofeng Li <lihaofeng@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/smb2pdu.c | 31 ++++++++++++++++++++++++-------
+ 1 file changed, 24 insertions(+), 7 deletions(-)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index 170cf10f2768..f1093c3ab5cc 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -1551,6 +1551,21 @@ static struct ksmbd_user *session_user(struct ksmbd_conn *conn,
+ 	return user;
+ }
+ 
++static bool smb2_signing_required(struct ksmbd_conn *conn,
++				  struct smb2_sess_setup_req *req)
++{
++	return conn->sign || server_conf.enforced_signing ||
++	       (req->SecurityMode & SMB2_NEGOTIATE_SIGNING_REQUIRED);
++}
++
++static bool smb2_guest_or_null_session(struct ksmbd_session *sess)
++{
++	if (!sess->user)
++		return false;
++
++	return user_guest(sess->user) || ksmbd_anonymous_user(sess->user);
++}
++
+ static int ntlm_authenticate(struct ksmbd_work *work,
+ 			     struct smb2_sess_setup_req *req,
+ 			     struct smb2_sess_setup_rsp *rsp)
+@@ -1608,7 +1623,9 @@ static int ntlm_authenticate(struct ksmbd_work *work,
+ 		sess->user = user;
+ 	}
+ 
+-	if (conn->binding == false && user_guest(sess->user)) {
++	if (!conn->binding && smb2_guest_or_null_session(sess)) {
++		if (smb2_signing_required(conn, req))
++			return -EPERM;
+ 		rsp->SessionFlags = SMB2_SESSION_FLAG_IS_GUEST_LE;
+ 	} else {
+ 		struct authenticate_message *authblob;
+@@ -1637,9 +1654,7 @@ static int ntlm_authenticate(struct ksmbd_work *work,
+ 		return 0;
+ 	}
+ 
+-	if ((rsp->SessionFlags != SMB2_SESSION_FLAG_IS_GUEST_LE &&
+-	     (conn->sign || server_conf.enforced_signing)) ||
+-	    (req->SecurityMode & SMB2_NEGOTIATE_SIGNING_REQUIRED))
++	if (smb2_signing_required(conn, req))
+ 		sess->sign = true;
+ 
+ 	if (smb3_encryption_negotiated(conn) &&
+@@ -1736,9 +1751,11 @@ static int krb5_authenticate(struct ksmbd_work *work,
+ 		return 0;
+ 	}
+ 
+-	if ((rsp->SessionFlags != SMB2_SESSION_FLAG_IS_GUEST_LE &&
+-	    (conn->sign || server_conf.enforced_signing)) ||
+-	    (req->SecurityMode & SMB2_NEGOTIATE_SIGNING_REQUIRED))
++	if (smb2_guest_or_null_session(sess) &&
++	    smb2_signing_required(conn, req))
++		return -EPERM;
++
++	if (smb2_signing_required(conn, req))
+ 		sess->sign = true;
+ 
+ 	if (smb3_encryption_negotiated(conn) &&
+-- 
+2.55.0
+

@@ -1,0 +1,70 @@
+From e94b5891c8d4c6df0316d6bca3f7748fd7d9e72f Mon Sep 17 00:00:00 2001
+From: Haofeng Li <lihaofeng@kylinos.cn>
+Date: Sat, 27 Jun 2026 14:22:37 +0800
+Subject: [PATCH 7/8] smb: ksmbd: use opener creds for duplicate extents
+
+FSCTL_DUPLICATE_EXTENTS_TO_FILE calls clone and copy helpers
+without switching away from the ksmbd worker credentials.
+Those VFS helpers revalidate inode permissions and LSM
+policy against current_cred(), so root worker credentials
+can bypass checks meant for the SMB opener.
+
+Attack chain:
+  A client authenticates to a writable ksmbd share.
+  The client opens a source handle with FILE_READ_DATA.
+  The client opens a target handle with FILE_WRITE_DATA.
+  It sends FSCTL_DUPLICATE_EXTENTS_TO_FILE for both handles.
+  ksmbd validates only SMB handle access masks.
+  ksmbd then enters VFS clone or copy as the worker task.
+  VFS and LSM rechecks see current_cred() for that worker.
+  On typical setups that credential is root, not the opener.
+  A policy that would deny the opener can therefore be skipped.
+
+Run the operation under the target file opener credentials.
+This makes VFS permission and LSM checks use the same user
+that opened the destination handle.
+
+Signed-off-by: Haofeng Li <lihaofeng@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/smb2pdu.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index f1093c3ab5cc..8e5525debf2a 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -8762,6 +8762,7 @@ int smb2_ioctl(struct ksmbd_work *work)
+ 	}
+ 	case FSCTL_DUPLICATE_EXTENTS_TO_FILE:
+ 	{
++		const struct cred *saved_cred;
+ 		struct ksmbd_file *fp_in, *fp_out = NULL;
+ 		struct duplicate_extents_to_file *dup_ext;
+ 		loff_t src_off, dst_off, length, cloned;
+@@ -8815,11 +8816,11 @@ int smb2_ioctl(struct ksmbd_work *work)
+ 		 * fall back to vfs_copy_file_range(), should be avoided when
+ 		 * the flag DUPLICATE_EXTENTS_DATA_EX_SOURCE_ATOMIC is set.
+ 		 */
++		saved_cred = override_creds(fp_out->filp->f_cred);
+ 		cloned = vfs_clone_file_range(fp_in->filp, src_off,
+ 					      fp_out->filp, dst_off, length, 0);
+ 		if (cloned == -EXDEV || cloned == -EOPNOTSUPP) {
+ 			ret = -EOPNOTSUPP;
+-			goto dup_ext_out;
+ 		} else if (cloned != length) {
+ 			cloned = vfs_copy_file_range(fp_in->filp, src_off,
+ 						     fp_out->filp, dst_off,
+@@ -8831,6 +8832,9 @@ int smb2_ioctl(struct ksmbd_work *work)
+ 					ret = -EINVAL;
+ 			}
+ 		}
++		revert_creds(saved_cred);
++		if (ret < 0)
++			goto dup_ext_out;
+ 
+ dup_ext_out:
+ 		ksmbd_fd_put(work, fp_in);
+-- 
+2.55.0
+

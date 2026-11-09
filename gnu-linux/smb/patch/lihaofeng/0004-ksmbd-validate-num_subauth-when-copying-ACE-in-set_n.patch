@@ -1,7 +1,7 @@
-From eaf7f19ef8f0f978023d11851ce36e8dcd19fd62 Mon Sep 17 00:00:00 2001
+From 40495c8b117535e06c29cf86b5e946f99d187935 Mon Sep 17 00:00:00 2001
 From: Haofeng Li <lihaofeng@kylinos.cn>
 Date: Mon, 22 Jun 2026 15:38:51 +0800
-Subject: [PATCH 1/2] ksmbd: validate num_subauth when copying ACE in
+Subject: [PATCH 4/8] ksmbd: validate num_subauth when copying ACE in
  set_ntacl_dacl
 
 set_ntacl_dacl() copies each ACE from the attacker-controlled stored
@@ -39,24 +39,28 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  1 file changed, 5 insertions(+)
 
 diff --git a/fs/smb/server/smbacl.c b/fs/smb/server/smbacl.c
-index 340ea98fa494..693a550fbe34 100644
+index fc9937cedb01..d78b0fe031f7 100644
 --- a/fs/smb/server/smbacl.c
 +++ b/fs/smb/server/smbacl.c
-@@ -740,9 +740,14 @@ static void set_ntacl_dacl(struct mnt_idmap *idmap,
+@@ -745,6 +745,10 @@ static void set_ntacl_dacl(struct mnt_idmap *idmap,
  			if (nt_ace_size > aces_size)
  				break;
  
 +			if (ntace->sid.num_subauth == 0 ||
 +			    ntace->sid.num_subauth > SID_MAX_SUB_AUTHORITIES)
-+				goto next;
++				goto out;
 +
  			memcpy((char *)pndace + size, ntace, nt_ace_size);
  			if (check_add_overflow(size, nt_ace_size, &size))
  				break;
-+next:
- 			aces_size -= nt_ace_size;
- 			ntace = (struct smb_ace *)((char *)ntace + nt_ace_size);
- 			num_aces++;
+@@ -754,6 +758,7 @@ static void set_ntacl_dacl(struct mnt_idmap *idmap,
+ 		}
+ 	}
+ 
++out:
+ 	set_posix_acl_entries_dacl(idmap, pndace, fattr,
+ 				   &num_aces, &size, nt_num_aces);
+ 	pndacl->num_aces = cpu_to_le16(num_aces);
 -- 
-2.54.0
+2.55.0
 
