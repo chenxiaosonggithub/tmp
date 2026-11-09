@@ -1,4 +1,4 @@
-From d5a32984be3027cf59c7690c940f57d37fa7a27d Mon Sep 17 00:00:00 2001
+From dab27639656dfb85ba8cafee080159da87a872ca Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Wed, 4 Nov 2026 10:51:39 +0800
 Subject: [PATCH 19/21] smb/server: use smb2_add_create_context() for maximal
@@ -16,10 +16,10 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  1 file changed, 3 insertions(+), 13 deletions(-)
 
 diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index 130e7d2c3608..0ef2adfae86f 100644
+index f3c0c75d27a0..930cc7583d1e 100644
 --- a/fs/smb/server/smb2pdu.c
 +++ b/fs/smb/server/smb2pdu.c
-@@ -5560,23 +5560,13 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5574,23 +5574,13 @@ int smb2_open(struct ksmbd_work *work)
  	opinfo_put(opinfo);
  
  	if (ctx.query_maximal_access) {

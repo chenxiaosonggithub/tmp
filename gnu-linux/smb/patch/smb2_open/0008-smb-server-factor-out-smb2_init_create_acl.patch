@@ -1,4 +1,4 @@
-From 5529c87de8782442043053cd07e7b4c706998f56 Mon Sep 17 00:00:00 2001
+From 8cd6c2fbf4a940368fc625ab43687128151374ba Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Wed, 4 Nov 2026 10:46:29 +0800
 Subject: [PATCH 08/21] smb/server: factor out smb2_init_create_acl()
@@ -14,10 +14,10 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  1 file changed, 72 insertions(+), 81 deletions(-)
 
 diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index cb7ab8c5768a..3c807ca990d6 100644
+index 5453a2e443b2..99dfb00cd419 100644
 --- a/fs/smb/server/smb2pdu.c
 +++ b/fs/smb/server/smb2pdu.c
-@@ -3858,6 +3858,76 @@ static int ksmbd_acls_fattr(struct smb_fattr *fattr,
+@@ -3861,6 +3861,76 @@ static int ksmbd_acls_fattr(struct smb_fattr *fattr,
  	return 0;
  }
  
@@ -94,7 +94,7 @@ index cb7ab8c5768a..3c807ca990d6 100644
  enum {
  	DURABLE_RECONN_V2 = 1,
  	DURABLE_RECONN,
-@@ -5230,89 +5300,10 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5234,89 +5304,10 @@ int smb2_open(struct ksmbd_work *work)
  	fp->saccess = req->ShareAccess;
  	fp->coption = req->CreateOptions;
  

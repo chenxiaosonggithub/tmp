@@ -1,4 +1,4 @@
-From 2b81e10eaa003b94cf27ecc993c97cc6222c42db Mon Sep 17 00:00:00 2001
+From 9b784fee62afcafb910da725b093cad2d63bbb39 Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Wed, 4 Nov 2026 10:47:30 +0800
 Subject: [PATCH 09/21] smb/server: factor out smb2_get_create_name()
@@ -14,10 +14,10 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  1 file changed, 57 insertions(+), 41 deletions(-)
 
 diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index 3c807ca990d6..838159fc4eb1 100644
+index 99dfb00cd419..82d78c9070f1 100644
 --- a/fs/smb/server/smb2pdu.c
 +++ b/fs/smb/server/smb2pdu.c
-@@ -4524,6 +4524,58 @@ static int smb2_check_create_request(struct smb2_create_req *req,
+@@ -4527,6 +4527,58 @@ static int smb2_check_create_request(struct smb2_create_req *req,
  	return 0;
  }
  
@@ -76,7 +76,7 @@ index 3c807ca990d6..838159fc4eb1 100644
  static int smb2_parse_posix_context(struct ksmbd_work *work,
  				    struct smb2_create_req *req,
  				    struct smb2_create_rsp *rsp,
-@@ -4821,47 +4873,11 @@ int smb2_open(struct ksmbd_work *work)
+@@ -4825,47 +4877,11 @@ int smb2_open(struct ksmbd_work *work)
  		return create_smb2_pipe(work);
  	}
  

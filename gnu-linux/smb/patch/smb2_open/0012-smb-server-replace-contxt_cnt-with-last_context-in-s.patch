@@ -1,4 +1,4 @@
-From e442ffbb7662e974a8a4edd78703ca47e28a4f00 Mon Sep 17 00:00:00 2001
+From 8d05800f4463dfcb632b15c8ccab8c83da0ef89b Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Thu, 5 Nov 2026 14:50:47 +0800
 Subject: [PATCH 12/21] smb/server: replace contxt_cnt with last_context in
@@ -17,10 +17,10 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  1 file changed, 1 insertion(+), 8 deletions(-)
 
 diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index 7109b324ed2d..18d70d70ea82 100644
+index 1accf1dc340e..8e8f9be2bde8 100644
 --- a/fs/smb/server/smb2pdu.c
 +++ b/fs/smb/server/smb2pdu.c
-@@ -4865,7 +4865,6 @@ int smb2_open(struct ksmbd_work *work)
+@@ -4868,7 +4868,6 @@ int smb2_open(struct ksmbd_work *work)
  	struct create_context *last_context = NULL;
  	int open_flags = 0, may_flags = 0, file_info = 0;
  	int rc = 0;
@@ -28,7 +28,7 @@ index 7109b324ed2d..18d70d70ea82 100644
  	bool durable_rsp = true;
  	int s_type = 0;
  	char *name = NULL;
-@@ -5538,7 +5537,6 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5552,7 +5551,6 @@ int smb2_open(struct ksmbd_work *work)
  		rsp->OplockLevel = SMB2_OPLOCK_LEVEL_LEASE;
  
  		lease_ccontext = (struct create_context *)rsp->Buffer;
@@ -36,7 +36,7 @@ index 7109b324ed2d..18d70d70ea82 100644
  		create_lease_buf(rsp->Buffer, opinfo->o_lease);
  		le32_add_cpu(&rsp->CreateContextsLength,
  			     conn->vals->create_lease_size);
-@@ -5556,7 +5554,6 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5570,7 +5568,6 @@ int smb2_open(struct ksmbd_work *work)
  						       &ctx.maximal_access);
  		mxac_ccontext = (struct create_context *)(rsp->Buffer +
  				le32_to_cpu(rsp->CreateContextsLength));
@@ -44,7 +44,7 @@ index 7109b324ed2d..18d70d70ea82 100644
  		create_mxac_rsp_buf(rsp->Buffer +
  				le32_to_cpu(rsp->CreateContextsLength),
  				le32_to_cpu(ctx.maximal_access));
-@@ -5574,7 +5571,6 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5588,7 +5585,6 @@ int smb2_open(struct ksmbd_work *work)
  
  		disk_id_ccontext = (struct create_context *)(rsp->Buffer +
  				le32_to_cpu(rsp->CreateContextsLength));
@@ -52,7 +52,7 @@ index 7109b324ed2d..18d70d70ea82 100644
  		create_disk_id_rsp_buf(rsp->Buffer +
  				le32_to_cpu(rsp->CreateContextsLength),
  				stat.ino, tcon->id);
-@@ -5593,7 +5589,6 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5607,7 +5603,6 @@ int smb2_open(struct ksmbd_work *work)
  
  		durable_ccontext = (struct create_context *)(rsp->Buffer +
  				le32_to_cpu(rsp->CreateContextsLength));
@@ -60,7 +60,7 @@ index 7109b324ed2d..18d70d70ea82 100644
  		if (ctx.durable.type == DURABLE_REQ) {
  			create_durable_rsp_buf(rsp->Buffer +
  					le32_to_cpu(rsp->CreateContextsLength));
-@@ -5620,7 +5615,6 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5634,7 +5629,6 @@ int smb2_open(struct ksmbd_work *work)
  
  		posix_ccontext = (struct create_context *)(rsp->Buffer +
  				le32_to_cpu(rsp->CreateContextsLength));
@@ -68,7 +68,7 @@ index 7109b324ed2d..18d70d70ea82 100644
  		create_posix_rsp_buf(rsp->Buffer +
  				le32_to_cpu(rsp->CreateContextsLength),
  				fp);
-@@ -5655,7 +5649,6 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5669,7 +5663,6 @@ int smb2_open(struct ksmbd_work *work)
  
  		aapl_ccontext = (struct create_context *)(rsp->Buffer +
  				le32_to_cpu(rsp->CreateContextsLength));
@@ -76,7 +76,7 @@ index 7109b324ed2d..18d70d70ea82 100644
  		create_aapl_rsp_buf(rsp->Buffer +
  				le32_to_cpu(rsp->CreateContextsLength),
  				SMB2_CRTCTX_AAPL_FULL_SYNC,
-@@ -5670,7 +5663,7 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5684,7 +5677,7 @@ int smb2_open(struct ksmbd_work *work)
  		last_context = aapl_ccontext;
  	}
  

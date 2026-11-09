@@ -1,4 +1,4 @@
-From ef9c3b4096caf2ccf4fa742c5ff62036f40323c0 Mon Sep 17 00:00:00 2001
+From 2e433fc75dfe66c595d38741724c3a186c4fa7de Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Wed, 4 Nov 2026 10:49:54 +0800
 Subject: [PATCH 02/21] smb/server: factor out smb2_parse_posix_context()
@@ -14,10 +14,10 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  1 file changed, 44 insertions(+), 32 deletions(-)
 
 diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index 306b36a3b262..db3c73252989 100644
+index 8233e606de8c..25a5d90e987b 100644
 --- a/fs/smb/server/smb2pdu.c
 +++ b/fs/smb/server/smb2pdu.c
-@@ -4373,6 +4373,47 @@ static int smb2_handle_app_instance_id(struct ksmbd_work *work,
+@@ -4376,6 +4376,47 @@ static int smb2_handle_app_instance_id(struct ksmbd_work *work,
  	return ksmbd_close_fd_app_instance_id(work, old_fp, closed);
  }
  
@@ -65,7 +65,7 @@ index 306b36a3b262..db3c73252989 100644
  /**
   * smb2_open() - handler for smb file open request
   * @work:	smb work containing request buffer
-@@ -4424,39 +4465,10 @@ int smb2_open(struct ksmbd_work *work)
+@@ -4428,39 +4469,10 @@ int smb2_open(struct ksmbd_work *work)
  		return -EINVAL;
  	}
  

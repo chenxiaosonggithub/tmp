@@ -1,4 +1,4 @@
-From bf0a97722bb0435a92dc744dde95dfb1568bb22a Mon Sep 17 00:00:00 2001
+From 756becf67bd8074703f8289a2301b445764b38fc Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Thu, 5 Nov 2026 14:50:47 +0800
 Subject: [PATCH 11/21] smb/server: track CREATE contexts with last_context in
@@ -17,10 +17,10 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  1 file changed, 26 insertions(+), 25 deletions(-)
 
 diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index cf8fde27ad2f..7109b324ed2d 100644
+index 2ce54fdc277f..1accf1dc340e 100644
 --- a/fs/smb/server/smb2pdu.c
 +++ b/fs/smb/server/smb2pdu.c
-@@ -4862,13 +4862,12 @@ int smb2_open(struct ksmbd_work *work)
+@@ -4865,13 +4865,12 @@ int smb2_open(struct ksmbd_work *work)
  	struct kstat stat;
  	struct oplock_info *opinfo;
  	struct smb2_create_contexts ctx = {};
@@ -35,7 +35,7 @@ index cf8fde27ad2f..7109b324ed2d 100644
  	char *name = NULL;
  	char *stream_name = NULL;
  	bool file_present = false, created = false, already_permitted = false;
-@@ -5544,8 +5543,7 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5558,8 +5557,7 @@ int smb2_open(struct ksmbd_work *work)
  		le32_add_cpu(&rsp->CreateContextsLength,
  			     conn->vals->create_lease_size);
  		iov_len += conn->vals->create_lease_size;
@@ -45,7 +45,7 @@ index cf8fde27ad2f..7109b324ed2d 100644
  	}
  	opinfo_put(opinfo);
  
-@@ -5565,10 +5563,10 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5579,10 +5577,10 @@ int smb2_open(struct ksmbd_work *work)
  		le32_add_cpu(&rsp->CreateContextsLength,
  			     conn->vals->create_mxac_size);
  		iov_len += conn->vals->create_mxac_size;
@@ -60,7 +60,7 @@ index cf8fde27ad2f..7109b324ed2d 100644
  	}
  
  	if (ctx.query_disk_id) {
-@@ -5583,10 +5581,10 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5597,10 +5595,10 @@ int smb2_open(struct ksmbd_work *work)
  		le32_add_cpu(&rsp->CreateContextsLength,
  			     conn->vals->create_disk_id_size);
  		iov_len += conn->vals->create_disk_id_size;
@@ -75,7 +75,7 @@ index cf8fde27ad2f..7109b324ed2d 100644
  	}
  
  	if (durable_rsp &&
-@@ -5611,12 +5609,10 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5625,12 +5623,10 @@ int smb2_open(struct ksmbd_work *work)
  			iov_len += conn->vals->create_durable_v2_size;
  		}
  
@@ -92,7 +92,7 @@ index cf8fde27ad2f..7109b324ed2d 100644
  	}
  
  	if (ctx.posix) {
-@@ -5631,10 +5627,10 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5645,10 +5641,10 @@ int smb2_open(struct ksmbd_work *work)
  		le32_add_cpu(&rsp->CreateContextsLength,
  			     conn->vals->create_posix_size);
  		iov_len += conn->vals->create_posix_size;
@@ -107,7 +107,7 @@ index cf8fde27ad2f..7109b324ed2d 100644
  	}
  
  	/*
-@@ -5642,6 +5638,8 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5656,6 +5652,8 @@ int smb2_open(struct ksmbd_work *work)
  	 * rationale. Scoped to TIME_MACHINE shares only.
  	 */
  	if (ctx.aapl) {
@@ -116,7 +116,7 @@ index cf8fde27ad2f..7109b324ed2d 100644
  		if (ctx.aapl_client_caps & SMB2_CRTCTX_AAPL_SUPPORTS_READ_DIR_ATTR)
  			conn->aapl_readdir_attr = true;
  		/*
-@@ -5655,6 +5653,8 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5669,6 +5667,8 @@ int smb2_open(struct ksmbd_work *work)
  			conn->aapl_readdir_attr_v2 = true;
  		}
  
@@ -125,7 +125,7 @@ index cf8fde27ad2f..7109b324ed2d 100644
  		contxt_cnt++;
  		create_aapl_rsp_buf(rsp->Buffer +
  				le32_to_cpu(rsp->CreateContextsLength),
-@@ -5664,9 +5664,10 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5678,9 +5678,10 @@ int smb2_open(struct ksmbd_work *work)
  		le32_add_cpu(&rsp->CreateContextsLength,
  			     conn->vals->create_aapl_size);
  		iov_len += conn->vals->create_aapl_size;

@@ -1,4 +1,4 @@
-From e06e9ed1529d36b1c18028b9e1794fbb4b55edb6 Mon Sep 17 00:00:00 2001
+From a671d8a197738ed9436ac48bc8b14cef8356ad98 Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Thu, 5 Nov 2026 14:50:47 +0800
 Subject: [PATCH 13/21] smb/server: calculate CREATE response iov_len once in
@@ -17,10 +17,10 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  1 file changed, 3 insertions(+), 8 deletions(-)
 
 diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index 18d70d70ea82..94facca99a89 100644
+index 8e8f9be2bde8..93082dc65dc6 100644
 --- a/fs/smb/server/smb2pdu.c
 +++ b/fs/smb/server/smb2pdu.c
-@@ -5526,7 +5526,6 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5540,7 +5540,6 @@ int smb2_open(struct ksmbd_work *work)
  
  	rsp->CreateContextsOffset = 0;
  	rsp->CreateContextsLength = 0;
@@ -28,7 +28,7 @@ index 18d70d70ea82..94facca99a89 100644
  
  	/* If lease is request send lease context response */
  	if (opinfo && opinfo->is_lease) {
-@@ -5540,7 +5539,6 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5554,7 +5553,6 @@ int smb2_open(struct ksmbd_work *work)
  		create_lease_buf(rsp->Buffer, opinfo->o_lease);
  		le32_add_cpu(&rsp->CreateContextsLength,
  			     conn->vals->create_lease_size);
@@ -36,7 +36,7 @@ index 18d70d70ea82..94facca99a89 100644
  		last_context = lease_ccontext;
  	}
  	opinfo_put(opinfo);
-@@ -5559,7 +5557,6 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5573,7 +5571,6 @@ int smb2_open(struct ksmbd_work *work)
  				le32_to_cpu(ctx.maximal_access));
  		le32_add_cpu(&rsp->CreateContextsLength,
  			     conn->vals->create_mxac_size);
@@ -44,7 +44,7 @@ index 18d70d70ea82..94facca99a89 100644
  		if (last_context)
  			last_context->Next =
  				cpu_to_le32((char *)mxac_ccontext - (char *)last_context);
-@@ -5576,7 +5573,6 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5590,7 +5587,6 @@ int smb2_open(struct ksmbd_work *work)
  				stat.ino, tcon->id);
  		le32_add_cpu(&rsp->CreateContextsLength,
  			     conn->vals->create_disk_id_size);
@@ -52,7 +52,7 @@ index 18d70d70ea82..94facca99a89 100644
  		if (last_context)
  			last_context->Next =
  				cpu_to_le32((char *)disk_id_ccontext - (char *)last_context);
-@@ -5594,14 +5590,12 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5608,14 +5604,12 @@ int smb2_open(struct ksmbd_work *work)
  					le32_to_cpu(rsp->CreateContextsLength));
  			le32_add_cpu(&rsp->CreateContextsLength,
  					conn->vals->create_durable_size);
@@ -67,7 +67,7 @@ index 18d70d70ea82..94facca99a89 100644
  		}
  
  		if (last_context)
-@@ -5620,7 +5614,6 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5634,7 +5628,6 @@ int smb2_open(struct ksmbd_work *work)
  				fp);
  		le32_add_cpu(&rsp->CreateContextsLength,
  			     conn->vals->create_posix_size);
@@ -75,7 +75,7 @@ index 18d70d70ea82..94facca99a89 100644
  		if (last_context)
  			last_context->Next =
  				cpu_to_le32((char *)posix_ccontext - (char *)last_context);
-@@ -5656,7 +5649,6 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5670,7 +5663,6 @@ int smb2_open(struct ksmbd_work *work)
  				conn->aapl_readdir_attr_v2);
  		le32_add_cpu(&rsp->CreateContextsLength,
  			     conn->vals->create_aapl_size);
@@ -83,7 +83,7 @@ index 18d70d70ea82..94facca99a89 100644
  		if (last_context)
  			last_context->Next =
  				cpu_to_le32((char *)aapl_ccontext - (char *)last_context);
-@@ -5668,6 +5660,9 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5682,6 +5674,9 @@ int smb2_open(struct ksmbd_work *work)
  			cpu_to_le32(offsetof(struct smb2_create_rsp, Buffer));
  	}
  

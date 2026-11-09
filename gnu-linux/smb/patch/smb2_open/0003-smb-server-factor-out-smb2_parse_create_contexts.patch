@@ -1,4 +1,4 @@
-From a607f3909a693c2737d8dc82765ac34f0acee60f Mon Sep 17 00:00:00 2001
+From 033c705d3438906a638a867f4a0a521fa1f31655 Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Wed, 4 Nov 2026 10:49:54 +0800
 Subject: [PATCH 03/21] smb/server: factor out smb2_parse_create_contexts()
@@ -15,10 +15,10 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  1 file changed, 52 insertions(+), 43 deletions(-)
 
 diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index db3c73252989..f5c223036021 100644
+index 25a5d90e987b..cb1468c956ca 100644
 --- a/fs/smb/server/smb2pdu.c
 +++ b/fs/smb/server/smb2pdu.c
-@@ -4414,6 +4414,55 @@ static int smb2_parse_posix_context(struct ksmbd_work *work,
+@@ -4417,6 +4417,55 @@ static int smb2_parse_posix_context(struct ksmbd_work *work,
  	return 0;
  }
  
@@ -74,7 +74,7 @@ index db3c73252989..f5c223036021 100644
  /**
   * smb2_open() - handler for smb file open request
   * @work:	smb work containing request buffer
-@@ -4678,49 +4727,9 @@ int smb2_open(struct ksmbd_work *work)
+@@ -4682,49 +4731,9 @@ int smb2_open(struct ksmbd_work *work)
  		goto err_out2;
  	}
  

@@ -1,4 +1,4 @@
-From 6374468fa7321d2bb5eb8218d758d0a2b4f4a92c Mon Sep 17 00:00:00 2001
+From 5d581da45c41adba3e65f96d4a54c49e3236d9d3 Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Wed, 4 Nov 2026 10:51:39 +0800
 Subject: [PATCH 14/21] smb/server: factor out smb2_add_create_context() and
@@ -17,10 +17,10 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  1 file changed, 21 insertions(+), 15 deletions(-)
 
 diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index 94facca99a89..bbe2265b4676 100644
+index 93082dc65dc6..2d7a20ec1cb8 100644
 --- a/fs/smb/server/smb2pdu.c
 +++ b/fs/smb/server/smb2pdu.c
-@@ -4841,6 +4841,22 @@ static int smb2_open_oplock(struct ksmbd_work *work, struct ksmbd_file *fp,
+@@ -4844,6 +4844,22 @@ static int smb2_open_oplock(struct ksmbd_work *work, struct ksmbd_file *fp,
  	return rc;
  }
  
@@ -43,7 +43,7 @@ index 94facca99a89..bbe2265b4676 100644
  /**
   * smb2_open() - handler for smb file open request
   * @work:	smb work containing request buffer
-@@ -5625,8 +5641,6 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5639,8 +5655,6 @@ int smb2_open(struct ksmbd_work *work)
  	 * rationale. Scoped to TIME_MACHINE shares only.
  	 */
  	if (ctx.aapl) {
@@ -52,7 +52,7 @@ index 94facca99a89..bbe2265b4676 100644
  		if (ctx.aapl_client_caps & SMB2_CRTCTX_AAPL_SUPPORTS_READ_DIR_ATTR)
  			conn->aapl_readdir_attr = true;
  		/*
-@@ -5640,19 +5654,11 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5654,19 +5668,11 @@ int smb2_open(struct ksmbd_work *work)
  			conn->aapl_readdir_attr_v2 = true;
  		}
  

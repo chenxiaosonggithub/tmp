@@ -1,4 +1,4 @@
-From 14951ddb08983cd433fae87fb8c1b3f827f24f0d Mon Sep 17 00:00:00 2001
+From e413ed8d173f53a3ff09842c387aa73b9af75e06 Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Wed, 4 Nov 2026 10:53:25 +0800
 Subject: [PATCH 21/21] smb/server: factor out smb2_build_create_rsp()
@@ -15,10 +15,10 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  1 file changed, 139 insertions(+), 125 deletions(-)
 
 diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index 402897965236..ddfff3106425 100644
+index 1dd3bf20b566..35fa7a8be28f 100644
 --- a/fs/smb/server/smb2pdu.c
 +++ b/fs/smb/server/smb2pdu.c
-@@ -4857,6 +4857,144 @@ static void *smb2_add_create_context(struct smb2_create_rsp *rsp,
+@@ -4860,6 +4860,144 @@ static void *smb2_add_create_context(struct smb2_create_rsp *rsp,
  	return context;
  }
  
@@ -163,7 +163,7 @@ index 402897965236..ddfff3106425 100644
  /**
   * smb2_open() - handler for smb file open request
   * @work:	smb work containing request buffer
-@@ -4876,19 +5014,15 @@ int smb2_open(struct ksmbd_work *work)
+@@ -4879,12 +5017,9 @@ int smb2_open(struct ksmbd_work *work)
  	struct file *filp = NULL;
  	const struct mnt_idmap *idmap = NULL;
  	struct kstat stat;
@@ -176,14 +176,15 @@ index 402897965236..ddfff3106425 100644
  	int s_type = 0;
  	char *name = NULL;
  	char *stream_name = NULL;
- 	bool file_present = false, created = false, already_permitted = false;
+@@ -4892,7 +5027,6 @@ int smb2_open(struct ksmbd_work *work)
  	bool app_instance_id_checked = false, app_instance_closed;
+ 	bool stream_created = false;
  	int need_truncate = 0;
 -	u64 time;
  	__le32 daccess;
  	u32 dos_attr;
  	int iov_len = 0;
-@@ -5488,127 +5622,7 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5502,127 +5636,7 @@ int smb2_open(struct ksmbd_work *work)
  	 * this function's normal (non-reconnect) parsing already handles.
  	 */
  	reconnected_fp:

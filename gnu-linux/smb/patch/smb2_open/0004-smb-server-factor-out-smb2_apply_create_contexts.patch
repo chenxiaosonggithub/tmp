@@ -1,4 +1,4 @@
-From ae1fa56d6d9c599d63f2e9d64468b0a678e33519 Mon Sep 17 00:00:00 2001
+From 896d8a8a971d0557c29849f25da9e1d3d0d3fa61 Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Wed, 4 Nov 2026 10:49:54 +0800
 Subject: [PATCH 04/21] smb/server: factor out smb2_apply_create_contexts()
@@ -15,10 +15,10 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  1 file changed, 94 insertions(+), 84 deletions(-)
 
 diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index f5c223036021..cdcc29b3e5f1 100644
+index cb1468c956ca..3eefc8e3e0f1 100644
 --- a/fs/smb/server/smb2pdu.c
 +++ b/fs/smb/server/smb2pdu.c
-@@ -4463,6 +4463,97 @@ static int smb2_parse_create_contexts(struct smb2_create_req *req,
+@@ -4466,6 +4466,97 @@ static int smb2_parse_create_contexts(struct smb2_create_req *req,
  	return 0;
  }
  
@@ -116,7 +116,7 @@ index f5c223036021..cdcc29b3e5f1 100644
  /**
   * smb2_open() - handler for smb file open request
   * @work:	smb work containing request buffer
-@@ -4482,7 +4573,6 @@ int smb2_open(struct ksmbd_work *work)
+@@ -4485,7 +4576,6 @@ int smb2_open(struct ksmbd_work *work)
  	struct file *filp = NULL;
  	const struct mnt_idmap *idmap = NULL;
  	struct kstat stat;
@@ -124,7 +124,7 @@ index f5c223036021..cdcc29b3e5f1 100644
  	struct oplock_info *opinfo;
  	struct smb2_create_contexts ctx = {};
  	__le32 *next_ptr = NULL;
-@@ -5268,89 +5358,9 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5282,89 +5372,9 @@ int smb2_open(struct ksmbd_work *work)
  			goto err_out1;
  	}
  

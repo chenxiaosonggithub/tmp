@@ -1,4 +1,4 @@
-From ed16d665f5ad17a4a21f9899d2d3688b440915fd Mon Sep 17 00:00:00 2001
+From 044b9b07bfc0d767324816269d3ce147f180126a Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Wed, 4 Nov 2026 10:48:07 +0800
 Subject: [PATCH 10/21] smb/server: factor out smb2_parse_lease_context()
@@ -14,10 +14,10 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  1 file changed, 31 insertions(+), 24 deletions(-)
 
 diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index 838159fc4eb1..cf8fde27ad2f 100644
+index 82d78c9070f1..2ce54fdc277f 100644
 --- a/fs/smb/server/smb2pdu.c
 +++ b/fs/smb/server/smb2pdu.c
-@@ -4576,6 +4576,33 @@ static char *smb2_get_create_name(struct ksmbd_work *work,
+@@ -4579,6 +4579,33 @@ static char *smb2_get_create_name(struct ksmbd_work *work,
  	return ERR_PTR(rc);
  }
  
@@ -51,7 +51,7 @@ index 838159fc4eb1..cf8fde27ad2f 100644
  static int smb2_parse_posix_context(struct ksmbd_work *work,
  				    struct smb2_create_req *req,
  				    struct smb2_create_rsp *rsp,
-@@ -4891,20 +4918,12 @@ int smb2_open(struct ksmbd_work *work)
+@@ -4895,20 +4922,12 @@ int smb2_open(struct ksmbd_work *work)
  			goto err_out2;
  	}
  
@@ -76,7 +76,7 @@ index 838159fc4eb1..cf8fde27ad2f 100644
  		rc = parse_durable_handle_context(work, req, ctx.lease, &ctx.durable);
  		if (rc) {
  			ksmbd_debug(SMB, "error parsing durable handle context\n");
-@@ -4956,18 +4975,6 @@ int smb2_open(struct ksmbd_work *work)
+@@ -4960,18 +4979,6 @@ int smb2_open(struct ksmbd_work *work)
  			goto reconnected_fp;
  		}
  

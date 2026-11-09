@@ -1,4 +1,4 @@
-From d630d99a9df0a4d063c7be76fc6239f5b4467673 Mon Sep 17 00:00:00 2001
+From ef6ec23a08932d2d65253a2892aa127e599671b9 Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Wed, 4 Nov 2026 10:51:39 +0800
 Subject: [PATCH 16/21] smb/server: use smb2_add_create_context() for durable
@@ -17,10 +17,10 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  1 file changed, 9 insertions(+), 14 deletions(-)
 
 diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index 47843ee1275e..2ea79f73bccd 100644
+index acd44af25c9f..2045d8dc92a4 100644
 --- a/fs/smb/server/smb2pdu.c
 +++ b/fs/smb/server/smb2pdu.c
-@@ -5595,29 +5595,24 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5609,29 +5609,24 @@ int smb2_open(struct ksmbd_work *work)
  		last_context = disk_id_ccontext;
  	}
  

@@ -1,4 +1,4 @@
-From 8412b5c3689465dcb007ec6451c765e651aa71ab Mon Sep 17 00:00:00 2001
+From 947bb8a24931d6db41808eb9bc479d7c873ab1e1 Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Wed, 4 Nov 2026 10:45:41 +0800
 Subject: [PATCH 07/21] smb/server: factor out smb2_query_maximal_access()
@@ -14,10 +14,10 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  1 file changed, 23 insertions(+), 20 deletions(-)
 
 diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index a01f4158aebb..cb7ab8c5768a 100644
+index 8dd8bd5310bf..5453a2e443b2 100644
 --- a/fs/smb/server/smb2pdu.c
 +++ b/fs/smb/server/smb2pdu.c
-@@ -4285,6 +4285,24 @@ static int smb2_app_instance_stream_matches(struct ksmbd_file *fp,
+@@ -4288,6 +4288,24 @@ static int smb2_app_instance_stream_matches(struct ksmbd_file *fp,
  	return 0;
  }
  
@@ -42,7 +42,7 @@ index a01f4158aebb..cb7ab8c5768a 100644
  static int smb2_handle_app_instance_id(struct ksmbd_work *work,
  				       struct smb2_create_rsp *rsp,
  				       struct durable_info *dh_info,
-@@ -4296,7 +4314,7 @@ static int smb2_handle_app_instance_id(struct ksmbd_work *work,
+@@ -4299,7 +4317,7 @@ static int smb2_handle_app_instance_id(struct ksmbd_work *work,
  	struct ksmbd_file *old_fp;
  	const struct path *old_path;
  	char *app_instance_id;
@@ -51,7 +51,7 @@ index a01f4158aebb..cb7ab8c5768a 100644
  	bool reject = false, stream_matches;
  	int cursor = 0, rc;
  
-@@ -4351,16 +4369,13 @@ static int smb2_handle_app_instance_id(struct ksmbd_work *work,
+@@ -4354,16 +4372,13 @@ static int smb2_handle_app_instance_id(struct ksmbd_work *work,
  
  	/* Authorize the referenced open even if its name changes meanwhile. */
  	old_path = &old_fp->filp->f_path;
@@ -70,7 +70,7 @@ index a01f4158aebb..cb7ab8c5768a 100644
  	/* Also require read access with the effective VFS credentials. */
  	if ((le32_to_cpu(maximal_access) & GENERIC_READ_FLAGS) !=
  	    GENERIC_READ_FLAGS ||
-@@ -5039,22 +5054,10 @@ int smb2_open(struct ksmbd_work *work)
+@@ -5043,22 +5058,10 @@ int smb2_open(struct ksmbd_work *work)
  			goto err_out;
  
  		if (ctx.query_maximal_access) {

@@ -1,4 +1,4 @@
-From f925e64247c151efa8008094535c22a322edf402 Mon Sep 17 00:00:00 2001
+From 5f165d60191a97a51bdb094a3795b6e14fed5d1b Mon Sep 17 00:00:00 2001
 From: ZhangGuoDong <zhangguodong@kylinos.cn>
 Date: Wed, 4 Nov 2026 10:50:49 +0800
 Subject: [PATCH 05/21] smb/server: factor out smb2_open_oplock()
@@ -14,10 +14,10 @@ Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
  1 file changed, 61 insertions(+), 46 deletions(-)
 
 diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index cdcc29b3e5f1..ee7dbbae01d6 100644
+index 3eefc8e3e0f1..6c63228153c1 100644
 --- a/fs/smb/server/smb2pdu.c
 +++ b/fs/smb/server/smb2pdu.c
-@@ -4554,6 +4554,63 @@ static int smb2_apply_create_contexts(struct ksmbd_work *work,
+@@ -4557,6 +4557,63 @@ static int smb2_apply_create_contexts(struct ksmbd_work *work,
  	return 0;
  }
  
@@ -81,18 +81,18 @@ index cdcc29b3e5f1..ee7dbbae01d6 100644
  /**
   * smb2_open() - handler for smb file open request
   * @work:	smb work containing request buffer
-@@ -4586,7 +4643,7 @@ int smb2_open(struct ksmbd_work *work)
- 	char *stream_name = NULL;
+@@ -4590,7 +4647,7 @@ int smb2_open(struct ksmbd_work *work)
  	bool file_present = false, created = false, already_permitted = false;
  	bool app_instance_id_checked = false, app_instance_closed;
+ 	bool stream_created = false;
 -	int share_ret, need_truncate = 0;
 +	int need_truncate = 0;
  	u64 time;
  	__le32 daccess;
  	u32 dos_attr;
-@@ -5301,51 +5358,9 @@ int smb2_open(struct ksmbd_work *work)
- 		need_truncate = 1;
- 	}
+@@ -5315,51 +5372,9 @@ int smb2_open(struct ksmbd_work *work)
+ 	if (need_truncate)
+ 		smb_break_all_oplock(work, fp);
  
 -	share_ret = ksmbd_smb_check_shared_mode(fp->filp, fp);
 -	if (!test_share_config_flag(work->tcon->share_conf, KSMBD_SHARE_FLAG_OPLOCKS) ||
