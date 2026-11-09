@@ -1,0 +1,154 @@
+From 44348ac0e242061df1ed3638b74b377c5f023424 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:18 +0800
+Subject: [PATCH 03/39] smb: move NTLMSSP negotiate flags to common/ntlmssp.h
+
+The client and server define the same NTLMSSP negotiate flags. Move
+the duplicate definitions to the common header file.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/client/ntlmssp.h | 35 -----------------------------------
+ fs/smb/common/ntlmssp.h | 35 +++++++++++++++++++++++++++++++++++
+ fs/smb/server/ntlmssp.h | 35 -----------------------------------
+ 3 files changed, 35 insertions(+), 70 deletions(-)
+
+diff --git a/fs/smb/client/ntlmssp.h b/fs/smb/client/ntlmssp.h
+index f7fa1840032b..e1715290c385 100644
+--- a/fs/smb/client/ntlmssp.h
++++ b/fs/smb/client/ntlmssp.h
+@@ -11,41 +11,6 @@
+ 
+ #include "../common/ntlmssp.h"
+ 
+-/* Negotiate Flags */
+-#define NTLMSSP_NEGOTIATE_UNICODE         0x01 /* Text strings are unicode */
+-#define NTLMSSP_NEGOTIATE_OEM             0x02 /* Text strings are in OEM */
+-#define NTLMSSP_REQUEST_TARGET            0x04 /* Srv returns its auth realm */
+-/* define reserved9                       0x08 */
+-#define NTLMSSP_NEGOTIATE_SIGN          0x0010 /* Request signing capability */
+-#define NTLMSSP_NEGOTIATE_SEAL          0x0020 /* Request confidentiality */
+-#define NTLMSSP_NEGOTIATE_DGRAM         0x0040
+-#define NTLMSSP_NEGOTIATE_LM_KEY        0x0080 /* Use LM session key */
+-/* defined reserved 8                   0x0100 */
+-#define NTLMSSP_NEGOTIATE_NTLM          0x0200 /* NTLM authentication */
+-#define NTLMSSP_NEGOTIATE_NT_ONLY       0x0400 /* Lanman not allowed */
+-#define NTLMSSP_ANONYMOUS               0x0800
+-#define NTLMSSP_NEGOTIATE_DOMAIN_SUPPLIED 0x1000 /* reserved6 */
+-#define NTLMSSP_NEGOTIATE_WORKSTATION_SUPPLIED 0x2000
+-#define NTLMSSP_NEGOTIATE_LOCAL_CALL    0x4000 /* client/server same machine */
+-#define NTLMSSP_NEGOTIATE_ALWAYS_SIGN   0x8000 /* Sign. All security levels  */
+-#define NTLMSSP_TARGET_TYPE_DOMAIN     0x10000
+-#define NTLMSSP_TARGET_TYPE_SERVER     0x20000
+-#define NTLMSSP_TARGET_TYPE_SHARE      0x40000
+-#define NTLMSSP_NEGOTIATE_EXTENDED_SEC 0x80000 /* NB:not related to NTLMv2 pwd*/
+-/* #define NTLMSSP_REQUEST_INIT_RESP     0x100000 */
+-#define NTLMSSP_NEGOTIATE_IDENTIFY    0x100000
+-#define NTLMSSP_REQUEST_ACCEPT_RESP   0x200000 /* reserved5 */
+-#define NTLMSSP_REQUEST_NON_NT_KEY    0x400000
+-#define NTLMSSP_NEGOTIATE_TARGET_INFO 0x800000
+-/* #define reserved4                 0x1000000 */
+-#define NTLMSSP_NEGOTIATE_VERSION    0x2000000 /* we only set for SMB2+ */
+-/* #define reserved3                 0x4000000 */
+-/* #define reserved2                 0x8000000 */
+-/* #define reserved1                0x10000000 */
+-#define NTLMSSP_NEGOTIATE_128       0x20000000
+-#define NTLMSSP_NEGOTIATE_KEY_XCH   0x40000000
+-#define NTLMSSP_NEGOTIATE_56        0x80000000
+-
+ /* Define AV Pair Field IDs */
+ enum av_field_type {
+ 	NTLMSSP_AV_EOL = 0,
+diff --git a/fs/smb/common/ntlmssp.h b/fs/smb/common/ntlmssp.h
+index 332e33aa9cec..966467280251 100644
+--- a/fs/smb/common/ntlmssp.h
++++ b/fs/smb/common/ntlmssp.h
+@@ -18,4 +18,39 @@
+ #define NtLmAuthenticate  cpu_to_le32(3)
+ #define UnknownMessage    cpu_to_le32(8)
+ 
++/* Negotiate Flags */
++#define NTLMSSP_NEGOTIATE_UNICODE         0x01 /* Text strings are unicode */
++#define NTLMSSP_NEGOTIATE_OEM             0x02 /* Text strings are in OEM */
++#define NTLMSSP_REQUEST_TARGET            0x04 /* Srv returns its auth realm */
++/* define reserved9                       0x08 */
++#define NTLMSSP_NEGOTIATE_SIGN          0x0010 /* Request signing capability */
++#define NTLMSSP_NEGOTIATE_SEAL          0x0020 /* Request confidentiality */
++#define NTLMSSP_NEGOTIATE_DGRAM         0x0040
++#define NTLMSSP_NEGOTIATE_LM_KEY        0x0080 /* Use LM session key */
++/* defined reserved 8                   0x0100 */
++#define NTLMSSP_NEGOTIATE_NTLM          0x0200 /* NTLM authentication */
++#define NTLMSSP_NEGOTIATE_NT_ONLY       0x0400 /* Lanman not allowed */
++#define NTLMSSP_ANONYMOUS               0x0800
++#define NTLMSSP_NEGOTIATE_DOMAIN_SUPPLIED 0x1000 /* reserved6 */
++#define NTLMSSP_NEGOTIATE_WORKSTATION_SUPPLIED 0x2000
++#define NTLMSSP_NEGOTIATE_LOCAL_CALL    0x4000 /* client/server same machine */
++#define NTLMSSP_NEGOTIATE_ALWAYS_SIGN   0x8000 /* Sign. All security levels  */
++#define NTLMSSP_TARGET_TYPE_DOMAIN     0x10000
++#define NTLMSSP_TARGET_TYPE_SERVER     0x20000
++#define NTLMSSP_TARGET_TYPE_SHARE      0x40000
++#define NTLMSSP_NEGOTIATE_EXTENDED_SEC 0x80000 /* NB:not related to NTLMv2 pwd*/
++/* #define NTLMSSP_REQUEST_INIT_RESP     0x100000 */
++#define NTLMSSP_NEGOTIATE_IDENTIFY    0x100000
++#define NTLMSSP_REQUEST_ACCEPT_RESP   0x200000 /* reserved5 */
++#define NTLMSSP_REQUEST_NON_NT_KEY    0x400000
++#define NTLMSSP_NEGOTIATE_TARGET_INFO 0x800000
++/* #define reserved4                 0x1000000 */
++#define NTLMSSP_NEGOTIATE_VERSION    0x2000000
++/* #define reserved3                 0x4000000 */
++/* #define reserved2                 0x8000000 */
++/* #define reserved1                0x10000000 */
++#define NTLMSSP_NEGOTIATE_128       0x20000000
++#define NTLMSSP_NEGOTIATE_KEY_XCH   0x40000000
++#define NTLMSSP_NEGOTIATE_56        0x80000000
++
+ #endif /* _COMMON_NTLMSSP_H */
+diff --git a/fs/smb/server/ntlmssp.h b/fs/smb/server/ntlmssp.h
+index d43fce25da56..e1fcb8c3de09 100644
+--- a/fs/smb/server/ntlmssp.h
++++ b/fs/smb/server/ntlmssp.h
+@@ -24,41 +24,6 @@
+ #define CIFS_ENCPWD_SIZE	(16)
+ #define CIFS_CPHTXT_SIZE	(16)
+ 
+-/* Negotiate Flags */
+-#define NTLMSSP_NEGOTIATE_UNICODE         0x01 /* Text strings are unicode */
+-#define NTLMSSP_NEGOTIATE_OEM             0x02 /* Text strings are in OEM */
+-#define NTLMSSP_REQUEST_TARGET            0x04 /* Srv returns its auth realm */
+-/* define reserved9                       0x08 */
+-#define NTLMSSP_NEGOTIATE_SIGN          0x0010 /* Request signing capability */
+-#define NTLMSSP_NEGOTIATE_SEAL          0x0020 /* Request confidentiality */
+-#define NTLMSSP_NEGOTIATE_DGRAM         0x0040
+-#define NTLMSSP_NEGOTIATE_LM_KEY        0x0080 /* Use LM session key */
+-/* defined reserved 8                   0x0100 */
+-#define NTLMSSP_NEGOTIATE_NTLM          0x0200 /* NTLM authentication */
+-#define NTLMSSP_NEGOTIATE_NT_ONLY       0x0400 /* Lanman not allowed */
+-#define NTLMSSP_ANONYMOUS               0x0800
+-#define NTLMSSP_NEGOTIATE_DOMAIN_SUPPLIED 0x1000 /* reserved6 */
+-#define NTLMSSP_NEGOTIATE_WORKSTATION_SUPPLIED 0x2000
+-#define NTLMSSP_NEGOTIATE_LOCAL_CALL    0x4000 /* client/server same machine */
+-#define NTLMSSP_NEGOTIATE_ALWAYS_SIGN   0x8000 /* Sign. All security levels  */
+-#define NTLMSSP_TARGET_TYPE_DOMAIN     0x10000
+-#define NTLMSSP_TARGET_TYPE_SERVER     0x20000
+-#define NTLMSSP_TARGET_TYPE_SHARE      0x40000
+-#define NTLMSSP_NEGOTIATE_EXTENDED_SEC 0x80000 /* NB:not related to NTLMv2 pwd*/
+-/* #define NTLMSSP_REQUEST_INIT_RESP     0x100000 */
+-#define NTLMSSP_NEGOTIATE_IDENTIFY    0x100000
+-#define NTLMSSP_REQUEST_ACCEPT_RESP   0x200000 /* reserved5 */
+-#define NTLMSSP_REQUEST_NON_NT_KEY    0x400000
+-#define NTLMSSP_NEGOTIATE_TARGET_INFO 0x800000
+-/* #define reserved4                 0x1000000 */
+-#define NTLMSSP_NEGOTIATE_VERSION    0x2000000 /* we do not set */
+-/* #define reserved3                 0x4000000 */
+-/* #define reserved2                 0x8000000 */
+-/* #define reserved1                0x10000000 */
+-#define NTLMSSP_NEGOTIATE_128       0x20000000
+-#define NTLMSSP_NEGOTIATE_KEY_XCH   0x40000000
+-#define NTLMSSP_NEGOTIATE_56        0x80000000
+-
+ /* Define AV Pair Field IDs */
+ enum av_field_type {
+ 	NTLMSSP_AV_EOL = 0,
+-- 
+2.53.0
+

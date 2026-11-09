@@ -1,0 +1,51 @@
+From 2a37974be1729c06ee3005aede29a1d68480d623 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:18 +0800
+Subject: [PATCH 19/39] smb: remove obsolete NTLMSSP typedef comments
+
+Remove the typedef explanation from the client and server NTLMSSP
+headers after moving the shared structures to the common header file.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/client/ntlmssp.h | 6 ------
+ fs/smb/server/ntlmssp.h | 6 ------
+ 2 files changed, 12 deletions(-)
+
+diff --git a/fs/smb/client/ntlmssp.h b/fs/smb/client/ntlmssp.h
+index c44b889b3483..9e74330cd1ee 100644
+--- a/fs/smb/client/ntlmssp.h
++++ b/fs/smb/client/ntlmssp.h
+@@ -11,12 +11,6 @@
+ 
+ #include "../common/ntlmssp.h"
+ 
+-/* Although typedefs are not commonly used for structure definitions */
+-/* in the Linux kernel, in this particular case they are useful      */
+-/* to more closely match the standards document for NTLMSSP from     */
+-/* OpenGroup and to make the code more closely match the standard in */
+-/* appearance */
+-
+ #define NTLMSSP_REVISION_W2K3 0x0F
+ 
+ /* See MS-NLMP section 2.2.2.10 */
+diff --git a/fs/smb/server/ntlmssp.h b/fs/smb/server/ntlmssp.h
+index 04c9ad910e7b..c673f876967d 100644
+--- a/fs/smb/server/ntlmssp.h
++++ b/fs/smb/server/ntlmssp.h
+@@ -14,12 +14,6 @@
+ 
+ #define CIFS_KEY_SIZE	(40)
+ 
+-/* Although typedefs are not commonly used for structure definitions */
+-/* in the Linux kernel, in this particular case they are useful      */
+-/* to more closely match the standards document for NTLMSSP from     */
+-/* OpenGroup and to make the code more closely match the standard in */
+-/* appearance */
+-
+ struct authenticate_message {
+ 	__u8 Signature[sizeof(NTLMSSP_SIGNATURE)];
+ 	__le32 MessageType;  /* NtLmsAuthenticate = 3 */
+-- 
+2.53.0
+

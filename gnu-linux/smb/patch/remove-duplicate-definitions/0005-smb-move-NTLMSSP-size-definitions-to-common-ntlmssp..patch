@@ -1,0 +1,138 @@
+From a10f8ef38e508fabccbc1794f9ff999787524be0 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:18 +0800
+Subject: [PATCH 05/39] smb: move NTLMSSP size definitions to common/ntlmssp.h
+
+The client and server define the same password, key, hash and response
+sizes. Move the NTLMSSP size definitions to the common header file.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/client/smb1pdu.h | 26 +-------------------------
+ fs/smb/common/ntlmssp.h | 25 +++++++++++++++++++++++++
+ fs/smb/server/auth.h    |  7 -------
+ fs/smb/server/ntlmssp.h | 10 ----------
+ 4 files changed, 26 insertions(+), 42 deletions(-)
+
+diff --git a/fs/smb/client/smb1pdu.h b/fs/smb/client/smb1pdu.h
+index 0870949144ab..71bd8fdf3558 100644
+--- a/fs/smb/client/smb1pdu.h
++++ b/fs/smb/client/smb1pdu.h
+@@ -10,6 +10,7 @@
+ #define _SMB1PDU_H
+ 
+ #include "../common/smb1pdu.h"
++#include "../common/ntlmssp.h"
+ 
+ #define CIFS_PROT   0
+ #define POSIX_PROT  (CIFS_PROT+1)
+@@ -101,31 +102,6 @@
+  */
+ #define CIFS_MAX_MSGSIZE (4*4096)
+ 
+-/*
+- * Size of encrypted user password in bytes
+- */
+-#define CIFS_ENCPWD_SIZE (16)
+-
+-/*
+- * Size of the crypto key returned on the negotiate SMB in bytes
+- */
+-#define CIFS_CRYPTO_KEY_SIZE (8)
+-
+-/*
+- * Size of the ntlm client response
+- */
+-#define CIFS_AUTH_RESP_SIZE (24)
+-
+-/*
+- * Size of the session key (crypto key encrypted with the password
+- */
+-#define CIFS_SESS_KEY_SIZE (16)
+-
+-#define CIFS_SERVER_CHALLENGE_SIZE (8)
+-#define CIFS_HMAC_MD5_HASH_SIZE (16)
+-#define CIFS_CPHTXT_SIZE (16)
+-#define CIFS_NTHASH_SIZE (16)
+-
+ /*
+  * Maximum user name length
+  */
+diff --git a/fs/smb/common/ntlmssp.h b/fs/smb/common/ntlmssp.h
+index 0c407814315e..0b159e79bd7d 100644
+--- a/fs/smb/common/ntlmssp.h
++++ b/fs/smb/common/ntlmssp.h
+@@ -68,4 +68,29 @@ enum av_field_type {
+ 	NTLMSSP_AV_CHANNEL_BINDINGS
+ };
+ 
++/*
++ * Size of encrypted user password in bytes
++ */
++#define CIFS_ENCPWD_SIZE (16)
++
++/*
++ * Size of the crypto key returned on the negotiate SMB in bytes
++ */
++#define CIFS_CRYPTO_KEY_SIZE (8)
++
++/*
++ * Size of the ntlm client response
++ */
++#define CIFS_AUTH_RESP_SIZE (24)
++
++/*
++ * Size of the session key (crypto key encrypted with the password
++ */
++#define CIFS_SESS_KEY_SIZE (16)
++
++#define CIFS_SERVER_CHALLENGE_SIZE (8)
++#define CIFS_HMAC_MD5_HASH_SIZE (16)
++#define CIFS_CPHTXT_SIZE (16)
++#define CIFS_NTHASH_SIZE (16)
++
+ #endif /* _COMMON_NTLMSSP_H */
+diff --git a/fs/smb/server/auth.h b/fs/smb/server/auth.h
+index 7ce9c42d58f1..58f9d9f055d2 100644
+--- a/fs/smb/server/auth.h
++++ b/fs/smb/server/auth.h
+@@ -16,13 +16,6 @@
+ #define AUTH_GSS_PADDING	6
+ #endif
+ 
+-#define CIFS_HMAC_MD5_HASH_SIZE	(16)
+-#define CIFS_NTHASH_SIZE	(16)
+-
+-/*
+- * Size of the ntlm client response
+- */
+-#define CIFS_AUTH_RESP_SIZE		24
+ #define CIFS_SMB1_SIGNATURE_SIZE	8
+ #define CIFS_SMB1_SESSKEY_SIZE		16
+ 
+diff --git a/fs/smb/server/ntlmssp.h b/fs/smb/server/ntlmssp.h
+index 0ee95367e58f..e7e2f361c94f 100644
+--- a/fs/smb/server/ntlmssp.h
++++ b/fs/smb/server/ntlmssp.h
+@@ -12,18 +12,8 @@
+ /* Security blob target info data */
+ #define TGT_Name        "KSMBD"
+ 
+-/*
+- * Size of the crypto key returned on the negotiate SMB in bytes
+- */
+-#define CIFS_CRYPTO_KEY_SIZE	(8)
+ #define CIFS_KEY_SIZE	(40)
+ 
+-/*
+- * Size of encrypted user password in bytes
+- */
+-#define CIFS_ENCPWD_SIZE	(16)
+-#define CIFS_CPHTXT_SIZE	(16)
+-
+ /* Although typedefs are not commonly used for structure definitions */
+ /* in the Linux kernel, in this particular case they are useful      */
+ /* to more closely match the standards document for NTLMSSP from     */
+-- 
+2.53.0
+

@@ -1,0 +1,38 @@
+From 28ed980d6e49f8d887f4559fd1a1bb0ff41125cd Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:18 +0800
+Subject: [PATCH 16/39] smb/client: fix indentation in ntlmv2_resp
+
+Use tabs for the union and nested challenge structure in ntlmv2_resp.
+This keeps the formatting cleanup separate from moving the definition
+to the common header file.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/client/smb1pdu.h | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/fs/smb/client/smb1pdu.h b/fs/smb/client/smb1pdu.h
+index 52a6812ff22c..99a85f85e988 100644
+--- a/fs/smb/client/smb1pdu.h
++++ b/fs/smb/client/smb1pdu.h
+@@ -491,11 +491,11 @@ typedef union smb_com_session_setup_andx {
+ 
+ struct ntlmv2_resp {
+ 	union {
+-	    char ntlmv2_hash[CIFS_ENCPWD_SIZE];
+-	    struct {
+-		__u8 reserved[8];
+-		__u8 key[CIFS_SERVER_CHALLENGE_SIZE];
+-	    } __packed challenge;
++		char ntlmv2_hash[CIFS_ENCPWD_SIZE];
++		struct {
++			__u8 reserved[8];
++			__u8 key[CIFS_SERVER_CHALLENGE_SIZE];
++		} __packed challenge;
+ 	} __packed;
+ 	__le32 blob_signature;
+ 	__u32  reserved;
+-- 
+2.53.0
+

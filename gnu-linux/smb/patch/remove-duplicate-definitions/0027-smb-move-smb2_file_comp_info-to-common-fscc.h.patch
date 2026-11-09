@@ -1,0 +1,80 @@
+From 039963ed112651747cbda8024041019aa4efb13b Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:20 +0800
+Subject: [PATCH 27/39] smb: move smb2_file_comp_info to common/fscc.h
+
+file_compression_info and smb2_file_comp_info describe the same file
+compression information layout. Remove the unused client definition
+and move the server definition to the common header file.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/client/smb1pdu.h |  9 ---------
+ fs/smb/common/fscc.h    | 10 ++++++++++
+ fs/smb/server/smb2pdu.h |  9 ---------
+ 3 files changed, 10 insertions(+), 18 deletions(-)
+
+diff --git a/fs/smb/client/smb1pdu.h b/fs/smb/client/smb1pdu.h
+index 1a41fe3be280..592980651d69 100644
+--- a/fs/smb/client/smb1pdu.h
++++ b/fs/smb/client/smb1pdu.h
+@@ -2004,15 +2004,6 @@ struct file_stream_info {
+ 		stream info */
+ };      /* level 0x109 */
+ 
+-struct file_compression_info {
+-	__le64 compressed_size;
+-	__le16 format;
+-	__u8   unit_shift;
+-	__u8   ch_shift;
+-	__u8   cl_shift;
+-	__u8   pad[3];
+-} __packed;      /* level 0x10b */
+-
+ /* POSIX ACL set/query path info structures */
+ #define CIFS_ACL_VERSION 1
+ struct cifs_posix_ace { /* access control entry (ACE) */
+diff --git a/fs/smb/common/fscc.h b/fs/smb/common/fscc.h
+index d51b0712288c..68e9393a7012 100644
+--- a/fs/smb/common/fscc.h
++++ b/fs/smb/common/fscc.h
+@@ -278,6 +278,16 @@ typedef struct {
+ 	char FileName[];
+ } __packed FILE_BOTH_DIRECTORY_INFO; /* level 0x104 FFrsp data */
+ 
++/* See MS-FSCC 2.4.9 */
++struct smb2_file_comp_info {
++	__le64 CompressedFileSize;
++	__le16 CompressionFormat;
++	__u8 CompressionUnitShift;
++	__u8 ChunkShift;
++	__u8 ClusterShift;
++	__u8 Reserved[3];
++} __packed;
++
+ /* See MS-FSCC 2.4.10 */
+ typedef struct {
+ 	__le32 NextEntryOffset;
+diff --git a/fs/smb/server/smb2pdu.h b/fs/smb/server/smb2pdu.h
+index c85e6ec5cdb5..d2fad9b20911 100644
+--- a/fs/smb/server/smb2pdu.h
++++ b/fs/smb/server/smb2pdu.h
+@@ -296,15 +296,6 @@ struct smb2_file_mode_info {
+ 	__le32 Mode;
+ } __packed;
+ 
+-struct smb2_file_comp_info {
+-	__le64 CompressedFileSize;
+-	__le16 CompressionFormat;
+-	__u8 CompressionUnitShift;
+-	__u8 ChunkShift;
+-	__u8 ClusterShift;
+-	__u8 Reserved[3];
+-} __packed;
+-
+ struct smb2_file_attr_tag_info {
+ 	__le32 FileAttributes;
+ 	__le32 ReparseTag;
+-- 
+2.53.0
+

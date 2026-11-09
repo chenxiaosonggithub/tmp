@@ -1,0 +1,71 @@
+From 13865d12ea3e4d1cf7c9f95247279a45330daff1 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:18 +0800
+Subject: [PATCH 08/39] smb/client: rename versioned NTLMSSP negotiate message
+
+Rename struct negotiate_message to negotiate_message_with_version
+to identify the message containing version information. This frees
+the negotiate_message name for the message without version information.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/client/ntlmssp.h |  2 +-
+ fs/smb/client/sess.c    | 10 +++++-----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/fs/smb/client/ntlmssp.h b/fs/smb/client/ntlmssp.h
+index be548abae4c1..aafb1b4b89f2 100644
+--- a/fs/smb/client/ntlmssp.h
++++ b/fs/smb/client/ntlmssp.h
+@@ -41,7 +41,7 @@ struct ntlmssp_version {
+ } __packed;
+ 
+ /* see MS-NLMP section 2.2.1.1 */
+-struct negotiate_message {
++struct negotiate_message_with_version {
+ 	__u8 Signature[sizeof(NTLMSSP_SIGNATURE)];
+ 	__le32 MessageType;     /* NtLmNegotiate = 1 */
+ 	__le32 NegotiateFlags;
+diff --git a/fs/smb/client/sess.c b/fs/smb/client/sess.c
+index 6d54046a6e9f..b4e3b19e6810 100644
+--- a/fs/smb/client/sess.c
++++ b/fs/smb/client/sess.c
+@@ -858,12 +858,12 @@ int build_ntlmssp_smb3_negotiate_blob(unsigned char **pbuffer,
+ 				 struct TCP_Server_Info *server)
+ {
+ 	int rc = 0;
+-	struct negotiate_message *sec_blob;
++	struct negotiate_message_with_version *sec_blob;
+ 	__u32 flags;
+ 	unsigned char *tmp;
+ 	int len;
+ 
+-	len = size_of_ntlmssp_blob(ses, sizeof(struct negotiate_message));
++	len = size_of_ntlmssp_blob(ses, sizeof(struct negotiate_message_with_version));
+ 	*pbuffer = kmalloc(len, GFP_KERNEL);
+ 	if (!*pbuffer) {
+ 		rc = -ENOMEM;
+@@ -871,9 +871,9 @@ int build_ntlmssp_smb3_negotiate_blob(unsigned char **pbuffer,
+ 		*buflen = 0;
+ 		goto setup_ntlm_smb3_neg_ret;
+ 	}
+-	sec_blob = (struct negotiate_message *)*pbuffer;
++	sec_blob = (struct negotiate_message_with_version *)*pbuffer;
+ 
+-	memset(*pbuffer, 0, sizeof(struct negotiate_message));
++	memset(*pbuffer, 0, sizeof(struct negotiate_message_with_version));
+ 	memcpy(sec_blob->Signature, NTLMSSP_SIGNATURE, 8);
+ 	sec_blob->MessageType = NtLmNegotiate;
+ 
+@@ -891,7 +891,7 @@ int build_ntlmssp_smb3_negotiate_blob(unsigned char **pbuffer,
+ 	sec_blob->Version.ProductBuild = cpu_to_le16(LINUX_VERSION_SUBLEVEL);
+ 	sec_blob->Version.NTLMRevisionCurrent = NTLMSSP_REVISION_W2K3;
+ 
+-	tmp = *pbuffer + sizeof(struct negotiate_message);
++	tmp = *pbuffer + sizeof(struct negotiate_message_with_version);
+ 	ses->ntlmssp->client_flags = flags;
+ 	sec_blob->NegotiateFlags = cpu_to_le32(flags);
+ 
+-- 
+2.53.0
+

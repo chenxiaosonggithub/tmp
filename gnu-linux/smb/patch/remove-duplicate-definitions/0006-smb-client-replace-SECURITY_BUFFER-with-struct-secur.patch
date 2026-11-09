@@ -1,0 +1,110 @@
+From 4c9b1529894c5d5c160978702322ff8d02399214 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:18 +0800
+Subject: [PATCH 06/39] smb/client: replace SECURITY_BUFFER with struct
+ security_buffer
+
+Replace the SECURITY_BUFFER typedef and its users with struct
+security_buffer to match the server type name. This prepares the
+definition for sharing with the server.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/client/ntlmssp.h | 32 ++++++++++++++++----------------
+ fs/smb/client/sess.c    |  2 +-
+ 2 files changed, 17 insertions(+), 17 deletions(-)
+
+diff --git a/fs/smb/client/ntlmssp.h b/fs/smb/client/ntlmssp.h
+index 0cd0ba52806d..7f64d0864161 100644
+--- a/fs/smb/client/ntlmssp.h
++++ b/fs/smb/client/ntlmssp.h
+@@ -17,18 +17,18 @@
+ /* OpenGroup and to make the code more closely match the standard in */
+ /* appearance */
+ 
+-typedef struct _SECURITY_BUFFER {
++struct security_buffer {
+ 	__le16 Length;
+ 	__le16 MaximumLength;
+ 	__le32 BufferOffset;	/* offset to buffer */
+-} __packed SECURITY_BUFFER;
++} __packed;
+ 
+ typedef struct _NEGOTIATE_MESSAGE {
+ 	__u8 Signature[sizeof(NTLMSSP_SIGNATURE)];
+ 	__le32 MessageType;     /* NtLmNegotiate = 1 */
+ 	__le32 NegotiateFlags;
+-	SECURITY_BUFFER DomainName;	/* RFC 1001 style and ASCII */
+-	SECURITY_BUFFER WorkstationName;	/* RFC 1001 and ASCII */
++	struct security_buffer DomainName;	/* RFC 1001 style and ASCII */
++	struct security_buffer WorkstationName;	/* RFC 1001 and ASCII */
+ 	/* SECURITY_BUFFER for version info not present since we
+ 	   do not set the version is present flag */
+ 	char DomainString[];
+@@ -51,10 +51,10 @@ struct negotiate_message {
+ 	__u8 Signature[sizeof(NTLMSSP_SIGNATURE)];
+ 	__le32 MessageType;     /* NtLmNegotiate = 1 */
+ 	__le32 NegotiateFlags;
+-	SECURITY_BUFFER DomainName;	/* RFC 1001 style and ASCII */
+-	SECURITY_BUFFER WorkstationName;	/* RFC 1001 and ASCII */
++	struct security_buffer DomainName;	/* RFC 1001 style and ASCII */
++	struct security_buffer WorkstationName;	/* RFC 1001 and ASCII */
+ 	struct	ntlmssp_version Version;
+-	/* SECURITY_BUFFER */
++	/* struct security_buffer */
+ 	char DomainString[];
+ 	/* followed by WorkstationString */
+ } __packed;
+@@ -62,11 +62,11 @@ struct negotiate_message {
+ typedef struct _CHALLENGE_MESSAGE {
+ 	__u8 Signature[sizeof(NTLMSSP_SIGNATURE)];
+ 	__le32 MessageType;   /* NtLmChallenge = 2 */
+-	SECURITY_BUFFER TargetName;
++	struct security_buffer TargetName;
+ 	__le32 NegotiateFlags;
+ 	__u8 Challenge[CIFS_CRYPTO_KEY_SIZE];
+ 	__u8 Reserved[8];
+-	SECURITY_BUFFER TargetInfoArray;
++	struct security_buffer TargetInfoArray;
+ 	/* SECURITY_BUFFER for version info not present since we
+ 	   do not set the version is present flag */
+ } __packed CHALLENGE_MESSAGE, *PCHALLENGE_MESSAGE;
+@@ -74,15 +74,15 @@ typedef struct _CHALLENGE_MESSAGE {
+ typedef struct _AUTHENTICATE_MESSAGE {
+ 	__u8 Signature[sizeof(NTLMSSP_SIGNATURE)];
+ 	__le32 MessageType;  /* NtLmsAuthenticate = 3 */
+-	SECURITY_BUFFER LmChallengeResponse;
+-	SECURITY_BUFFER NtChallengeResponse;
+-	SECURITY_BUFFER DomainName;
+-	SECURITY_BUFFER UserName;
+-	SECURITY_BUFFER WorkstationName;
+-	SECURITY_BUFFER SessionKey;
++	struct security_buffer LmChallengeResponse;
++	struct security_buffer NtChallengeResponse;
++	struct security_buffer DomainName;
++	struct security_buffer UserName;
++	struct security_buffer WorkstationName;
++	struct security_buffer SessionKey;
+ 	__le32 NegotiateFlags;
+ 	struct	ntlmssp_version Version;
+-	/* SECURITY_BUFFER */
++	/* struct security_buffer */
+ 	char UserString[];
+ } __packed AUTHENTICATE_MESSAGE, *PAUTHENTICATE_MESSAGE;
+ 
+diff --git a/fs/smb/client/sess.c b/fs/smb/client/sess.c
+index c1fc90726e2d..6d54046a6e9f 100644
+--- a/fs/smb/client/sess.c
++++ b/fs/smb/client/sess.c
+@@ -755,7 +755,7 @@ static int size_of_ntlmssp_blob(struct cifs_ses *ses, int base_size)
+ 	return sz;
+ }
+ 
+-static inline void cifs_security_buffer_from_str(SECURITY_BUFFER *pbuf,
++static inline void cifs_security_buffer_from_str(struct security_buffer *pbuf,
+ 						 char *str_value,
+ 						 int str_length,
+ 						 unsigned char *pstart,
+-- 
+2.53.0
+

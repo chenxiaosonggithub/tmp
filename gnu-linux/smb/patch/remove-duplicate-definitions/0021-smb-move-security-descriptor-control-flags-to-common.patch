@@ -1,0 +1,207 @@
+From d3b50932f1eba30a1327d089d98991c5dc2c5b7c Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:18 +0800
+Subject: [PATCH 21/39] smb: move security descriptor control flags to
+ common/smbacl.h
+
+The client and server define the same security descriptor control flags
+with different names. Move the definitions to the common header file
+and use ACL_CONTROL_* on both sides.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/client/cifsacl.h            | 18 ------------------
+ fs/smb/common/smbacl.h             | 18 ++++++++++++++++++
+ fs/smb/server/smbacl.c             | 28 ++++++++++++++--------------
+ fs/smb/server/smbacl.h             | 18 ------------------
+ fs/smb/server/tests/smbacl_kunit.c |  2 +-
+ 5 files changed, 33 insertions(+), 51 deletions(-)
+
+diff --git a/fs/smb/client/cifsacl.h b/fs/smb/client/cifsacl.h
+index 31b51a8fc256..58515c82abe8 100644
+--- a/fs/smb/client/cifsacl.h
++++ b/fs/smb/client/cifsacl.h
+@@ -47,24 +47,6 @@ struct smb3_sd {
+ 	__le32 OffsetDacl;
+ } __packed;
+ 
+-/* Meaning of 'Control' field flags */
+-#define ACL_CONTROL_SR	0x8000	/* Self relative */
+-#define ACL_CONTROL_RM	0x4000	/* Resource manager control bits */
+-#define ACL_CONTROL_PS	0x2000	/* SACL protected from inherits */
+-#define ACL_CONTROL_PD	0x1000	/* DACL protected from inherits */
+-#define ACL_CONTROL_SI	0x0800	/* SACL Auto-Inherited */
+-#define ACL_CONTROL_DI	0x0400	/* DACL Auto-Inherited */
+-#define ACL_CONTROL_SC	0x0200	/* SACL computed through inheritance */
+-#define ACL_CONTROL_DC	0x0100	/* DACL computed through inheritance */
+-#define ACL_CONTROL_SS	0x0080	/* Create server ACL */
+-#define ACL_CONTROL_DT	0x0040	/* DACL provided by trusted source */
+-#define ACL_CONTROL_SD	0x0020	/* SACL defaulted */
+-#define ACL_CONTROL_SP	0x0010	/* SACL is present on object */
+-#define ACL_CONTROL_DD	0x0008	/* DACL defaulted */
+-#define ACL_CONTROL_DP	0x0004	/* DACL is present on object */
+-#define ACL_CONTROL_GD	0x0002	/* Group was defaulted */
+-#define ACL_CONTROL_OD	0x0001	/* User was defaulted */
+-
+ /* Meaning of AclRevision flags */
+ #define ACL_REVISION	0x02 /* See section 2.4.4.1 of MS-DTYP */
+ #define ACL_REVISION_DS	0x04 /* Additional AceTypes allowed */
+diff --git a/fs/smb/common/smbacl.h b/fs/smb/common/smbacl.h
+index 70bba5ff7fc1..7afffe5715a0 100644
+--- a/fs/smb/common/smbacl.h
++++ b/fs/smb/common/smbacl.h
+@@ -11,6 +11,24 @@
+ #define NUM_AUTHS (6)	/* number of authority fields */
+ #define SID_MAX_SUB_AUTHORITIES (15) /* max number of sub authority fields */
+ 
++/* Meaning of 'Control' field flags */
++#define ACL_CONTROL_SR	0x8000	/* Self relative */
++#define ACL_CONTROL_RM	0x4000	/* Resource manager control bits */
++#define ACL_CONTROL_PS	0x2000	/* SACL protected from inherits */
++#define ACL_CONTROL_PD	0x1000	/* DACL protected from inherits */
++#define ACL_CONTROL_SI	0x0800	/* SACL Auto-Inherited */
++#define ACL_CONTROL_DI	0x0400	/* DACL Auto-Inherited */
++#define ACL_CONTROL_SC	0x0200	/* SACL computed through inheritance */
++#define ACL_CONTROL_DC	0x0100	/* DACL computed through inheritance */
++#define ACL_CONTROL_SS	0x0080	/* Create server ACL */
++#define ACL_CONTROL_DT	0x0040	/* DACL provided by trusted source */
++#define ACL_CONTROL_SD	0x0020	/* SACL defaulted */
++#define ACL_CONTROL_SP	0x0010	/* SACL is present on object */
++#define ACL_CONTROL_DD	0x0008	/* DACL defaulted */
++#define ACL_CONTROL_DP	0x0004	/* DACL is present on object */
++#define ACL_CONTROL_GD	0x0002	/* Group was defaulted */
++#define ACL_CONTROL_OD	0x0001	/* User was defaulted */
++
+ /* ACE types - see MS-DTYP 2.4.4.1 */
+ #define ACCESS_ALLOWED_ACE_TYPE 0x00
+ #define ACCESS_DENIED_ACE_TYPE  0x01
+diff --git a/fs/smb/server/smbacl.c b/fs/smb/server/smbacl.c
+index 32feafe9f73b..55693bfa7116 100644
+--- a/fs/smb/server/smbacl.c
++++ b/fs/smb/server/smbacl.c
+@@ -926,12 +926,12 @@ int parse_sec_desc(const struct mnt_idmap *idmap, struct smb_ntsd *pntsd,
+ 		    le32_to_cpu(pntsd->sacloffset), dacloffset);
+ 
+ 	pntsd_type = le16_to_cpu(pntsd->type);
+-	if (!(pntsd_type & DACL_PRESENT)) {
++	if (!(pntsd_type & ACL_CONTROL_DP)) {
+ 		ksmbd_debug(SMB, "DACL_PRESENT in DACL type is not set\n");
+ 		return rc;
+ 	}
+ 
+-	pntsd->type = cpu_to_le16(DACL_PRESENT);
++	pntsd->type = cpu_to_le16(ACL_CONTROL_DP);
+ 
+ 	if (pntsd->osidoffset) {
+ 		if (le32_to_cpu(pntsd->osidoffset) < sizeof(struct smb_ntsd) ||
+@@ -975,11 +975,11 @@ int parse_sec_desc(const struct mnt_idmap *idmap, struct smb_ntsd *pntsd,
+ 		}
+ 	}
+ 
+-	if ((pntsd_type & (DACL_AUTO_INHERITED | DACL_AUTO_INHERIT_REQ)) ==
+-	    (DACL_AUTO_INHERITED | DACL_AUTO_INHERIT_REQ))
+-		pntsd->type |= cpu_to_le16(DACL_AUTO_INHERITED);
+-	if (pntsd_type & DACL_PROTECTED)
+-		pntsd->type |= cpu_to_le16(DACL_PROTECTED);
++	if ((pntsd_type & (ACL_CONTROL_DI | ACL_CONTROL_DC)) ==
++	    (ACL_CONTROL_DI | ACL_CONTROL_DC))
++		pntsd->type |= cpu_to_le16(ACL_CONTROL_DI);
++	if (pntsd_type & ACL_CONTROL_PD)
++		pntsd->type |= cpu_to_le16(ACL_CONTROL_PD);
+ 
+ 	if (dacloffset) {
+ 		if (dacloffset < sizeof(struct smb_ntsd) || dacloffset >= acl_len)
+@@ -1074,7 +1074,7 @@ int build_sec_desc(const struct mnt_idmap *idmap,
+ 	offset = sizeof(struct smb_ntsd);
+ 	pntsd->sacloffset = 0;
+ 	pntsd->revision = cpu_to_le16(1);
+-	pntsd->type = cpu_to_le16(SELF_RELATIVE);
++	pntsd->type = cpu_to_le16(ACL_CONTROL_SR);
+ 	if (ppntsd)
+ 		pntsd->type |= ppntsd->type;
+ 
+@@ -1093,7 +1093,7 @@ int build_sec_desc(const struct mnt_idmap *idmap,
+ 	}
+ 
+ 	if (addition_info & DACL_SECINFO) {
+-		pntsd->type |= cpu_to_le16(DACL_PRESENT);
++		pntsd->type |= cpu_to_le16(ACL_CONTROL_DP);
+ 		dacl_ptr = (struct smb_acl *)((char *)pntsd + offset);
+ 		dacl_ptr->revision = cpu_to_le16(2);
+ 		dacl_ptr->size = cpu_to_le16(sizeof(struct smb_acl));
+@@ -1268,7 +1268,7 @@ int smb_inherit_dacl(struct ksmbd_conn *conn,
+ 	parent_aces = (struct smb_ace *)((char *)parent_pdacl +
+ 			sizeof(struct smb_acl));
+ 
+-	if (pntsd_type & DACL_AUTO_INHERITED)
++	if (pntsd_type & ACL_CONTROL_DI)
+ 		inherited_flags = INHERITED_ACE;
+ 
+ 	for (i = 0; i < num_aces; i++) {
+@@ -1380,9 +1380,9 @@ int smb_inherit_dacl(struct ksmbd_conn *conn,
+ 		}
+ 
+ 		pntsd->revision = cpu_to_le16(1);
+-		pntsd->type = cpu_to_le16(SELF_RELATIVE | DACL_PRESENT);
+-		if (le16_to_cpu(parent_pntsd->type) & DACL_AUTO_INHERITED)
+-			pntsd->type |= cpu_to_le16(DACL_AUTO_INHERITED);
++		pntsd->type = cpu_to_le16(ACL_CONTROL_SR | ACL_CONTROL_DP);
++		if (le16_to_cpu(parent_pntsd->type) & ACL_CONTROL_DI)
++			pntsd->type |= cpu_to_le16(ACL_CONTROL_DI);
+ 		pntsd_size = sizeof(struct smb_ntsd);
+ 		pntsd->osidoffset = parent_pntsd->osidoffset;
+ 		pntsd->gsidoffset = parent_pntsd->gsidoffset;
+@@ -1856,7 +1856,7 @@ int set_info_sec(struct ksmbd_conn *conn, struct ksmbd_tree_connect *tcon,
+ 		goto out;
+ 
+ 	/* Check it only calling from SD BUFFER context */
+-	if (type_check && !(le16_to_cpu(pntsd->type) & DACL_PRESENT))
++	if (type_check && !(le16_to_cpu(pntsd->type) & ACL_CONTROL_DP))
+ 		goto out;
+ 
+ 	if (test_share_config_flag(tcon->share_conf, KSMBD_SHARE_FLAG_ACL_XATTR)) {
+diff --git a/fs/smb/server/smbacl.h b/fs/smb/server/smbacl.h
+index 3342cebab333..ffa178fe85f2 100644
+--- a/fs/smb/server/smbacl.h
++++ b/fs/smb/server/smbacl.h
+@@ -19,24 +19,6 @@
+ /* Revision for ACLs */
+ #define SD_REVISION	1
+ 
+-/* Control flags for Security Descriptor */
+-#define OWNER_DEFAULTED		0x0001
+-#define GROUP_DEFAULTED		0x0002
+-#define DACL_PRESENT		0x0004
+-#define DACL_DEFAULTED		0x0008
+-#define SACL_PRESENT		0x0010
+-#define SACL_DEFAULTED		0x0020
+-#define DACL_TRUSTED		0x0040
+-#define SERVER_SECURITY		0x0080
+-#define DACL_AUTO_INHERIT_REQ	0x0100
+-#define SACL_AUTO_INHERIT_REQ	0x0200
+-#define DACL_AUTO_INHERITED	0x0400
+-#define SACL_AUTO_INHERITED	0x0800
+-#define DACL_PROTECTED		0x1000
+-#define SACL_PROTECTED		0x2000
+-#define RM_CONTROL_VALID	0x4000
+-#define SELF_RELATIVE		0x8000
+-
+ struct ksmbd_conn;
+ 
+ struct smb_fattr {
+diff --git a/fs/smb/server/tests/smbacl_kunit.c b/fs/smb/server/tests/smbacl_kunit.c
+index 33496b4d31a3..bfc2a89e1023 100644
+--- a/fs/smb/server/tests/smbacl_kunit.c
++++ b/fs/smb/server/tests/smbacl_kunit.c
+@@ -189,7 +189,7 @@ static struct smb_ntsd *build_boundary_ntsd(struct kunit *test,
+ 		return NULL;
+ 
+ 	pntsd->revision = cpu_to_le16(SD_REVISION);
+-	pntsd->type = cpu_to_le16(DACL_PRESENT);
++	pntsd->type = cpu_to_le16(ACL_CONTROL_DP);
+ 	pntsd->dacloffset = cpu_to_le32(sizeof(struct smb_ntsd));
+ 
+ 	pdacl = (struct smb_acl *)((char *)pntsd + sizeof(struct smb_ntsd));
+-- 
+2.53.0
+

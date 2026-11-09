@@ -1,0 +1,68 @@
+From ff8e2e838cb6ba059da899cfdee86f12040b5fb8 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:21 +0800
+Subject: [PATCH 29/39] smb: move smb2_file_attr_tag_info to common/fscc.h
+
+file_attrib_tag and smb2_file_attr_tag_info describe the same file
+attribute tag information layout. Remove the unused client definition
+and move the server definition to the common header file.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/client/smb1pdu.h | 5 -----
+ fs/smb/common/fscc.h    | 6 ++++++
+ fs/smb/server/smb2pdu.h | 5 -----
+ 3 files changed, 6 insertions(+), 10 deletions(-)
+
+diff --git a/fs/smb/client/smb1pdu.h b/fs/smb/client/smb1pdu.h
+index cd0acf5c0546..788b1755f669 100644
+--- a/fs/smb/client/smb1pdu.h
++++ b/fs/smb/client/smb1pdu.h
+@@ -2075,11 +2075,6 @@ struct file_internal_info {
+ 	__le64  UniqueId; /* inode number */
+ } __packed;      /* level 0x3ee */
+ 
+-struct file_attrib_tag {
+-	__le32 Attribute;
+-	__le32 ReparseTag;
+-} __packed;      /* level 0x40b */
+-
+ 
+ /********************************************************/
+ /*  FindFirst/FindNext transact2 data buffer formats    */
+diff --git a/fs/smb/common/fscc.h b/fs/smb/common/fscc.h
+index 81a352299c9f..9236ba58f8b1 100644
+--- a/fs/smb/common/fscc.h
++++ b/fs/smb/common/fscc.h
+@@ -249,6 +249,12 @@ struct smb2_file_all_info { /* data block encoding of response to level 18 */
+ 	};
+ } __packed; /* level 18 Query */
+ 
++/* See MS-FSCC 2.4.6 */
++struct smb2_file_attr_tag_info {
++	__le32 FileAttributes;
++	__le32 ReparseTag;
++} __packed;
++
+ /* See MS-FSCC 2.4.7 */
+ typedef struct file_basic_info { /* data block encoding of response to level 18 */
+ 	__le64 CreationTime;
+diff --git a/fs/smb/server/smb2pdu.h b/fs/smb/server/smb2pdu.h
+index 68644b7fbfe8..e1b8c4cb0467 100644
+--- a/fs/smb/server/smb2pdu.h
++++ b/fs/smb/server/smb2pdu.h
+@@ -292,11 +292,6 @@ struct smb2_file_pos_info {
+ 
+ #define FILE_MODE_INFO_MASK cpu_to_le32(0x0000100e)
+ 
+-struct smb2_file_attr_tag_info {
+-	__le32 FileAttributes;
+-	__le32 ReparseTag;
+-} __packed;
+-
+ #define SL_RESTART_SCAN	0x00000001
+ #define SL_RETURN_SINGLE_ENTRY	0x00000002
+ #define SL_INDEX_SPECIFIED	0x00000004
+-- 
+2.53.0
+

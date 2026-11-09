@@ -1,0 +1,67 @@
+From fccc6afbf307431d4d18c80ccc22f487599e8235 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:18 +0800
+Subject: [PATCH 07/39] smb: move security_buffer to common/ntlmssp.h
+
+The fields of struct security_buffer are the same on both client and
+server. Move the duplicate definitions to the common header file.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/client/ntlmssp.h | 6 ------
+ fs/smb/common/ntlmssp.h | 6 ++++++
+ fs/smb/server/ntlmssp.h | 6 ------
+ 3 files changed, 6 insertions(+), 12 deletions(-)
+
+diff --git a/fs/smb/client/ntlmssp.h b/fs/smb/client/ntlmssp.h
+index 7f64d0864161..be548abae4c1 100644
+--- a/fs/smb/client/ntlmssp.h
++++ b/fs/smb/client/ntlmssp.h
+@@ -17,12 +17,6 @@
+ /* OpenGroup and to make the code more closely match the standard in */
+ /* appearance */
+ 
+-struct security_buffer {
+-	__le16 Length;
+-	__le16 MaximumLength;
+-	__le32 BufferOffset;	/* offset to buffer */
+-} __packed;
+-
+ typedef struct _NEGOTIATE_MESSAGE {
+ 	__u8 Signature[sizeof(NTLMSSP_SIGNATURE)];
+ 	__le32 MessageType;     /* NtLmNegotiate = 1 */
+diff --git a/fs/smb/common/ntlmssp.h b/fs/smb/common/ntlmssp.h
+index 0b159e79bd7d..a14a83648604 100644
+--- a/fs/smb/common/ntlmssp.h
++++ b/fs/smb/common/ntlmssp.h
+@@ -93,4 +93,10 @@ enum av_field_type {
+ #define CIFS_CPHTXT_SIZE (16)
+ #define CIFS_NTHASH_SIZE (16)
+ 
++struct security_buffer {
++	__le16 Length;
++	__le16 MaximumLength;
++	__le32 BufferOffset;	/* offset to buffer */
++} __packed;
++
+ #endif /* _COMMON_NTLMSSP_H */
+diff --git a/fs/smb/server/ntlmssp.h b/fs/smb/server/ntlmssp.h
+index e7e2f361c94f..59bff4a86617 100644
+--- a/fs/smb/server/ntlmssp.h
++++ b/fs/smb/server/ntlmssp.h
+@@ -20,12 +20,6 @@
+ /* OpenGroup and to make the code more closely match the standard in */
+ /* appearance */
+ 
+-struct security_buffer {
+-	__le16 Length;
+-	__le16 MaximumLength;
+-	__le32 BufferOffset;	/* offset to buffer */
+-} __packed;
+-
+ struct target_info {
+ 	__le16 Type;
+ 	__le16 Length;
+-- 
+2.53.0
+

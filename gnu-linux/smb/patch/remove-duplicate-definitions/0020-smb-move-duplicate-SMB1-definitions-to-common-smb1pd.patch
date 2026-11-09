@@ -1,0 +1,120 @@
+From 1dc4a76bd934320c43ed09e52d98a45c6dc1d742 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:18 +0800
+Subject: [PATCH 20/39] smb: move duplicate SMB1 definitions to
+ common/smb1pdu.h
+
+Move BAD_PROT, SMB_COM_NEGOTIATE and the duplicate SMB header flags to
+the common header file.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/client/smb1pdu.h    |  7 -------
+ fs/smb/common/smb1pdu.h    | 15 +++++++++++++++
+ fs/smb/server/smb_common.h | 15 ---------------
+ 3 files changed, 15 insertions(+), 22 deletions(-)
+
+diff --git a/fs/smb/client/smb1pdu.h b/fs/smb/client/smb1pdu.h
+index 6d66cd203d7d..814be567ac18 100644
+--- a/fs/smb/client/smb1pdu.h
++++ b/fs/smb/client/smb1pdu.h
+@@ -14,7 +14,6 @@
+ 
+ #define CIFS_PROT   0
+ #define POSIX_PROT  (CIFS_PROT+1)
+-#define BAD_PROT 0xFFFF
+ 
+ /* SMB command codes:
+  * See MS-CIFS 2.2.2.1
+@@ -40,7 +39,6 @@
+ #define SMB_COM_TRANSACTION2_SECONDARY 0x33
+ #define SMB_COM_FIND_CLOSE2           0x34 /* trivial response */
+ #define SMB_COM_TREE_DISCONNECT       0x71 /* trivial response */
+-#define SMB_COM_NEGOTIATE             0x72
+ #define SMB_COM_SESSION_SETUP_ANDX    0x73
+ #define SMB_COM_LOGOFF_ANDX           0x74 /* trivial response */
+ #define SMB_COM_TREE_CONNECT_ANDX     0x75
+@@ -136,7 +134,6 @@
+ #define SMBFLG_CANONICAL_PATH_FORMAT 0x10	/* obsolete */
+ #define SMBFLG_OLD_OPLOCK 0x20	/* obsolete */
+ #define SMBFLG_OLD_OPLOCK_NOTIFY 0x40	/* obsolete */
+-#define SMBFLG_RESPONSE 0x80	/* this PDU is a response from server */
+ 
+ /*
+  * SMB flag2 definitions
+@@ -149,13 +146,9 @@
+ #define SMBFLG2_SECURITY_SIGNATURE cpu_to_le16(4)
+ #define SMBFLG2_COMPRESSED (8)
+ #define SMBFLG2_SECURITY_SIGNATURE_REQUIRED (0x10)
+-#define SMBFLG2_IS_LONG_NAME cpu_to_le16(0x40)
+ #define SMBFLG2_REPARSE_PATH (0x400)
+-#define SMBFLG2_EXT_SEC cpu_to_le16(0x800)
+ #define SMBFLG2_DFS cpu_to_le16(0x1000)
+ #define SMBFLG2_PAGING_IO cpu_to_le16(0x2000)
+-#define SMBFLG2_ERR_STATUS cpu_to_le16(0x4000)
+-#define SMBFLG2_UNICODE cpu_to_le16(0x8000)
+ 
+ /* Combinations of file access permission bits */
+ #define SET_FILE_READ_RIGHTS (FILE_READ_DATA | FILE_READ_EA | FILE_WRITE_EA \
+diff --git a/fs/smb/common/smb1pdu.h b/fs/smb/common/smb1pdu.h
+index df6d4e11ae92..47e1dc0570ac 100644
+--- a/fs/smb/common/smb1pdu.h
++++ b/fs/smb/common/smb1pdu.h
+@@ -13,6 +13,21 @@
+ 
+ #define SMB1_PROTO_NUMBER		cpu_to_le32(0x424d53ff)
+ 
++#define BAD_PROT			0xFFFF
++#define SMB_COM_NEGOTIATE		0x72 /* See MS-CIFS 2.2.2.1 */
++
++/* See MS-CIFS 2.2.3.1 */
++#define SMBFLG_RESPONSE 0x80	/* this PDU is a response from server */
++
++/*
++ * See MS-CIFS 2.2.3.1
++ *     MS-SMB 2.2.3.1
++ */
++#define SMBFLG2_IS_LONG_NAME	cpu_to_le16(0x40)
++#define SMBFLG2_EXT_SEC		cpu_to_le16(0x800)
++#define SMBFLG2_ERR_STATUS	cpu_to_le16(0x4000)
++#define SMBFLG2_UNICODE		cpu_to_le16(0x8000)
++
+ /*
+  * See MS-CIFS 2.2.3.1
+  *     MS-SMB 2.2.3.1
+diff --git a/fs/smb/server/smb_common.h b/fs/smb/server/smb_common.h
+index a9cc09e31721..c778da14f71e 100644
+--- a/fs/smb/server/smb_common.h
++++ b/fs/smb/server/smb_common.h
+@@ -26,7 +26,6 @@
+ #define SMB30_PROT		4
+ #define SMB302_PROT		5
+ #define SMB311_PROT		6
+-#define BAD_PROT		0xFFFF
+ 
+ #define SMB_ECHO_INTERVAL	(60 * HZ)
+ 
+@@ -69,20 +68,6 @@
+ 		FILE_EXECUTE | FILE_DELETE_CHILD | \
+ 		FILE_READ_ATTRIBUTES | FILE_WRITE_ATTRIBUTES)
+ 
+-#define SMB_COM_NEGOTIATE		0x72 /* See MS-CIFS 2.2.2.1 */
+-
+-/* See MS-CIFS 2.2.3.1 */
+-#define SMBFLG_RESPONSE 0x80	/* this PDU is a response from server */
+-
+-/*
+- * See MS-CIFS 2.2.3.1
+- *     MS-SMB 2.2.3.1
+- */
+-#define SMBFLG2_IS_LONG_NAME	cpu_to_le16(0x40)
+-#define SMBFLG2_EXT_SEC		cpu_to_le16(0x800)
+-#define SMBFLG2_ERR_STATUS	cpu_to_le16(0x4000)
+-#define SMBFLG2_UNICODE		cpu_to_le16(0x8000)
+-
+ /* See MS-CIFS 2.2.4.52.2 */
+ struct smb_negotiate_rsp {
+ 	struct smb_hdr hdr;     /* wct = 17 */
+-- 
+2.53.0
+

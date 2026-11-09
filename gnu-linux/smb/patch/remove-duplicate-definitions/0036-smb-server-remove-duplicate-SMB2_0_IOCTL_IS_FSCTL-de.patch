@@ -1,0 +1,30 @@
+From 61e86003c8294b6b53804275e8e0b0735a161cd6 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:23 +0800
+Subject: [PATCH 36/39] smb/server: remove duplicate SMB2_0_IOCTL_IS_FSCTL
+ definition
+
+SMB2_0_IOCTL_IS_FSCTL is already defined in common/smb2pdu.h. Remove
+the duplicate server definition.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/server/smb2pdu.h | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/fs/smb/server/smb2pdu.h b/fs/smb/server/smb2pdu.h
+index 90af5583327a..11f8b87ef5a4 100644
+--- a/fs/smb/server/smb2pdu.h
++++ b/fs/smb/server/smb2pdu.h
+@@ -170,8 +170,6 @@ struct create_posix_rsp {
+ 
+ __le32 smb2_get_reparse_tag_special_file(umode_t mode);
+ 
+-#define SMB2_0_IOCTL_IS_FSCTL 0x00000001
+-
+ struct sockaddr_storage_rsp {
+ 	__le16 Family;
+ 	union {
+-- 
+2.53.0
+

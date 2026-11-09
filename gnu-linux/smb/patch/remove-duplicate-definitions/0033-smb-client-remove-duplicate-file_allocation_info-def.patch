@@ -1,0 +1,32 @@
+From 912bdee099d7d36fde5b3c3c9d8b4bc232998158 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:22 +0800
+Subject: [PATCH 33/39] smb/client: remove duplicate file_allocation_info
+ definition
+
+file_allocation_info is unused and describes the same layout as
+smb2_file_alloc_info in common/fscc.h. Remove the duplicate definition.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/client/smb1pdu.h | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/fs/smb/client/smb1pdu.h b/fs/smb/client/smb1pdu.h
+index 8a6587dbc117..70d2e68bd162 100644
+--- a/fs/smb/client/smb1pdu.h
++++ b/fs/smb/client/smb1pdu.h
+@@ -1984,10 +1984,6 @@ typedef struct {
+ 	__le32 EASize;
+ } __packed FILE_INFO_STANDARD;  /* level 1 SetPath/FileInfo */
+ 
+-struct file_allocation_info {
+-	__le64 AllocationSize; /* Note old Samba srvr rounds this up too much */
+-} __packed; /* size used on disk, for level 0x103 for set, 0x105 for query */
+-
+ struct file_alt_name_info {
+ 	DECLARE_FLEX_ARRAY(__u8, alt_name);
+ } __packed;      /* level 0x0108 */
+-- 
+2.53.0
+

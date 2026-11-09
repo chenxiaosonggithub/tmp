@@ -1,0 +1,36 @@
+From 7519645dad81e96d745ff748e340531ddc1e472b Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:18 +0800
+Subject: [PATCH 01/39] smb/client: add include guard to ntlmssp.h
+
+Add an include guard to the client NTLMSSP header before sharing its
+protocol definitions with the server.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/client/ntlmssp.h | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/fs/smb/client/ntlmssp.h b/fs/smb/client/ntlmssp.h
+index 0957b4002b9c..e5582219a026 100644
+--- a/fs/smb/client/ntlmssp.h
++++ b/fs/smb/client/ntlmssp.h
+@@ -6,6 +6,9 @@
+  *
+  */
+ 
++#ifndef _CIFS_NTLMSSP_H
++#define _CIFS_NTLMSSP_H
++
+ #define NTLMSSP_SIGNATURE "NTLMSSP"
+ /* Message Types */
+ #define NtLmNegotiate     cpu_to_le32(1)
+@@ -153,3 +156,5 @@ int build_ntlmssp_smb3_negotiate_blob(unsigned char **pbuffer, u16 *buflen,
+ int build_ntlmssp_auth_blob(unsigned char **pbuffer, u16 *buflen,
+ 			    struct cifs_ses *ses,
+ 			    struct TCP_Server_Info *server);
++
++#endif /* _CIFS_NTLMSSP_H */
+-- 
+2.53.0
+

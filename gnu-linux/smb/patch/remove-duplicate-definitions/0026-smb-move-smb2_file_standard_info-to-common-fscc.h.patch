@@ -1,0 +1,81 @@
+From fa4b80c4eb686d4f5b97c9ea191629094349cbb4 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:20 +0800
+Subject: [PATCH 26/39] smb: move smb2_file_standard_info to common/fscc.h
+
+FILE_STANDARD_INFO and smb2_file_standard_info describe the same file
+standard information layout. Remove the unused client definition and
+move the server definition to the common header file.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/client/smb1pdu.h | 10 ----------
+ fs/smb/common/fscc.h    | 10 ++++++++++
+ fs/smb/server/smb2pdu.h |  9 ---------
+ 3 files changed, 10 insertions(+), 19 deletions(-)
+
+diff --git a/fs/smb/client/smb1pdu.h b/fs/smb/client/smb1pdu.h
+index 814be567ac18..1a41fe3be280 100644
+--- a/fs/smb/client/smb1pdu.h
++++ b/fs/smb/client/smb1pdu.h
+@@ -1928,16 +1928,6 @@ typedef struct { /* data block encoding of response to level 263 QPathInfo */
+ 	};
+ } __packed FILE_ALL_INFO;	/* level 0x107 QPathInfo */
+ 
+-typedef struct {
+-	__le64 AllocationSize;
+-	__le64 EndOfFile;	/* size ie offset to first free byte in file */
+-	__le32 NumberOfLinks;	/* hard links */
+-	__u8 DeletePending;
+-	__u8 Directory;
+-	__u16 Pad;
+-} __packed FILE_STANDARD_INFO;	/* level 0x102 QPathInfo */
+-
+-
+ /* defines for enumerating possible values of the Unix type field below */
+ #define UNIX_FILE      0
+ #define UNIX_DIR       1
+diff --git a/fs/smb/common/fscc.h b/fs/smb/common/fscc.h
+index cc04b9fa7e1e..d51b0712288c 100644
+--- a/fs/smb/common/fscc.h
++++ b/fs/smb/common/fscc.h
+@@ -396,6 +396,16 @@ struct smb2_file_rename_info { /* encoding of request for level 10 */
+ static_assert(offsetof(struct smb2_file_rename_info, FileName) == sizeof(struct smb2_file_rename_info_hdr),
+ 	      "struct member likely outside of __struct_group()");
+ 
++/* See MS-FSCC 2.4.47 */
++struct smb2_file_standard_info {
++	__le64 AllocationSize;
++	__le64 EndOfFile;
++	__le32 NumberOfLinks;
++	__u8   DeletePending;
++	__u8   Directory;
++	__le16 Reserved;
++} __packed;
++
+ /* File System Information Classes */
+ /* See MS-FSCC 2.5 */
+ #define FS_VOLUME_INFORMATION		1 /* Query */
+diff --git a/fs/smb/server/smb2pdu.h b/fs/smb/server/smb2pdu.h
+index 4d51e9a2ea05..c85e6ec5cdb5 100644
+--- a/fs/smb/server/smb2pdu.h
++++ b/fs/smb/server/smb2pdu.h
+@@ -278,15 +278,6 @@ struct srv_snapshot_array {
+ 	__le32 Reserved;
+ } __packed;
+ 
+-struct smb2_file_standard_info {
+-	__le64 AllocationSize;
+-	__le64 EndOfFile;
+-	__le32 NumberOfLinks;	/* hard links */
+-	__u8   DeletePending;
+-	__u8   Directory;
+-	__le16 Reserved;
+-} __packed; /* level 18 Query */
+-
+ struct smb2_file_ea_info {
+ 	__le32 EASize;
+ } __packed;
+-- 
+2.53.0
+

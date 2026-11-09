@@ -1,0 +1,65 @@
+From bc44f467880ae7a7bd4e1503945002437b407168 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:20 +0800
+Subject: [PATCH 28/39] smb: move smb2_file_mode_info to common/fscc.h
+
+file_mode_info and smb2_file_mode_info describe the same file mode
+information layout. Remove the unused client definition and move the
+server definition to the common header file.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/client/smb1pdu.h | 4 ----
+ fs/smb/common/fscc.h    | 5 +++++
+ fs/smb/server/smb2pdu.h | 4 ----
+ 3 files changed, 5 insertions(+), 8 deletions(-)
+
+diff --git a/fs/smb/client/smb1pdu.h b/fs/smb/client/smb1pdu.h
+index 592980651d69..cd0acf5c0546 100644
+--- a/fs/smb/client/smb1pdu.h
++++ b/fs/smb/client/smb1pdu.h
+@@ -2075,10 +2075,6 @@ struct file_internal_info {
+ 	__le64  UniqueId; /* inode number */
+ } __packed;      /* level 0x3ee */
+ 
+-struct file_mode_info {
+-	__le32	Mode;
+-} __packed;      /* level 0x3f8 */
+-
+ struct file_attrib_tag {
+ 	__le32 Attribute;
+ 	__le32 ReparseTag;
+diff --git a/fs/smb/common/fscc.h b/fs/smb/common/fscc.h
+index 68e9393a7012..81a352299c9f 100644
+--- a/fs/smb/common/fscc.h
++++ b/fs/smb/common/fscc.h
+@@ -376,6 +376,11 @@ struct smb2_file_link_info { /* encoding of request for level 11 */
+ static_assert(offsetof(struct smb2_file_link_info, FileName) == sizeof(struct smb2_file_link_info_hdr),
+ 	      "struct member likely outside of __struct_group()");
+ 
++/* See MS-FSCC 2.4.31 */
++struct smb2_file_mode_info {
++	__le32 Mode;
++} __packed;
++
+ /* See MS-FSCC 2.4.34 */
+ struct smb2_file_network_open_info {
+ 	struct_group_attr(network_open_info, __packed,
+diff --git a/fs/smb/server/smb2pdu.h b/fs/smb/server/smb2pdu.h
+index d2fad9b20911..68644b7fbfe8 100644
+--- a/fs/smb/server/smb2pdu.h
++++ b/fs/smb/server/smb2pdu.h
+@@ -292,10 +292,6 @@ struct smb2_file_pos_info {
+ 
+ #define FILE_MODE_INFO_MASK cpu_to_le32(0x0000100e)
+ 
+-struct smb2_file_mode_info {
+-	__le32 Mode;
+-} __packed;
+-
+ struct smb2_file_attr_tag_info {
+ 	__le32 FileAttributes;
+ 	__le32 ReparseTag;
+-- 
+2.53.0
+

@@ -1,0 +1,81 @@
+From 9d8ca4a7a81aa30cfa1aebf90e6037164c18b7ff Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:18 +0800
+Subject: [PATCH 09/39] smb/client: replace NEGOTIATE_MESSAGE with struct
+ negotiate_message
+
+Replace the NEGOTIATE_MESSAGE typedef and its users with struct
+negotiate_message to match the server type name. This prepares the
+definition for sharing with the server.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/client/ntlmssp.h |  4 ++--
+ fs/smb/client/sess.c    | 10 +++++-----
+ 2 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/fs/smb/client/ntlmssp.h b/fs/smb/client/ntlmssp.h
+index aafb1b4b89f2..0dfddc43e91b 100644
+--- a/fs/smb/client/ntlmssp.h
++++ b/fs/smb/client/ntlmssp.h
+@@ -17,7 +17,7 @@
+ /* OpenGroup and to make the code more closely match the standard in */
+ /* appearance */
+ 
+-typedef struct _NEGOTIATE_MESSAGE {
++struct negotiate_message {
+ 	__u8 Signature[sizeof(NTLMSSP_SIGNATURE)];
+ 	__le32 MessageType;     /* NtLmNegotiate = 1 */
+ 	__le32 NegotiateFlags;
+@@ -27,7 +27,7 @@ typedef struct _NEGOTIATE_MESSAGE {
+ 	   do not set the version is present flag */
+ 	char DomainString[];
+ 	/* followed by WorkstationString */
+-} __packed NEGOTIATE_MESSAGE, *PNEGOTIATE_MESSAGE;
++} __packed;
+ 
+ #define NTLMSSP_REVISION_W2K3 0x0F
+ 
+diff --git a/fs/smb/client/sess.c b/fs/smb/client/sess.c
+index b4e3b19e6810..cdcea8cd7b31 100644
+--- a/fs/smb/client/sess.c
++++ b/fs/smb/client/sess.c
+@@ -797,12 +797,12 @@ int build_ntlmssp_negotiate_blob(unsigned char **pbuffer,
+ 				 struct TCP_Server_Info *server)
+ {
+ 	int rc = 0;
+-	NEGOTIATE_MESSAGE *sec_blob;
++	struct negotiate_message *sec_blob;
+ 	__u32 flags;
+ 	unsigned char *tmp;
+ 	int len;
+ 
+-	len = size_of_ntlmssp_blob(ses, sizeof(NEGOTIATE_MESSAGE));
++	len = size_of_ntlmssp_blob(ses, sizeof(struct negotiate_message));
+ 	*pbuffer = kmalloc(len, GFP_KERNEL);
+ 	if (!*pbuffer) {
+ 		rc = -ENOMEM;
+@@ -810,9 +810,9 @@ int build_ntlmssp_negotiate_blob(unsigned char **pbuffer,
+ 		*buflen = 0;
+ 		goto setup_ntlm_neg_ret;
+ 	}
+-	sec_blob = (NEGOTIATE_MESSAGE *)*pbuffer;
++	sec_blob = (struct negotiate_message *)*pbuffer;
+ 
+-	memset(*pbuffer, 0, sizeof(NEGOTIATE_MESSAGE));
++	memset(*pbuffer, 0, sizeof(struct negotiate_message));
+ 	memcpy(sec_blob->Signature, NTLMSSP_SIGNATURE, 8);
+ 	sec_blob->MessageType = NtLmNegotiate;
+ 
+@@ -825,7 +825,7 @@ int build_ntlmssp_negotiate_blob(unsigned char **pbuffer,
+ 	if (!server->session_estab || ses->ntlmssp->sesskey_per_smbsess)
+ 		flags |= NTLMSSP_NEGOTIATE_KEY_XCH;
+ 
+-	tmp = *pbuffer + sizeof(NEGOTIATE_MESSAGE);
++	tmp = *pbuffer + sizeof(struct negotiate_message);
+ 	ses->ntlmssp->client_flags = flags;
+ 	sec_blob->NegotiateFlags = cpu_to_le32(flags);
+ 
+-- 
+2.53.0
+

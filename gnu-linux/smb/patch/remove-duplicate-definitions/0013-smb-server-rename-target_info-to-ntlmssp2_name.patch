@@ -1,0 +1,80 @@
+From 2a86e800d11e512a063481192158b29edaab885e Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:18 +0800
+Subject: [PATCH 13/39] smb/server: rename target_info to ntlmssp2_name
+
+Rename struct target_info to ntlmssp2_name and its fields Type, Length
+and Content to type, length and data. This matches the client AV pair
+definition and prepares it for sharing.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/server/auth.c    | 16 ++++++++--------
+ fs/smb/server/ntlmssp.h |  8 ++++----
+ 2 files changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/fs/smb/server/auth.c b/fs/smb/server/auth.c
+index 0c51ca0cb14d..bbc706948309 100644
+--- a/fs/smb/server/auth.c
++++ b/fs/smb/server/auth.c
+@@ -307,7 +307,7 @@ unsigned int
+ ksmbd_build_ntlmssp_challenge_blob(struct challenge_message *chgblob,
+ 				   struct ksmbd_conn *conn)
+ {
+-	struct target_info *tinfo;
++	struct ntlmssp2_name *tinfo;
+ 	wchar_t *name;
+ 	__u8 *target_name;
+ 	unsigned int flags, blob_off, blob_len, type, target_info_len = 0;
+@@ -374,22 +374,22 @@ ksmbd_build_ntlmssp_challenge_blob(struct challenge_message *chgblob,
+ 
+ 	target_name = (__u8 *)chgblob + blob_off;
+ 	memcpy(target_name, name, uni_len);
+-	tinfo = (struct target_info *)(target_name + uni_len);
++	tinfo = (struct ntlmssp2_name *)(target_name + uni_len);
+ 
+ 	chgblob->TargetInfoArray.Length = 0;
+ 	/* Add target info list for NetBIOS/DNS settings */
+ 	for (type = NTLMSSP_AV_NB_COMPUTER_NAME;
+ 	     type <= NTLMSSP_AV_DNS_DOMAIN_NAME; type++) {
+-		tinfo->Type = cpu_to_le16(type);
+-		tinfo->Length = cpu_to_le16(uni_len);
+-		memcpy(tinfo->Content, name, uni_len);
+-		tinfo = (struct target_info *)((char *)tinfo + 4 + uni_len);
++		tinfo->type = cpu_to_le16(type);
++		tinfo->length = cpu_to_le16(uni_len);
++		memcpy(tinfo->data, name, uni_len);
++		tinfo = (struct ntlmssp2_name *)((char *)tinfo + 4 + uni_len);
+ 		target_info_len += 4 + uni_len;
+ 	}
+ 
+ 	/* Add terminator subblock */
+-	tinfo->Type = 0;
+-	tinfo->Length = 0;
++	tinfo->type = 0;
++	tinfo->length = 0;
+ 	target_info_len += 4;
+ 
+ 	chgblob->TargetInfoArray.Length = cpu_to_le16(target_info_len);
+diff --git a/fs/smb/server/ntlmssp.h b/fs/smb/server/ntlmssp.h
+index 856e76694d9e..ce927e1f54b5 100644
+--- a/fs/smb/server/ntlmssp.h
++++ b/fs/smb/server/ntlmssp.h
+@@ -20,10 +20,10 @@
+ /* OpenGroup and to make the code more closely match the standard in */
+ /* appearance */
+ 
+-struct target_info {
+-	__le16 Type;
+-	__le16 Length;
+-	__u8 Content[];
++struct ntlmssp2_name {
++	__le16 type;
++	__le16 length;
++	__u8 data[];
+ } __packed;
+ 
+ struct authenticate_message {
+-- 
+2.53.0
+

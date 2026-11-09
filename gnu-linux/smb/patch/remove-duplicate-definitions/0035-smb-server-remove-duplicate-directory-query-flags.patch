@@ -1,0 +1,32 @@
+From 7d9ee6d0b7785558e25399586da79a11b7dba7ba Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:22 +0800
+Subject: [PATCH 35/39] smb/server: remove duplicate directory query flags
+
+SL_RESTART_SCAN, SL_RETURN_SINGLE_ENTRY and SL_INDEX_SPECIFIED are
+already defined in common/smb2pdu.h. Remove the duplicate server
+definitions.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/server/smb2pdu.h | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/fs/smb/server/smb2pdu.h b/fs/smb/server/smb2pdu.h
+index 3402bcf45a0e..90af5583327a 100644
+--- a/fs/smb/server/smb2pdu.h
++++ b/fs/smb/server/smb2pdu.h
+@@ -292,10 +292,6 @@ struct smb2_file_pos_info {
+ 
+ #define FILE_MODE_INFO_MASK cpu_to_le32(0x0000100e)
+ 
+-#define SL_RESTART_SCAN	0x00000001
+-#define SL_RETURN_SINGLE_ENTRY	0x00000002
+-#define SL_INDEX_SPECIFIED	0x00000004
+-
+ struct smb2_ea_info_req {
+ 	__le32 NextEntryOffset;
+ 	__u8   EaNameLength;
+-- 
+2.53.0
+

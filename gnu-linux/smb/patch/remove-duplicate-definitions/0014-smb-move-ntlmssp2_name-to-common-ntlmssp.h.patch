@@ -1,0 +1,67 @@
+From 5e77d2bfb70eb6968f07af471ba1504c499da37e Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:18 +0800
+Subject: [PATCH 14/39] smb: move ntlmssp2_name to common/ntlmssp.h
+
+The fields of struct ntlmssp2_name are the same on both client and
+server. Move the duplicate definitions to the common header file.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/client/smb1pdu.h | 6 ------
+ fs/smb/common/ntlmssp.h | 6 ++++++
+ fs/smb/server/ntlmssp.h | 6 ------
+ 3 files changed, 6 insertions(+), 12 deletions(-)
+
+diff --git a/fs/smb/client/smb1pdu.h b/fs/smb/client/smb1pdu.h
+index 71bd8fdf3558..5589789a327f 100644
+--- a/fs/smb/client/smb1pdu.h
++++ b/fs/smb/client/smb1pdu.h
+@@ -497,12 +497,6 @@ typedef union smb_com_session_setup_andx {
+ #define NTLMSSP_DNS_DOMAIN_TYPE	4
+ #define NTLMSSP_DNS_PARENT_TYPE	5
+ 
+-struct ntlmssp2_name {
+-	__le16 type;
+-	__le16 length;
+-	__u8 data[];
+-} __packed;
+-
+ struct ntlmv2_resp {
+ 	union {
+ 	    char ntlmv2_hash[CIFS_ENCPWD_SIZE];
+diff --git a/fs/smb/common/ntlmssp.h b/fs/smb/common/ntlmssp.h
+index 04f09e17ec77..4014286d101c 100644
+--- a/fs/smb/common/ntlmssp.h
++++ b/fs/smb/common/ntlmssp.h
+@@ -127,4 +127,10 @@ struct challenge_message {
+ 	 */
+ } __packed;
+ 
++struct ntlmssp2_name {
++	__le16 type;
++	__le16 length;
++	__u8 data[];
++} __packed;
++
+ #endif /* _COMMON_NTLMSSP_H */
+diff --git a/fs/smb/server/ntlmssp.h b/fs/smb/server/ntlmssp.h
+index ce927e1f54b5..3b5f2501e4ea 100644
+--- a/fs/smb/server/ntlmssp.h
++++ b/fs/smb/server/ntlmssp.h
+@@ -20,12 +20,6 @@
+ /* OpenGroup and to make the code more closely match the standard in */
+ /* appearance */
+ 
+-struct ntlmssp2_name {
+-	__le16 type;
+-	__le16 length;
+-	__u8 data[];
+-} __packed;
+-
+ struct authenticate_message {
+ 	__u8 Signature[sizeof(NTLMSSP_SIGNATURE)];
+ 	__le32 MessageType;  /* NtLmsAuthenticate = 3 */
+-- 
+2.53.0
+

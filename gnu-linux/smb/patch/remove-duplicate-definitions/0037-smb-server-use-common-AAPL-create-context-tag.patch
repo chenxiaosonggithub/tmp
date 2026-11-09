@@ -1,0 +1,54 @@
+From dee9f6406b28281d7119cfd70b4fac95b6eda498 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:23 +0800
+Subject: [PATCH 37/39] smb/server: use common AAPL create context tag
+
+SMB2_CREATE_AAPL has the same value as SMB2_CREATE_TAG_AAPL in the
+common header file. Remove the duplicate definition and use the
+common name.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/server/smb2pdu.c | 4 ++--
+ fs/smb/server/smb2pdu.h | 3 ---
+ 2 files changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index 31e2c4d7b51d..f74c289794db 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -4750,7 +4750,7 @@ static int smb2_apply_create_contexts(struct ksmbd_work *work,
+ 	}
+ 
+ 	if (test_share_config_flag(share, KSMBD_SHARE_FLAG_TIME_MACHINE)) {
+-		context = smb2_find_context_vals(req, SMB2_CREATE_AAPL, 4);
++		context = smb2_find_context_vals(req, SMB2_CREATE_TAG_AAPL, 4);
+ 		if (IS_ERR(context)) {
+ 			return PTR_ERR(context);
+ 		} else if (context) {
+@@ -4773,7 +4773,7 @@ static int smb2_apply_create_contexts(struct ksmbd_work *work,
+ 			}
+ 		}
+ 	} else if (conn->is_aapl == false) {
+-		context = smb2_find_context_vals(req, SMB2_CREATE_AAPL, 4);
++		context = smb2_find_context_vals(req, SMB2_CREATE_TAG_AAPL, 4);
+ 		if (IS_ERR(context))
+ 			return PTR_ERR(context);
+ 		if (context)
+diff --git a/fs/smb/server/smb2pdu.h b/fs/smb/server/smb2pdu.h
+index 11f8b87ef5a4..85ded095807c 100644
+--- a/fs/smb/server/smb2pdu.h
++++ b/fs/smb/server/smb2pdu.h
+@@ -61,9 +61,6 @@ struct preauth_integrity_info {
+ #define SMB2_SESSION_IN_PROGRESS	BIT(0)
+ #define SMB2_SESSION_VALID		BIT(1)
+ 
+-/* Apple Defined Contexts */
+-#define SMB2_CREATE_AAPL		"AAPL"
+-
+ /*
+  * AAPL SMB2 extension -- kAAPL_SERVER_QUERY create context.
+  *
+-- 
+2.53.0
+

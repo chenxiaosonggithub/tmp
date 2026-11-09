@@ -1,0 +1,373 @@
+From 21419738cf7633b5bb657f4f6700de98e9c8fb0d Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:20 +0800
+Subject: [PATCH 25/39] smb: move EA definitions to common header files
+
+The client and server define the same full EA information and CREATE
+EA context layouts. Move the definitions to common/fscc.h and
+common/smb2pdu.h.
+
+Rename the following places:
+
+  - smb2_ea_info -> smb2_file_full_ea_info
+  - create_ea_buf_req -> smb2_create_ea_ctx
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/client/smb2pdu.h | 14 -------
+ fs/smb/common/fscc.h    |  9 +++++
+ fs/smb/common/smb2pdu.h |  9 +++++
+ fs/smb/server/smb2pdu.c | 88 ++++++++++++++++++++---------------------
+ fs/smb/server/smb2pdu.h | 15 -------
+ 5 files changed, 62 insertions(+), 73 deletions(-)
+
+diff --git a/fs/smb/client/smb2pdu.h b/fs/smb/client/smb2pdu.h
+index 04e755d2cdd8..369bef19a4fe 100644
+--- a/fs/smb/client/smb2pdu.h
++++ b/fs/smb/client/smb2pdu.h
+@@ -186,14 +186,6 @@ struct network_resiliency_req {
+  *	BB consider moving to a different header
+  */
+ 
+-struct smb2_file_full_ea_info { /* encoding of response for level 15 */
+-	__le32 next_entry_offset;
+-	__u8   flags;
+-	__u8   ea_name_length;
+-	__le16 ea_value_length;
+-	char   ea_data[]; /* \0 terminated name plus value */
+-} __packed; /* level 15 Set */
+-
+ struct smb2_file_reparse_point_info {
+ 	__le64 IndexNumber;
+ 	__le32 Tag;
+@@ -288,12 +280,6 @@ struct smb2_posix_info_parsed {
+ 	const u8 *name;
+ };
+ 
+-struct smb2_create_ea_ctx {
+-	struct create_context_hdr ctx;
+-	__u8 name[8];
+-	struct smb2_file_full_ea_info ea;
+-} __packed;
+-
+ #define SMB2_WSL_XATTR_UID		"$LXUID"
+ #define SMB2_WSL_XATTR_GID		"$LXGID"
+ #define SMB2_WSL_XATTR_MODE		"$LXMOD"
+diff --git a/fs/smb/common/fscc.h b/fs/smb/common/fscc.h
+index 00f09e1a3afe..cc04b9fa7e1e 100644
+--- a/fs/smb/common/fscc.h
++++ b/fs/smb/common/fscc.h
+@@ -319,6 +319,15 @@ typedef struct {
+ 	char FileName[];
+ } __packed FILE_FULL_DIRECTORY_INFO; /* level 0x102 rsp data */
+ 
++/* See MS-FSCC 2.4.16 */
++struct smb2_file_full_ea_info {
++	__le32 next_entry_offset;
++	__u8   flags;
++	__u8   ea_name_length;
++	__le16 ea_value_length;
++	char   ea_data[]; /* NUL-terminated name followed by value */
++} __packed;
++
+ /* See MS-FSCC 2.4.24 */
+ typedef struct {
+ 	__le32 NextEntryOffset;
+diff --git a/fs/smb/common/smb2pdu.h b/fs/smb/common/smb2pdu.h
+index f9a8862cb3d4..bf3f5832476e 100644
+--- a/fs/smb/common/smb2pdu.h
++++ b/fs/smb/common/smb2pdu.h
+@@ -5,6 +5,8 @@
+ #include <linux/types.h>
+ #include <linux/build_bug.h>
+ 
++#include "fscc.h"
++
+ /*
+  * Note that, due to trying to use names similar to the protocol specifications,
+  * there are many mixed case field names in the structures below.  Although
+@@ -1246,6 +1248,13 @@ struct create_posix {
+ 	__u32   Reserved;
+ } __packed;
+ 
++/* See MS-SMB2 2.2.13.2.1 */
++struct smb2_create_ea_ctx {
++	struct create_context_hdr ctx;
++	__u8 name[8];
++	struct smb2_file_full_ea_info ea;
++} __packed;
++
+ /* See MS-SMB2 2.2.13.2.3 and MS-SMB2 2.2.13.2.4 */
+ typedef struct {
+ 	struct create_context_hdr ccontext;
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index ddfff3106425..31e2c4d7b51d 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -3434,7 +3434,7 @@ static bool smb2_is_private_ea(const char *name, size_t name_len)
+  *
+  * Return:	0 on success, otherwise error
+  */
+-static int smb2_set_ea(struct smb2_ea_info *eabuf, unsigned int buf_len,
++static int smb2_set_ea(struct smb2_file_full_ea_info *eabuf, unsigned int buf_len,
+ 		       const struct path *path, bool get_write)
+ {
+ 	const struct mnt_idmap *idmap = mnt_idmap(path->mnt);
+@@ -3442,8 +3442,8 @@ static int smb2_set_ea(struct smb2_ea_info *eabuf, unsigned int buf_len,
+ 	int rc = 0;
+ 	unsigned int next = 0;
+ 
+-	if (buf_len < sizeof(struct smb2_ea_info) + eabuf->EaNameLength + 1 +
+-			le16_to_cpu(eabuf->EaValueLength))
++	if (buf_len < sizeof(struct smb2_file_full_ea_info) + eabuf->ea_name_length + 1 +
++			le16_to_cpu(eabuf->ea_value_length))
+ 		return -EINVAL;
+ 
+ 	attr_name = kmalloc(XATTR_NAME_MAX + 1, KSMBD_DEFAULT_GFP);
+@@ -3451,42 +3451,42 @@ static int smb2_set_ea(struct smb2_ea_info *eabuf, unsigned int buf_len,
+ 		return -ENOMEM;
+ 
+ 	do {
+-		if (!eabuf->EaNameLength)
++		if (!eabuf->ea_name_length)
+ 			goto next;
+ 
+-		if (eabuf->name[eabuf->EaNameLength]) {
++		if (eabuf->ea_data[eabuf->ea_name_length]) {
+ 			rc = -EBADMSG;
+ 			break;
+ 		}
+ 
+ 		ksmbd_debug(SMB,
+ 			    "name : <%s>, name_len : %u, value_len : %u, next : %u\n",
+-			    eabuf->name, eabuf->EaNameLength,
+-			    le16_to_cpu(eabuf->EaValueLength),
+-			    le32_to_cpu(eabuf->NextEntryOffset));
++			    eabuf->ea_data, eabuf->ea_name_length,
++			    le16_to_cpu(eabuf->ea_value_length),
++			    le32_to_cpu(eabuf->next_entry_offset));
+ 
+-		if (eabuf->EaNameLength >
++		if (eabuf->ea_name_length >
+ 		    (XATTR_NAME_MAX - XATTR_USER_PREFIX_LEN)) {
+ 			rc = -EINVAL;
+ 			break;
+ 		}
+-		if (smb2_is_private_ea(eabuf->name, eabuf->EaNameLength)) {
++		if (smb2_is_private_ea(eabuf->ea_data, eabuf->ea_name_length)) {
+ 			rc = -EACCES;
+ 			break;
+ 		}
+ 
+ 		memcpy(attr_name, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN);
+-		memcpy(&attr_name[XATTR_USER_PREFIX_LEN], eabuf->name,
+-		       eabuf->EaNameLength);
+-		attr_name[XATTR_USER_PREFIX_LEN + eabuf->EaNameLength] = '\0';
+-		value = (char *)&eabuf->name + eabuf->EaNameLength + 1;
++		memcpy(&attr_name[XATTR_USER_PREFIX_LEN], eabuf->ea_data,
++		       eabuf->ea_name_length);
++		attr_name[XATTR_USER_PREFIX_LEN + eabuf->ea_name_length] = '\0';
++		value = (char *)&eabuf->ea_data + eabuf->ea_name_length + 1;
+ 
+-		if (!eabuf->EaValueLength) {
++		if (!eabuf->ea_value_length) {
+ 			rc = ksmbd_vfs_casexattr_len(idmap,
+ 						     path->dentry,
+ 						     attr_name,
+ 						     XATTR_USER_PREFIX_LEN +
+-						     eabuf->EaNameLength, NULL);
++						     eabuf->ea_name_length, NULL);
+ 
+ 			/* delete the EA only when it exits */
+ 			if (rc > 0) {
+@@ -3507,7 +3507,7 @@ static int smb2_set_ea(struct smb2_ea_info *eabuf, unsigned int buf_len,
+ 			rc = 0;
+ 		} else {
+ 			rc = ksmbd_vfs_setxattr(idmap, path, attr_name, value,
+-						le16_to_cpu(eabuf->EaValueLength),
++						le16_to_cpu(eabuf->ea_value_length),
+ 						0, get_write);
+ 			if (rc < 0) {
+ 				ksmbd_debug(SMB,
+@@ -3518,18 +3518,18 @@ static int smb2_set_ea(struct smb2_ea_info *eabuf, unsigned int buf_len,
+ 		}
+ 
+ next:
+-		next = le32_to_cpu(eabuf->NextEntryOffset);
++		next = le32_to_cpu(eabuf->next_entry_offset);
+ 		if (next == 0 || buf_len < next)
+ 			break;
+ 		buf_len -= next;
+-		eabuf = (struct smb2_ea_info *)((char *)eabuf + next);
+-		if (buf_len < sizeof(struct smb2_ea_info)) {
++		eabuf = (struct smb2_file_full_ea_info *)((char *)eabuf + next);
++		if (buf_len < sizeof(struct smb2_file_full_ea_info)) {
+ 			rc = -EINVAL;
+ 			break;
+ 		}
+ 
+-		if (buf_len < sizeof(struct smb2_ea_info) + eabuf->EaNameLength + 1 +
+-				le16_to_cpu(eabuf->EaValueLength)) {
++		if (buf_len < sizeof(struct smb2_file_full_ea_info) + eabuf->ea_name_length + 1 +
++				le16_to_cpu(eabuf->ea_value_length)) {
+ 			rc = -EINVAL;
+ 			break;
+ 		}
+@@ -3955,7 +3955,7 @@ struct durable_info {
+ struct smb2_create_contexts {
+ 	struct durable_info durable;
+ 	struct lease_ctx_info *lease;
+-	struct create_ea_buf_req *ea;
++	struct smb2_create_ea_ctx *ea;
+ 	int oplock_level;
+ 	umode_t posix_mode;
+ 	__le32 maximal_access;
+@@ -4658,10 +4658,10 @@ static int smb2_parse_create_contexts(struct smb2_create_req *req,
+ 	if (IS_ERR(context)) {
+ 		return PTR_ERR(context);
+ 	} else if (context) {
+-		ctx->ea = (struct create_ea_buf_req *)context;
++		ctx->ea = (struct smb2_create_ea_ctx *)context;
+ 		if (le16_to_cpu(context->DataOffset) +
+ 		    le32_to_cpu(context->DataLength) <
+-		    sizeof(struct create_ea_buf_req)) {
++		    sizeof(struct smb2_create_ea_ctx)) {
+ 			return -EINVAL;
+ 		}
+ 		if (req->CreateOptions & FILE_NO_EA_KNOWLEDGE_LE) {
+@@ -5355,14 +5355,14 @@ int smb2_open(struct ksmbd_work *work)
+ 		created = true;
+ 		idmap = mnt_idmap(path.mnt);
+ 		if (ctx.ea) {
+-			if (le32_to_cpu(ctx.ea->ccontext.DataLength) <
+-			    sizeof(struct smb2_ea_info)) {
++			if (le32_to_cpu(ctx.ea->ctx.DataLength) <
++			    sizeof(struct smb2_file_full_ea_info)) {
+ 				rc = -EINVAL;
+ 				goto err_out;
+ 			}
+ 
+ 			rc = smb2_set_ea(&ctx.ea->ea,
+-					 le32_to_cpu(ctx.ea->ccontext.DataLength),
++					 le32_to_cpu(ctx.ea->ctx.DataLength),
+ 					 &path, false);
+ 			if (rc == -EOPNOTSUPP)
+ 				rc = 0;
+@@ -6968,7 +6968,7 @@ static int smb2_get_ea(struct ksmbd_work *work, struct ksmbd_file *fp,
+ 		       struct smb2_query_info_req *req,
+ 		       struct smb2_query_info_rsp *rsp, void *rsp_org)
+ {
+-	struct smb2_ea_info *eainfo, *prev_eainfo;
++	struct smb2_file_full_ea_info *eainfo, *prev_eainfo;
+ 	char *name, *ptr, *xattr_list = NULL, *buf;
+ 	int rc, name_len, value_len, xattr_list_len, idx;
+ 	ssize_t buf_free_len, alignment_bytes, next_offset, rsp_data_cnt = 0;
+@@ -7022,7 +7022,7 @@ static int smb2_get_ea(struct ksmbd_work *work, struct ksmbd_file *fp,
+ 	xattr_list_len = rc;
+ 
+ 	ptr = (char *)rsp->Buffer;
+-	eainfo = (struct smb2_ea_info *)ptr;
++	eainfo = (struct smb2_file_full_ea_info *)ptr;
+ 	prev_eainfo = eainfo;
+ 	idx = 0;
+ 
+@@ -7053,8 +7053,8 @@ static int smb2_get_ea(struct ksmbd_work *work, struct ksmbd_file *fp,
+ 		if (!strncmp(name, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN))
+ 			name_len -= XATTR_USER_PREFIX_LEN;
+ 
+-		ptr = eainfo->name + name_len + 1;
+-		buf_free_len -= (offsetof(struct smb2_ea_info, name) +
++		ptr = eainfo->ea_data + name_len + 1;
++		buf_free_len -= (offsetof(struct smb2_file_full_ea_info, ea_data) +
+ 				name_len + 1);
+ 		/* bailout if xattr can't fit in buf_free_len */
+ 		value_len = ksmbd_vfs_getxattr(idmap, path->dentry,
+@@ -7075,18 +7075,18 @@ static int smb2_get_ea(struct ksmbd_work *work, struct ksmbd_file *fp,
+ 		kfree(buf);
+ 
+ 		ptr += value_len;
+-		eainfo->Flags = 0;
+-		eainfo->EaNameLength = name_len;
++		eainfo->flags = 0;
++		eainfo->ea_name_length = name_len;
+ 
+ 		if (!strncmp(name, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN))
+-			memcpy(eainfo->name, &name[XATTR_USER_PREFIX_LEN],
++			memcpy(eainfo->ea_data, &name[XATTR_USER_PREFIX_LEN],
+ 			       name_len);
+ 		else
+-			memcpy(eainfo->name, name, name_len);
++			memcpy(eainfo->ea_data, name, name_len);
+ 
+-		eainfo->name[name_len] = '\0';
+-		eainfo->EaValueLength = cpu_to_le16(value_len);
+-		next_offset = offsetof(struct smb2_ea_info, name) +
++		eainfo->ea_data[name_len] = '\0';
++		eainfo->ea_value_length = cpu_to_le16(value_len);
++		next_offset = offsetof(struct smb2_file_full_ea_info, ea_data) +
+ 			name_len + 1 + value_len;
+ 
+ 		/* align next xattr entry at 4 byte bundary */
+@@ -7099,9 +7099,9 @@ static int smb2_get_ea(struct ksmbd_work *work, struct ksmbd_file *fp,
+ 			next_offset += alignment_bytes;
+ 			buf_free_len -= alignment_bytes;
+ 		}
+-		eainfo->NextEntryOffset = cpu_to_le32(next_offset);
++		eainfo->next_entry_offset = cpu_to_le32(next_offset);
+ 		prev_eainfo = eainfo;
+-		eainfo = (struct smb2_ea_info *)ptr;
++		eainfo = (struct smb2_file_full_ea_info *)ptr;
+ 		rsp_data_cnt += next_offset;
+ 
+ 		if (req->InputBufferLength) {
+@@ -7111,7 +7111,7 @@ static int smb2_get_ea(struct ksmbd_work *work, struct ksmbd_file *fp,
+ 	}
+ 
+ 	/* no more ea entries */
+-	prev_eainfo->NextEntryOffset = 0;
++	prev_eainfo->next_entry_offset = 0;
+ done:
+ 	rc = 0;
+ 	if (rsp_data_cnt == 0)
+@@ -9211,10 +9211,10 @@ static int smb2_set_info_file(struct ksmbd_work *work, struct ksmbd_file *fp,
+ 			return -EACCES;
+ 		}
+ 
+-		if (buf_len < sizeof(struct smb2_ea_info))
++		if (buf_len < sizeof(struct smb2_file_full_ea_info))
+ 			return -EMSGSIZE;
+ 
+-		return smb2_set_ea((struct smb2_ea_info *)buffer,
++		return smb2_set_ea((struct smb2_file_full_ea_info *)buffer,
+ 				   buf_len, &fp->filp->f_path, true);
+ 	}
+ 	case FILE_POSITION_INFORMATION:
+diff --git a/fs/smb/server/smb2pdu.h b/fs/smb/server/smb2pdu.h
+index 8c6b170c2716..4d51e9a2ea05 100644
+--- a/fs/smb/server/smb2pdu.h
++++ b/fs/smb/server/smb2pdu.h
+@@ -329,21 +329,6 @@ struct smb2_ea_info_req {
+ 	char name[];
+ } __packed; /* level 15 Query */
+ 
+-struct smb2_ea_info {
+-	__le32 NextEntryOffset;
+-	__u8   Flags;
+-	__u8   EaNameLength;
+-	__le16 EaValueLength;
+-	char name[];
+-	/* optionally followed by value */
+-} __packed; /* level 15 Query */
+-
+-struct create_ea_buf_req {
+-	struct create_context_hdr ccontext;
+-	__u8   Name[8];
+-	struct smb2_ea_info ea;
+-} __packed;
+-
+ struct create_sd_buf_req {
+ 	struct create_context_hdr ccontext;
+ 	__u8   Name[8];
+-- 
+2.53.0
+

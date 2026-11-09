@@ -1,0 +1,103 @@
+From da7f80790bba768ea70bf88203b1eca9ab828e04 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:21 +0800
+Subject: [PATCH 31/39] smb/client: use common file EOF information definition
+
+file_end_of_file_info duplicates smb2_file_eof_info in common/fscc.h.
+Remove the duplicate definition and use smb2_file_eof_info and its
+EndOfFile field in the SMB1 file size requests.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/client/cifssmb.c | 16 ++++++++--------
+ fs/smb/client/smb1pdu.h |  4 ----
+ 2 files changed, 8 insertions(+), 12 deletions(-)
+
+diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
+index 2936b38de98f..06cb1204a8d9 100644
+--- a/fs/smb/client/cifssmb.c
++++ b/fs/smb/client/cifssmb.c
+@@ -5574,7 +5574,7 @@ CIFSSMBSetEOF(const unsigned int xid, struct cifs_tcon *tcon,
+ {
+ 	struct smb_com_transaction2_spi_req *pSMB = NULL;
+ 	struct smb_com_transaction2_spi_rsp *pSMBr = NULL;
+-	struct file_end_of_file_info *parm_data;
++	struct smb2_file_eof_info *parm_data;
+ 	unsigned int in_len;
+ 	int name_len;
+ 	int rc = 0;
+@@ -5601,7 +5601,7 @@ CIFSSMBSetEOF(const unsigned int xid, struct cifs_tcon *tcon,
+ 		name_len = copy_path_name(pSMB->FileName, file_name);
+ 	}
+ 	params = 6 + name_len;
+-	data_count = sizeof(struct file_end_of_file_info);
++	data_count = sizeof(struct smb2_file_eof_info);
+ 	pSMB->MaxParameterCount = cpu_to_le16(2);
+ 	pSMB->MaxDataCount = cpu_to_le16(4100);
+ 	pSMB->MaxSetupCount = 0;
+@@ -5629,7 +5629,7 @@ CIFSSMBSetEOF(const unsigned int xid, struct cifs_tcon *tcon,
+ 	}
+ 
+ 	parm_data =
+-	    (struct file_end_of_file_info *) (((char *) &pSMB->hdr.Protocol) +
++	    (struct smb2_file_eof_info *) (((char *) &pSMB->hdr.Protocol) +
+ 				       offset);
+ 	pSMB->ParameterOffset = cpu_to_le16(param_offset);
+ 	pSMB->DataOffset = cpu_to_le16(offset);
+@@ -5643,7 +5643,7 @@ CIFSSMBSetEOF(const unsigned int xid, struct cifs_tcon *tcon,
+ 	pSMB->TotalParameterCount = pSMB->ParameterCount;
+ 	pSMB->Reserved4 = 0;
+ 	in_len += byte_count;
+-	parm_data->FileSize = cpu_to_le64(size);
++	parm_data->EndOfFile = cpu_to_le64(size);
+ 	pSMB->ByteCount = cpu_to_le16(byte_count);
+ 	rc = SendReceive(xid, tcon->ses, (struct smb_hdr *) pSMB, in_len,
+ 			 (struct smb_hdr *) pSMBr, &bytes_returned, 0);
+@@ -5663,7 +5663,7 @@ CIFSSMBSetFileSize(const unsigned int xid, struct cifs_tcon *tcon,
+ 		   struct cifsFileInfo *cfile, __u64 size, bool set_allocation)
+ {
+ 	struct smb_com_transaction2_sfi_req *pSMB  = NULL;
+-	struct file_end_of_file_info *parm_data;
++	struct smb2_file_eof_info *parm_data;
+ 	unsigned int in_len;
+ 	int rc = 0;
+ 	__u16 params, param_offset, offset, byte_count, count;
+@@ -5687,7 +5687,7 @@ CIFSSMBSetFileSize(const unsigned int xid, struct cifs_tcon *tcon,
+ 	param_offset = offsetof(struct smb_com_transaction2_sfi_req, Fid);
+ 	offset = param_offset + params;
+ 
+-	count = sizeof(struct file_end_of_file_info);
++	count = sizeof(struct smb2_file_eof_info);
+ 	pSMB->MaxParameterCount = cpu_to_le16(2);
+ 	/* BB find exact max SMB PDU from sess structure BB */
+ 	pSMB->MaxDataCount = cpu_to_le16(1000);
+@@ -5701,9 +5701,9 @@ CIFSSMBSetFileSize(const unsigned int xid, struct cifs_tcon *tcon,
+ 	pSMB->TotalParameterCount = pSMB->ParameterCount;
+ 	pSMB->ParameterOffset = cpu_to_le16(param_offset);
+ 	parm_data =
+-		(struct file_end_of_file_info *)(((char *)pSMB) + offset);
++		(struct smb2_file_eof_info *)(((char *)pSMB) + offset);
+ 	pSMB->DataOffset = cpu_to_le16(offset);
+-	parm_data->FileSize = cpu_to_le64(size);
++	parm_data->EndOfFile = cpu_to_le64(size);
+ 	pSMB->Fid = cfile->fid.netfid;
+ 	if (set_allocation) {
+ 		if (tcon->ses->capabilities & CAP_INFOLEVEL_PASSTHRU)
+diff --git a/fs/smb/client/smb1pdu.h b/fs/smb/client/smb1pdu.h
+index 788b1755f669..d7c7876ab477 100644
+--- a/fs/smb/client/smb1pdu.h
++++ b/fs/smb/client/smb1pdu.h
+@@ -1988,10 +1988,6 @@ struct file_allocation_info {
+ 	__le64 AllocationSize; /* Note old Samba srvr rounds this up too much */
+ } __packed; /* size used on disk, for level 0x103 for set, 0x105 for query */
+ 
+-struct file_end_of_file_info {
+-	__le64 FileSize;		/* offset to end of file */
+-} __packed; /* size info, level 0x104 for set, 0x106 for query */
+-
+ struct file_alt_name_info {
+ 	DECLARE_FLEX_ARRAY(__u8, alt_name);
+ } __packed;      /* level 0x0108 */
+-- 
+2.53.0
+

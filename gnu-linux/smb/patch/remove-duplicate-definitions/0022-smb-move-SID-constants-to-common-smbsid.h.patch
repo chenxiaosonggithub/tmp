@@ -1,0 +1,187 @@
+From b042d040e900ba8e10883bd4a4918a376495216b Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:19 +0800
+Subject: [PATCH 22/39] smb: move SID constants to common/smbsid.h
+
+The client and server define the same SID constants for world,
+authenticated users and Unix users, groups and modes. Move these
+definitions to a common header file.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/client/cifsacl.c | 37 +----------------------------
+ fs/smb/common/smbsid.h  | 52 +++++++++++++++++++++++++++++++++++++++++
+ fs/smb/server/smbacl.c  | 37 +----------------------------
+ 3 files changed, 54 insertions(+), 72 deletions(-)
+ create mode 100644 fs/smb/common/smbsid.h
+
+diff --git a/fs/smb/client/cifsacl.c b/fs/smb/client/cifsacl.c
+index f9f61c758a75..44d77833f94f 100644
+--- a/fs/smb/client/cifsacl.c
++++ b/fs/smb/client/cifsacl.c
+@@ -19,48 +19,13 @@
+ #include <keys/user-type.h>
+ #include "cifsglob.h"
+ #include "cifsacl.h"
++#include "../common/smbsid.h"
+ #include "cifsproto.h"
+ #include "cifs_debug.h"
+ #include "fs_context.h"
+ #include "cifs_fs_sb.h"
+ #include "cifs_unicode.h"
+ 
+-/* security id for everyone/world system group */
+-static const struct smb_sid sid_everyone = {
+-	1, 1, {0, 0, 0, 0, 0, 1}, {0} };
+-/* security id for Authenticated Users system group */
+-static const struct smb_sid sid_authusers = {
+-	1, 1, {0, 0, 0, 0, 0, 5}, {cpu_to_le32(11)} };
+-
+-/* S-1-22-1 Unmapped Unix users */
+-static const struct smb_sid sid_unix_users = {1, 1, {0, 0, 0, 0, 0, 22},
+-		{cpu_to_le32(1), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} };
+-
+-/* S-1-22-2 Unmapped Unix groups */
+-static const struct smb_sid sid_unix_groups = { 1, 1, {0, 0, 0, 0, 0, 22},
+-		{cpu_to_le32(2), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} };
+-
+-/*
+- * See https://technet.microsoft.com/en-us/library/hh509017(v=ws.10).aspx
+- */
+-
+-/* S-1-5-88 MS NFS and Apple style UID/GID/mode */
+-
+-/* S-1-5-88-1 Unix uid */
+-static const struct smb_sid sid_unix_NFS_users = { 1, 2, {0, 0, 0, 0, 0, 5},
+-	{cpu_to_le32(88),
+-	 cpu_to_le32(1), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} };
+-
+-/* S-1-5-88-2 Unix gid */
+-static const struct smb_sid sid_unix_NFS_groups = { 1, 2, {0, 0, 0, 0, 0, 5},
+-	{cpu_to_le32(88),
+-	 cpu_to_le32(2), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} };
+-
+-/* S-1-5-88-3 Unix mode */
+-static const struct smb_sid sid_unix_NFS_mode = { 1, 2, {0, 0, 0, 0, 0, 5},
+-	{cpu_to_le32(88),
+-	 cpu_to_le32(3), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} };
+-
+ static const struct cred *root_cred;
+ 
+ static int
+diff --git a/fs/smb/common/smbsid.h b/fs/smb/common/smbsid.h
+new file mode 100644
+index 000000000000..6b71a6d6f4ff
+--- /dev/null
++++ b/fs/smb/common/smbsid.h
+@@ -0,0 +1,52 @@
++/* SPDX-License-Identifier: LGPL-2.1 */
++/*
++ * Copyright (C) International Business Machines Corp., 2007,2008
++ * Author(s): Steve French (sfrench@us.ibm.com)
++ */
++
++#ifndef _COMMON_SMBSID_H
++#define _COMMON_SMBSID_H
++
++#include <linux/compiler_attributes.h>
++#include <linux/types.h>
++#include <asm/byteorder.h>
++
++#include "smbacl.h"
++
++/* security id for everyone/world system group */
++static const struct smb_sid sid_everyone = {
++	1, 1, {0, 0, 0, 0, 0, 1}, {0} };
++/* security id for Authenticated Users system group */
++static const struct smb_sid sid_authusers = {
++	1, 1, {0, 0, 0, 0, 0, 5}, {cpu_to_le32(11)} };
++
++/* S-1-22-1 Unmapped Unix users */
++static const struct smb_sid sid_unix_users = {1, 1, {0, 0, 0, 0, 0, 22},
++		{cpu_to_le32(1), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} };
++
++/* S-1-22-2 Unmapped Unix groups */
++static const struct smb_sid sid_unix_groups = { 1, 1, {0, 0, 0, 0, 0, 22},
++		{cpu_to_le32(2), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} };
++
++/*
++ * See http://technet.microsoft.com/en-us/library/hh509017(v=ws.10).aspx
++ */
++
++/* S-1-5-88 MS NFS and Apple style UID/GID/mode */
++
++/* S-1-5-88-1 Unix uid */
++static const struct smb_sid sid_unix_NFS_users = { 1, 2, {0, 0, 0, 0, 0, 5},
++	{cpu_to_le32(88),
++	 cpu_to_le32(1), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} };
++
++/* S-1-5-88-2 Unix gid */
++static const struct smb_sid sid_unix_NFS_groups = { 1, 2, {0, 0, 0, 0, 0, 5},
++	{cpu_to_le32(88),
++	 cpu_to_le32(2), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} };
++
++/* S-1-5-88-3 Unix mode */
++static const struct smb_sid sid_unix_NFS_mode = { 1, 2, {0, 0, 0, 0, 0, 5},
++	{cpu_to_le32(88),
++	 cpu_to_le32(3), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} };
++
++#endif /* _COMMON_SMBSID_H */
+diff --git a/fs/smb/server/smbacl.c b/fs/smb/server/smbacl.c
+index 55693bfa7116..944e4c1ec85a 100644
+--- a/fs/smb/server/smbacl.c
++++ b/fs/smb/server/smbacl.c
+@@ -13,6 +13,7 @@
+ #include <linux/mnt_idmapping.h>
+ 
+ #include "smbacl.h"
++#include "../common/smbsid.h"
+ #include "smb_common.h"
+ #include "server.h"
+ #include "misc.h"
+@@ -32,42 +33,6 @@ static const struct smb_sid creator_group = {
+ static const struct smb_sid sid_owner_rights = {
+ 	1, 1, {0, 0, 0, 0, 0, 3}, {cpu_to_le32(4)} };
+ 
+-/* security id for everyone/world system group */
+-static const struct smb_sid sid_everyone = {
+-	1, 1, {0, 0, 0, 0, 0, 1}, {0} };
+-/* security id for Authenticated Users system group */
+-static const struct smb_sid sid_authusers = {
+-	1, 1, {0, 0, 0, 0, 0, 5}, {cpu_to_le32(11)} };
+-
+-/* S-1-22-1 Unmapped Unix users */
+-static const struct smb_sid sid_unix_users = {1, 1, {0, 0, 0, 0, 0, 22},
+-		{cpu_to_le32(1), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} };
+-
+-/* S-1-22-2 Unmapped Unix groups */
+-static const struct smb_sid sid_unix_groups = { 1, 1, {0, 0, 0, 0, 0, 22},
+-		{cpu_to_le32(2), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} };
+-
+-/*
+- * See http://technet.microsoft.com/en-us/library/hh509017(v=ws.10).aspx
+- */
+-
+-/* S-1-5-88 MS NFS and Apple style UID/GID/mode */
+-
+-/* S-1-5-88-1 Unix uid */
+-static const struct smb_sid sid_unix_NFS_users = { 1, 2, {0, 0, 0, 0, 0, 5},
+-	{cpu_to_le32(88),
+-	 cpu_to_le32(1), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} };
+-
+-/* S-1-5-88-2 Unix gid */
+-static const struct smb_sid sid_unix_NFS_groups = { 1, 2, {0, 0, 0, 0, 0, 5},
+-	{cpu_to_le32(88),
+-	 cpu_to_le32(2), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} };
+-
+-/* S-1-5-88-3 Unix mode */
+-static const struct smb_sid sid_unix_NFS_mode = { 1, 2, {0, 0, 0, 0, 0, 5},
+-	{cpu_to_le32(88),
+-	 cpu_to_le32(3), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} };
+-
+ /*
+  * if the two SIDs (roughly equivalent to a UUID for a user or group) are
+  * the same returns zero, if they do not match returns non-zero.
+-- 
+2.53.0
+

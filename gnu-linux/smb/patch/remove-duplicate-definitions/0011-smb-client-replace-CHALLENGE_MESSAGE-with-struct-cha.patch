@@ -1,0 +1,58 @@
+From 7c38c359c3b322e4696908ae207ad9e4456dc114 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:18 +0800
+Subject: [PATCH 11/39] smb/client: replace CHALLENGE_MESSAGE with struct
+ challenge_message
+
+Replace the CHALLENGE_MESSAGE typedef and its users with struct
+challenge_message to match the server type name. This prepares the
+definition for sharing with the server.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/client/ntlmssp.h | 4 ++--
+ fs/smb/client/sess.c    | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/fs/smb/client/ntlmssp.h b/fs/smb/client/ntlmssp.h
+index 2a618794c50c..8c3e091e9b9f 100644
+--- a/fs/smb/client/ntlmssp.h
++++ b/fs/smb/client/ntlmssp.h
+@@ -41,7 +41,7 @@ struct negotiate_message_with_version {
+ 	/* followed by WorkstationString */
+ } __packed;
+ 
+-typedef struct _CHALLENGE_MESSAGE {
++struct challenge_message {
+ 	__u8 Signature[sizeof(NTLMSSP_SIGNATURE)];
+ 	__le32 MessageType;   /* NtLmChallenge = 2 */
+ 	struct security_buffer TargetName;
+@@ -51,7 +51,7 @@ typedef struct _CHALLENGE_MESSAGE {
+ 	struct security_buffer TargetInfoArray;
+ 	/* SECURITY_BUFFER for version info not present since we
+ 	   do not set the version is present flag */
+-} __packed CHALLENGE_MESSAGE, *PCHALLENGE_MESSAGE;
++} __packed;
+ 
+ typedef struct _AUTHENTICATE_MESSAGE {
+ 	__u8 Signature[sizeof(NTLMSSP_SIGNATURE)];
+diff --git a/fs/smb/client/sess.c b/fs/smb/client/sess.c
+index cdcea8cd7b31..4ee2d46b2d95 100644
+--- a/fs/smb/client/sess.c
++++ b/fs/smb/client/sess.c
+@@ -657,10 +657,10 @@ int decode_ntlmssp_challenge(char *bcc_ptr, int blob_len,
+ {
+ 	unsigned int tioffset; /* challenge message target info area */
+ 	unsigned int tilen; /* challenge message target info area length  */
+-	CHALLENGE_MESSAGE *pblob = (CHALLENGE_MESSAGE *)bcc_ptr;
++	struct challenge_message *pblob = (struct challenge_message *)bcc_ptr;
+ 	__u32 server_flags;
+ 
+-	if (blob_len < sizeof(CHALLENGE_MESSAGE)) {
++	if (blob_len < sizeof(struct challenge_message)) {
+ 		cifs_dbg(VFS, "challenge blob len %d too small\n", blob_len);
+ 		return -EINVAL;
+ 	}
+-- 
+2.53.0
+

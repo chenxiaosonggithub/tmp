@@ -1,0 +1,90 @@
+From 49330f9b17a9862f949b15308b1222cba0eac7c2 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:18 +0800
+Subject: [PATCH 02/39] smb: move NTLMSSP message types to common/ntlmssp.h
+
+The client and server define the same NTLMSSP signature and message
+types. Move these duplicate definitions to a new common header file.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/client/ntlmssp.h |  7 +------
+ fs/smb/common/ntlmssp.h | 21 +++++++++++++++++++++
+ fs/smb/server/ntlmssp.h |  8 +-------
+ 3 files changed, 23 insertions(+), 13 deletions(-)
+ create mode 100644 fs/smb/common/ntlmssp.h
+
+diff --git a/fs/smb/client/ntlmssp.h b/fs/smb/client/ntlmssp.h
+index e5582219a026..f7fa1840032b 100644
+--- a/fs/smb/client/ntlmssp.h
++++ b/fs/smb/client/ntlmssp.h
+@@ -9,12 +9,7 @@
+ #ifndef _CIFS_NTLMSSP_H
+ #define _CIFS_NTLMSSP_H
+ 
+-#define NTLMSSP_SIGNATURE "NTLMSSP"
+-/* Message Types */
+-#define NtLmNegotiate     cpu_to_le32(1)
+-#define NtLmChallenge     cpu_to_le32(2)
+-#define NtLmAuthenticate  cpu_to_le32(3)
+-#define UnknownMessage    cpu_to_le32(8)
++#include "../common/ntlmssp.h"
+ 
+ /* Negotiate Flags */
+ #define NTLMSSP_NEGOTIATE_UNICODE         0x01 /* Text strings are unicode */
+diff --git a/fs/smb/common/ntlmssp.h b/fs/smb/common/ntlmssp.h
+new file mode 100644
+index 000000000000..332e33aa9cec
+--- /dev/null
++++ b/fs/smb/common/ntlmssp.h
+@@ -0,0 +1,21 @@
++/* SPDX-License-Identifier: LGPL-2.1 */
++/*
++ *
++ *   Copyright (c) International Business Machines  Corp., 2002,2007
++ *   Author(s): Steve French (sfrench@us.ibm.com)
++ *
++ */
++
++#ifndef _COMMON_NTLMSSP_H
++#define _COMMON_NTLMSSP_H
++
++#include <linux/types.h>
++
++#define NTLMSSP_SIGNATURE "NTLMSSP"
++/* Message Types */
++#define NtLmNegotiate     cpu_to_le32(1)
++#define NtLmChallenge     cpu_to_le32(2)
++#define NtLmAuthenticate  cpu_to_le32(3)
++#define UnknownMessage    cpu_to_le32(8)
++
++#endif /* _COMMON_NTLMSSP_H */
+diff --git a/fs/smb/server/ntlmssp.h b/fs/smb/server/ntlmssp.h
+index f13153c18b4e..d43fce25da56 100644
+--- a/fs/smb/server/ntlmssp.h
++++ b/fs/smb/server/ntlmssp.h
+@@ -7,7 +7,7 @@
+ #ifndef __KSMBD_NTLMSSP_H
+ #define __KSMBD_NTLMSSP_H
+ 
+-#define NTLMSSP_SIGNATURE "NTLMSSP"
++#include "../common/ntlmssp.h"
+ 
+ /* Security blob target info data */
+ #define TGT_Name        "KSMBD"
+@@ -24,12 +24,6 @@
+ #define CIFS_ENCPWD_SIZE	(16)
+ #define CIFS_CPHTXT_SIZE	(16)
+ 
+-/* Message Types */
+-#define NtLmNegotiate     cpu_to_le32(1)
+-#define NtLmChallenge     cpu_to_le32(2)
+-#define NtLmAuthenticate  cpu_to_le32(3)
+-#define UnknownMessage    cpu_to_le32(8)
+-
+ /* Negotiate Flags */
+ #define NTLMSSP_NEGOTIATE_UNICODE         0x01 /* Text strings are unicode */
+ #define NTLMSSP_NEGOTIATE_OEM             0x02 /* Text strings are in OEM */
+-- 
+2.53.0
+

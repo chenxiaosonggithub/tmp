@@ -1,0 +1,31 @@
+From fa7bda1b13c2b37e95b4c4c74adbc01169ebf338 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:23 +0800
+Subject: [PATCH 38/39] smb/server: remove unused create option definitions
+
+CREATE_OPTION_READONLY and CREATE_OPTION_SPECIAL are not used by the
+server. Remove these duplicate definitions.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/server/vfs.h | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/fs/smb/server/vfs.h b/fs/smb/server/vfs.h
+index 21b0d29a3db0..9bed33a95171 100644
+--- a/fs/smb/server/vfs.h
++++ b/fs/smb/server/vfs.h
+@@ -29,10 +29,6 @@ enum {
+ #define CREATE_TREE_CONNECTION			cpu_to_le32(0x00000080)
+ #define FILE_RESERVE_OPFILTER_LE		cpu_to_le32(0x00100000)
+ 
+-#define CREATE_OPTION_READONLY			0x10000000
+-/* system. NB not sent over wire */
+-#define CREATE_OPTION_SPECIAL			0x20000000
+-
+ struct ksmbd_work;
+ struct ksmbd_file;
+ struct ksmbd_conn;
+-- 
+2.53.0
+

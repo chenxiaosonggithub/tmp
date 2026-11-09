@@ -1,0 +1,89 @@
+From 9975f94280af143b15d2ad7a253a70cdcbb1a161 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:18 +0800
+Subject: [PATCH 10/39] smb: move negotiate_message to common/ntlmssp.h
+
+The fields of struct negotiate_message are the same on both client and
+server. Move the duplicate definitions to the common header file.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/client/ntlmssp.h | 12 ------------
+ fs/smb/common/ntlmssp.h | 14 ++++++++++++++
+ fs/smb/server/ntlmssp.h | 14 --------------
+ 3 files changed, 14 insertions(+), 26 deletions(-)
+
+diff --git a/fs/smb/client/ntlmssp.h b/fs/smb/client/ntlmssp.h
+index 0dfddc43e91b..2a618794c50c 100644
+--- a/fs/smb/client/ntlmssp.h
++++ b/fs/smb/client/ntlmssp.h
+@@ -17,18 +17,6 @@
+ /* OpenGroup and to make the code more closely match the standard in */
+ /* appearance */
+ 
+-struct negotiate_message {
+-	__u8 Signature[sizeof(NTLMSSP_SIGNATURE)];
+-	__le32 MessageType;     /* NtLmNegotiate = 1 */
+-	__le32 NegotiateFlags;
+-	struct security_buffer DomainName;	/* RFC 1001 style and ASCII */
+-	struct security_buffer WorkstationName;	/* RFC 1001 and ASCII */
+-	/* SECURITY_BUFFER for version info not present since we
+-	   do not set the version is present flag */
+-	char DomainString[];
+-	/* followed by WorkstationString */
+-} __packed;
+-
+ #define NTLMSSP_REVISION_W2K3 0x0F
+ 
+ /* See MS-NLMP section 2.2.2.10 */
+diff --git a/fs/smb/common/ntlmssp.h b/fs/smb/common/ntlmssp.h
+index a14a83648604..482b74c4fe5c 100644
+--- a/fs/smb/common/ntlmssp.h
++++ b/fs/smb/common/ntlmssp.h
+@@ -99,4 +99,18 @@ struct security_buffer {
+ 	__le32 BufferOffset;	/* offset to buffer */
+ } __packed;
+ 
++struct negotiate_message {
++	__u8 Signature[sizeof(NTLMSSP_SIGNATURE)];
++	__le32 MessageType;     /* NtLmNegotiate = 1 */
++	__le32 NegotiateFlags;
++	struct security_buffer DomainName;	/* RFC 1001 style and ASCII */
++	struct security_buffer WorkstationName;	/* RFC 1001 and ASCII */
++	/*
++	 * struct security_buffer for version info not present since we
++	 * do not set the version is present flag
++	 */
++	char DomainString[];
++	/* followed by WorkstationString */
++} __packed;
++
+ #endif /* _COMMON_NTLMSSP_H */
+diff --git a/fs/smb/server/ntlmssp.h b/fs/smb/server/ntlmssp.h
+index 59bff4a86617..3dd8cdf047e1 100644
+--- a/fs/smb/server/ntlmssp.h
++++ b/fs/smb/server/ntlmssp.h
+@@ -26,20 +26,6 @@ struct target_info {
+ 	__u8 Content[];
+ } __packed;
+ 
+-struct negotiate_message {
+-	__u8 Signature[sizeof(NTLMSSP_SIGNATURE)];
+-	__le32 MessageType;     /* NtLmNegotiate = 1 */
+-	__le32 NegotiateFlags;
+-	struct security_buffer DomainName;	/* RFC 1001 style and ASCII */
+-	struct security_buffer WorkstationName;	/* RFC 1001 and ASCII */
+-	/*
+-	 * struct security_buffer for version info not present since we
+-	 * do not set the version is present flag
+-	 */
+-	char DomainString[];
+-	/* followed by WorkstationString */
+-} __packed;
+-
+ struct challenge_message {
+ 	__u8 Signature[sizeof(NTLMSSP_SIGNATURE)];
+ 	__le32 MessageType;   /* NtLmChallenge = 2 */
+-- 
+2.53.0
+

@@ -1,0 +1,98 @@
+From 41d44312fbe40b8159a31afe7c8df6022eaf6fd6 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:18 +0800
+Subject: [PATCH 18/39] smb: move ntlmv2_resp to common/ntlmssp.h
+
+The fields of struct ntlmv2_resp are now the same on both client and
+server. Move the duplicate definitions to the common header file.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/client/smb1pdu.h | 17 -----------------
+ fs/smb/common/ntlmssp.h | 16 ++++++++++++++++
+ fs/smb/server/ntlmssp.h | 16 ----------------
+ 3 files changed, 16 insertions(+), 33 deletions(-)
+
+diff --git a/fs/smb/client/smb1pdu.h b/fs/smb/client/smb1pdu.h
+index 99a85f85e988..6d66cd203d7d 100644
+--- a/fs/smb/client/smb1pdu.h
++++ b/fs/smb/client/smb1pdu.h
+@@ -489,23 +489,6 @@ typedef union smb_com_session_setup_andx {
+ 	} __packed old_resp; /* pre-NTLM (LANMAN2.1) response */
+ } __packed SESSION_SETUP_ANDX;
+ 
+-struct ntlmv2_resp {
+-	union {
+-		char ntlmv2_hash[CIFS_ENCPWD_SIZE];
+-		struct {
+-			__u8 reserved[8];
+-			__u8 key[CIFS_SERVER_CHALLENGE_SIZE];
+-		} __packed challenge;
+-	} __packed;
+-	__le32 blob_signature;
+-	__u32  reserved;
+-	__le64  time;
+-	__u64  client_chal; /* random */
+-	__u32  reserved2;
+-	/* array of name entries could follow ending in minimum 4 byte struct */
+-} __packed;
+-
+-
+ #define CIFS_NETWORK_OPSYS "CIFS VFS Client for Linux"
+ 
+ 
+diff --git a/fs/smb/common/ntlmssp.h b/fs/smb/common/ntlmssp.h
+index a611ab98283f..f33182ee45f2 100644
+--- a/fs/smb/common/ntlmssp.h
++++ b/fs/smb/common/ntlmssp.h
+@@ -141,4 +141,20 @@ struct ntlmssp2_name {
+ 	__u8 data[];
+ } __packed;
+ 
++struct ntlmv2_resp {
++	union {
++		char ntlmv2_hash[CIFS_ENCPWD_SIZE];
++		struct {
++			__u8 reserved[8];
++			__u8 key[CIFS_SERVER_CHALLENGE_SIZE];
++		} __packed challenge;
++	} __packed;
++	__le32 blob_signature;
++	__u32  reserved;
++	__le64  time;
++	__u64  client_chal; /* random */
++	__u32  reserved2;
++	/* array of name entries could follow ending in minimum 4 byte struct */
++} __packed;
++
+ #endif /* _COMMON_NTLMSSP_H */
+diff --git a/fs/smb/server/ntlmssp.h b/fs/smb/server/ntlmssp.h
+index fab225665845..04c9ad910e7b 100644
+--- a/fs/smb/server/ntlmssp.h
++++ b/fs/smb/server/ntlmssp.h
+@@ -37,22 +37,6 @@ struct authenticate_message {
+ 	char UserString[];
+ } __packed;
+ 
+-struct ntlmv2_resp {
+-	union {
+-		char ntlmv2_hash[CIFS_ENCPWD_SIZE];
+-		struct {
+-			__u8 reserved[8];
+-			__u8 key[CIFS_SERVER_CHALLENGE_SIZE];
+-		} __packed challenge;
+-	} __packed;
+-	__le32 blob_signature;
+-	__u32  reserved;
+-	__le64  time;
+-	__u64  client_chal; /* random */
+-	__u32  reserved2;
+-	/* array of name entries could follow ending in minimum 4 byte struct */
+-} __packed;
+-
+ /* per smb session structure/fields */
+ struct ntlmssp_auth {
+ 	/* whether session key is per smb session */
+-- 
+2.53.0
+

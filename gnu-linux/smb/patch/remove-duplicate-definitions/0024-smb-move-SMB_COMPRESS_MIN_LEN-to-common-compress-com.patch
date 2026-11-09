@@ -1,0 +1,60 @@
+From d65a94b0fc48bc6d65ca0d287a6c3c08c715ffa8 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:19 +0800
+Subject: [PATCH 24/39] smb: move SMB_COMPRESS_MIN_LEN to
+ common/compress/compress.h
+
+The client and server use the same minimum message length for
+compression. Move the duplicate definition to the common header file.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/client/compress.h          | 1 -
+ fs/smb/common/compress/compress.h | 3 +++
+ fs/smb/server/compress.c          | 2 --
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/smb/client/compress.h b/fs/smb/client/compress.h
+index e08e6d339d21..c27b8cc15b34 100644
+--- a/fs/smb/client/compress.h
++++ b/fs/smb/client/compress.h
+@@ -25,7 +25,6 @@
+ #define SMB_COMPRESS_HDR_LEN		16
+ /* sizeof(smb2_compression_payload_hdr) - sizeof(OriginalPayloadSize) */
+ #define SMB_COMPRESS_PAYLOAD_HDR_LEN	8
+-#define SMB_COMPRESS_MIN_LEN		PAGE_SIZE
+ 
+ #ifdef CONFIG_CIFS_COMPRESSION
+ typedef int (*compress_send_fn)(struct TCP_Server_Info *, int, struct smb_rqst *);
+diff --git a/fs/smb/common/compress/compress.h b/fs/smb/common/compress/compress.h
+index d6916669f887..6cfcc73757e3 100644
+--- a/fs/smb/common/compress/compress.h
++++ b/fs/smb/common/compress/compress.h
+@@ -5,8 +5,11 @@
+ #ifndef _COMMON_SMB_COMPRESS_H
+ #define _COMMON_SMB_COMPRESS_H
+ 
++#include <asm/page.h>
+ #include "../smb2pdu.h"
+ 
++#define SMB_COMPRESS_MIN_LEN	PAGE_SIZE
++
+ /*
+  * SMB3_COMPRESS_NONE is valid only in chained payload headers. It is never
+  * negotiated as a compression algorithm.
+diff --git a/fs/smb/server/compress.c b/fs/smb/server/compress.c
+index 3fcb3e44302e..af2d36f3cf62 100644
+--- a/fs/smb/server/compress.c
++++ b/fs/smb/server/compress.c
+@@ -12,8 +12,6 @@
+ #include "smb_common.h"
+ #include "../common/compress/lz77.h"
+ 
+-#define SMB_COMPRESS_MIN_LEN	PAGE_SIZE
+-
+ static int __ksmbd_decompress_request(struct ksmbd_conn *conn,
+ 					     void *request_buf, void **out_buf)
+ {
+-- 
+2.53.0
+

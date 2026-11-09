@@ -1,0 +1,59 @@
+From 554bd25c833a653503c40b915efffcaab26b32e0 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:21 +0800
+Subject: [PATCH 32/39] smb/client: use common file internal information
+ definition
+
+file_internal_info duplicates smb2_file_internal_info in common/fscc.h.
+Remove the duplicate definition and use smb2_file_internal_info and its
+IndexNumber field when querying the server inode number.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/client/cifssmb.c | 6 +++---
+ fs/smb/client/smb1pdu.h | 4 ----
+ 2 files changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
+index 06cb1204a8d9..c40a0f4a3c09 100644
+--- a/fs/smb/client/cifssmb.c
++++ b/fs/smb/client/cifssmb.c
+@@ -4849,7 +4849,7 @@ CIFSGetSrvInodeNumber(const unsigned int xid, struct cifs_tcon *tcon,
+ 		else {
+ 			__u16 data_offset = le16_to_cpu(pSMBr->t2.DataOffset);
+ 			__u16 count = le16_to_cpu(pSMBr->t2.DataCount);
+-			struct file_internal_info *pfinfo;
++			struct smb2_file_internal_info *pfinfo;
+ 			/* BB Do we need a cast or hash here ? */
+ 			if (count < 8) {
+ 				cifs_dbg(FYI, "Invalid size ret in QryIntrnlInf\n");
+@@ -4857,9 +4857,9 @@ CIFSGetSrvInodeNumber(const unsigned int xid, struct cifs_tcon *tcon,
+ 					      count, 8);
+ 				goto GetInodeNumOut;
+ 			}
+-			pfinfo = (struct file_internal_info *)
++			pfinfo = (struct smb2_file_internal_info *)
+ 				(data_offset + (char *) &pSMBr->hdr.Protocol);
+-			*inode_number = le64_to_cpu(pfinfo->UniqueId);
++			*inode_number = le64_to_cpu(pfinfo->IndexNumber);
+ 		}
+ 	}
+ GetInodeNumOut:
+diff --git a/fs/smb/client/smb1pdu.h b/fs/smb/client/smb1pdu.h
+index d7c7876ab477..8a6587dbc117 100644
+--- a/fs/smb/client/smb1pdu.h
++++ b/fs/smb/client/smb1pdu.h
+@@ -2067,10 +2067,6 @@ struct unlink_psx_rq { /* level 0x20a SetPathInfo */
+ 	__le16 type;
+ } __packed;
+ 
+-struct file_internal_info {
+-	__le64  UniqueId; /* inode number */
+-} __packed;      /* level 0x3ee */
+-
+ 
+ /********************************************************/
+ /*  FindFirst/FindNext transact2 data buffer formats    */
+-- 
+2.53.0
+

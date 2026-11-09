@@ -1,0 +1,37 @@
+From b4b6bb2e15e6ef9625ad00a321bac7ce2f07ed5e Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:18 +0800
+Subject: [PATCH 17/39] smb/server: align ntlmv2_resp with the client
+ definition
+
+Add the client challenge union to struct ntlmv2_resp so the client and
+server can share the same definition. The hash stays at the same offset,
+and the structure size and all following field offsets are unchanged.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/server/ntlmssp.h | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/fs/smb/server/ntlmssp.h b/fs/smb/server/ntlmssp.h
+index 3b5f2501e4ea..fab225665845 100644
+--- a/fs/smb/server/ntlmssp.h
++++ b/fs/smb/server/ntlmssp.h
+@@ -38,7 +38,13 @@ struct authenticate_message {
+ } __packed;
+ 
+ struct ntlmv2_resp {
+-	char ntlmv2_hash[CIFS_ENCPWD_SIZE];
++	union {
++		char ntlmv2_hash[CIFS_ENCPWD_SIZE];
++		struct {
++			__u8 reserved[8];
++			__u8 key[CIFS_SERVER_CHALLENGE_SIZE];
++		} __packed challenge;
++	} __packed;
+ 	__le32 blob_signature;
+ 	__u32  reserved;
+ 	__le64  time;
+-- 
+2.53.0
+

@@ -1,0 +1,87 @@
+From 0dbf3fff3299f8e01cef83a1a0549158762e5403 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Fri, 6 Nov 2026 10:49:22 +0800
+Subject: [PATCH 34/39] smb: move POSIX file type definitions to common/fscc.h
+
+The client and server define the same POSIX file types and mode shift.
+Move these duplicate definitions to the common header file.
+
+Prepared with assistance from OpenAI Codex.
+---
+ fs/smb/client/inode.c   | 10 ----------
+ fs/smb/common/fscc.h    | 11 +++++++++++
+ fs/smb/server/smb2pdu.h | 10 ----------
+ 3 files changed, 11 insertions(+), 20 deletions(-)
+
+diff --git a/fs/smb/client/inode.c b/fs/smb/client/inode.c
+index 2647785ec1e4..e5d83cf1210f 100644
+--- a/fs/smb/client/inode.c
++++ b/fs/smb/client/inode.c
+@@ -767,14 +767,6 @@ static int cifs_sfu_mode(struct cifs_fattr *fattr, const unsigned char *path,
+ #endif
+ }
+ 
+-#define POSIX_TYPE_FILE    0
+-#define POSIX_TYPE_DIR     1
+-#define POSIX_TYPE_SYMLINK 2
+-#define POSIX_TYPE_CHARDEV 3
+-#define POSIX_TYPE_BLKDEV  4
+-#define POSIX_TYPE_FIFO    5
+-#define POSIX_TYPE_SOCKET  6
+-
+ #define POSIX_X_OTH      0000001
+ #define POSIX_W_OTH      0000002
+ #define POSIX_R_OTH      0000004
+@@ -794,8 +786,6 @@ static int cifs_sfu_mode(struct cifs_fattr *fattr, const unsigned char *path,
+ #define POSIX_PERM_MASK     0000777
+ #define POSIX_FILETYPE_MASK 0070000
+ 
+-#define POSIX_FILETYPE_SHIFT 12
+-
+ static u32 wire_perms_to_posix(u32 wire)
+ {
+ 	u32 mode = 0;
+diff --git a/fs/smb/common/fscc.h b/fs/smb/common/fscc.h
+index 75bb0e8eb04f..a682323abefb 100644
+--- a/fs/smb/common/fscc.h
++++ b/fs/smb/common/fscc.h
+@@ -632,6 +632,17 @@ struct file_notify_information {
+ 	__u8  FileName[];
+ } __packed;
+ 
++/* File types in the POSIX mode field. */
++#define POSIX_TYPE_FILE		0
++#define POSIX_TYPE_DIR		1
++#define POSIX_TYPE_SYMLINK	2
++#define POSIX_TYPE_CHARDEV	3
++#define POSIX_TYPE_BLKDEV		4
++#define POSIX_TYPE_FIFO		5
++#define POSIX_TYPE_SOCKET	6
++
++#define POSIX_FILETYPE_SHIFT	12
++
+ /*
+  * See POSIX-FSCC 2.3.1
+  */
+diff --git a/fs/smb/server/smb2pdu.h b/fs/smb/server/smb2pdu.h
+index e1b8c4cb0467..3402bcf45a0e 100644
+--- a/fs/smb/server/smb2pdu.h
++++ b/fs/smb/server/smb2pdu.h
+@@ -409,14 +409,4 @@ int smb2_ioctl(struct ksmbd_work *work);
+ int smb2_oplock_break(struct ksmbd_work *work);
+ int smb2_notify(struct ksmbd_work *ksmbd_work);
+ 
+-#define POSIX_TYPE_FILE		0
+-#define POSIX_TYPE_DIR		1
+-#define POSIX_TYPE_SYMLINK	2
+-#define POSIX_TYPE_CHARDEV	3
+-#define POSIX_TYPE_BLKDEV	4
+-#define POSIX_TYPE_FIFO		5
+-#define POSIX_TYPE_SOCKET	6
+-
+-#define POSIX_FILETYPE_SHIFT	12
+-
+ #endif	/* _SMB2PDU_H */
+-- 
+2.53.0
+
