@@ -1,7 +1,7 @@
-From bce2ca1cb3b67020e67b5b53942ec050b600d9a4 Mon Sep 17 00:00:00 2001
+From 732f825ca9024a4ecdced1c4723bf3eb33c6714f Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
-Date: Wed, 11 Nov 2026 10:15:08 +0800
-Subject: [PATCH 0/3] smbinfo: add options to notify subcommand
+Date: Wed, 11 Nov 2026 10:23:14 +0800
+Subject: [PATCH cifs-utils 0/3] smbinfo: add options to notify subcommand
 
 Add optional `watch_tree` and `completion_filter` arguments to make
 debugging easier.

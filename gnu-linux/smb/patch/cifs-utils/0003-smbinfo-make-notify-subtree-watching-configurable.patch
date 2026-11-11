@@ -1,7 +1,8 @@
 From 732f825ca9024a4ecdced1c4723bf3eb33c6714f Mon Sep 17 00:00:00 2001
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 Date: Tue, 10 Nov 2026 14:37:46 +0800
-Subject: [PATCH 3/3] smbinfo: make notify subtree watching configurable
+Subject: [PATCH cifs-utils 3/3] smbinfo: make notify subtree watching
+ configurable
 
 Add an optional `watch_tree` argument to make debugging easier.
 
