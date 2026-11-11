@@ -1,0 +1,163 @@
+From 14617e42a8410fdb8ed72f0adce58d9c2d956516 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Tue, 10 Nov 2026 14:37:46 +0800
+Subject: [PATCH 2/3] smbinfo: make the notify completion filter configurable
+
+Add an optional `completion_filter` argument to make debugging easier.
+
+Example:
+
+  ./smbinfo notify -h
+  usage: smbinfo notify [-h] directory [completion_filter]
+
+  positional arguments:
+    ...
+    completion_filter  Filter mask from 0 to 0xFFF; supports '|' (quote expressions in the shell; default: 0xFFF)
+  ...
+  completion_filter flags:
+    0x00000001  FILE_NOTIFY_CHANGE_FILE_NAME
+    0x00000002  FILE_NOTIFY_CHANGE_DIR_NAME
+    0x00000003  FILE_NOTIFY_CHANGE_NAME
+    0x00000004  FILE_NOTIFY_CHANGE_ATTRIBUTES
+    0x00000008  FILE_NOTIFY_CHANGE_SIZE
+    0x00000010  FILE_NOTIFY_CHANGE_LAST_WRITE
+    0x00000020  FILE_NOTIFY_CHANGE_LAST_ACCESS
+    0x00000040  FILE_NOTIFY_CHANGE_CREATION
+    0x00000080  FILE_NOTIFY_CHANGE_EA
+    0x00000100  FILE_NOTIFY_CHANGE_SECURITY
+    0x00000200  FILE_NOTIFY_CHANGE_STREAM_NAME
+    0x00000400  FILE_NOTIFY_CHANGE_STREAM_SIZE
+    0x00000800  FILE_NOTIFY_CHANGE_STREAM_WRITE
+
+  Example: smbinfo notify /mnt '0x1|0x2'
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ smbinfo     | 52 ++++++++++++++++++++++++++++++++++++++++++++++++----
+ smbinfo.rst | 11 ++++++++++-
+ 2 files changed, 58 insertions(+), 5 deletions(-)
+
+diff --git a/smbinfo b/smbinfo
+index 1ed1b6c..e2faeb3 100755
+--- a/smbinfo
++++ b/smbinfo
+@@ -133,6 +133,27 @@ FILE_MODE_FLAGS = [
+     (0x00001000, "DELETE_ON_CLOSE"),
+ ]
+ 
++# See notify completion filter flags in linux kernel fs/smb/common/smb2pdu.h
++NOTIFY_CHANGE_FLAGS = [
++    (0x00000001, "FILE_NOTIFY_CHANGE_FILE_NAME"),
++    (0x00000002, "FILE_NOTIFY_CHANGE_DIR_NAME"),
++    (0x00000003, "FILE_NOTIFY_CHANGE_NAME"),
++    (0x00000004, "FILE_NOTIFY_CHANGE_ATTRIBUTES"),
++    (0x00000008, "FILE_NOTIFY_CHANGE_SIZE"),
++    (0x00000010, "FILE_NOTIFY_CHANGE_LAST_WRITE"),
++    (0x00000020, "FILE_NOTIFY_CHANGE_LAST_ACCESS"),
++    (0x00000040, "FILE_NOTIFY_CHANGE_CREATION"),
++    (0x00000080, "FILE_NOTIFY_CHANGE_EA"),
++    (0x00000100, "FILE_NOTIFY_CHANGE_SECURITY"),
++    (0x00000200, "FILE_NOTIFY_CHANGE_STREAM_NAME"),
++    (0x00000400, "FILE_NOTIFY_CHANGE_STREAM_SIZE"),
++    (0x00000800, "FILE_NOTIFY_CHANGE_STREAM_WRITE"),
++]
++
++NOTIFY_CHANGE_MASK = 0
++for flag, _ in NOTIFY_CHANGE_FLAGS:
++    NOTIFY_CHANGE_MASK |= flag
++
+ ALIGN_TYPES = [
+     (0, "BYTE_ALIGNMENT"),
+     (1, "WORD_ALIGNMENT"),
+@@ -316,8 +337,18 @@ def main():
+     sap.add_argument("file")
+     sap.set_defaults(func=cmd_gettconinfo)
+ 
+-    sap = subp.add_parser("notify", help="Query a directory for change notifications. Press Ctrl+C to exit.")
++    sap = subp.add_parser(
++        "notify", help="Query a directory for change notifications.",
++        formatter_class=argparse.RawDescriptionHelpFormatter,
++        epilog="completion_filter flags:\n" + "\n".join(
++            "  0x%08x  %s"%(value, name) for value, name in NOTIFY_CHANGE_FLAGS
++        ) + "\n\nExample: smbinfo notify /mnt '0x1|0x2'")
+     sap.add_argument("directory", help="Directory to watch for changes")
++    sap.add_argument(
++        "completion_filter", nargs="?", type=parse_notify_completion_filter,
++        default=NOTIFY_CHANGE_MASK,
++        help=f"Filter mask from 0 to 0x{NOTIFY_CHANGE_MASK:X}; supports '|' "
++             f"(quote expressions in the shell; default: 0x{NOTIFY_CHANGE_MASK:X})")
+     sap.set_defaults(func=cmd_notify)
+ 
+     # parse arguments
+@@ -980,6 +1011,19 @@ def cmd_gettconinfo(args):
+     print("TCON Id: 0x%x"%tcon.tid)
+     print("Session Id: 0x%x"%tcon.session_id)
+ 
++def parse_notify_completion_filter(value):
++    try:
++        completion_filter = 0
++        for flag in value.split("|"):
++            completion_filter |= int(flag.strip(), 0)
++        if 0 <= completion_filter <= NOTIFY_CHANGE_MASK:
++            return completion_filter
++    except ValueError:
++        pass
++    raise argparse.ArgumentTypeError(
++        "completion_filter must contain integers between 0 and "
++        f"0x{NOTIFY_CHANGE_MASK:X} separated by '|'.")
++
+ def cmd_notify(args):
+     try:
+         fd = os.open(args.directory, os.O_RDONLY)
+@@ -987,7 +1031,8 @@ def cmd_notify(args):
+         print("syscall failed: %s"%e)
+         return False
+ 
+-    thread = threading.Thread(target=notify_thread, args=(fd,))
++    thread = threading.Thread(target=notify_thread,
++                              args=(fd, args.completion_filter))
+     thread.start()
+ 
+     try:
+@@ -997,10 +1042,9 @@ def cmd_notify(args):
+     finally:
+         os.close(fd)
+ 
+-def notify_thread(fd):
++def notify_thread(fd, completion_filter):
+     fmt = "<IBI"
+     # See `struct smb3_notify_info` in linux kernel fs/smb/client/cifs_ioctl.h
+-    completion_filter = 0xFFF
+     watch_tree = True
+     data_len = 1000
+ 
+diff --git a/smbinfo.rst b/smbinfo.rst
+index a74ce57..924a37b 100644
+--- a/smbinfo.rst
++++ b/smbinfo.rst
+@@ -104,12 +104,21 @@ the SMB3 traffic of this mount can be decryped e.g. via wireshark
+ 
+ `gettconinfo`: Prints both the TCON Id and Session Id for a cifs file.
+ 
+-`notify directory`
++`notify directory [completion_filter]`
+   Query a directory for change notifications.
+ 
+   `directory`
+     Required. The directory to watch for changes.
+ 
++  `completion_filter`
++    Optional. Accepts integers in decimal or with a ``0x`` prefix for
++    hexadecimal, optionally joined by ``|``. Its default and upper limit are
++    the bitwise OR of all ``FILE_NOTIFY_CHANGE_*`` flags; the lower limit is
++    zero. Run ``smbinfo notify -h`` to list the flags and their hexadecimal
++    values. Quote bitwise OR expressions in the shell, for example::
++
++      smbinfo notify /mnt '0x1|0x2'
++
+ *****
+ NOTES
+ *****
+-- 
+2.53.0
+

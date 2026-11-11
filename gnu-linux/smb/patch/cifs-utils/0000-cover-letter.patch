@@ -1,0 +1,50 @@
+From bce2ca1cb3b67020e67b5b53942ec050b600d9a4 Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Wed, 11 Nov 2026 10:15:08 +0800
+Subject: [PATCH 0/3] smbinfo: add options to notify subcommand
+
+Add optional `watch_tree` and `completion_filter` arguments to make
+debugging easier.
+
+Example:
+
+  ./smbinfo notify -h
+  usage: smbinfo notify [-h] directory [completion_filter] [watch_tree]
+  
+  positional arguments:
+    directory          Directory to watch for changes
+    completion_filter  Filter mask from 0 to 0xFFF; supports '|' (quote expressions in the shell; default: 0xFFF)
+    watch_tree         Watch subdirectories: True/1 or False/0 (default: True)
+  
+  options:
+    -h, --help         show this help message and exit
+  
+  completion_filter flags:
+    0x00000001  FILE_NOTIFY_CHANGE_FILE_NAME
+    0x00000002  FILE_NOTIFY_CHANGE_DIR_NAME
+    0x00000003  FILE_NOTIFY_CHANGE_NAME
+    0x00000004  FILE_NOTIFY_CHANGE_ATTRIBUTES
+    0x00000008  FILE_NOTIFY_CHANGE_SIZE
+    0x00000010  FILE_NOTIFY_CHANGE_LAST_WRITE
+    0x00000020  FILE_NOTIFY_CHANGE_LAST_ACCESS
+    0x00000040  FILE_NOTIFY_CHANGE_CREATION
+    0x00000080  FILE_NOTIFY_CHANGE_EA
+    0x00000100  FILE_NOTIFY_CHANGE_SECURITY
+    0x00000200  FILE_NOTIFY_CHANGE_STREAM_NAME
+    0x00000400  FILE_NOTIFY_CHANGE_STREAM_SIZE
+    0x00000800  FILE_NOTIFY_CHANGE_STREAM_WRITE
+  
+  Example: smbinfo notify /mnt '0x1|0x2' 0
+
+ChenXiaoSong (3):
+  smbinfo: show directory in notify help
+  smbinfo: make the notify completion filter configurable
+  smbinfo: make notify subtree watching configurable
+
+ smbinfo     | 68 +++++++++++++++++++++++++++++++++++++++++++++++------
+ smbinfo.rst | 20 +++++++++++++++-
+ 2 files changed, 80 insertions(+), 8 deletions(-)
+
+-- 
+2.53.0
+

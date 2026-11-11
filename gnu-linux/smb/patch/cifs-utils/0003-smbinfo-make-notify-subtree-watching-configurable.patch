@@ -1,0 +1,112 @@
+From 732f825ca9024a4ecdced1c4723bf3eb33c6714f Mon Sep 17 00:00:00 2001
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Date: Tue, 10 Nov 2026 14:37:46 +0800
+Subject: [PATCH 3/3] smbinfo: make notify subtree watching configurable
+
+Add an optional `watch_tree` argument to make debugging easier.
+
+Example:
+
+  ./smbinfo notify -h
+  usage: smbinfo notify [-h] directory [completion_filter] [watch_tree]
+
+  positional arguments:
+    ...
+    watch_tree         Watch subdirectories: True/1 or False/0 (default: True)
+  ...
+  Example: smbinfo notify /mnt '0x1|0x2' 0
+
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ smbinfo     | 18 ++++++++++++++----
+ smbinfo.rst |  9 +++++++--
+ 2 files changed, 21 insertions(+), 6 deletions(-)
+
+diff --git a/smbinfo b/smbinfo
+index e2faeb3..2c966d7 100755
+--- a/smbinfo
++++ b/smbinfo
+@@ -342,13 +342,16 @@ def main():
+         formatter_class=argparse.RawDescriptionHelpFormatter,
+         epilog="completion_filter flags:\n" + "\n".join(
+             "  0x%08x  %s"%(value, name) for value, name in NOTIFY_CHANGE_FLAGS
+-        ) + "\n\nExample: smbinfo notify /mnt '0x1|0x2'")
++        ) + "\n\nExample: smbinfo notify /mnt '0x1|0x2' 0")
+     sap.add_argument("directory", help="Directory to watch for changes")
+     sap.add_argument(
+         "completion_filter", nargs="?", type=parse_notify_completion_filter,
+         default=NOTIFY_CHANGE_MASK,
+         help=f"Filter mask from 0 to 0x{NOTIFY_CHANGE_MASK:X}; supports '|' "
+              f"(quote expressions in the shell; default: 0x{NOTIFY_CHANGE_MASK:X})")
++    sap.add_argument(
++        "watch_tree", nargs="?", type=parse_notify_watch_tree, default=True,
++        help="Watch subdirectories: True/1 or False/0 (default: True)")
+     sap.set_defaults(func=cmd_notify)
+ 
+     # parse arguments
+@@ -1024,6 +1027,14 @@ def parse_notify_completion_filter(value):
+         "completion_filter must contain integers between 0 and "
+         f"0x{NOTIFY_CHANGE_MASK:X} separated by '|'.")
+ 
++def parse_notify_watch_tree(value):
++    value = value.strip().lower()
++    if value in ("true", "1"):
++        return True
++    if value in ("false", "0"):
++        return False
++    raise argparse.ArgumentTypeError("watch_tree must be True, False, 1 or 0.")
++
+ def cmd_notify(args):
+     try:
+         fd = os.open(args.directory, os.O_RDONLY)
+@@ -1032,7 +1043,7 @@ def cmd_notify(args):
+         return False
+ 
+     thread = threading.Thread(target=notify_thread,
+-                              args=(fd, args.completion_filter))
++                              args=(fd, args.completion_filter, args.watch_tree))
+     thread.start()
+ 
+     try:
+@@ -1042,10 +1053,9 @@ def cmd_notify(args):
+     finally:
+         os.close(fd)
+ 
+-def notify_thread(fd, completion_filter):
++def notify_thread(fd, completion_filter, watch_tree):
+     fmt = "<IBI"
+     # See `struct smb3_notify_info` in linux kernel fs/smb/client/cifs_ioctl.h
+-    watch_tree = True
+     data_len = 1000
+ 
+     while True:
+diff --git a/smbinfo.rst b/smbinfo.rst
+index 924a37b..9131d30 100644
+--- a/smbinfo.rst
++++ b/smbinfo.rst
+@@ -104,7 +104,7 @@ the SMB3 traffic of this mount can be decryped e.g. via wireshark
+ 
+ `gettconinfo`: Prints both the TCON Id and Session Id for a cifs file.
+ 
+-`notify directory [completion_filter]`
++`notify directory [completion_filter] [watch_tree]`
+   Query a directory for change notifications.
+ 
+   `directory`
+@@ -117,7 +117,12 @@ the SMB3 traffic of this mount can be decryped e.g. via wireshark
+     zero. Run ``smbinfo notify -h`` to list the flags and their hexadecimal
+     values. Quote bitwise OR expressions in the shell, for example::
+ 
+-      smbinfo notify /mnt '0x1|0x2'
++      smbinfo notify /mnt '0x1|0x2' 0
++
++  `watch_tree`
++    Optional. Controls whether subdirectories are also watched. Accepts
++    `True` or `False` (case-insensitive), or ``1``/``0`` respectively, and
++    defaults to `True`. To specify `watch_tree`, also supply `completion_filter`.
+ 
+ *****
+ NOTES
+-- 
+2.53.0
+
