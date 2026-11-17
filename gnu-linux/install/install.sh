@@ -30,7 +30,7 @@ install_linux()
 cp_config_file()
 {
 	cd /home/chenxiaosong/code/blog/course/gnu-linux/src/config-file
-	bash copy-to-home.sh
+	bash deploy-to-home.sh
 }
 
 tip_perm()
@@ -268,7 +268,7 @@ fedora_vm()
 	cd /home/chenxiaosong/code
 	git clone https://gitee.com/chenxiaosonggitee/blog.git
 	cd /home/chenxiaosong/code/blog/course/gnu-linux/src/config-file
-	bash copy-to-home.sh
+	bash deploy-to-home.sh
 	cd /home/chenxiaosong/code/blog/course/kernel/src/script
 	# command cp parse-cmdline.sh ~
 
@@ -561,7 +561,7 @@ windows_physical()
 	# 百度网盘限制设备的规则太他妈艹蛋了，7天内只能退出2台，点击这里查看设备管理的网页: https://pan.baidu.com/disk/base/device#/index
 
 	cd /home/chenxiaosong/code/blog/course/gnu-linux/src/config-file
-	bash copy-to-home.sh
+	bash deploy-to-home.sh
 }
 
 windows_vm()
