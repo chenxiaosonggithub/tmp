@@ -248,6 +248,8 @@ ubuntu_vm()
 	# 共享剪贴板
 	sudo apt install spice-vdagent -y
 	sudo reboot
+	# 虚拟机里ai需要访问docker中的文件，需要root权限
+	vim /etc/sudoers.d/chenxiaosong # chenxiaosong ALL=(ALL:ALL) NOPASSWD: ALL
 }
 
 fedora_vm()
