@@ -1,0 +1,20 @@
+From 4ad5d211044cd49ddbb6cab0d62827579a7b3347 Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Tue, 24 Nov 2026 07:33:46 +0000
+Subject: [PATCH 0/2] smb/server: fix byte order issues on big-endian systems
+
+ZhangGuoDong (2):
+  smb/server: fix little-endian values in diagnostic messages
+  smb/server: fix file name conversion on big-endian systems
+
+ fs/smb/server/auth.c       |  2 +-
+ fs/smb/server/oplock.c     | 12 ++++++----
+ fs/smb/server/smb2pdu.c    | 47 ++++++++++++++++++++------------------
+ fs/smb/server/smb_common.c |  2 +-
+ fs/smb/server/smbacl.c     |  4 ++--
+ fs/smb/server/unicode.c    |  4 ++--
+ 6 files changed, 38 insertions(+), 33 deletions(-)
+
+-- 
+2.55.0
+

@@ -1,0 +1,41 @@
+From 4ad5d211044cd49ddbb6cab0d62827579a7b3347 Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Tue, 24 Nov 2026 15:18:36 +0800
+Subject: [PATCH 2/2] smb/server: fix file name conversion on big-endian
+ systems
+
+Use CPU byte order for temporary UTF-16 buffers to avoid incorrect
+file name conversion on big-endian architectures.
+
+Fixes: 0c180317c654 ("ksmbd: add support for surrogate pair conversion")
+Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/server/unicode.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/smb/server/unicode.c b/fs/smb/server/unicode.c
+index 85e6791745ec..8841f8a83026 100644
+--- a/fs/smb/server/unicode.c
++++ b/fs/smb/server/unicode.c
+@@ -80,7 +80,7 @@ cifs_mapchar(char *target, const __u16 *from, const struct nls_table *cp,
+ 	/* convert SURROGATE_PAIR and IVS */
+ 	if (strcmp(cp->charset, "utf8"))
+ 		goto unknown;
+-	len = utf16s_to_utf8s(from, 3, UTF16_LITTLE_ENDIAN, target, 6);
++	len = utf16s_to_utf8s(from, 3, UTF16_HOST_ENDIAN, target, 6);
+ 	if (len <= 0)
+ 		goto unknown;
+ 	return len;
+@@ -404,7 +404,7 @@ int smbConvertToUTF16(__le16 *target, const char *source, int srclen,
+ 			} else
+ 				goto unknown;
+ 			ret  = utf8s_to_utf16s(source + i, charlen,
+-					UTF16_LITTLE_ENDIAN,
++					UTF16_HOST_ENDIAN,
+ 					wchar_to, 6);
+ 			if (ret < 0)
+ 				goto unknown;
+-- 
+2.55.0
+
