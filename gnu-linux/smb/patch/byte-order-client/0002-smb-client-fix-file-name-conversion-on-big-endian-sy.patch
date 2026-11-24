@@ -1,0 +1,50 @@
+From 485a2e3db833cb539062a9a46ff9f64f555a5c40 Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Tue, 24 Nov 2026 15:18:34 +0800
+Subject: [PATCH 2/2] smb/client: fix file name conversion on big-endian
+ systems
+
+Use CPU byte order for temporary UTF-16 buffers to avoid incorrect
+file name conversion on big-endian architectures.
+
+Fixes: b29103076bec ("Fix to convert SURROGATE PAIR")
+Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+Reviewed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/client/cifs_unicode.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/smb/client/cifs_unicode.c b/fs/smb/client/cifs_unicode.c
+index 4a8a591f4bca..264595633b1e 100644
+--- a/fs/smb/client/cifs_unicode.c
++++ b/fs/smb/client/cifs_unicode.c
+@@ -92,7 +92,7 @@ convert_sfm_char(const __u16 src_char, char *target)
+ /*
+  * cifs_mapchar - convert a host-endian char to proper char in codepage
+  * @target - where converted character should be copied
+- * @src_char - 2 byte host-endian source character
++ * @from - 2 byte host-endian source character
+  * @cp - codepage to which character should be converted
+  * @map_type - How should the 7 NTFS/SMB reserved characters be mapped to UCS2?
+  *
+@@ -126,7 +126,7 @@ cifs_mapchar(char *target, const __u16 *from, const struct nls_table *cp,
+ 	/* convert SURROGATE_PAIR and IVS */
+ 	if (strcmp(cp->charset, "utf8"))
+ 		goto unknown;
+-	len = utf16s_to_utf8s(from, 3, UTF16_LITTLE_ENDIAN, target, 6);
++	len = utf16s_to_utf8s(from, 3, UTF16_HOST_ENDIAN, target, 6);
+ 	if (len <= 0)
+ 		goto unknown;
+ 	return len;
+@@ -518,7 +518,7 @@ cifsConvertToUTF16(__le16 *target, const char *source, int srclen,
+ 			} else
+ 				goto unknown;
+ 			ret  = utf8s_to_utf16s(source + i, charlen,
+-					       UTF16_LITTLE_ENDIAN,
++					       UTF16_HOST_ENDIAN,
+ 					       wchar_to, 6);
+ 			if (ret < 0)
+ 				goto unknown;
+-- 
+2.55.0
+

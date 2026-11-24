@@ -1,0 +1,23 @@
+From 485a2e3db833cb539062a9a46ff9f64f555a5c40 Mon Sep 17 00:00:00 2001
+From: ZhangGuoDong <zhangguodong@kylinos.cn>
+Date: Tue, 24 Nov 2026 07:43:48 +0000
+Subject: [PATCH 0/2] smb/client: fix byte order issues on big-endian systems
+
+ZhangGuoDong (2):
+  smb/client: fix little-endian values in diagnostic messages
+  smb/client: fix file name conversion on big-endian systems
+
+ fs/smb/client/cifs_unicode.c  | 6 +++---
+ fs/smb/client/cifsacl.c       | 3 ++-
+ fs/smb/client/sess.c          | 2 +-
+ fs/smb/client/smb1debug.c     | 5 +++--
+ fs/smb/client/smb1misc.c      | 4 ++--
+ fs/smb/client/smb2ops.c       | 5 +++--
+ fs/smb/client/smb2pdu.c       | 4 ++--
+ fs/smb/client/smb2transport.c | 6 +++---
+ fs/smb/client/transport.c     | 2 +-
+ 9 files changed, 20 insertions(+), 17 deletions(-)
+
+-- 
+2.55.0
+
